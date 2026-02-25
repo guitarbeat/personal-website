@@ -29,7 +29,8 @@ export const useVFXEffect = ({
   activeElement = null,
   effectConfig = { shader: "rgbShift", overflow: 100 },
 }: VFXOptions) => {
-  const vfxRef = useRef<any>(null);
+  const vfxRef = useRef<// biome-ignore lint/suspicious/noExplicitAny: legacy
+any>(null);
   const previousActiveRef = useRef<HTMLElement | null>(null);
 
   // * Initialize VFX instance

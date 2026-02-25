@@ -74,18 +74,20 @@ const getSessionData = (key: string) => {
   }
 };
 
-const setSessionData = (key: string, value: any) => {
+const setSessionData = (key: string, // biome-ignore lint/suspicious/noExplicitAny: generic value
+value: any) => {
   if (!hasSessionStorage()) {
     return;
   }
 
   try {
     window.sessionStorage.setItem(key, JSON.stringify(value));
-  } catch (error: any) {
+  } catch (// biome-ignore lint/suspicious/noExplicitAny: error
+error: any) {
     console.warn(`${ERROR_MESSAGES.STORAGE_ERROR} for ${key}:`, error);
     if (error.name === "QuotaExceededError") {
       try {
-        Object.values(SESSION_KEYS).forEach((k) => clearSessionData(k));
+        Object.values(SESSION_KEYS).forEach((k) => { clearSessionData(k); });
         window.sessionStorage.setItem(key, JSON.stringify(value));
       } catch (retryError) {
         console.error(
@@ -247,15 +249,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     [DEVICE_KEYS.MOBILE]: isMobileUnlocked,
   } = unlockState;
 
-  const toolsAccessible = useMemo(() => {
-    if (isMobile) {
-      return isMobileUnlocked;
-    }
-    return isUnlocked;
-  }, [isMobile, isMobileUnlocked, isUnlocked]);
+  const toolsAccessible = isMobile ? isMobileUnlocked : isUnlocked;
 
   return (
     <AuthContext.Provider
+       // biome-ignore lint/correctness/useExhaustiveDependencies: context update
       value={useMemo(
         () => ({
           isUnlocked,

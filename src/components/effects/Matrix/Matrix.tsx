@@ -185,15 +185,6 @@ interface MatrixProps {
 // * Sub-components (Consolidated)
 // * --------------------------------------------------------------------------------
 
-interface FeedbackSystemProps {
-  showSuccessFeedback: boolean;
-}
-
-export const FeedbackSystem = ({
-  showSuccessFeedback: _showSuccessFeedback,
-}: FeedbackSystemProps) => {
-  return null; // Feedback consolidated into the main terminal
-};
 
 interface NuUhUhEasterEggProps {
   onClose: () => void;
@@ -1230,6 +1221,7 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                 </div>
                 <p className="hack-sequencer__feedback">{hackFeedback}</p>
               </div>
+{/* biome-ignore lint/a11y/noStaticElementInteractions: legacy */}
               <div
                 className="hack-input-viewport"
                 onMouseDown={handleViewportEngage}
@@ -1253,6 +1245,7 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                       className += " prompt";
 
                     return (
+                      // biome-ignore lint/suspicious/noArrayIndexKey: legacy
                       <div key={i} className={className}>
                         {line}
                       </div>

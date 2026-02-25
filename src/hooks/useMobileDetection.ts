@@ -38,6 +38,7 @@ export const useMobileDetection = (): MobileDetectionResult => {
     desktop: 1017, // Above 1016px is desktop
   };
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: legacy
   const updateScreenSize = useCallback(() => {
     const width = window.innerWidth;
     const height = window.innerHeight;
