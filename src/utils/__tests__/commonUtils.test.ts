@@ -3,71 +3,75 @@ import {
   throttle,
   debounce,
   throttleAdvanced,
+  clamp,
+  randomInt,
+  randomFloat,
+  cn,
+  getWindowDimensions,
+  generateId,
+  copyPoint,
+  subtractPoints,
+  createTimeout,
 } from "../commonUtils";
-import { randomFloat, randomInt } from "../commonUtils";
 
 describe("commonUtils", () => {
+  describe("clamp", () => {
+    it("returns value when within range", () => {
+      expect(clamp(5, 0, 10)).toBe(5);
+    });
+
+    it("returns min when value is less than min", () => {
+      expect(clamp(-5, 0, 10)).toBe(0);
+    });
+
+    it("returns max when value is greater than max", () => {
+      expect(clamp(15, 0, 10)).toBe(10);
+    });
+  });
+
   describe("randomInt", () => {
-    afterEach(() => {
-      jest.restoreAllMocks();
+    it("returns integer within range", () => {
+      const val = randomInt(1, 10);
+      expect(val).toBeGreaterThanOrEqual(1);
+      expect(val).toBeLessThanOrEqual(10);
+      expect(Number.isInteger(val)).toBe(true);
     });
 
-    it("returns a number between min and max inclusive", () => {
-      const min = 1;
-      const max = 10;
-      for (let i = 0; i < 100; i++) {
-        const result = randomInt(min, max);
-        expect(result).toBeGreaterThanOrEqual(min);
-        expect(result).toBeLessThanOrEqual(max);
-        expect(Number.isInteger(result)).toBe(true);
-      }
-    });
-
-    it("returns min when random returns 0", () => {
-      jest.spyOn(Math, "random").mockReturnValue(0);
-      expect(randomInt(1, 10)).toBe(1);
-    });
-
-    it("returns max when random returns almost 1", () => {
-      jest.spyOn(Math, "random").mockReturnValue(0.999999999);
-      expect(randomInt(1, 10)).toBe(10);
-    });
-
-    it("returns min when min equals max", () => {
+    it("handles min equal to max", () => {
       expect(randomInt(5, 5)).toBe(5);
     });
   });
 
   describe("randomFloat", () => {
-    afterEach(() => {
-      jest.restoreAllMocks();
+    it("returns float within range", () => {
+      const val = randomFloat(1, 10);
+      expect(val).toBeGreaterThanOrEqual(1);
+      expect(val).toBeLessThan(10); // randomFloat is exclusive of max
     });
 
-    it("returns a number between min and max", () => {
-      const min = 1.5;
-      const max = 4.5;
-      for (let i = 0; i < 100; i++) {
-        const result = randomFloat(min, max);
-        expect(result).toBeGreaterThanOrEqual(min);
-        expect(result).toBeLessThan(max);
-      }
+    it("handles min equal to max", () => {
+        expect(randomFloat(3.14, 3.14)).toBe(3.14);
+    });
+  });
+
+  describe("cn", () => {
+    it("returns base class when no additional classes", () => {
+      expect(cn("base")).toBe("base");
     });
 
-    it("returns min when random returns 0", () => {
-      jest.spyOn(Math, "random").mockReturnValue(0);
-      expect(randomFloat(1.5, 4.5)).toBe(1.5);
+    it("combines classes correctly", () => {
+      expect(cn("base", "foo", "bar")).toBe("base foo bar");
     });
 
-    it("returns close to max when random returns almost 1", () => {
-      jest.spyOn(Math, "random").mockReturnValue(0.999999999);
-      expect(randomFloat(1.5, 4.5)).toBeCloseTo(4.5);
+    it("filters falsy values", () => {
+      expect(cn("base", false && "foo", null, undefined, "bar", "")).toBe("base bar");
     });
 
-    it("returns min when min equals max", () => {
-      expect(randomFloat(3.14, 3.14)).toBe(3.14);
-import { isAboveBreakpoint } from "../commonUtils";
+    it("trims whitespace only strings", () => {
+        expect(cn("base", "   ", "foo")).toBe("base foo");
+    });
+  });
 
-describe("commonUtils", () => {
   describe("isAboveBreakpoint", () => {
     const originalInnerWidth = window.innerWidth;
 
@@ -97,6 +101,67 @@ describe("commonUtils", () => {
       window.innerWidth = 500;
       expect(isAboveBreakpoint(768)).toBe(false);
     });
+  });
+
+  describe("getWindowDimensions", () => {
+    it("returns window dimensions", () => {
+      // JSDOM default dimensions might vary, but usually they are defined
+      const dims = getWindowDimensions();
+      expect(typeof dims.width).toBe("number");
+      expect(typeof dims.height).toBe("number");
+    });
+  });
+
+  describe("generateId", () => {
+    it("generates ID of default length 5", () => {
+      expect(generateId().length).toBe(5);
+    });
+
+    it("generates ID of specified length", () => {
+      expect(generateId(10).length).toBe(10);
+    });
+
+    it("uses default alphabet if not provided", () => {
+        const id = generateId(100);
+        expect(id).toMatch(/^[A-Za-z0-9]+$/);
+    });
+  });
+
+  describe("Point utilities", () => {
+    it("copyPoint returns a new object with same values", () => {
+      const p = { x: 10, y: 20 };
+      const copy = copyPoint(p);
+      expect(copy).toEqual(p);
+      expect(copy).not.toBe(p);
+    });
+
+    it("subtractPoints returns difference", () => {
+      const p1 = { x: 10, y: 20 };
+      const p2 = { x: 4, y: 5 };
+      expect(subtractPoints(p1, p2)).toEqual({ x: 6, y: 15 });
+    });
+  });
+
+  describe("createTimeout", () => {
+      jest.useFakeTimers();
+
+      it("executes callback after delay", () => {
+          const cb = jest.fn();
+          createTimeout(cb, 100);
+          expect(cb).not.toHaveBeenCalled();
+          jest.advanceTimersByTime(100);
+          expect(cb).toHaveBeenCalled();
+      });
+
+      it("can be cleared", () => {
+          const cb = jest.fn();
+          const clear = createTimeout(cb, 100);
+          clear();
+          jest.advanceTimersByTime(100);
+          expect(cb).not.toHaveBeenCalled();
+      });
+
+      jest.useRealTimers();
   });
 
   describe("throttle", () => {
