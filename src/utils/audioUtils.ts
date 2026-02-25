@@ -206,33 +206,45 @@ class AudioManager {
   // Fallback method to try loading from file
   async playKnightRiderThemeFromFile(): Promise<boolean> {
     try {
-      // Get the Knight Rider audio URL
-      const knightRiderUrl = this.getKnightRiderAudioUrl();
-      this.createAudioElement(knightRiderUrl);
+      // Get the Knight Rider audio URLs
+      const knightRiderUrls = this.getKnightRiderAudioUrls();
 
-      if (!this.audioElement) {
-        throw new Error("Failed to create audio element");
+      for (const url of knightRiderUrls) {
+        try {
+          console.log(`Attempting to play from: ${url}`);
+          this.createAudioElement(url);
+
+          if (!this.audioElement) {
+            continue;
+          }
+
+          // Start playing
+          await this.audioElement.play();
+          this.isPlaying = true;
+
+          // Fade in effect
+          this.fadeIn();
+
+          console.log(`Knight Rider theme started playing from ${url}`);
+          return true;
+        } catch (error) {
+          console.warn(`Failed to play Knight Rider theme from ${url}:`, error);
+          // Continue to next source
+        }
       }
 
-      // Start playing
-      await this.audioElement.play();
-      this.isPlaying = true;
-
-      // Fade in effect
-      this.fadeIn();
-
-      console.log("Knight Rider theme started playing from file");
-      return true;
+      // If all sources fail
+      throw new Error("All audio sources failed");
     } catch (error) {
       console.error("Error playing Knight Rider theme from file:", error);
       throw error;
     }
   }
 
-  // Get Knight Rider audio URL - using multiple fallback sources
-  getKnightRiderAudioUrl(): string {
+  // Get Knight Rider audio URLs - using multiple fallback sources
+  getKnightRiderAudioUrls(): string[] {
     // Try multiple sources in order of preference (local first)
-    const audioSources = [
+    return [
       // Primary: Local asset (most reliable and fast)
       "/assets/audio/knight-rider-theme.mp3",
 
@@ -242,9 +254,6 @@ class AudioManager {
       // Fallback 2: Another source (last resort)
       "https://www.soundjay.com/misc/sounds/bell-ringing-05.wav",
     ];
-
-    // Return the first source (local asset)
-    return audioSources[0];
   }
 
   // Stop audio with fade out
