@@ -42,7 +42,7 @@ module.exports = {
       loaderOptions: {
         implementation: require("sass"),
         api: "modern",
-        sourceMap: true,
+        sourceMap: process.env.NODE_ENV !== "production",
         sassOptions: {
           outputStyle:
             process.env.NODE_ENV === "production" ? "compressed" : "expanded",
@@ -57,12 +57,12 @@ module.exports = {
     },
     css: {
       loaderOptions: {
-        sourceMap: true,
+        sourceMap: process.env.NODE_ENV !== "production",
       },
     },
     postcss: {
       loaderOptions: {
-        sourceMap: true,
+        sourceMap: process.env.NODE_ENV !== "production",
       },
     },
   },
