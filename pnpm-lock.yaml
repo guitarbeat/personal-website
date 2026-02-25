@@ -242,6 +242,9 @@ importers:
       prettier:
         specifier: ^3.8.0
         version: 3.8.1
+      react-scripts:
+        specifier: ^5.0.1
+        version: 5.0.1(@babel/plugin-syntax-flow@7.28.6(@babel/core@7.29.0))(@babel/plugin-transform-react-jsx@7.28.6(@babel/core@7.29.0))(@types/babel__core@7.20.5)(clean-css@5.3.3)(eslint@10.0.2(jiti@1.21.7))(react@19.2.4)(sass@1.97.3)(ts-node@10.9.2(@types/node@25.3.0)(typescript@5.9.3))(tsx@4.21.0)(type-fest@0.21.3)(typescript@5.9.3)(yaml@2.8.2)
       resolve-url-loader:
         specifier: ^5.0.0
         version: 5.0.0
