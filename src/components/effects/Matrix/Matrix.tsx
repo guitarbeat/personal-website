@@ -185,15 +185,6 @@ interface MatrixProps {
 // * Sub-components (Consolidated)
 // * --------------------------------------------------------------------------------
 
-interface FeedbackSystemProps {
-  showSuccessFeedback: boolean;
-}
-
-export const FeedbackSystem = ({
-  showSuccessFeedback: _showSuccessFeedback,
-}: FeedbackSystemProps) => {
-  return null; // Feedback consolidated into the main terminal
-};
 
 interface NuUhUhEasterEggProps {
   onClose: () => void;
