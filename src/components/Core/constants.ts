@@ -1,7 +1,10 @@
 export const GOOGLE_SHEETS_CONFIG = {
-  apiKey: process.env.REACT_APP_GOOGLE_SHEETS_API_KEY,
+  // Security Fix: API Key removed from client bundle.
+  // This integration is currently disabled. If re-enabled, use a backend proxy.
+  apiKey: undefined,
   discoveryDocs: ["https://sheets.googleapis.com/$discovery/rest?version=v4"],
-  spreadsheetId: process.env.REACT_APP_GOOGLE_SHEETS_DOC_ID,
+  // Security Fix: Doc ID removed from client bundle.
+  spreadsheetId: undefined,
   dataLoading: {
     component: () => null,
   },
