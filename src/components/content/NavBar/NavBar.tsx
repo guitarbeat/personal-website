@@ -74,14 +74,12 @@ const updateThemeColor = (isLight: boolean) => {
 interface NavBarProps {
   items: Record<string, string>;
   onMatrixActivate: () => void;
-  onShopActivate?: () => void;
   isInShop?: boolean;
 }
 
 function NavBar({
   items,
   onMatrixActivate,
-  _onShopActivate,
   isInShop = false,
 }: NavBarProps) {
   const themeClickTimesRef = useRef<number[]>([]);
@@ -296,8 +294,7 @@ function NavBar({
     (e: React.MouseEvent, href: string, label: string) => {
       // * Clear any existing timeout
       if (vfxTimeoutRef.current) {
-        // biome-ignore lint/suspicious/noExplicitAny: NodeJS Timeout type mismatch
-        clearTimeout(vfxTimeoutRef.current as any);
+        if (typeof vfxTimeoutRef.current === "number") clearTimeout(vfxTimeoutRef.current); else clearTimeout(vfxTimeoutRef.current as unknown as number);
         vfxTimeoutRef.current = null;
       }
 

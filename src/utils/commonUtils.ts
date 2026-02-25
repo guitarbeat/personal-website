@@ -118,17 +118,22 @@ export const throttleAdvanced = (
   let timeout: ReturnType<typeof setTimeout> | null = null;
   let previous = 0;
   let result: unknown;
+  let storedArgs: unknown[] | null = null;
 
-  const later = (callArgs: unknown[]) => {
+  const later = () => {
     previous = options.leading === false ? 0 : Date.now();
     timeout = null;
-    result = func(...callArgs);
+    if (storedArgs) {
+      result = func(...storedArgs);
+      storedArgs = null;
+    }
   };
 
   const throttled = (...args: unknown[]) => {
     const now = Date.now();
     if (!previous && options.leading === false) previous = now;
     const remaining = limit - (now - previous);
+    storedArgs = args;
 
     if (remaining <= 0 || remaining > limit) {
       if (timeout) {
@@ -136,9 +141,10 @@ export const throttleAdvanced = (
         timeout = null;
       }
       previous = now;
-      result = func(...args);
+      result = func(...storedArgs);
+      storedArgs = null;
     } else if (!timeout && options.trailing !== false) {
-      timeout = setTimeout(() => later(args), remaining);
+      timeout = setTimeout(later, remaining);
     }
 
     return result;
@@ -150,6 +156,7 @@ export const throttleAdvanced = (
       timeout = null;
     }
     previous = 0;
+    storedArgs = null;
   };
 
   return throttled;

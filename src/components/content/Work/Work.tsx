@@ -183,7 +183,6 @@ const MemoizedTimelineBar = React.memo(TimelineBar);
 
 interface WorkProps {
   db?: {
-    // biome-ignore lint/suspicious/noExplicitAny: Loose data type from DB
     work: any[];
   };
 }
@@ -216,7 +215,6 @@ function Work({ db: propsDb }: WorkProps = {}) {
 
   // Data processing
   // Make a deep copy to avoid mutating the original data in context
-  // biome-ignore lint/suspicious/noExplicitAny: Safe cast for mapping
   const jobs: Job[] = ((db?.work as any[]) || []).map((job) => ({
     ...job,
   })) as Job[];

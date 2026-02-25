@@ -96,7 +96,7 @@ const Layout = memo(
         <NavBar
           items={navItems}
           onMatrixActivate={onMatrixActivate}
-          onShopActivate={onScrollActivate}
+
           isInShop={isInScroll}
         />
       )}
