@@ -101,7 +101,10 @@ function validateQueryBody(body) {
   if (!body || typeof body !== "object") return { page_size: 100 };
   const validated = {};
   if (body.page_size && typeof body.page_size === "number") {
-    validated.page_size = Math.min(Math.max(Math.floor(body.page_size), 1), 100);
+    validated.page_size = Math.min(
+      Math.max(Math.floor(body.page_size), 1),
+      100,
+    );
   } else {
     validated.page_size = 100;
   }
@@ -137,9 +140,18 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
-  // Only allow POST requests
-  if (req.method !== "POST") {
+  // Only allow GET and POST requests
+  if (req.method !== "POST" && req.method !== "GET") {
     return res.status(405).json({ error: "Method not allowed" });
+  }
+
+  // Set Cache-Control header for GET requests
+  // Cache for 1 hour (3600s), allow stale for another 24 hours (86400s)
+  if (req.method === "GET") {
+    res.setHeader(
+      "Cache-Control",
+      "public, s-maxage=3600, stale-while-revalidate=86400",
+    );
   }
 
   try {
@@ -184,7 +196,9 @@ export default async function handler(req, res) {
 
     if (!response.ok) {
       console.error("Notion API error:", data);
-      return res.status(response.status).json({ error: "Notion API request failed" });
+      return res
+        .status(response.status)
+        .json({ error: "Notion API request failed" });
     }
 
     // Transform the data based on database type
