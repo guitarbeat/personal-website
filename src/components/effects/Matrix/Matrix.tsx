@@ -1076,16 +1076,17 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
           // * Pass 1: Draw Trails (Pure Green)
           context.fillStyle = "#00FF00";
           for (const drop of bucket) {
-            drop.trail.forEach((trailItem, index) => {
-              const trailOpacity =
-                (index / drop.trail.length) * drop.opacity * 0.3;
+            const trailLength = drop.trail.length;
+            for (let i = 0; i < trailLength; i++) {
+              const trailItem = drop.trail[i];
+              const trailOpacity = (i / trailLength) * drop.opacity * 0.3;
               context.globalAlpha = trailOpacity;
               context.fillText(
                 trailItem.char,
                 drop.x,
                 trailItem.y * drop.fontSize,
               );
-            });
+            }
           }
 
           // * Pass 2: Draw Normal Heads (Spring Green)
