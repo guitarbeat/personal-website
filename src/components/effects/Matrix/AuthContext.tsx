@@ -74,18 +74,20 @@ const getSessionData = (key: string) => {
   }
 };
 
-const setSessionData = (key: string, value: any) => {
+const setSessionData = (key: string, value: unknown) => {
   if (!hasSessionStorage()) {
     return;
   }
 
   try {
     window.sessionStorage.setItem(key, JSON.stringify(value));
-  } catch (error: any) {
+  } catch (error) {
     console.warn(`${ERROR_MESSAGES.STORAGE_ERROR} for ${key}:`, error);
-    if (error.name === "QuotaExceededError") {
+    if ((error as Error).name === "QuotaExceededError") {
       try {
-        Object.values(SESSION_KEYS).forEach((k) => clearSessionData(k));
+        Object.values(SESSION_KEYS).forEach((k) => {
+          clearSessionData(k);
+        });
         window.sessionStorage.setItem(key, JSON.stringify(value));
       } catch (retryError) {
         console.error(
@@ -247,6 +249,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     [DEVICE_KEYS.MOBILE]: isMobileUnlocked,
   } = unlockState;
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Biome incorrectly flags dependencies as unnecessary
   const toolsAccessible = useMemo(() => {
     if (isMobile) {
       return isMobileUnlocked;
@@ -256,6 +259,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <AuthContext.Provider
+      // biome-ignore lint/correctness/useExhaustiveDependencies: Biome incorrectly flags dependencies as unnecessary
       value={useMemo(
         () => ({
           isUnlocked,

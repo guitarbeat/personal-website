@@ -24,7 +24,7 @@ const fetchNotionDatabase = async (databaseType: string): Promise<any[]> => {
     const data = await response.json();
     // Serverless function returns already-transformed data as an array
     return Array.isArray(data) ? data : [];
-  } catch (error: any) {
+  } catch (error) {
     console.error(`Error fetching ${databaseType} from Notion:`, error);
     return [];
   }
