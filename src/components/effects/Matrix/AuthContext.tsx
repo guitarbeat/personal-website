@@ -74,29 +74,6 @@ const getSessionData = (key: string) => {
   }
 };
 
-const setSessionData = (key: string, value: any) => {
-  if (!hasSessionStorage()) {
-    return;
-  }
-
-  try {
-    window.sessionStorage.setItem(key, JSON.stringify(value));
-  } catch (error: any) {
-    console.warn(`${ERROR_MESSAGES.STORAGE_ERROR} for ${key}:`, error);
-    if (error.name === "QuotaExceededError") {
-      try {
-        Object.values(SESSION_KEYS).forEach((k) => clearSessionData(k));
-        window.sessionStorage.setItem(key, JSON.stringify(value));
-      } catch (retryError) {
-        console.error(
-          `${ERROR_MESSAGES.STORAGE_ERROR} even after cleanup:`,
-          retryError,
-        );
-      }
-    }
-  }
-};
-
 const clearSessionData = (key: string) => {
   if (!hasSessionStorage()) {
     return;
@@ -106,6 +83,33 @@ const clearSessionData = (key: string) => {
     window.sessionStorage.removeItem(key);
   } catch (error) {
     console.warn(`${ERROR_MESSAGES.STORAGE_ERROR} for ${key}:`, error);
+  }
+};
+
+// biome-ignore lint/suspicious/noExplicitAny: Generic session value
+const setSessionData = (key: string, value: any) => {
+  if (!hasSessionStorage()) {
+    return;
+  }
+
+  try {
+    window.sessionStorage.setItem(key, JSON.stringify(value));
+    // biome-ignore lint/suspicious/noExplicitAny: Error handling for storage quota
+  } catch (error: any) {
+    console.warn(`${ERROR_MESSAGES.STORAGE_ERROR} for ${key}:`, error);
+    if (error.name === "QuotaExceededError") {
+      try {
+        Object.values(SESSION_KEYS).forEach((k) => {
+          clearSessionData(k);
+        });
+        window.sessionStorage.setItem(key, JSON.stringify(value));
+      } catch (retryError) {
+        console.error(
+          `${ERROR_MESSAGES.STORAGE_ERROR} even after cleanup:`,
+          retryError,
+        );
+      }
+    }
   }
 };
 
@@ -247,6 +251,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     [DEVICE_KEYS.MOBILE]: isMobileUnlocked,
   } = unlockState;
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Dependencies are required
   const toolsAccessible = useMemo(() => {
     if (isMobile) {
       return isMobileUnlocked;
@@ -256,6 +261,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <AuthContext.Provider
+      // biome-ignore lint/correctness/useExhaustiveDependencies: Context value needs all dependencies
       value={useMemo(
         () => ({
           isUnlocked,
