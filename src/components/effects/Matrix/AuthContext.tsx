@@ -74,6 +74,7 @@ const getSessionData = (key: string) => {
   }
 };
 
+// biome-ignore lint/suspicious/noExplicitAny: Session data can be anything
 const setSessionData = (key: string, value: any) => {
   if (!hasSessionStorage()) {
     return;
@@ -81,11 +82,12 @@ const setSessionData = (key: string, value: any) => {
 
   try {
     window.sessionStorage.setItem(key, JSON.stringify(value));
+  // biome-ignore lint/suspicious/noExplicitAny: Error type is unknown
   } catch (error: any) {
     console.warn(`${ERROR_MESSAGES.STORAGE_ERROR} for ${key}:`, error);
     if (error.name === "QuotaExceededError") {
       try {
-        Object.values(SESSION_KEYS).forEach((k) => clearSessionData(k));
+        Object.values(SESSION_KEYS).forEach((k) => { clearSessionData(k); });
         window.sessionStorage.setItem(key, JSON.stringify(value));
       } catch (retryError) {
         console.error(
@@ -247,6 +249,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     [DEVICE_KEYS.MOBILE]: isMobileUnlocked,
   } = unlockState;
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Dependencies are conditionally used
   const toolsAccessible = useMemo(() => {
     if (isMobile) {
       return isMobileUnlocked;
@@ -256,6 +259,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <AuthContext.Provider
+      // biome-ignore lint/correctness/useExhaustiveDependencies: Dependencies are necessary
       value={useMemo(
         () => ({
           isUnlocked,

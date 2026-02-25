@@ -20,6 +20,13 @@ interface MobileDetectionResult {
   isBetweenBreakpoints: (min: number, max: number) => boolean;
 }
 
+// Define breakpoints (matching the SCSS breakpoints)
+const BREAKPOINTS: Breakpoints = {
+  mobile: 768, // Below 768px is considered mobile
+  tablet: 1016, // 768px - 1016px is tablet
+  desktop: 1017, // Above 1016px is desktop
+};
+
 /**
  * Custom hook to detect mobile devices and screen size
  * Provides responsive breakpoint detection and mobile-specific utilities
@@ -31,13 +38,6 @@ export const useMobileDetection = (): MobileDetectionResult => {
   const [screenWidth, setScreenWidth] = useState<number>(0);
   const [screenHeight, setScreenHeight] = useState<number>(0);
 
-  // Define breakpoints (matching the SCSS breakpoints)
-  const breakpoints: Breakpoints = {
-    mobile: 768, // Below 768px is considered mobile
-    tablet: 1016, // 768px - 1016px is tablet
-    desktop: 1017, // Above 1016px is desktop
-  };
-
   const updateScreenSize = useCallback(() => {
     const width = window.innerWidth;
     const height = window.innerHeight;
@@ -46,10 +46,9 @@ export const useMobileDetection = (): MobileDetectionResult => {
     setScreenHeight(height);
 
     // Update device type based on width
-    setIsMobile(width < breakpoints.mobile);
-    setIsTablet(width >= breakpoints.mobile && width < breakpoints.desktop);
-    setIsDesktop(width >= breakpoints.desktop);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    setIsMobile(width < BREAKPOINTS.mobile);
+    setIsTablet(width >= BREAKPOINTS.mobile && width < BREAKPOINTS.desktop);
+    setIsDesktop(width >= BREAKPOINTS.desktop);
   }, []);
 
   useEffect(() => {
@@ -96,7 +95,7 @@ export const useMobileDetection = (): MobileDetectionResult => {
     isDesktop,
     screenWidth,
     screenHeight,
-    breakpoints,
+    breakpoints: BREAKPOINTS,
     isTouchDevice: isTouchDevice(),
     isMobileUserAgent: isMobileUserAgent(),
     // Helper functions
