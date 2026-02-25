@@ -1,10 +1,12 @@
 import "@testing-library/jest-dom";
 import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { NotionContext } from "../../../contexts/NotionContext";
 import { generateItemColors } from "../../../utils/colorUtils";
 import Projects from "./Projects";
 
 jest.mock("react-db-google-sheets", () => ({
+  // biome-ignore lint/suspicious/noExplicitAny: mocking HOC
   withGoogleSheets: () => (Component: any) => (props: any) => (
     <Component {...props} />
   ),
@@ -40,6 +42,12 @@ describe("Projects", () => {
     },
   ];
 
+  const mockContextValue = {
+    db: { projects: [], work: [], about: [] },
+    loading: false,
+    error: null,
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -55,7 +63,11 @@ describe("Projects", () => {
         Node: "hsl(40, 80%, 60%)",
       }));
 
-    render(<Projects db={{ projects: MOCK_PROJECTS }} />);
+    render(
+      <NotionContext.Provider value={mockContextValue}>
+        <Projects db={{ projects: MOCK_PROJECTS }} />
+      </NotionContext.Provider>
+    );
 
     const reactFilter = await screen.findByRole("button", { name: "React" });
 
@@ -63,7 +75,7 @@ describe("Projects", () => {
 
     await waitFor(() => {
       expect(reactFilter).toHaveStyle({
-        borderLeft: "4px solid hsl(0, 0%, 50%)",
+        "--tag-color": "hsl(0, 0%, 50%)",
       });
     });
 
@@ -79,7 +91,7 @@ describe("Projects", () => {
 
     await waitFor(() => {
       expect(reactFilter).toHaveStyle({
-        borderLeft: "4px solid hsl(200, 60%, 55%)",
+        "--tag-color": "hsl(200, 60%, 55%)",
       });
       expect(reactFilter).toHaveClass("active");
     });
@@ -93,7 +105,11 @@ describe("Projects", () => {
 
     const user = userEvent.setup();
 
-    render(<Projects db={{ projects: MOCK_PROJECTS }} />);
+    render(
+      <NotionContext.Provider value={mockContextValue}>
+        <Projects db={{ projects: MOCK_PROJECTS }} />
+      </NotionContext.Provider>
+    );
 
     const reactFilter = await screen.findByRole("button", { name: "React" });
     const nodeFilter = await screen.findByRole("button", { name: "Node" });

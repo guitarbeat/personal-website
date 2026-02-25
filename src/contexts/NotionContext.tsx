@@ -4,8 +4,11 @@ import { createContext, useContext, useEffect, useState } from "react";
 import NotionService from "../services/notionService";
 
 interface NotionData {
+  // biome-ignore lint/suspicious/noExplicitAny: legacy data structure
   projects: any[];
+  // biome-ignore lint/suspicious/noExplicitAny: legacy data structure
   work: any[];
+  // biome-ignore lint/suspicious/noExplicitAny: legacy data structure
   about: any[];
 }
 
@@ -15,7 +18,7 @@ interface NotionContextType {
   error: string | null;
 }
 
-const NotionContext = createContext<NotionContextType | null>(null);
+export const NotionContext = createContext<NotionContextType | null>(null);
 
 export const useNotion = () => {
   const context = useContext(NotionContext);
@@ -43,6 +46,7 @@ export const NotionProvider = ({ children }: { children: React.ReactNode }) => {
         const notionService = new NotionService();
         const allData = await notionService.getAllData();
         setData(allData);
+      // biome-ignore lint/suspicious/noExplicitAny: error handling
       } catch (err: any) {
         console.error("Error fetching Notion data:", err);
         setError(err.message);

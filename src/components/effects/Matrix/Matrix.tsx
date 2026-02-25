@@ -1177,9 +1177,9 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
         role="img"
         aria-label="Matrix rain animation"
       />
-      <div className="hack-terminal-frame">
-        <div className="hack-terminal-titlebar">
-          <div className="hack-terminal-titlebar__label">
+              <div className="hack-terminal-frame">
+              <div className="hack-terminal-titlebar">
+              <div className="hack-terminal-titlebar__label">
             {hackProgress < 33
               ? "PHASE 1: FIREWALL PENETRATION // BREACHING..."
               : hackProgress < 66
@@ -1188,22 +1188,22 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                   ? "PHASE 3: OVERRIDING CORE KERNEL..."
                   : "ACCESS GRANTED // SYSTEM UNLOCKED"}
           </div>
-          <div style={{ fontSize: "0.65rem", opacity: 0.6 }}>
+              <div style={{ fontSize: "0.65rem", opacity: 0.6 }}>
             {hackProgress < 100
               ? `SECURE CHANNEL: ${hackProgress < 33 ? "LOCKED" : hackProgress < 66 ? "DECRYPTING" : "OPEN"}`
               : "SYSTEM READY"}
           </div>
         </div>
-        <div className="hack-terminal-screen">
-          <div className="matrix-console-grid">
-            <div
+              <div className="hack-terminal-screen">
+              <div className="matrix-console-grid">
+              <div
               className={cn(
                 "hack-input-panel",
                 isHackingComplete && "complete",
               )}
             >
               <div className="hack-sequencer">
-                <div className="hack-sequencer__header">
+              <div className="hack-sequencer__header">
                   <span className="hack-sequencer__spacer" aria-hidden="true">
                     {Math.round(hackProgress)}%
                   </span>
@@ -1214,8 +1214,8 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                     {Math.round(hackProgress)}%
                   </span>
                 </div>
-                <div className="hack-sequencer__bar">
-                  <div
+              <div className="hack-sequencer__bar">
+              <div
                     className="hack-sequencer__fill"
                     style={{
                       width: `${hackProgress}%`,
@@ -1230,12 +1230,14 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                 </div>
                 <p className="hack-sequencer__feedback">{hackFeedback}</p>
               </div>
+{/* biome-ignore lint/a11y/useSemanticElements: styling requires div */}
               <div
-                className="hack-input-viewport"
+
+                className="hack-input-viewport" role="button" tabIndex={0}
                 onMouseDown={handleViewportEngage}
                 onTouchStart={handleViewportEngage}
               >
-                <div className="hack-input-stream" aria-hidden="true">
+              <div className="hack-input-stream" role="presentation">
                   {consoleDisplay.split("\n").map((line, i) => {
                     let className = "hack-line";
                     if (line.includes("[ERR]") || line.includes("failed"))
@@ -1253,7 +1255,8 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                       className += " prompt";
 
                     return (
-                      <div key={i} className={className}>
+                      // biome-ignore lint/suspicious/noArrayIndexKey: log lines have no unique id
+              <div key={i} className={className}>
                         {line}
                       </div>
                     );
