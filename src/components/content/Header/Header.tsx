@@ -223,13 +223,6 @@ const SOCIAL_MEDIA = [
     link: "https://twitter.com/WoodsResearch",
     tooltip: "Twitter: @WoodsResearch",
   },
-  // {
-  //   keyword: "BlueSky",
-  //   icon: "",
-  //   customIcon: blueskyIcon,
-  //   link: "https://bsky.app/profile/guitarbeat.bsky.social",
-  //   tooltip: "BlueSky: @guitarbeat",
-  // },
   {
     keyword: "CV",
     icon: "fas fa-file-alt",
