@@ -37,5 +37,6 @@ declare module "*.pdf" {
 }
 
 declare module "https://esm.sh/@vfx-js/core" {
+  // biome-ignore lint/suspicious/noExplicitAny: external module
   export const VFX: any;
 }
