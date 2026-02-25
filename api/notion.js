@@ -101,15 +101,12 @@ function validateQueryBody(body) {
   if (!body || typeof body !== "object") return { page_size: 100 };
   const validated = {};
   if (body.page_size && typeof body.page_size === "number") {
-    validated.page_size = Math.min(Math.max(Math.floor(body.page_size), 1), 100);
+    validated.page_size = Math.min(
+      Math.max(Math.floor(body.page_size), 1),
+      100,
+    );
   } else {
     validated.page_size = 100;
-  }
-  if (body.filter && typeof body.filter === "object") {
-    validated.filter = body.filter;
-  }
-  if (body.sorts && Array.isArray(body.sorts)) {
-    validated.sorts = body.sorts;
   }
   return validated;
 }
@@ -184,7 +181,9 @@ export default async function handler(req, res) {
 
     if (!response.ok) {
       console.error("Notion API error:", data);
-      return res.status(response.status).json({ error: "Notion API request failed" });
+      return res
+        .status(response.status)
+        .json({ error: "Notion API request failed" });
     }
 
     // Transform the data based on database type
