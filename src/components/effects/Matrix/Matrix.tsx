@@ -15,8 +15,8 @@ import deniedAudio from "../../../assets/audio/didn't-say-the-magic-word.mp3";
 import deniedCaptions from "../../../assets/audio/didnt-say-the-magic-word.vtt";
 import deniedImage from "../../../assets/images/nu-uh-uh.webp";
 
-const MIN_FONT_SIZE = 12;
-const MAX_FONT_SIZE = 18;
+import { Drop, MAX_FONT_SIZE, MIN_FONT_SIZE } from "./MatrixDrop";
+
 const PROGRESS_DECAY_INTERVAL = 140;
 const PROGRESS_DECAY_BASE = 0.5; // Increased from 0.18
 const PROGRESS_DECAY_RAMP = [
@@ -184,7 +184,6 @@ interface MatrixProps {
 // * --------------------------------------------------------------------------------
 // * Sub-components (Consolidated)
 // * --------------------------------------------------------------------------------
-
 
 interface NuUhUhEasterEggProps {
   onClose: () => void;
@@ -394,9 +393,6 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
   const successTelemetryRef = useRef<SuccessConsoleParams | null>(null);
 
   // * Configuration constants
-  const ALPHABET =
-    "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*";
-
   const updateHackDisplay = useCallback(
     (direction: "forward" | "backward", magnitude: number) => {
       if (!Number.isFinite(magnitude) || magnitude <= 0) {
@@ -962,63 +958,6 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
     resizeCanvas();
     window.addEventListener("resize", handleResize);
 
-    class Drop {
-      x: number;
-      y: number;
-      char: string;
-      changeInterval: number;
-      frame: number;
-      brightness: boolean;
-      trailLength: number;
-      trail: { char: string; y: number }[];
-      speed!: number;
-      fontSize!: number;
-      opacity!: number;
-
-      constructor(x: number) {
-        this.x = x;
-        this.y = -100;
-        this.char = ALPHABET[Math.floor(Math.random() * ALPHABET.length)];
-        this.changeInterval = Math.random() * 50 + 15;
-        this.frame = 0;
-        this.brightness = Math.random() > 0.95;
-        this.trailLength = Math.floor(Math.random() * 3) + 2;
-        this.trail = [];
-        this.initializeCharacterProperties();
-      }
-
-      initializeCharacterProperties() {
-        this.speed = Math.random() * 2 + 0.8;
-        this.fontSize = Math.floor(
-          Math.random() * (MAX_FONT_SIZE - MIN_FONT_SIZE) + MIN_FONT_SIZE,
-        );
-        this.opacity = Math.random() * 0.6 + 0.3;
-      }
-
-      update() {
-        this.y += this.speed;
-        this.frame++;
-
-        // * Update trail
-        this.trail.push({ char: this.char, y: this.y });
-        if (this.trail.length > this.trailLength) {
-          this.trail.shift();
-        }
-
-        if (this.frame >= this.changeInterval) {
-          this.char = ALPHABET[Math.floor(Math.random() * ALPHABET.length)];
-          this.frame = 0;
-          this.brightness = Math.random() > 0.97;
-        }
-
-        if (canvas && this.y * this.fontSize > canvas.height) {
-          this.y = -100 / this.fontSize;
-          this.initializeCharacterProperties();
-          this.trail = [];
-        }
-      }
-    }
-
     const columns = Math.floor(canvas.width / MIN_FONT_SIZE);
     const drops = Array(columns)
       .fill(null)
@@ -1048,7 +987,7 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
 
         // * Update all drops first
         for (const drop of drops) {
-          drop.update();
+          drop.update(canvas.height);
         }
 
         // * Performance Optimization: Batch drawing by font size to minimize state changes
@@ -1224,6 +1163,7 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                 </div>
                 <p className="hack-sequencer__feedback">{hackFeedback}</p>
               </div>
+              {/* biome-ignore lint/a11y/noStaticElementInteractions: Interactive viewport area */}
               <div
                 className="hack-input-viewport"
                 onMouseDown={handleViewportEngage}
@@ -1247,6 +1187,7 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                       className += " prompt";
 
                     return (
+                      /* biome-ignore lint/suspicious/noArrayIndexKey: Terminal output is stable */
                       <div key={i} className={className}>
                         {line}
                       </div>
