@@ -75,7 +75,7 @@ const getSessionData = (key: string) => {
 };
 
 // biome-ignore lint/suspicious/noExplicitAny: Session value can be anything
-const setSessionData = (key: string, value: any) => {
+const setSessionData = (key: string, value: any) => { // biome-ignore lint/suspicious/noExplicitAny: Generic value
   if (!hasSessionStorage()) {
     return;
   }
@@ -83,7 +83,7 @@ const setSessionData = (key: string, value: any) => {
   try {
     window.sessionStorage.setItem(key, JSON.stringify(value));
     // biome-ignore lint/suspicious/noExplicitAny: Error handling
-  } catch (error: any) {
+  } catch (error: any) { // biome-ignore lint/suspicious/noExplicitAny: Error handling
     if (error.name === "QuotaExceededError") {
       try {
         Object.values(SESSION_KEYS).forEach((k) => {

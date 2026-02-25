@@ -73,6 +73,7 @@ export const useMobileDetection = (): MobileDetectionResult => {
     const mobileRegex =
       /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
     return mobileRegex.test(userAgent);
+    // biome-ignore lint/correctness/useExhaustiveDependencies: Intentional empty dependency array
   }, []);
 
   // Touch capability detection
@@ -85,6 +86,7 @@ export const useMobileDetection = (): MobileDetectionResult => {
       // @ts-expect-error - msMaxTouchPoints is a legacy Internet Explorer property
       navigator.msMaxTouchPoints > 0
     );
+    // biome-ignore lint/correctness/useExhaustiveDependencies: Intentional empty dependency array
   }, []);
 
   // Combined mobile detection (screen size + user agent + touch)

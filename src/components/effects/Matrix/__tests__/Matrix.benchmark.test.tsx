@@ -24,6 +24,7 @@ describe("Matrix Performance", () => {
       globalAlpha: 1,
     });
     // biome-ignore lint/suspicious/noExplicitAny: Mocking canvas context
+    // biome-ignore lint/suspicious/noExplicitAny: Mocking canvas context
     HTMLCanvasElement.prototype.getContext = mockGetContext as any;
 
     // Spy on canvas width setter

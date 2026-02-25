@@ -1223,8 +1223,10 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                 </div>
                 <p className="hack-sequencer__feedback">{hackFeedback}</p>
               </div>
-              {/* biome-ignore lint/a11y/noStaticElementInteractions: Interactive console */}
+              {/* biome-ignore lint/a11y/useSemanticElements: Interactive console */}
               <div
+                role="button"
+                tabIndex={0}
                 className="hack-input-viewport"
                 onMouseDown={handleViewportEngage}
                 onTouchStart={handleViewportEngage}

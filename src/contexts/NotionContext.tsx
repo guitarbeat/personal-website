@@ -5,11 +5,11 @@ import NotionService from "../services/notionService";
 
 interface NotionData {
   // biome-ignore lint/suspicious/noExplicitAny: Generic data structure
-  projects: any[];
+  projects: any[]; // biome-ignore lint/suspicious/noExplicitAny: Generic data structure
   // biome-ignore lint/suspicious/noExplicitAny: Generic data structure
-  work: any[];
+  work: any[]; // biome-ignore lint/suspicious/noExplicitAny: Generic data structure
   // biome-ignore lint/suspicious/noExplicitAny: Generic data structure
-  about: any[];
+  about: any[]; // biome-ignore lint/suspicious/noExplicitAny: Generic data structure
 }
 
 interface NotionContextType {
@@ -47,7 +47,7 @@ export const NotionProvider = ({ children }: { children: React.ReactNode }) => {
         const allData = await notionService.getAllData();
         setData(allData);
         // biome-ignore lint/suspicious/noExplicitAny: Error handling
-      } catch (err: any) {
+      } catch (err: any) { // biome-ignore lint/suspicious/noExplicitAny: Error handling
         console.error("Error fetching Notion data:", err);
         setError(err.message);
       } finally {

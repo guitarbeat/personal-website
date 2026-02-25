@@ -1,4 +1,4 @@
-import { isAboveBreakpoint } from "../commonUtils";
+import { isAboveBreakpoint, randomFloat } from "../commonUtils";
 
 describe("commonUtils", () => {
   describe("isAboveBreakpoint", () => {
@@ -29,6 +29,20 @@ describe("commonUtils", () => {
     it("returns false when window width is less than breakpoint", () => {
       window.innerWidth = 500;
       expect(isAboveBreakpoint(768)).toBe(false);
+    });
+  });
+
+  describe("randomFloat", () => {
+    it("returns a number between min and max", () => {
+      const min = 1;
+      const max = 10;
+      const result = randomFloat(min, max);
+      expect(result).toBeGreaterThanOrEqual(min);
+      expect(result).toBeLessThan(max);
+    });
+
+    it("returns min when min equals max", () => {
+      expect(randomFloat(3.14, 3.14)).toBe(3.14);
     });
   });
 });
