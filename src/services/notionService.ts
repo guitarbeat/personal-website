@@ -1,29 +1,21 @@
-// Notion Service - handles fetching data from Notion databases via Vercel serverless functions
+import type { NotionData } from "../contexts/NotionContext";
 
-// In production (Vercel), use relative paths which resolve to /api/*
-// In development, can use local proxy server or Vercel dev server
-const API_BASE = process.env.REACT_APP_API_BASE || "";
+// Define the shape of the Notion response if needed, otherwise use any[] for now due to complex structure
 
 // Fetch data from a Notion database via Vercel serverless function
+// biome-ignore lint/suspicious/noExplicitAny: Notion data structure
 const fetchNotionDatabase = async (databaseType: string): Promise<any[]> => {
   try {
     const response = await fetch(
-      `${API_BASE}/api/notion?database=${databaseType}`,
-      {
-        method: "GET",
-      },
+      `/api/notion?type=${databaseType}&filter=true&sorts=true`,
     );
-
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(
-        `Notion API error: ${error.message || response.statusText}`,
-      );
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-
     const data = await response.json();
     // Serverless function returns already-transformed data as an array
     return Array.isArray(data) ? data : [];
+    // biome-ignore lint/suspicious/noExplicitAny: Error handling
   } catch (error: any) {
     console.error(`Error fetching ${databaseType} from Notion:`, error);
     return [];
@@ -31,42 +23,33 @@ const fetchNotionDatabase = async (databaseType: string): Promise<any[]> => {
 };
 
 // Data is already transformed by serverless function, just pass through
+// biome-ignore lint/suspicious/noExplicitAny: Data transform
 const transformProjectsData = (data: any[]): any[] => {
   return data;
 };
 
 // Data is already transformed by serverless function, just pass through
+// biome-ignore lint/suspicious/noExplicitAny: Data transform
 const transformWorkData = (data: any[]): any[] => {
   return data;
 };
 
 // Data is already transformed by serverless function, just pass through
+// biome-ignore lint/suspicious/noExplicitAny: Data transform
 const transformAboutData = (data: any[]): any[] => {
   return data;
 };
 
-// Main Notion Service class
-class NotionService {
-  async getProjects() {
-    const pages = await fetchNotionDatabase("projects");
-    return transformProjectsData(pages);
-  }
-
-  async getWork() {
-    const pages = await fetchNotionDatabase("work");
-    return transformWorkData(pages);
-  }
-
-  async getAbout() {
-    const pages = await fetchNotionDatabase("about");
-    return transformAboutData(pages);
-  }
-
-  async getAllData() {
+export const notionService = {
+  getProjects: () =>
+    fetchNotionDatabase("projects").then(transformProjectsData),
+  getWork: () => fetchNotionDatabase("work").then(transformWorkData),
+  getAbout: () => fetchNotionDatabase("about").then(transformAboutData),
+  getAllData: async (): Promise<NotionData> => {
     const [projects, work, about] = await Promise.all([
-      this.getProjects(),
-      this.getWork(),
-      this.getAbout(),
+      fetchNotionDatabase("projects").then(transformProjectsData),
+      fetchNotionDatabase("work").then(transformWorkData),
+      fetchNotionDatabase("about").then(transformAboutData),
     ]);
 
     return {
@@ -74,7 +57,5 @@ class NotionService {
       work,
       about,
     };
-  }
-}
-
-export default NotionService;
+  },
+};

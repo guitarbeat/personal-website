@@ -1,188 +1,35 @@
-import moment from "moment";
-import PropTypes from "prop-types";
-// Import required libraries and components
-import React, { useCallback, useEffect, useRef, useState } from "react";
-// import { withGoogleSheets } from "react-db-google-sheets";
-import { useNotion } from "../../../contexts/NotionContext";
-import { cn } from "../../../utils/commonUtils";
-// import { processWorkData } from "../../../utils/googleSheetsUtils";
-import PixelCanvas from "../../effects/PixelCanvas/PixelCanvas";
+import type React from "react";
+import { useContext, useEffect, useState } from "react";
+import { withGoogleSheets } from "react-db-google-sheets";
+import { useInView } from "react-intersection-observer";
+import { NotionContext } from "../../../contexts/NotionContext";
+import ErrorBoundary from "../../Core/ErrorBoundary";
+import "./Work.scss";
 
-interface Job {
-  slug: string;
-  title: string;
-  company: string;
-  place: string;
-  from: string;
-  to: string;
-  _from: moment.Moment;
-  _to: moment.Moment;
-  date: string;
-  duration: number;
-  bar_start: number;
-  bar_height: number;
-  description: string;
-}
-
-interface TimelineBarProps {
-  first_year: string;
-  job_bars: number[][];
-  activeCards: Set<string>;
-  hoveredJob: Job | undefined;
-  jobs: Job[];
-}
-
-// Function for TimelineBar component
-function TimelineBar({
-  first_year,
-  job_bars,
-  activeCards,
-  hoveredJob,
-  jobs,
-}: TimelineBarProps) {
-  const formatDuration = (months: number) => {
-    const years = Math.floor(months / 12);
-    const remainingMonths = months % 12;
-
-    // Convert numbers to words
-    const numberToWord = (num: number) => {
-      const words = [
-        "One",
-        "Two",
-        "Three",
-        "Four",
-        "Five",
-        "Six",
-        "Seven",
-        "Eight",
-        "Nine",
-        "Ten",
-        "Eleven",
-        "Twelve",
-      ];
-      return num <= 12 ? words[num - 1] : num.toString();
-    };
-
-    // Helper for formatting duration parts
-    const formatPart = (num: number, singular: string, plural: string) => {
-      if (num === 0) {
-        return "";
-      }
-      const word = numberToWord(num);
-      return `${word} ${num === 1 ? singular : plural}`;
-    };
-
-    // Format months only
-    if (years === 0) {
-      return formatPart(remainingMonths, "Month", "Months");
-    }
-
-    // Format years only
-    if (remainingMonths === 0) {
-      return formatPart(years, "Year", "Years");
-    }
-
-    // Format years and months
-    const yearText = formatPart(years, "Year", "Years");
-    const monthText = formatPart(
-      remainingMonths,
-      "Month",
-      "Months",
-    ).toLowerCase();
-    return `${yearText}, ${monthText}`;
-  };
-
-  const sub_bars = job_bars.map(([height, start]) => (
-    <div
-      key={`${height}-${start}`}
-      className="work__timeline__subbar"
-      style={{ height: `${height}%`, bottom: `${start}%` }}
-    />
-  ));
-
-  return (
-    <div className="work__timeline">
-      <p className="work__timeline__now">Now</p>
-      {hoveredJob && (
-        <div
-          className="work__timeline__duration"
-          style={{
-            bottom: `${hoveredJob.bar_start + hoveredJob.bar_height / 2}%`,
-            visibility: hoveredJob ? "visible" : "hidden",
-          }}
-        >
-          {formatDuration(hoveredJob.duration)}
-        </div>
-      )}
-      <p className="work__timeline__start">{first_year}</p>
-
-      {sub_bars}
-      {Array.from(activeCards).map((slug) => {
-        const activeJob = jobs.find((job) => job.slug === slug);
-        return (
-          activeJob && (
-            <div
-              key={slug}
-              className="work__timeline__bar"
-              style={{
-                height: `${activeJob.bar_height}%`,
-                bottom: `${activeJob.bar_start}%`,
-              }}
-            />
-          )
-        );
-      })}
-    </div>
-  );
-}
-
-TimelineBar.propTypes = {
-  first_year: PropTypes.string.isRequired,
-  job_bars: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)).isRequired,
-  activeCards: PropTypes.instanceOf(Set).isRequired,
-  hoveredJob: PropTypes.shape({
-    bar_start: PropTypes.number,
-    bar_height: PropTypes.number,
-    duration: PropTypes.number,
-  }),
-  jobs: PropTypes.arrayOf(
-    PropTypes.shape({
-      slug: PropTypes.string.isRequired,
-      bar_start: PropTypes.number.isRequired,
-      bar_height: PropTypes.number.isRequired,
-    }),
-  ).isRequired,
+// Utility for handling classes
+const cn = (...classes: (string | undefined | null | false)[]) => {
+  return classes.filter(Boolean).join(" ");
 };
 
-const CARD_EFFECTS = [
-  {
-    colors: ["#f8fafc", "#f1f5f9", "#cbd5e1"],
-    gap: 8,
-    speed: 24,
-  },
-  {
-    colors: ["#e0f2fe", "#7dd3fc", "#0ea5e9"],
-    gap: 12,
-    speed: 18,
-  },
-  {
-    colors: ["#fef08a", "#fde047", "#eab308"],
-    gap: 10,
-    speed: 16,
-  },
-  {
-    colors: ["#fecdd3", "#fda4af", "#e11d48"],
-    gap: 11,
-    speed: 28,
-    noFocus: true,
-  },
-];
-
-// Memoize TimelineBar component
-const MemoizedTimelineBar = React.memo(TimelineBar);
+// Types for Work component
+interface Job {
+  company: string;
+  role: string;
+  location: string;
+  duration: string;
+  description: string[];
+  image: string;
+  id: string;
+  url?: string;
+  color?: string;
+  technologies?: string[];
+  startDate?: string;
+  endDate?: string;
+}
 
 interface WorkProps {
   db?: {
+    // biome-ignore lint/suspicious/noExplicitAny: Generic data structure
     work: any[];
   };
 }
@@ -193,162 +40,146 @@ function Work({ db: propsDb }: WorkProps = {}) {
   const [activeCards, setActiveCards] = useState<Set<string>>(
     () => new Set<string>(),
   );
-  const [hoveredCard, setHoveredCard] = useState<string | null>(null); // Add missing state
-  const { db: contextDb } = useNotion();
-  const db = propsDb || contextDb;
 
-  const handleCardClick = useCallback((slug: string) => {
-    setActiveCards((prev) => {
-      const newSet = new Set(prev); // Create a new Set to avoid mutating state directly
-      if (newSet.has(slug)) {
-        newSet.delete(slug);
-      } else {
-        newSet.add(slug);
-      }
-      return newSet;
-    });
-  }, []);
+  // Context
+  const {
+    work: notionWork,
+    error: notionError,
+    loading: notionLoading,
+  } = useContext(NotionContext);
 
-  const handleCardHover = useCallback((slug: string | null) => {
-    setHoveredCard(slug);
-  }, []);
+  // Combine data sources - prefer Notion, fallback to props/Google Sheets
+  const displayWork = notionWork.length > 0 ? notionWork : propsDb?.work || [];
+  const isLoading = notionLoading && displayWork.length === 0;
+  const hasError = !!notionError && displayWork.length === 0;
 
   // Data processing
   // Make a deep copy to avoid mutating the original data in context
-  const jobs: Job[] = ((db?.work as any[]) || []).map((job) => ({
+  // biome-ignore lint/suspicious/noExplicitAny: Generic data structure
+  const jobs: Job[] = ((displayWork as any[]) || []).map((job) => ({
     ...job,
   })) as Job[];
 
-  let first_date = moment();
-
-  // Format and enhance jobs data
-  for (const job of jobs) {
-    const _to_moment = job.to ? moment(job.to, "MM-YYYY") : moment();
-    const _from_moment = moment(job.from, "MM-YYYY");
-    const _duration = _to_moment.diff(_from_moment, "months");
-
-    job.from = _from_moment.format("MMM YYYY");
-    job.to = job.to ? _to_moment.format("MMM YYYY") : "Now";
-    job._from = _from_moment;
-    job._to = _to_moment;
-    job.date = _duration === 0 ? job.from : `${job.from} - ${job.to}`;
-    job.duration = _duration === 0 ? 1 : _duration;
-
-    if (first_date.diff(_from_moment) > 0) {
-      first_date = _from_moment;
-    }
-  }
-
-  const time_span = moment().diff(first_date, "months");
-  const safe_time_span = time_span === 0 ? 1 : time_span;
-  for (const job of jobs) {
-    job.bar_start =
-      (100 * job._from.diff(first_date, "months")) / safe_time_span;
-    job.bar_height = (100 * job.duration) / safe_time_span;
-  }
-
-  const job_bars = jobs.map((job) => [job.bar_height, job.bar_start]);
-
-  // Add intersection observer for lazy loading
-  const [isVisible, setIsVisible] = useState(false);
-  const sectionRef = useRef(null);
-
+  // Effects
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.1 },
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => observer.disconnect();
+    // Initial animation delay
+    const timer = setTimeout(() => {
+      // Animation logic if needed
+    }, 100);
+    return () => clearTimeout(timer);
   }, []);
 
+  const toggleCard = (id: string) => {
+    setActiveCards((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) {
+        newSet.delete(id);
+      } else {
+        newSet.add(id);
+      }
+      return newSet;
+    });
+  };
+
+  if (isLoading) {
+    return <div className="work-loading">Loading work experience...</div>;
+  }
+
+  if (hasError) {
+    return <div className="work-error">Error loading work experience.</div>;
+  }
+
   return (
-    <div className="container" id="work" ref={sectionRef}>
-      <div className="container__content">
-        <h1>My career so far</h1>
-        <div className={cn("work", isVisible && "visible")}>
-          <MemoizedTimelineBar
-            first_year={first_date.format("YYYY")}
-            job_bars={job_bars}
-            activeCards={activeCards}
-            hoveredJob={jobs.find((job) => job.slug === hoveredCard)}
-            jobs={jobs}
+    <div className="work-container" id="work">
+      <h2 className="section-title">Work Experience</h2>
+      <div className="timeline">
+        {jobs.map((job, index) => (
+          <WorkCard
+            key={job.id || index}
+            job={job}
+            isActive={activeCards.has(job.id)}
+            onToggle={() => toggleCard(job.id)}
+            index={index}
           />
-          <div className="work__items">
-            {jobs.map((job, index) => {
-              const isActive = activeCards.has(job.slug);
-              const effect = CARD_EFFECTS[index % CARD_EFFECTS.length];
-              return (
-                <button
-                  key={job.slug}
-                  type="button"
-                  className={cn("work__item", isActive && "active")}
-                  onClick={() => handleCardClick(job.slug)}
-                  onMouseEnter={() => handleCardHover(job.slug)}
-                  onMouseLeave={() => handleCardHover(null)}
-                  aria-expanded={isActive}
-                >
-                  <PixelCanvas
-                    className="work__item__pixel-canvas"
-                    colors={effect.colors}
-                    gap={effect.gap}
-                    speed={effect.speed}
-                    noFocus={effect.noFocus}
-                  />
-                  <div className="work__item__content">
-                    <p
-                      className={`work__item__place ${
-                        isActive ? "show-text" : ""
-                      }`}
-                    >
-                      <i className="fa fa-map-marker-alt" /> {job.place}
-                    </p>
-                    <h2>{job.title}</h2>
-                    <h3 className="company-name">{job.company}</h3>
-                    <p
-                      className={`work__item__date ${
-                        isActive ? "show-text" : ""
-                      }`}
-                    >
-                      {job.date}
-                    </p>
-                    <p className={cn("", isActive ? "show-text" : "")}>
-                      {job.description}
-                    </p>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </div>
+        ))}
       </div>
     </div>
   );
 }
 
-Work.propTypes = {
-  db: PropTypes.shape({
-    work: PropTypes.arrayOf(
-      PropTypes.shape({
-        title: PropTypes.string.isRequired,
-        company: PropTypes.string.isRequired,
-        place: PropTypes.string.isRequired,
-        from: PropTypes.string.isRequired,
-        to: PropTypes.string,
-        description: PropTypes.string.isRequired,
-        slug: PropTypes.string.isRequired,
-      }),
-    ).isRequired,
-  }).isRequired,
+// Subcomponent for individual work cards
+interface WorkCardProps {
+  job: Job;
+  isActive: boolean;
+  onToggle: () => void;
+  index: number;
+}
+
+const WorkCard = ({ job, isActive, onToggle, index }: WorkCardProps) => {
+  const [ref, inView] = useInView({
+    triggerOnce: true,
+    threshold: 0.1,
+  });
+
+  return (
+    // biome-ignore lint/a11y/useSemanticElements: Complex interactive card
+    <div
+      ref={ref}
+      className={cn(
+        "work-card",
+        isActive ? "active" : "",
+        inView ? "animate-in" : "",
+      )}
+      onClick={onToggle}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          onToggle();
+        }
+      }}
+      role="button"
+      tabIndex={0}
+      style={{ "--index": index } as React.CSSProperties}
+    >
+      <div className="work-card-header">
+        <div className="company-info">
+          <h3>{job.company}</h3>
+          <h4>{job.role}</h4>
+        </div>
+        <div className="meta-info">
+          <span className="duration">{job.duration}</span>
+          <span className="location">{job.location}</span>
+        </div>
+      </div>
+
+      <div
+        className={cn("work-card-content", isActive ? "expanded" : "collapsed")}
+      >
+        <div className="description">
+          {Array.isArray(job.description) ? (
+            <ul>
+              {job.description.map((desc, i) => (
+                // biome-ignore lint/suspicious/noArrayIndexKey: Static content
+                <li key={i}>{desc}</li>
+              ))}
+            </ul>
+          ) : (
+            <p>{job.description}</p>
+          )}
+        </div>
+
+        {job.technologies && (
+          <div className="technologies">
+            {job.technologies.map((tech) => (
+              <span key={tech} className="tech-tag">
+                {tech}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
 };
 
-export default Work;
+// biome-ignore lint/suspicious/noExplicitAny: HOC type mismatch
+export default withGoogleSheets("work")(ErrorBoundary as any)(Work);

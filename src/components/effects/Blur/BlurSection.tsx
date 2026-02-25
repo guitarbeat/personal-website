@@ -28,7 +28,6 @@ interface BlurSectionProps {
   disabled?: boolean;
   blurCap?: number;
   blurAxis?: "x" | "y" | "both";
-  [key: string]: any;
 }
 
 const BlurSection = ({

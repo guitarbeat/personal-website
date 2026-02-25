@@ -36,6 +36,4 @@ declare module "*.pdf" {
   export default src;
 }
 
-declare module "https://esm.sh/@vfx-js/core" {
-  export const VFX: any;
-}
+declare module "https://esm.sh/@vfx-js/core" {}

@@ -81,6 +81,7 @@ interface NavBarProps {
 function NavBar({
   items,
   onMatrixActivate,
+  // biome-ignore lint/correctness/noUnusedFunctionParameters: Future implementation
   onShopActivate,
   isInShop = false,
 }: NavBarProps) {
@@ -296,6 +297,7 @@ function NavBar({
     (e: React.MouseEvent, href: string, label: string) => {
       // * Clear any existing timeout
       if (vfxTimeoutRef.current) {
+        // biome-ignore lint/suspicious/noExplicitAny: NodeJS vs DOM Timeout type mismatch
         clearTimeout(vfxTimeoutRef.current as any);
         vfxTimeoutRef.current = null;
       }

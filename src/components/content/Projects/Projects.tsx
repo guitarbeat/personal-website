@@ -139,6 +139,7 @@ function ProjectCard({
 }
 interface ProjectsProps {
   db?: {
+    // biome-ignore lint/suspicious/noExplicitAny: Generic data structure
     projects: any[];
   };
 }
