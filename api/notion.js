@@ -176,7 +176,7 @@ function validateFilter(filter, depth = 0) {
         try {
           newFilter[key] = JSON.parse(JSON.stringify(filter[key]));
           hasType = true;
-        } catch (e) {}
+        } catch (_e) {}
       }
     }
 
@@ -195,7 +195,7 @@ function validateFilter(filter, depth = 0) {
           JSON.stringify(filter.created_time),
         );
         return newFilter;
-      } catch (e) {
+      } catch (_e) {
         return null;
       }
     }
@@ -208,7 +208,7 @@ function validateFilter(filter, depth = 0) {
           JSON.stringify(filter.last_edited_time),
         );
         return newFilter;
-      } catch (e) {
+      } catch (_e) {
         return null;
       }
     }
