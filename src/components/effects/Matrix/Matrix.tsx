@@ -185,7 +185,6 @@ interface MatrixProps {
 // * Sub-components (Consolidated)
 // * --------------------------------------------------------------------------------
 
-
 interface NuUhUhEasterEggProps {
   onClose: () => void;
   id?: number;
@@ -1224,8 +1223,15 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                 </div>
                 <p className="hack-sequencer__feedback">{hackFeedback}</p>
               </div>
+              {/* biome-ignore lint/a11y/useSemanticElements: Visual hack */}
               <div
                 className="hack-input-viewport"
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ")
+                    handleViewportEngage();
+                }}
                 onMouseDown={handleViewportEngage}
                 onTouchStart={handleViewportEngage}
               >
@@ -1247,6 +1253,7 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                       className += " prompt";
 
                     return (
+                      // biome-ignore lint/suspicious/noArrayIndexKey: Simple terminal display
                       <div key={i} className={className}>
                         {line}
                       </div>

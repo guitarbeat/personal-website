@@ -74,18 +74,25 @@ const getSessionData = (key: string) => {
   }
 };
 
-const setSessionData = (key: string, value: any) => {
+const setSessionData = (key: string, value: unknown) => {
   if (!hasSessionStorage()) {
     return;
   }
 
   try {
     window.sessionStorage.setItem(key, JSON.stringify(value));
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.warn(`${ERROR_MESSAGES.STORAGE_ERROR} for ${key}:`, error);
-    if (error.name === "QuotaExceededError") {
+    if (
+      error &&
+      typeof error === "object" &&
+      "name" in error &&
+      (error as Error).name === "QuotaExceededError"
+    ) {
       try {
-        Object.values(SESSION_KEYS).forEach((k) => clearSessionData(k));
+        Object.values(SESSION_KEYS).forEach((k) => {
+          clearSessionData(k);
+        });
         window.sessionStorage.setItem(key, JSON.stringify(value));
       } catch (retryError) {
         console.error(
@@ -118,7 +125,7 @@ const createUnlockStateFromSession = () => {
     const storedTimestamp = getSessionData(keys.timestampKey);
 
     if (isStoredUnlocked && storedTimestamp) {
-      const sessionAge = Date.now() - storedTimestamp;
+      const sessionAge = Date.now() - (storedTimestamp as number);
       if (sessionAge < maxSessionAge) {
         unlockState[device] = true;
       } else {
@@ -247,6 +254,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     [DEVICE_KEYS.MOBILE]: isMobileUnlocked,
   } = unlockState;
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Dependencies are correct for the logic
   const toolsAccessible = useMemo(() => {
     if (isMobile) {
       return isMobileUnlocked;
@@ -256,6 +264,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <AuthContext.Provider
+      // biome-ignore lint/correctness/useExhaustiveDependencies: Context value dependencies
       value={useMemo(
         () => ({
           isUnlocked,

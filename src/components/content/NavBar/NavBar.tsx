@@ -81,7 +81,7 @@ interface NavBarProps {
 function NavBar({
   items,
   onMatrixActivate,
-  onShopActivate,
+  onShopActivate: _onShopActivate,
   isInShop = false,
 }: NavBarProps) {
   const themeClickTimesRef = useRef<number[]>([]);
@@ -296,6 +296,7 @@ function NavBar({
     (e: React.MouseEvent, href: string, label: string) => {
       // * Clear any existing timeout
       if (vfxTimeoutRef.current) {
+        // biome-ignore lint/suspicious/noExplicitAny: Timer type mismatch
         clearTimeout(vfxTimeoutRef.current as any);
         vfxTimeoutRef.current = null;
       }
