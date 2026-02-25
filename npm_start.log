@@ -1,0 +1,8 @@
+
+> portfolio@0.1.0 start /app
+> craco start --config config/craco.config.js
+
+Could not find a required file.
+  Name: index.html
+  Searched in: /app/public
+ ELIFECYCLE  Command failed with exit code 1.
