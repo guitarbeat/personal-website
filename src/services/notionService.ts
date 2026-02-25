@@ -10,13 +10,7 @@ const fetchNotionDatabase = async (databaseType: string): Promise<any[]> => {
     const response = await fetch(
       `${API_BASE}/api/notion?database=${databaseType}`,
       {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          page_size: 100,
-        }),
+        method: "GET",
       },
     );
 
