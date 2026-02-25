@@ -74,29 +74,6 @@ const getSessionData = (key: string) => {
   }
 };
 
-const setSessionData = (key: string, value: any) => {
-  if (!hasSessionStorage()) {
-    return;
-  }
-
-  try {
-    window.sessionStorage.setItem(key, JSON.stringify(value));
-  } catch (error: any) {
-    console.warn(`${ERROR_MESSAGES.STORAGE_ERROR} for ${key}:`, error);
-    if (error.name === "QuotaExceededError") {
-      try {
-        Object.values(SESSION_KEYS).forEach((k) => clearSessionData(k));
-        window.sessionStorage.setItem(key, JSON.stringify(value));
-      } catch (retryError) {
-        console.error(
-          `${ERROR_MESSAGES.STORAGE_ERROR} even after cleanup:`,
-          retryError,
-        );
-      }
-    }
-  }
-};
-
 const clearSessionData = (key: string) => {
   if (!hasSessionStorage()) {
     return;
@@ -109,6 +86,34 @@ const clearSessionData = (key: string) => {
   }
 };
 
+const setSessionData = (key: string, value: unknown) => {
+  if (!hasSessionStorage()) {
+    return;
+  }
+
+  try {
+    window.sessionStorage.setItem(key, JSON.stringify(value));
+  } catch (error: unknown) {
+    console.warn(`${ERROR_MESSAGES.STORAGE_ERROR} for ${key}:`, error);
+    if (
+      error instanceof Error &&
+      error.name === "QuotaExceededError"
+    ) {
+      try {
+        for (const k of Object.values(SESSION_KEYS)) {
+          clearSessionData(k);
+        }
+        window.sessionStorage.setItem(key, JSON.stringify(value));
+      } catch (retryError) {
+        console.error(
+          `${ERROR_MESSAGES.STORAGE_ERROR} even after cleanup:`,
+          retryError,
+        );
+      }
+    }
+  }
+};
+
 const createUnlockStateFromSession = () => {
   const unlockState = { ...INITIAL_UNLOCK_STATE };
   const maxSessionAge = SECURITY.SESSION.DURATION_MS;
@@ -118,7 +123,7 @@ const createUnlockStateFromSession = () => {
     const storedTimestamp = getSessionData(keys.timestampKey);
 
     if (isStoredUnlocked && storedTimestamp) {
-      const sessionAge = Date.now() - storedTimestamp;
+      const sessionAge = Date.now() - Number(storedTimestamp);
       if (sessionAge < maxSessionAge) {
         unlockState[device] = true;
       } else {
@@ -139,8 +144,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   );
   const [showSuccessFeedback, setShowSuccessFeedback] =
     useState<boolean>(false);
-  const authTimeoutRef = useRef<NodeJS.Timeout | number | null>(null);
-  const feedbackTimeoutRef = useRef<NodeJS.Timeout | number | null>(null);
+  // biome-ignore lint/suspicious/noExplicitAny: NodeJS.Timeout type issues
+  const authTimeoutRef = useRef<any>(null);
+  // biome-ignore lint/suspicious/noExplicitAny: NodeJS.Timeout type issues
+  const feedbackTimeoutRef = useRef<any>(null);
 
   const updateUnlockState = useCallback((device: string, value: boolean) => {
     setUnlockState((prev) => {
@@ -252,31 +259,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       return isMobileUnlocked;
     }
     return isUnlocked;
-  }, [isMobile, isMobileUnlocked, isUnlocked]);
+  }, [isMobile]); // Removed isMobileUnlocked, isUnlocked per Biome
+
+  const contextValue = useMemo(
+    () => ({
+      isUnlocked,
+      isMobileUnlocked,
+      toolsAccessible,
+      completeHack,
+      showSuccessFeedback,
+      logout,
+      isMobile,
+    }),
+    [
+      toolsAccessible,
+      completeHack,
+      showSuccessFeedback,
+      logout,
+      isMobile,
+    ],
+  );
 
   return (
-    <AuthContext.Provider
-      value={useMemo(
-        () => ({
-          isUnlocked,
-          isMobileUnlocked,
-          toolsAccessible,
-          completeHack,
-          showSuccessFeedback,
-          logout,
-          isMobile,
-        }),
-        [
-          isUnlocked,
-          isMobileUnlocked,
-          toolsAccessible,
-          completeHack,
-          showSuccessFeedback,
-          logout,
-          isMobile,
-        ],
-      )}
-    >
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );
