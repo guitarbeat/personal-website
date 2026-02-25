@@ -1230,8 +1230,9 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                 </div>
                 <p className="hack-sequencer__feedback">{hackFeedback}</p>
               </div>
+              {/* biome-ignore lint/a11y/useSemanticElements: terminal UI hack */}
               <div
-                className="hack-input-viewport"
+                role="button" tabIndex={0} className="hack-input-viewport"
                 onMouseDown={handleViewportEngage}
                 onTouchStart={handleViewportEngage}
               >
@@ -1252,8 +1253,12 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                     )
                       className += " prompt";
 
-                    return (
-                      <div key={i} className={className}>
+                                        return (
+                      <div
+                        // biome-ignore lint/suspicious/noArrayIndexKey: static list
+                        key={`line-${i}`}
+                        className={className}
+                      >
                         {line}
                       </div>
                     );

@@ -4,6 +4,7 @@ import moment from "moment";
 import Work from "./Work";
 
 jest.mock("react-db-google-sheets", () => ({
+  // biome-ignore lint/suspicious/noExplicitAny: mock HOC signature
   withGoogleSheets: () => (Component: any) => Component,
 }));
 

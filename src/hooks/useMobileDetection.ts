@@ -1,110 +1,84 @@
 import { useCallback, useEffect, useState } from "react";
 
-interface Breakpoints {
-  mobile: number;
-  tablet: number;
-  desktop: number;
-}
+const breakpoints = {
+  mobile: 768,
+  tablet: 1024,
+  desktop: 1200,
+};
 
-interface MobileDetectionResult {
-  isMobile: boolean;
-  isTablet: boolean;
-  isDesktop: boolean;
-  screenWidth: number;
-  screenHeight: number;
-  breakpoints: Breakpoints;
-  isTouchDevice: boolean;
-  isMobileUserAgent: boolean;
-  isBelowBreakpoint: (breakpoint: number) => boolean;
-  isAboveBreakpoint: (breakpoint: number) => boolean;
-  isBetweenBreakpoints: (min: number, max: number) => boolean;
-}
+export const useMobileDetection = () => {
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined" ? window.innerWidth < breakpoints.mobile : false,
+  );
+  const [isTablet, setIsTablet] = useState(
+    typeof window !== "undefined"
+      ? window.innerWidth >= breakpoints.mobile &&
+          window.innerWidth < breakpoints.desktop
+      : false,
+  );
+  const [isDesktop, setIsDesktop] = useState(
+    typeof window !== "undefined"
+      ? window.innerWidth >= breakpoints.desktop
+      : false,
+  );
 
-/**
- * Custom hook to detect mobile devices and screen size
- * Provides responsive breakpoint detection and mobile-specific utilities
- */
-export const useMobileDetection = (): MobileDetectionResult => {
-  const [isMobile, setIsMobile] = useState<boolean>(false);
-  const [isTablet, setIsTablet] = useState<boolean>(false);
-  const [isDesktop, setIsDesktop] = useState<boolean>(false);
-  const [screenWidth, setScreenWidth] = useState<number>(0);
-  const [screenHeight, setScreenHeight] = useState<number>(0);
-
-  // Define breakpoints (matching the SCSS breakpoints)
-  const breakpoints: Breakpoints = {
-    mobile: 768, // Below 768px is considered mobile
-    tablet: 1016, // 768px - 1016px is tablet
-    desktop: 1017, // Above 1016px is desktop
+  const getWindowDimensions = () => {
+    if (typeof window === "undefined") {
+      return { width: 0, height: 0 };
+    }
+    return {
+      width: window.innerWidth,
+      height: window.innerHeight,
+    };
   };
 
   const updateScreenSize = useCallback(() => {
     const width = window.innerWidth;
     const height = window.innerHeight;
 
-    setScreenWidth(width);
-    setScreenHeight(height);
+    // Update specific state
+    const doc = document.documentElement;
+    doc.style.setProperty("--app-height", `${height}px`);
 
     // Update device type based on width
     setIsMobile(width < breakpoints.mobile);
     setIsTablet(width >= breakpoints.mobile && width < breakpoints.desktop);
     setIsDesktop(width >= breakpoints.desktop);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: intentional empty dependency array
   useEffect(() => {
-    // Initial check
     updateScreenSize();
-
-    // Add resize listener
     window.addEventListener("resize", updateScreenSize);
+    return () => window.removeEventListener("resize", updateScreenSize);
+  }, []);
 
-    // Cleanup
-    return () => {
-      window.removeEventListener("resize", updateScreenSize);
-    };
-  }, [updateScreenSize]);
-
-  // Additional mobile detection using user agent (as fallback)
-  const isMobileUserAgent = useCallback((): boolean => {
-    if (typeof window === "undefined") return false;
-
-    const userAgent = window.navigator.userAgent;
+  const isIOS = useCallback(() => {
+    if (typeof window === "undefined" || !window.navigator) return false;
+    const userAgent =
+      // @ts-expect-error
+      window.navigator.userAgent || window.navigator.vendor || window.opera;
     const mobileRegex =
       /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
     return mobileRegex.test(userAgent);
   }, []);
 
-  // Touch capability detection
-  const isTouchDevice = useCallback((): boolean => {
+  const isTouchDevice = useCallback(() => {
     if (typeof window === "undefined") return false;
-
     return (
       "ontouchstart" in window ||
       navigator.maxTouchPoints > 0 ||
-      // @ts-expect-error - msMaxTouchPoints is a legacy Internet Explorer property
+      // @ts-expect-error
       navigator.msMaxTouchPoints > 0
     );
   }, []);
 
-  // Combined mobile detection (screen size + user agent + touch)
-  const isMobileDevice = isMobile || (isMobileUserAgent() && isTouchDevice());
-
   return {
-    isMobile: isMobileDevice,
+    isMobile,
     isTablet,
     isDesktop,
-    screenWidth,
-    screenHeight,
-    breakpoints,
-    isTouchDevice: isTouchDevice(),
-    isMobileUserAgent: isMobileUserAgent(),
-    // Helper functions
-    isBelowBreakpoint: (breakpoint: number) => screenWidth < breakpoint,
-    isAboveBreakpoint: (breakpoint: number) => screenWidth >= breakpoint,
-    isBetweenBreakpoints: (min: number, max: number) =>
-      screenWidth >= min && screenWidth < max,
+    getWindowDimensions,
+    isIOS,
+    isTouchDevice,
   };
 };
-
-export default useMobileDetection;

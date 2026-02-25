@@ -5,6 +5,7 @@ import { generateItemColors } from "../../../utils/colorUtils";
 import Projects from "./Projects";
 
 jest.mock("react-db-google-sheets", () => ({
+  // biome-ignore lint/suspicious/noExplicitAny: mock HOC signature
   withGoogleSheets: () => (Component: any) => (props: any) => (
     <Component {...props} />
   ),

@@ -139,6 +139,7 @@ function ProjectCard({
 }
 interface ProjectsProps {
   db?: {
+    // biome-ignore lint/suspicious/noExplicitAny: loose DB type
     projects: any[];
   };
 }
