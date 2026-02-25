@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 // Third-party imports
 import React, { useEffect, useRef, useState } from "react";
 
@@ -65,14 +64,6 @@ function SocialMedia({
     </div>
   );
 }
-
-SocialMedia.propTypes = {
-  keyword: PropTypes.string.isRequired,
-  icon: PropTypes.string,
-  link: PropTypes.string.isRequired,
-  tooltip: PropTypes.string.isRequired,
-  customIcon: PropTypes.string,
-};
 
 const ChatBubblePart = ({ part }: { part: string }) => (
   <div className={`bub-part-${part}`} />
@@ -162,10 +153,6 @@ const ChatBubble = ({ isVisible }: { isVisible: boolean }) => {
   );
 };
 
-ChatBubble.propTypes = {
-  isVisible: PropTypes.bool.isRequired,
-};
-
 interface HeaderTextProps {
   type: "name" | "roles" | "title";
   items: string[];
@@ -186,12 +173,6 @@ const HeaderText = ({ type, items, separator }: HeaderTextProps) => {
       <br />
     </>
   );
-};
-
-HeaderText.propTypes = {
-  type: PropTypes.oneOf(["name", "roles", "title"]).isRequired,
-  items: PropTypes.arrayOf(PropTypes.string).isRequired,
-  separator: PropTypes.string,
 };
 
 const HEADER_SECTIONS: {
