@@ -9,3 +9,15 @@
 ## 2024-05-23 - Render Loop Allocation
 **Learning:** Allocating objects (like `{}` or `[]`) or using `Object.entries` inside a 60fps loop generates significant garbage.
 **Action:** Reuse object/array structures by clearing them (e.g., `array.length = 0`) instead of creating new ones. Use `for (const key in obj)` to iterate keys without allocating an entries array.
+
+## 2024-05-25 - Event Listener Optimization
+**Learning:** Native `resize` events fire excessively (up to 60+ times per second during resize), causing heavy computations (like canvas context setup or re-renders) to run unnecessarily.
+**Action:** Always wrap expensive resize logic in a `debounce` or `throttle` function. Use `200ms` debounce for visual updates that don't need real-time feedback during the drag action.
+
+## 2024-05-25 - Dependency Management in CI
+**Learning:**  fails if  overrides (via ) do not match the lockfile content, or if key dependencies (like ) are missing from  but required by scripts.
+**Action:** Always ensure  dependencies are complete and  is regenerated after modifying  resolutions or dependencies. Use  to fix lockfile drift.
+
+## 2024-05-25 - Dependency Management in CI
+**Learning:** `pnpm install --frozen-lockfile` fails if `package.json` overrides (via `resolutions`) do not match the lockfile content, or if key dependencies (like `react-scripts`) are missing from `package.json` but required by scripts.
+**Action:** Always ensure `package.json` dependencies are complete and `pnpm-lock.yaml` is regenerated after modifying `package.json` resolutions or dependencies. Use `pnpm install --no-frozen-lockfile` to fix lockfile drift.

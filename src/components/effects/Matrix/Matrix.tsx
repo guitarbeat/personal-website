@@ -1,7 +1,7 @@
 // Third-party imports
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { cn } from "../../../utils/commonUtils";
+import { cn, debounce } from "../../../utils/commonUtils";
 
 // Context imports
 import { useAuth } from "./AuthContext";
@@ -966,8 +966,10 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
       // * Vignette handled by CSS overlay for performance
     };
 
+    const handleResize = debounce(resizeCanvas, 200);
+
     resizeCanvas();
-    window.addEventListener("resize", resizeCanvas);
+    window.addEventListener("resize", handleResize);
 
     class Drop {
       x: number;
@@ -1136,7 +1138,7 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
     animate(performance.now());
 
     return () => {
-      window.removeEventListener("resize", resizeCanvas);
+      window.removeEventListener("resize", handleResize);
       window.cancelAnimationFrame(animationFrameId);
     };
   }, [isVisible]);
