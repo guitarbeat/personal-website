@@ -74,18 +74,20 @@ const getSessionData = (key: string) => {
   }
 };
 
-const setSessionData = (key: string, value: any) => {
+const setSessionData = (key: string, value: unknown) => {
   if (!hasSessionStorage()) {
     return;
   }
 
   try {
     window.sessionStorage.setItem(key, JSON.stringify(value));
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.warn(`${ERROR_MESSAGES.STORAGE_ERROR} for ${key}:`, error);
-    if (error.name === "QuotaExceededError") {
+    if ((error as Error).name === "QuotaExceededError") {
       try {
-        Object.values(SESSION_KEYS).forEach((k) => clearSessionData(k));
+        Object.values(SESSION_KEYS).forEach((k) => {
+          clearSessionData(k);
+        });
         window.sessionStorage.setItem(key, JSON.stringify(value));
       } catch (retryError) {
         console.error(
@@ -242,10 +244,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, []);
 
-  const {
-    [DEVICE_KEYS.DEFAULT]: isUnlocked,
-    [DEVICE_KEYS.MOBILE]: isMobileUnlocked,
-  } = unlockState;
+  const isUnlocked = unlockState[DEVICE_KEYS.DEFAULT];
+  const isMobileUnlocked = unlockState[DEVICE_KEYS.MOBILE];
 
   const toolsAccessible = useMemo(() => {
     if (isMobile) {
@@ -254,29 +254,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return isUnlocked;
   }, [isMobile, isMobileUnlocked, isUnlocked]);
 
+  const providerValue = useMemo(
+    () => ({
+      isUnlocked,
+      isMobileUnlocked,
+      toolsAccessible,
+      completeHack,
+      showSuccessFeedback,
+      logout,
+      isMobile,
+    }),
+    [
+      isUnlocked,
+      isMobileUnlocked,
+      toolsAccessible,
+      completeHack,
+      showSuccessFeedback,
+      logout,
+      isMobile,
+    ],
+  );
+
   return (
-    <AuthContext.Provider
-      value={useMemo(
-        () => ({
-          isUnlocked,
-          isMobileUnlocked,
-          toolsAccessible,
-          completeHack,
-          showSuccessFeedback,
-          logout,
-          isMobile,
-        }),
-        [
-          isUnlocked,
-          isMobileUnlocked,
-          toolsAccessible,
-          completeHack,
-          showSuccessFeedback,
-          logout,
-          isMobile,
-        ],
-      )}
-    >
+    <AuthContext.Provider value={providerValue}>
       {children}
     </AuthContext.Provider>
   );
