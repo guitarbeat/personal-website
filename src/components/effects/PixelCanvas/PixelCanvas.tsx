@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { useEffect, useMemo, useRef } from "react";
 import { debounce } from "../../../utils/commonUtils";
 
@@ -358,15 +357,6 @@ const PixelCanvas = ({
       <canvas ref={canvasRef} />
     </div>
   );
-};
-
-PixelCanvas.propTypes = {
-  className: PropTypes.string,
-  style: PropTypes.object,
-  colors: PropTypes.arrayOf(PropTypes.string),
-  gap: PropTypes.number,
-  speed: PropTypes.number,
-  noFocus: PropTypes.bool,
 };
 
 export default PixelCanvas;
