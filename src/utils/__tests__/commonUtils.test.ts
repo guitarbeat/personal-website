@@ -1,35 +1,34 @@
-import { getWindowDimensions } from "../commonUtils";
+import { isAboveBreakpoint } from "../commonUtils";
 
 describe("commonUtils", () => {
-  describe("getWindowDimensions", () => {
-    const originalWindow = global.window;
+  describe("isAboveBreakpoint", () => {
+    const originalInnerWidth = window.innerWidth;
 
-    afterEach(() => {
-      global.window = originalWindow;
+    beforeAll(() => {
+      Object.defineProperty(window, "innerWidth", {
+        writable: true,
+        configurable: true,
+        value: originalInnerWidth,
+      });
     });
 
-    it("returns correct dimensions when window is defined", () => {
-      // Setup
-      global.window.innerWidth = 1920;
-      global.window.innerHeight = 1080;
-
-      // Execute
-      const result = getWindowDimensions();
-
-      // Verify
-      expect(result).toEqual({ width: 1920, height: 1080 });
+    afterAll(() => {
+      window.innerWidth = originalInnerWidth;
     });
 
-    it("returns zero dimensions when window is undefined", () => {
-      // Setup
-      // @ts-ignore
-      delete global.window;
+    it("returns true when window width is greater than breakpoint", () => {
+      window.innerWidth = 1024;
+      expect(isAboveBreakpoint(768)).toBe(true);
+    });
 
-      // Execute
-      const result = getWindowDimensions();
+    it("returns false when window width is equal to breakpoint", () => {
+      window.innerWidth = 768;
+      expect(isAboveBreakpoint(768)).toBe(false);
+    });
 
-      // Verify
-      expect(result).toEqual({ width: 0, height: 0 });
+    it("returns false when window width is less than breakpoint", () => {
+      window.innerWidth = 500;
+      expect(isAboveBreakpoint(768)).toBe(false);
     });
   });
 });
