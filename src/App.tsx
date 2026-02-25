@@ -29,7 +29,7 @@ import InfiniteScrollEffect from "./components/effects/InfiniteScrollEffect";
 import FrameEffect from "./components/effects/Loading/FrameEffect";
 import LoadingSequence from "./components/effects/Loading/LoadingSequence";
 import { AuthProvider, useAuth } from "./components/effects/Matrix/AuthContext";
-import Matrix, { FeedbackSystem } from "./components/effects/Matrix/Matrix";
+import Matrix from "./components/effects/Matrix/Matrix";
 import ScrollToTopButton from "./components/effects/Matrix/ScrollToTopButton";
 import MagicComponent from "./components/effects/Moire/Moire";
 import { About, Header, NavBar, Projects, Work } from "./components/index";
@@ -304,7 +304,7 @@ const AppContent = () => {
 
     return shouldShowMatrixFromSearch(window.location.search);
   });
-  const { isUnlocked, showSuccessFeedback } = useAuth();
+  const { isUnlocked } = useAuth();
   const [isScrollMode, setIsScrollMode] = useState(false);
   const [isInScroll, setIsInScroll] = useState(false);
   const scrollAnimationRef = useRef<number | null>(null);
@@ -400,7 +400,6 @@ const AppContent = () => {
         onSuccess={handleMatrixSuccess}
         onMatrixReady={handleMatrixReady}
       />
-      <FeedbackSystem showSuccessFeedback={showSuccessFeedback} />
       {isUnlocked ? <CustomCursor /> : null}
       <BrowserRouter>
         <MatrixRouteSync
