@@ -181,6 +181,7 @@ const MemoizedTimelineBar = React.memo(TimelineBar);
 
 interface WorkProps {
   db?: {
+    // biome-ignore lint/suspicious/noExplicitAny: Legacy notion data
     work: any[];
   };
 }
@@ -213,6 +214,7 @@ function Work({ db: propsDb }: WorkProps = {}) {
 
   // Data processing
   // Make a deep copy to avoid mutating the original data in context
+  // biome-ignore lint/suspicious/noExplicitAny: Legacy notion data
   const jobs: Job[] = ((db?.work as any[]) || []).map((job) => ({
     ...job,
   })) as Job[];

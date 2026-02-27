@@ -137,6 +137,7 @@ function ProjectCard({
 }
 interface ProjectsProps {
   db?: {
+    // biome-ignore lint/suspicious/noExplicitAny: Legacy notion data
     projects: any[];
   };
 }

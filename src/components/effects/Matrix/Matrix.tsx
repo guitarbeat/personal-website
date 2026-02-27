@@ -1224,7 +1224,10 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                 </div>
                 <p className="hack-sequencer__feedback">{hackFeedback}</p>
               </div>
+              {/* biome-ignore lint/a11y/useSemanticElements: Layout container */}
               <div
+                role="button"
+                tabIndex={0}
                 className="hack-input-viewport"
                 onMouseDown={handleViewportEngage}
                 onTouchStart={handleViewportEngage}
@@ -1247,7 +1250,7 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                       className += " prompt";
 
                     return (
-                      <div key={i} className={className}>
+                      <div key={`${i}-${line.substring(0, 10)}`} className={className}>
                         {line}
                       </div>
                     );
