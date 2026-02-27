@@ -1,7 +1,7 @@
-import { render, act } from "@testing-library/react";
+import { act, render } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import Matrix from "../Matrix";
 import { AuthProvider } from "../AuthContext";
+import Matrix from "../Matrix";
 
 describe("Matrix Performance", () => {
   let widthSetterSpy: jest.SpyInstance;
@@ -27,10 +27,12 @@ describe("Matrix Performance", () => {
     HTMLCanvasElement.prototype.getContext = mockGetContext as any;
 
     // Spy on canvas width setter
-    widthSetterSpy = jest.spyOn(HTMLCanvasElement.prototype, 'width', 'set');
+    widthSetterSpy = jest.spyOn(HTMLCanvasElement.prototype, "width", "set");
 
     // Mock audio
-    window.HTMLMediaElement.prototype.play = jest.fn().mockImplementation(() => Promise.resolve());
+    window.HTMLMediaElement.prototype.play = jest
+      .fn()
+      .mockImplementation(() => Promise.resolve());
     window.HTMLMediaElement.prototype.pause = jest.fn();
   });
 
@@ -46,7 +48,7 @@ describe("Matrix Performance", () => {
     render(
       <AuthProvider>
         <Matrix isVisible={true} />
-      </AuthProvider>
+      </AuthProvider>,
     );
 
     // Initial render calls resizeCanvas once directly

@@ -185,7 +185,6 @@ interface MatrixProps {
 // * Sub-components (Consolidated)
 // * --------------------------------------------------------------------------------
 
-
 interface NuUhUhEasterEggProps {
   onClose: () => void;
   id?: number;
@@ -1250,7 +1249,10 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                       className += " prompt";
 
                     return (
-                      <div key={`${i}-${line.substring(0, 10)}`} className={className}>
+                      <div
+                        key={`${i}-${line.substring(0, 10)}`}
+                        className={className}
+                      >
                         {line}
                       </div>
                     );

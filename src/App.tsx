@@ -18,9 +18,7 @@ import {
 } from "react-router-dom";
 import { NotionProvider } from "./contexts/NotionContext";
 import "./sass/main.scss";
-import {
-  NAV_ITEMS,
-} from "./components/Core/constants";
+import { NAV_ITEMS } from "./components/Core/constants";
 import { BlurSection } from "./components/effects/Blur/index";
 import CustomCursor from "./components/effects/CustomCursor/CustomCursor";
 import InfiniteScrollEffect from "./components/effects/InfiniteScrollEffect";
@@ -80,7 +78,6 @@ const Layout = memo(
     children,
     navItems,
     onMatrixActivate,
-    // biome-ignore lint/correctness/noUnusedFunctionParameters: Used in other layouts but not here
     onScrollActivate: _onScrollActivate,
     isInScroll,
     hideNavBar,
@@ -95,7 +92,6 @@ const Layout = memo(
         <NavBar
           items={navItems}
           onMatrixActivate={onMatrixActivate}
-
           isInShop={isInScroll}
         />
       )}
