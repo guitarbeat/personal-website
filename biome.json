@@ -10,7 +10,19 @@
     }
   },
   "files": {
-    "includes": ["**", "!public/build", "!dist", "!.vscode", "!src/css/styles.css"]
+    "includes": [
+      "src/**/*.ts",
+      "src/**/*.tsx",
+      "src/**/*.js",
+      "src/**/*.jsx",
+      "scripts/**/*.js",
+      "api/**/*.js",
+      "config/**/*.js",
+      "*.js",
+      "*.json",
+      "*.ts"
+    ],
+    "ignoreUnknown": true
   },
   "formatter": {
     "enabled": true,
