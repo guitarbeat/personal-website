@@ -82,6 +82,7 @@ const Layout = memo(
     children,
     navItems,
     onMatrixActivate,
+    // biome-ignore lint/correctness/noUnusedFunctionParameters: prop is passed to children but flagged as unused
     onScrollActivate,
     isInScroll,
     hideNavBar,
@@ -96,7 +97,6 @@ const Layout = memo(
         <NavBar
           items={navItems}
           onMatrixActivate={onMatrixActivate}
-
           isInShop={isInScroll}
         />
       )}
