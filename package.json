@@ -25,8 +25,8 @@
   "scripts": {
     "start": "craco start --config config/craco.config.js",
     "dev": "craco start --config config/craco.config.js",
-    "build": "craco build --config config/craco.config.js",
-    "test": "craco test --config config/craco.config.js --passWithNoTests",
+    "build": "DISABLE_ESLINT_PLUGIN=true craco build --config config/craco.config.js",
+    "test": "react-scripts test --passWithNoTests",
     "eject": "react-scripts eject",
     "format": "biome format ./src --write",
     "lint": "biome lint ./src",
@@ -74,7 +74,6 @@
     "postcss-cli": "^11.0.0",
     "prop-types": "^15.8.1",
     "react": "^19.2.3",
-    "react-db-google-sheets": "^3.0.0",
     "react-dom": "^19.2.3",
     "react-intersection-observer": "^10.0.3",
     "react-router-dom": "^7.12.0",

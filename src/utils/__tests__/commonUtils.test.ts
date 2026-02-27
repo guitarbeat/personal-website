@@ -1,20 +1,30 @@
 import {
-  isAboveBreakpoint,
-  throttle,
-  debounce,
-  throttleAdvanced,
   clamp,
-  randomInt,
-  randomFloat,
   cn,
-  getWindowDimensions,
-  generateId,
   copyPoint,
-  subtractPoints,
   createTimeout,
+  debounce,
+  generateId,
+  getWindowDimensions,
+  isAboveBreakpoint,
+  randomFloat,
+  randomInt,
+  subtractPoints,
+  throttle,
+  throttleAdvanced,
 } from "../commonUtils";
 
 describe("commonUtils", () => {
+  // Use fake timers for the entire suite to avoid switching issues
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.clearAllTimers();
+    jest.useRealTimers();
+  });
+
   describe("clamp", () => {
     it("returns value when within range", () => {
       expect(clamp(5, 0, 10)).toBe(5);
@@ -50,7 +60,7 @@ describe("commonUtils", () => {
     });
 
     it("handles min equal to max", () => {
-        expect(randomFloat(3.14, 3.14)).toBe(3.14);
+      expect(randomFloat(3.14, 3.14)).toBe(3.14);
     });
   });
 
@@ -64,11 +74,13 @@ describe("commonUtils", () => {
     });
 
     it("filters falsy values", () => {
-      expect(cn("base", false && "foo", null, undefined, "bar", "")).toBe("base bar");
+      expect(cn("base", false && "foo", null, undefined, "bar", "")).toBe(
+        "base bar",
+      );
     });
 
     it("trims whitespace only strings", () => {
-        expect(cn("base", "   ", "foo")).toBe("base foo");
+      expect(cn("base", "   ", "foo")).toBe("base foo");
     });
   });
 
@@ -122,8 +134,8 @@ describe("commonUtils", () => {
     });
 
     it("uses default alphabet if not provided", () => {
-        const id = generateId(100);
-        expect(id).toMatch(/^[A-Za-z0-9]+$/);
+      const id = generateId(100);
+      expect(id).toMatch(/^[A-Za-z0-9]+$/);
     });
   });
 
@@ -143,36 +155,24 @@ describe("commonUtils", () => {
   });
 
   describe("createTimeout", () => {
-      jest.useFakeTimers();
+    it("executes callback after delay", () => {
+      const cb = jest.fn();
+      createTimeout(cb, 100);
+      expect(cb).not.toHaveBeenCalled();
+      jest.advanceTimersByTime(100);
+      expect(cb).toHaveBeenCalled();
+    });
 
-      it("executes callback after delay", () => {
-          const cb = jest.fn();
-          createTimeout(cb, 100);
-          expect(cb).not.toHaveBeenCalled();
-          jest.advanceTimersByTime(100);
-          expect(cb).toHaveBeenCalled();
-      });
-
-      it("can be cleared", () => {
-          const cb = jest.fn();
-          const clear = createTimeout(cb, 100);
-          clear();
-          jest.advanceTimersByTime(100);
-          expect(cb).not.toHaveBeenCalled();
-      });
-
-      jest.useRealTimers();
+    it("can be cleared", () => {
+      const cb = jest.fn();
+      const clear = createTimeout(cb, 100);
+      clear();
+      jest.advanceTimersByTime(100);
+      expect(cb).not.toHaveBeenCalled();
+    });
   });
 
   describe("throttle", () => {
-    beforeEach(() => {
-      jest.useFakeTimers();
-    });
-
-    afterEach(() => {
-      jest.useRealTimers();
-    });
-
     it("executes immediately", () => {
       const func = jest.fn();
       const throttledFunc = throttle(func, 100);
@@ -200,14 +200,6 @@ describe("commonUtils", () => {
   });
 
   describe("debounce", () => {
-    beforeEach(() => {
-      jest.useFakeTimers();
-    });
-
-    afterEach(() => {
-      jest.useRealTimers();
-    });
-
     it("does not execute immediately by default", () => {
       const func = jest.fn();
       const debouncedFunc = debounce(func, 100);
@@ -246,14 +238,6 @@ describe("commonUtils", () => {
   });
 
   describe("throttleAdvanced", () => {
-    beforeEach(() => {
-      jest.useFakeTimers();
-    });
-
-    afterEach(() => {
-      jest.useRealTimers();
-    });
-
     it("executes leading edge and trailing edge by default", () => {
       const func = jest.fn();
       const throttledFunc = throttleAdvanced(func, 100);

@@ -315,15 +315,15 @@ export const useMatrixRain = (
       navigator.hardwareConcurrency && navigator.hardwareConcurrency < 4;
     const isOldBrowser =
       !window.requestAnimationFrame || !window.cancelAnimationFrame;
+
     // biome-ignore lint/suspicious/noExplicitAny: Navigator extension properties
-    const isSlowDevice =
-      // biome-ignore lint/suspicious/noExplicitAny: Navigator extension properties
-      (navigator as any).deviceMemory && (navigator as any).deviceMemory < 4;
-    // biome-ignore lint/suspicious/noExplicitAny: Navigator extension properties
-    const _isLowBattery = (navigator as any)
+    const nav = navigator as any;
+    const isSlowDevice = nav.deviceMemory && nav.deviceMemory < 4;
+
+    const _isLowBattery = nav
       .getBattery?.()
-      // biome-ignore lint/suspicious/noExplicitAny: Navigator extension properties
-      .then((battery: any) => battery.level < 0.2);
+      // biome-ignore lint/suspicious/noExplicitAny: Battery API
+      .then((_battery: any) => _battery.level < 0.2);
 
     // Determine performance mode based on multiple factors
     let performanceMode = "high";

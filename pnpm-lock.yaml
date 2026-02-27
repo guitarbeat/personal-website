@@ -118,9 +118,6 @@ importers:
       react:
         specifier: ^19.2.3
         version: 19.2.4
-      react-db-google-sheets:
-        specifier: ^3.0.0
-        version: 3.0.0(react@19.2.4)
       react-dom:
         specifier: ^19.2.3
         version: 19.2.4(react@19.2.4)
@@ -8022,11 +8019,6 @@ packages:
   react-app-polyfill@3.0.0:
     resolution: {integrity: sha512-sZ41cxiU5llIB003yxxQBYrARBqe0repqPTTYBTmMqTz9szeBbE37BehCE891NZsmdZqqP+xWKdT3eo3vOzN8w==}
     engines: {node: '>=14'}
-
-  react-db-google-sheets@3.0.0:
-    resolution: {integrity: sha512-UoRGU9PTmpALUmphh/ZcUJyPJ2kV3+3q3tPtguyQjurRalR2HSzgC6sX0Y1RIWJS0RypYvH+kaNmXGHgssXcrg==}
-    peerDependencies:
-      react: ^16.12.0
 
   react-dev-utils@12.0.1:
     resolution: {integrity: sha512-84Ivxmr17KjUupyqzFode6xKhjwuEJDROWKJy/BthkL7Wn6NJ8h4WE6k/exAv6ImS+0oZLRRW5j/aINMHyeGeQ==}
@@ -18764,11 +18756,6 @@ snapshots:
       raf: 3.4.1
       regenerator-runtime: 0.13.11
       whatwg-fetch: 3.6.20
-
-  react-db-google-sheets@3.0.0(react@19.2.4):
-    dependencies:
-      lodash: 4.17.23
-      react: 19.2.4
 
   react-dev-utils@12.0.1(eslint@10.0.2(jiti@1.21.7))(typescript@5.9.3)(webpack@5.105.2):
     dependencies:

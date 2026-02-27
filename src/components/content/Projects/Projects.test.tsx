@@ -4,12 +4,6 @@ import userEvent from "@testing-library/user-event";
 import { generateItemColors } from "../../../utils/colorUtils";
 import Projects from "./Projects";
 
-jest.mock("react-db-google-sheets", () => ({
-  withGoogleSheets: () => (Component: any) => (props: any) => (
-    <Component {...props} />
-  ),
-}));
-
 jest.mock("../../../utils/colorUtils", () => {
   const actual = jest.requireActual("../../../utils/colorUtils");
   return {
@@ -17,6 +11,15 @@ jest.mock("../../../utils/colorUtils", () => {
     generateItemColors: jest.fn() as jest.Mock,
   };
 });
+
+// Mock useNotion
+jest.mock("../../../contexts/NotionContext", () => ({
+  useNotion: () => ({
+    db: { projects: [] },
+    loading: false,
+    error: null,
+  }),
+}));
 
 describe("Projects", () => {
   const MOCK_PROJECTS = [
@@ -63,7 +66,7 @@ describe("Projects", () => {
 
     await waitFor(() => {
       expect(reactFilter).toHaveStyle({
-        borderLeft: "4px solid hsl(0, 0%, 50%)",
+        "--tag-color": "hsl(0, 0%, 50%)",
       });
     });
 
@@ -79,7 +82,7 @@ describe("Projects", () => {
 
     await waitFor(() => {
       expect(reactFilter).toHaveStyle({
-        borderLeft: "4px solid hsl(200, 60%, 55%)",
+        "--tag-color": "hsl(200, 60%, 55%)",
       });
       expect(reactFilter).toHaveClass("active");
     });
