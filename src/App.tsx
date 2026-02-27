@@ -16,11 +16,9 @@ import {
   useLocation,
   useNavigate,
 } from "react-router-dom";
-// import GoogleSheetsProvider from "react-db-google-sheets";
 import { NotionProvider } from "./contexts/NotionContext";
 import "./sass/main.scss";
 import {
-  // GOOGLE_SHEETS_CONFIG,
   NAV_ITEMS,
 } from "./components/Core/constants";
 import { BlurSection } from "./components/effects/Blur/index";
