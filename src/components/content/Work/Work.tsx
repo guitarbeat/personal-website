@@ -1,7 +1,13 @@
 import moment from "moment";
 import PropTypes from "prop-types";
 // Import required libraries and components
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 // import { withGoogleSheets } from "react-db-google-sheets";
 import { useNotion } from "../../../contexts/NotionContext";
 import { cn } from "../../../utils/commonUtils";
@@ -214,40 +220,44 @@ function Work({ db: propsDb }: WorkProps = {}) {
   }, []);
 
   // Data processing
-  // Make a deep copy to avoid mutating the original data in context
-  const jobs: Job[] = ((db?.work as any[]) || []).map((job) => ({
-    ...job,
-  })) as Job[];
+  const { jobs, first_date, job_bars } = useMemo(() => {
+    // Make a deep copy to avoid mutating the original data in context
+    const jobs: Job[] = ((db?.work as any[]) || []).map((job) => ({
+      ...job,
+    })) as Job[];
 
-  let first_date = moment();
+    let first_date = moment();
 
-  // Format and enhance jobs data
-  for (const job of jobs) {
-    const _to_moment = job.to ? moment(job.to, "MM-YYYY") : moment();
-    const _from_moment = moment(job.from, "MM-YYYY");
-    const _duration = _to_moment.diff(_from_moment, "months");
+    // Format and enhance jobs data
+    for (const job of jobs) {
+      const _to_moment = job.to ? moment(job.to, "MM-YYYY") : moment();
+      const _from_moment = moment(job.from, "MM-YYYY");
+      const _duration = _to_moment.diff(_from_moment, "months");
 
-    job.from = _from_moment.format("MMM YYYY");
-    job.to = job.to ? _to_moment.format("MMM YYYY") : "Now";
-    job._from = _from_moment;
-    job._to = _to_moment;
-    job.date = _duration === 0 ? job.from : `${job.from} - ${job.to}`;
-    job.duration = _duration === 0 ? 1 : _duration;
+      job.from = _from_moment.format("MMM YYYY");
+      job.to = job.to ? _to_moment.format("MMM YYYY") : "Now";
+      job._from = _from_moment;
+      job._to = _to_moment;
+      job.date = _duration === 0 ? job.from : `${job.from} - ${job.to}`;
+      job.duration = _duration === 0 ? 1 : _duration;
 
-    if (first_date.diff(_from_moment) > 0) {
-      first_date = _from_moment;
+      if (first_date.diff(_from_moment) > 0) {
+        first_date = _from_moment;
+      }
     }
-  }
 
-  const time_span = moment().diff(first_date, "months");
-  const safe_time_span = time_span === 0 ? 1 : time_span;
-  for (const job of jobs) {
-    job.bar_start =
-      (100 * job._from.diff(first_date, "months")) / safe_time_span;
-    job.bar_height = (100 * job.duration) / safe_time_span;
-  }
+    const time_span = moment().diff(first_date, "months");
+    const safe_time_span = time_span === 0 ? 1 : time_span;
+    for (const job of jobs) {
+      job.bar_start =
+        (100 * job._from.diff(first_date, "months")) / safe_time_span;
+      job.bar_height = (100 * job.duration) / safe_time_span;
+    }
 
-  const job_bars = jobs.map((job) => [job.bar_height, job.bar_start]);
+    const job_bars = jobs.map((job) => [job.bar_height, job.bar_start]);
+
+    return { jobs, first_date, job_bars };
+  }, [db?.work]);
 
   // Add intersection observer for lazy loading
   const [isVisible, setIsVisible] = useState(false);
