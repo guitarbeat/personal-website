@@ -279,7 +279,6 @@ const NuUhUhEasterEgg = ({ onClose, id: _id }: NuUhUhEasterEggProps) => {
 
   return (
     <button type="button"
-      type="button"
       ref={containerRef}
       className="nuuhuh-overlay"
       style={{
@@ -298,7 +297,6 @@ const NuUhUhEasterEgg = ({ onClose, id: _id }: NuUhUhEasterEggProps) => {
         aria-label="Access denied Easter egg"
       >
         <button type="button"
-          type="button"
           className="nuuhuh-overlay__close-btn"
           onClick={onClose}
           style={{
@@ -321,7 +319,6 @@ const NuUhUhEasterEgg = ({ onClose, id: _id }: NuUhUhEasterEggProps) => {
           Nu-uh-uh! You didn't say the magic word.
         </p>
         <button type="button"
-          type="button"
           className="nuuhuh-overlay__close-btn"
           onClick={onClose}
         >
@@ -1296,7 +1293,6 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
         </div>
       </div>
       <button type="button"
-        type="button"
         className="matrix-close-btn"
         onClick={onSuccess}
         aria-label="Exit Matrix"
