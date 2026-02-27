@@ -368,7 +368,7 @@ const AppContent = () => {
   const handleRouteMatrixChange = useCallback((shouldShow: boolean) => {
     setShowMatrix((prev) => (prev === shouldShow ? prev : shouldShow));
   }, []);
-  const handleScrollActivate = useCallback(() => setIsScrollMode(true), []);
+  // Removed handleScrollActivate as it's unused
 
   // Matrix ready callback - will be set by Matrix component
   const matrixReadyCallbackRef = useRef<(() => void) | null>(null);
