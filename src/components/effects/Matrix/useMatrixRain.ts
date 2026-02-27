@@ -7,7 +7,6 @@ import {
   MATRIX_RAIN,
   TYPOGRAPHY,
 } from "./constants";
-
 class Drop {
   x: number;
   y: number;
@@ -35,7 +34,6 @@ class Drop {
   glitchIntensity!: number;
   energyLevel!: number;
   colorShiftSpeed!: number;
-
   constructor(
     x: number,
     canvas: HTMLCanvasElement,
@@ -57,7 +55,6 @@ class Drop {
     this.brightness = Math.random() > 0.95;
     this.getTrailItem = getTrailItem;
     this.returnTrailItem = returnTrailItem;
-
     // Ultra-lightweight trail length based on performance mode
     let maxTrailLength: number;
     switch (performanceMode) {
@@ -73,18 +70,15 @@ class Drop {
       default: // 'high'
         maxTrailLength = 4;
     }
-
     this.trailLength = Math.floor(Math.random() * maxTrailLength + 1);
     this.trail = [];
     this.initializeProperties();
   }
-
   getRandomChar() {
     return MATRIX_RAIN.ALPHABET[
       Math.floor(Math.random() * MATRIX_RAIN.ALPHABET.length)
     ];
   }
-
   initializeProperties() {
     this.speed =
       Math.random() *
@@ -98,18 +92,15 @@ class Drop {
     this.colorIndex = Math.floor(
       Math.random() * this.getMatrixColorsArray().length,
     );
-
     // Simplified animation properties - removed complex effects
     this.pulsePhase = Math.random() * Math.PI * 2;
     this.rotation = 0; // Disabled rotation for simplicity
     this.scale = 1; // Fixed scale for simplicity
     this.glitchIntensity = Math.random() * 0.05; // Reduced glitch frequency
-
     // Removed complex effects: wave distortion, holographic, particle trails
     this.energyLevel = Math.random();
     this.colorShiftSpeed = Math.random() * 0.02 + 0.005; // Slower color changes
   }
-
   getMatrixColorsArray() {
     return [
       MATRIX_COLORS.GREEN,
@@ -123,20 +114,16 @@ class Drop {
       MATRIX_COLORS.WHITE,
     ];
   }
-
   update() {
     this.y += this.speed;
     this.frame++;
-
     // Simplified update - removed complex effects
     this.pulsePhase += 0.05; // Slower pulse
     this.colorShiftSpeed += 0.0005; // Much slower color changes
-
     // Update color shifting (simplified)
     this.colorIndex =
       (this.colorIndex + this.colorShiftSpeed) %
       this.getMatrixColorsArray().length;
-
     // Simplified trail update
     const trailItem = {
       char: this.char,
@@ -145,9 +132,7 @@ class Drop {
       colorIndex: this.colorIndex,
       brightness: this.brightness,
     };
-
     this.trail.push(trailItem);
-
     if (this.trail.length > this.trailLength) {
       const removedItem = this.trail.shift();
       // Return to pool if available
@@ -155,7 +140,6 @@ class Drop {
         this.returnTrailItem(removedItem);
       }
     }
-
     if (this.frame >= this.changeInterval) {
       this.char = this.getRandomChar();
       this.frame = 0;
@@ -164,7 +148,6 @@ class Drop {
         Math.random() * this.getMatrixColorsArray().length,
       );
     }
-
     if (this.y * this.fontSize > this.canvas.height) {
       this.y = -100 / this.fontSize;
       this.initializeProperties();
@@ -177,14 +160,11 @@ class Drop {
       this.trail.length = 0;
     }
   }
-
   draw() {
     const context = this.context;
     const MATRIX_COLORS_ARRAY = this.getMatrixColorsArray();
-
     // Set font once for all operations
     context.font = `${this.fontSize}px monospace`;
-
     // Simplified trail rendering - removed complex effects
     if (this.performanceMode !== "minimal" && this.trail.length > 0) {
       for (let index = 0; index < this.trail.length; index += 1) {
@@ -195,14 +175,12 @@ class Drop {
             Math.floor(trailItem.colorIndex || this.colorIndex) %
               MATRIX_COLORS_ARRAY.length
           ];
-
         context.fillStyle = ColorUtils.toRGBA(
           ColorUtils.withAlpha(color, trailOpacity),
         );
         context.fillText(trailItem.char, this.x, trailItem.y * this.fontSize);
       }
     }
-
     // Simplified main character rendering
     const color =
       MATRIX_COLORS_ARRAY[
@@ -210,11 +188,9 @@ class Drop {
       ];
     const finalX = this.x;
     const finalY = this.y * this.fontSize;
-
     // Simplified pulsing effect
     const pulseIntensity = Math.sin(this.pulsePhase) * 0.1 + 0.9; // Reduced intensity
     const finalOpacity = this.opacity * pulseIntensity;
-
     // Rare glitch effect
     if (Math.random() < this.glitchIntensity) {
       context.fillStyle = ColorUtils.toRGBA(
@@ -226,7 +202,6 @@ class Drop {
         finalY + (Math.random() - 0.5) * 1,
       );
     }
-
     if (this.brightness) {
       context.fillStyle = ColorUtils.toRGBA(
         ColorUtils.withAlpha(MATRIX_COLORS.WHITE, finalOpacity),
@@ -236,12 +211,10 @@ class Drop {
         ColorUtils.withAlpha(color, finalOpacity),
       );
     }
-
     // Simple character rendering - no rotation or scaling
     context.fillText(this.char, finalX, finalY);
   }
 }
-
 export const useMatrixRain = (
   isVisible: boolean,
   matrixIntensity: number,
@@ -253,7 +226,6 @@ export const useMatrixRain = (
   const _lastTimeRef = useRef<number>(0);
   const _frameCountRef = useRef<number>(0);
   const { isMobile, isTablet } = useMobileDetection();
-
   // Object pool for trail items to reduce allocations
   // biome-ignore lint/suspicious/noExplicitAny: Legacy matrix implementation
   const trailItemPool = useRef<any[]>([]);
@@ -270,7 +242,6 @@ export const useMatrixRain = (
       trailItemPool.current.push(item);
     }
   }, []);
-
   useEffect(() => {
     if (!isVisible) {
       // Clean up when not visible
@@ -289,19 +260,16 @@ export const useMatrixRain = (
       }
       return;
     }
-
     const canvas = canvasRef.current;
     if (!canvas) {
       console.error(ERROR_MESSAGES.CANVAS_ERROR);
       return;
     }
-
     const context = canvas.getContext("2d");
     if (!context) {
       console.error(ERROR_MESSAGES.CANVAS_ERROR);
       return;
     }
-
     // Fallback for very old browsers
     if (!window.requestAnimationFrame) {
       console.warn(
@@ -309,22 +277,16 @@ export const useMatrixRain = (
       );
       return;
     }
-
     // Enhanced device detection and compatibility checks
     const isLowEnd =
       navigator.hardwareConcurrency && navigator.hardwareConcurrency < 4;
     const isOldBrowser =
       !window.requestAnimationFrame || !window.cancelAnimationFrame;
-    // biome-ignore lint/suspicious/noExplicitAny: Navigator extension properties
     const isSlowDevice =
-      // biome-ignore lint/suspicious/noExplicitAny: Navigator extension properties
       (navigator as any).deviceMemory && (navigator as any).deviceMemory < 4;
-    // biome-ignore lint/suspicious/noExplicitAny: Navigator extension properties
     const _isLowBattery = (navigator as any)
       .getBattery?.()
-      // biome-ignore lint/suspicious/noExplicitAny: Navigator extension properties
       .then((battery: any) => battery.level < 0.2);
-
     // Determine performance mode based on multiple factors
     let performanceMode = "high";
     if (isMobile || isLowEnd || isOldBrowser || isSlowDevice) {
@@ -332,7 +294,6 @@ export const useMatrixRain = (
     } else if (isTablet) {
       performanceMode = "medium";
     }
-
     // Additional compatibility checks
     const _hasWebGL =
       !!canvas.getContext("webgl") || !!canvas.getContext("experimental-webgl");
@@ -340,12 +301,10 @@ export const useMatrixRain = (
     const isReducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
-
     // Override performance mode for accessibility
     if (isReducedMotion) {
       performanceMode = "minimal";
     }
-
     const resizeCanvas = () => {
       // Ultra-lightweight canvas setup
       const dpr =
@@ -354,20 +313,16 @@ export const useMatrixRain = (
           : performanceMode === "low"
             ? 1
             : Math.min(window.devicePixelRatio || 1, hasHighDPI ? 1.5 : 1);
-
       canvas.width = window.innerWidth * dpr;
       canvas.height = window.innerHeight * dpr;
       canvas.style.width = `${window.innerWidth}px`;
       canvas.style.height = `${window.innerHeight}px`;
-
       if (dpr !== 1) {
         context.scale(dpr, dpr);
       }
     };
-
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
-
     // Ultra-conservative column calculation based on performance mode
     const baseColumns = Math.floor(
       canvas.width / (TYPOGRAPHY.FONT_SIZES.MIN * 1.5),
@@ -376,7 +331,6 @@ export const useMatrixRain = (
     let columns;
     // biome-ignore lint/suspicious/noImplicitAnyLet: Legacy variable declaration
     let maxDrops;
-
     switch (performanceMode) {
       case "minimal":
         columns = Math.floor(baseColumns * 0.05); // 5% of base
@@ -394,7 +348,6 @@ export const useMatrixRain = (
         columns = Math.floor(baseColumns * 0.3); // 30% of base
         maxDrops = Math.floor(columns * matrixIntensity * 0.4);
     }
-
     // Initialize drops array only once with object pooling
     if (dropsRef.current.length === 0) {
       dropsRef.current = Array(columns)
@@ -412,7 +365,6 @@ export const useMatrixRain = (
           return drop;
         });
     }
-
     // Reduced frame rate settings for smoother, less overwhelming effect
     // biome-ignore lint/suspicious/noImplicitAnyLet: Legacy variable declaration
     let baseFrameInterval;
@@ -429,17 +381,14 @@ export const useMatrixRain = (
       default: // 'high'
         baseFrameInterval = 1000 / 15; // 15 FPS max
     }
-
     let frameInterval = baseFrameInterval;
     let lastTime = 0;
     let frameCount = 0;
     let performanceCounter = 0;
     let lastPerformanceCheck = 0;
-
     // Lightweight performance monitoring
     const performanceHistory: number[] = [];
     const maxPerformanceHistory = 5; // Reduced from 10
-
     // Disabled mouse interaction for maximum compatibility
     const _mouseTrail = [];
     const _mousePosition = { x: 0, y: 0 };
@@ -451,12 +400,10 @@ export const useMatrixRain = (
           : performanceMode === "medium"
             ? 0.3
             : 0.4;
-
     const draw = (currentTime: number) => {
       if (currentTime - lastTime >= frameInterval) {
         frameCount++;
         performanceCounter++;
-
         // Performance monitoring and adaptive throttling
         if (currentTime - lastPerformanceCheck > 1000) {
           // Check every second
@@ -465,22 +412,18 @@ export const useMatrixRain = (
           if (performanceHistory.length > maxPerformanceHistory) {
             performanceHistory.shift();
           }
-
           const avgFPS =
             performanceHistory.reduce((a, b) => a + b, 0) /
             performanceHistory.length;
-
           // Adaptive throttling based on performance
           if (avgFPS < 10 && performanceMode === "high") {
             frameInterval = Math.min(frameInterval * 1.2, 1000 / 10); // Cap at 10 FPS
           } else if (avgFPS > 20 && frameInterval > baseFrameInterval) {
             frameInterval = Math.max(frameInterval * 0.9, baseFrameInterval);
           }
-
           performanceCounter = 0;
           lastPerformanceCheck = currentTime;
         }
-
         // Enhanced rendering based on performance mode
         const shouldDrawEffects =
           performanceMode === "high" &&
@@ -488,7 +431,6 @@ export const useMatrixRain = (
           matrixIntensity > 0.5;
         const shouldDrawMinimalEffects =
           performanceMode === "medium" && matrixIntensity > 0.3;
-
         // Dynamic background with gradient fade
         const gradient = context.createLinearGradient(0, 0, 0, canvas.height);
         gradient.addColorStop(
@@ -511,7 +453,6 @@ export const useMatrixRain = (
         );
         context.fillStyle = gradient;
         context.fillRect(0, 0, canvas.width, canvas.height);
-
         // Enhanced scanline effects with dynamic intensity
         if (shouldDrawEffects && frameCount % 3 === 0) {
           const scanlineIntensity = matrixIntensity * 0.02;
@@ -520,7 +461,6 @@ export const useMatrixRain = (
           for (let i = 0; i < canvas.height; i += scanlineStep) {
             context.fillRect(0, i, canvas.width, 1);
           }
-
           // Add horizontal scanlines for more depth
           if (performanceMode === "high") {
             context.fillStyle = `rgba(0, 255, 100, ${scanlineIntensity * 0.5})`;
@@ -529,7 +469,6 @@ export const useMatrixRain = (
             }
           }
         }
-
         // Enhanced border with pulsing effect
         if (
           performanceMode !== "minimal" &&
@@ -540,7 +479,6 @@ export const useMatrixRain = (
           context.strokeStyle = `rgba(0, 255, 0, ${pulseIntensity})`;
           context.lineWidth = 2;
           context.strokeRect(0, 0, canvas.width, canvas.height);
-
           // Add corner accents
           if (performanceMode === "high") {
             context.strokeStyle = `rgba(0, 255, 255, ${pulseIntensity * 0.7})`;
@@ -567,20 +505,17 @@ export const useMatrixRain = (
             );
           }
         }
-
         // Enhanced cursor effect with blinking
         if (performanceMode !== "minimal" && frameCount % 15 === 0) {
           const blinkPhase = Math.sin(frameCount * 0.2) * 0.5 + 0.5;
           context.fillStyle = `rgba(0, 255, 0, ${blinkPhase * 0.6})`;
           context.fillRect(canvas.width - 12, 12, 4, 8);
-
           // Add cursor trail effect
           if (performanceMode === "high") {
             context.fillStyle = `rgba(0, 255, 0, ${blinkPhase * 0.2})`;
             context.fillRect(canvas.width - 16, 16, 2, 4);
           }
         }
-
         // Add particle effects for high performance mode
         if (
           performanceMode === "high" &&
@@ -593,7 +528,6 @@ export const useMatrixRain = (
           const particleSize = Math.random() * 3 + 1;
           context.fillRect(particleX, particleY, particleSize, particleSize);
         }
-
         // Ultra-lightweight drop rendering
         const performanceBasedMaxDrops = Math.floor(
           maxDrops *
@@ -608,7 +542,6 @@ export const useMatrixRain = (
           0,
           Math.min(dropsRef.current.length, performanceBasedMaxDrops),
         );
-
         // Reduced drop skipping for smoother effect
         // biome-ignore lint/suspicious/noImplicitAnyLet: Legacy variable declaration
         let skipFactor;
@@ -625,20 +558,16 @@ export const useMatrixRain = (
           default: // 'high'
             skipFactor = 1; // Render all drops for smoother effect
         }
-
         // Batch context operations for maximum efficiency
         context.save();
         context.globalAlpha =
           matrixIntensity * (performanceMode === "minimal" ? 0.6 : 0.8);
-
         for (let i = activeDrops.length - 1; i >= 0; i -= skipFactor) {
           const drop = activeDrops[i];
           drop.update();
           drop.draw();
         }
-
         context.restore();
-
         // Ultra-minimal glitch effects (only on high-end devices)
         if (
           performanceMode === "high" &&
@@ -649,18 +578,14 @@ export const useMatrixRain = (
           const glitchY = Math.random() * canvas.height;
           context.fillRect(0, glitchY, canvas.width, 1);
         }
-
         lastTime = currentTime;
       }
     };
-
     const animate = (currentTime: number) => {
       draw(currentTime);
       animationFrameRef.current = window.requestAnimationFrame(animate);
     };
-
     animate(0);
-
     return () => {
       window.removeEventListener("resize", resizeCanvas);
       if (animationFrameRef.current) {
@@ -692,7 +617,6 @@ export const useMatrixRain = (
     isTransitioning,
     returnTrailItem,
   ]);
-
   // Cleanup effect for component unmount
   useEffect(() => {
     return () => {
@@ -710,6 +634,5 @@ export const useMatrixRain = (
       }
     };
   }, []);
-
   return canvasRef;
 };
