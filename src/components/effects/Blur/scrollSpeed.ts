@@ -2,7 +2,7 @@ import {
   copyPoint,
   createTimeout,
   subtractPoints,
-  throttleTS,
+  throttle,
   type Point,
 } from "../../../utils/commonUtils";
 
@@ -67,7 +67,7 @@ export function initializeScrollSpeedWatcher(
   };
 
   // Throttle scroll handler to run at most every 8ms for more responsive updates
-  const handleScroll = throttleTS((_event: unknown) => {
+  const handleScroll = throttle((_event: unknown) => {
     if (rafId === null && !isProgrammaticScroll) {
       rafId = requestAnimationFrame(updateFrame);
     }
