@@ -183,7 +183,7 @@ const MemoizedTimelineBar = React.memo(TimelineBar);
 
 interface WorkProps {
   db?: {
-    work: any[];
+    work: any[]; // biome-ignore lint/suspicious/noExplicitAny: External data
   };
 }
 
@@ -216,6 +216,7 @@ function Work({ db: propsDb }: WorkProps = {}) {
   // Data processing
   // Make a deep copy to avoid mutating the original data in context
   const jobs: Job[] = ((db?.work as any[]) || []).map((job) => ({
+    // biome-ignore lint/suspicious/noExplicitAny: Data transformation
     ...job,
   })) as Job[];
 

@@ -5,9 +5,12 @@ import { generateItemColors } from "../../../utils/colorUtils";
 import Projects from "./Projects";
 
 jest.mock("react-db-google-sheets", () => ({
-  withGoogleSheets: () => (Component: any) => (props: any) => (
-    <Component {...props} />
-  ),
+  withGoogleSheets:
+    () =>
+    (Component: any) =>
+    (
+      props: any, // biome-ignore lint/suspicious/noExplicitAny: Mocking external library
+    ) => <Component {...props} />,
 }));
 
 jest.mock("../../../utils/colorUtils", () => {

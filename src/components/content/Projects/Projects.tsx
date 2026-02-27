@@ -139,7 +139,7 @@ function ProjectCard({
 }
 interface ProjectsProps {
   db?: {
-    projects: any[];
+    projects: any[]; // biome-ignore lint/suspicious/noExplicitAny: External data
   };
 }
 
