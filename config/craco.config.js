@@ -36,7 +36,7 @@ module.exports = {
 
       // Explicitly disable ESLint plugin in webpack config
       webpackConfig.plugins = webpackConfig.plugins.filter(
-        (plugin) => plugin.constructor.name !== "ESLintWebpackPlugin"
+        (plugin) => plugin.constructor.name !== "ESLintWebpackPlugin",
       );
 
       return webpackConfig;
@@ -45,7 +45,7 @@ module.exports = {
   // Ensure craco doesn't add it back
   eslint: {
     enable: false,
-    mode: 'file',
+    mode: "file",
   },
   style: {
     sass: {
