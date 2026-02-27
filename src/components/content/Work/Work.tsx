@@ -216,10 +216,8 @@ function Work({ db: propsDb }: WorkProps = {}) {
 
   // Data processing
   // Make a deep copy to avoid mutating the original data in context
-  const jobs: Job[] = ((db?.work as any[]) || []).map((job) => ({
-    // biome-ignore lint/suspicious/noExplicitAny: Data transformation
-    ...job,
-  })) as Job[];
+  // biome-ignore lint/suspicious/noExplicitAny: Data transformation
+  const jobs: Job[] = ((db?.work as any[]) || []).map((job) => ({})) as Job[];
 
   let first_date = moment();
 
