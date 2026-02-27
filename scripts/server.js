@@ -28,12 +28,12 @@ app.use(cors());
 app.use(express.json());
 
 // Health check endpoint
-app.get("/api/health", (req, res) => {
+app.get("/api/health", (_req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
 // Proxy endpoint for querying Notion databases
-app.post("/api/notion/database/:databaseType/query", async (req, res) => {
+app.post("/api/notion/database/:databaseType/query", async (_req, res) => {
   try {
     const { databaseType } = req.params;
     const databaseId = DATABASE_IDS[databaseType.toUpperCase()];
