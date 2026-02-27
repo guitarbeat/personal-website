@@ -1,13 +1,7 @@
 import moment from "moment";
 import PropTypes from "prop-types";
 // Import required libraries and components
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 // import { withGoogleSheets } from "react-db-google-sheets";
 import { useNotion } from "../../../contexts/NotionContext";
 import { cn } from "../../../utils/commonUtils";
@@ -189,6 +183,7 @@ const MemoizedTimelineBar = React.memo(TimelineBar);
 
 interface WorkProps {
   db?: {
+    // biome-ignore lint/suspicious/noExplicitAny: Legacy type
     work: any[];
   };
 }
@@ -222,6 +217,7 @@ function Work({ db: propsDb }: WorkProps = {}) {
   // Data processing
   const { jobs, first_date, job_bars } = useMemo(() => {
     // Make a deep copy to avoid mutating the original data in context
+    // biome-ignore lint/suspicious/noExplicitAny: Legacy data structure requires any cast
     const jobs: Job[] = ((db?.work as any[]) || []).map((job) => ({
       ...job,
     })) as Job[];
