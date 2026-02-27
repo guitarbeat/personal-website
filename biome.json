@@ -10,7 +10,7 @@
     }
   },
   "files": {
-    "includes": ["**", "!public/build", "!.vscode", "!src/css/styles.css", "!dist", "!build"]
+    "ignore": ["dist", "build", "public/build", ".vscode", "src/css/styles.css", "package-lock.json", "pnpm-lock.yaml"]
   },
   "formatter": {
     "enabled": true,
