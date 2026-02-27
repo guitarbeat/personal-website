@@ -18,12 +18,12 @@ class Drop {
   changeInterval: number;
   frame: number;
   brightness: boolean;
-  // biome-ignore lint/suspicious/noExplicitAny: Legacy matrix implementation
+  // biome-ignore lint/suspicious/noExplicitAny: Legacy untyped code
   getTrailItem: (() => any) | null;
-  // biome-ignore lint/suspicious/noExplicitAny: Legacy matrix implementation
+  // biome-ignore lint/suspicious/noExplicitAny: Legacy untyped code
   returnTrailItem: ((item: any) => void) | null;
   trailLength: number;
-  // biome-ignore lint/suspicious/noExplicitAny: Legacy matrix implementation
+  // biome-ignore lint/suspicious/noExplicitAny: Legacy untyped code
   trail: any[];
   speed!: number;
   fontSize!: number;
@@ -41,9 +41,9 @@ class Drop {
     canvas: HTMLCanvasElement,
     context: CanvasRenderingContext2D,
     performanceMode: string = "high",
-    // biome-ignore lint/suspicious/noExplicitAny: Legacy matrix implementation
+    // biome-ignore lint/suspicious/noExplicitAny: Legacy untyped code
     getTrailItem: (() => any) | null = null,
-    // biome-ignore lint/suspicious/noExplicitAny: Legacy matrix implementation
+    // biome-ignore lint/suspicious/noExplicitAny: Legacy untyped code
     returnTrailItem: ((item: any) => void) | null = null,
   ) {
     this.x = x;
@@ -255,7 +255,7 @@ export const useMatrixRain = (
   const { isMobile, isTablet } = useMobileDetection();
 
   // Object pool for trail items to reduce allocations
-  // biome-ignore lint/suspicious/noExplicitAny: Legacy matrix implementation
+  // biome-ignore lint/suspicious/noExplicitAny: Legacy untyped code
   const trailItemPool = useRef<any[]>([]);
   const getTrailItem = useCallback(() => {
     if (trailItemPool.current.length > 0) {
@@ -263,7 +263,7 @@ export const useMatrixRain = (
     }
     return { char: "", y: 0, opacity: 0, colorIndex: 0, brightness: false };
   }, []);
-  // biome-ignore lint/suspicious/noExplicitAny: Legacy matrix implementation
+  // biome-ignore lint/suspicious/noExplicitAny: Legacy untyped code
   const returnTrailItem = useCallback((item: any) => {
     if (trailItemPool.current.length < 100) {
       // Limit pool size
