@@ -71,6 +71,6 @@ describe("Matrix Performance", () => {
     }
     const end = performance.now();
 
-    expect(end - start).toBeLessThan(1000); // 50 keys in <1s
+    expect(end - _start).toBeLessThan(1000); // 50 keys in <1s
   });
 });
