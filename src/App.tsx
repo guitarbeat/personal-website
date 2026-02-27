@@ -67,7 +67,6 @@ interface LayoutProps {
   children: React.ReactNode;
   navItems: Record<string, string>;
   onMatrixActivate: () => void;
-  onScrollActivate: () => void;
   isInScroll: boolean;
   hideNavBar: boolean;
   showMatrix?: boolean;
@@ -81,7 +80,6 @@ const Layout = memo(
     children,
     navItems,
     onMatrixActivate,
-    onScrollActivate,
     isInScroll,
     hideNavBar,
   }: LayoutProps) => (
@@ -221,7 +219,6 @@ const MatrixRouteSync = ({
 interface MainRoutesProps {
   navItems: Record<string, string>;
   onMatrixActivate: () => void;
-  onScrollActivate: () => void;
   isScrollMode: boolean;
   isUnlocked: boolean;
   isInScroll: boolean;
@@ -233,7 +230,6 @@ interface MainRoutesProps {
 const MainRoutes = ({
   navItems,
   onMatrixActivate,
-  onScrollActivate,
   isScrollMode,
   isUnlocked,
   isInScroll,
@@ -251,7 +247,6 @@ const MainRoutes = ({
           <Layout
             navItems={navItems}
             onMatrixActivate={onMatrixActivate}
-            onScrollActivate={onScrollActivate}
             isInScroll={currentIsInScroll}
             showMatrix={showMatrix}
             onMatrixReady={onMatrixReady}
@@ -272,7 +267,6 @@ const MainRoutes = ({
           <Layout
             navItems={navItems}
             onMatrixActivate={onMatrixActivate}
-            onScrollActivate={onScrollActivate}
             isInScroll={true}
             showMatrix={showMatrix}
             onMatrixReady={onMatrixReady}
@@ -409,7 +403,6 @@ const AppContent = () => {
           <MainRoutes
             navItems={NAV_ITEMS}
             onMatrixActivate={handleMatrixActivate}
-            onScrollActivate={handleScrollActivate}
             isScrollMode={isScrollMode}
             isUnlocked={isUnlocked}
             isInScroll={isInScroll}
