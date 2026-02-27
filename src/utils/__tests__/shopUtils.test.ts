@@ -1,4 +1,64 @@
-import { parsePrintfulProduct } from "../shopUtils";
+import { handlePrintfulError, parsePrintfulProduct } from "../shopUtils";
+
+describe("handlePrintfulError", () => {
+  it("should format standard API error with status and statusText", () => {
+    const error = {
+      response: {
+        status: 404,
+        statusText: "Not Found",
+      },
+    };
+    const result = handlePrintfulError(error);
+    expect(result).toBe("API Error: 404 - Not Found");
+  });
+
+  it("should fallback to error message if statusText is missing", () => {
+    const error = {
+      response: {
+        status: 500,
+      },
+      message: "Internal Server Error",
+    };
+    const result = handlePrintfulError(error);
+    expect(result).toBe("API Error: 500 - Internal Server Error");
+  });
+
+  it("should handle error without response property", () => {
+    const error = {
+      message: "Network request failed",
+    };
+    const result = handlePrintfulError(error);
+    expect(result).toBe("API Error: undefined - Network request failed");
+  });
+
+  it("should return specific message for CORS Network Error", () => {
+    const error = {
+      message: "Network Error",
+    };
+    const result = handlePrintfulError(error);
+    expect(result).toContain("CORS Error: Unable to connect to Printful API");
+  });
+
+  it("should return specific message for CORS ERR_NETWORK code", () => {
+    const error = {
+      code: "ERR_NETWORK",
+      message: "Some other message",
+    };
+    const result = handlePrintfulError(error);
+    expect(result).toContain("CORS Error: Unable to connect to Printful API");
+  });
+
+  it("should use custom context if provided", () => {
+    const error = {
+      response: {
+        status: 400,
+        statusText: "Bad Request",
+      },
+    };
+    const result = handlePrintfulError(error, "Custom Context");
+    expect(result).toBe("Custom Context: 400 - Bad Request");
+  });
+});
 
 describe("parsePrintfulProduct", () => {
   it("should return default values for null product", () => {
