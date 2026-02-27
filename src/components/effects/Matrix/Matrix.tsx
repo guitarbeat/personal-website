@@ -1224,13 +1224,14 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                 </div>
                 <p className="hack-sequencer__feedback">{hackFeedback}</p>
               </div>
-              <div
+              <div role="button" tabIndex={0} onKeyDown={handleHackKeyDown}
                 className="hack-input-viewport"
                 onMouseDown={handleViewportEngage}
                 onTouchStart={handleViewportEngage}
               >
                 <div className="hack-input-stream" aria-hidden="true">
                   {consoleDisplay.split("\n").map((line, i) => {
+                    // biome-ignore lint/suspicious/noArrayIndexKey: Console logs are append-only and order is stable
                     let className = "hack-line";
                     if (line.includes("[ERR]") || line.includes("failed"))
                       className += " error";
