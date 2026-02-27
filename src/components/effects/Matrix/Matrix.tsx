@@ -1225,7 +1225,8 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                 <p className="hack-sequencer__feedback">{hackFeedback}</p>
               </div>
               <div
-                className="hack-input-viewport"
+                className="hack-input-viewport" role="button" tabIndex={0} // biome-ignore lint/a11y/useSemanticElements: Semantic button may break layout in this specific terminal emulation context
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { handleViewportEngage(); } }}
                 onMouseDown={handleViewportEngage}
                 onTouchStart={handleViewportEngage}
               >
@@ -1247,7 +1248,7 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                       className += " prompt";
 
                     return (
-                      <div key={i} className={className}>
+                      <div key={`${i}-${line.substring(0, 10)}`} className={className}>
                         {line}
                       </div>
                     );
