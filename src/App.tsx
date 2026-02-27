@@ -20,7 +20,6 @@ import {
 import { NotionProvider } from "./contexts/NotionContext";
 import "./sass/main.scss";
 import {
-  // GOOGLE_SHEETS_CONFIG,
   NAV_ITEMS,
 } from "./components/Core/constants";
 import { BlurSection } from "./components/effects/Blur/index";
