@@ -149,7 +149,11 @@
     "sourceMap": true,
     "sourceMapEmbed": true
   },
+  "overrides": {
+    "jest": "27.5.1"
+  },
   "resolutions": {
+    "jest": "27.5.1",
     "sass-loader": "^13.3.2",
     "postcss": "^8.5.6",
     "svgo": "^4.0.0",
@@ -157,7 +161,6 @@
     "@svgr/webpack": "^8.1.0",
     "resolve-url-loader": "^5.0.0"
   },
-  "overrides": {},
   "repository": {
     "type": "git",
     "url": "https://github.com/guitarbeat/Personal-Website"
