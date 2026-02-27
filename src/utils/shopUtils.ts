@@ -6,63 +6,41 @@ import { useState } from "react";
  */
 
 // ----------------------------------------------------------------------
-// Configuration
-// ----------------------------------------------------------------------
-
-// Environment variable names
-const API_KEY_VAR = "REACT_APP_PRINTFUL_API_KEY";
-const STORE_ID_VAR = "REACT_APP_PRINTFUL_STORE_ID";
-
-export interface PrintfulConfig {
-  apiKey: string;
-  storeId: string;
-}
-
-/**
- * Validates that required environment variables are set
- * @throws {Error} If required environment variables are missing
- */
-export const validatePrintfulConfig = (): PrintfulConfig => {
-  const apiKey = process.env[API_KEY_VAR];
-  const storeId = process.env[STORE_ID_VAR];
-
-  if (!apiKey) {
-    throw new Error(`${API_KEY_VAR} is not set`);
-  }
-  if (!storeId) {
-    throw new Error(`${STORE_ID_VAR} is not set`);
-  }
-
-  return { apiKey, storeId };
-};
-
-/**
- * Gets Printful configuration with validation
- * @returns {PrintfulConfig} Configuration object with apiKey and storeId
- */
-export const getPrintfulConfig = (): PrintfulConfig => {
-  return validatePrintfulConfig();
-};
-
-/**
- * Creates axios headers for Printful API calls
- */
-export const createPrintfulHeaders = (
-  apiKey: string,
-): Record<string, string> => ({
-  Authorization: `Bearer ${apiKey}`,
-});
-
-export const createPrintfulJsonHeaders = (
-  apiKey: string,
-): Record<string, string> => ({
-  Authorization: `Bearer ${apiKey}`,
-  "Content-Type": "application/json",
-});
-
-// ----------------------------------------------------------------------
 // Helpers
 // ----------------------------------------------------------------------
+
+// API Base URL (same as Notion)
+const API_BASE = process.env.REACT_APP_API_BASE || "";
+
+/**
+ * Fetches data from Printful API via the backend proxy
+ * @param endpoint The Printful API endpoint (e.g., 'store/products')
+ */
+// biome-ignore lint/suspicious/noExplicitAny: Returns raw API response
+export const fetchFromPrintful = async (endpoint: string): Promise<any> => {
+  try {
+    // Construct the URL for the proxy
+    const proxyUrl = `${API_BASE}/api/printful?endpoint=${encodeURIComponent(endpoint)}`;
+
+    const response = await fetch(proxyUrl, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `Printful API Error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching from Printful:", error);
+    throw error;
+  }
+};
 
 /**
  * Handles Printful API errors with specific CORS error detection
@@ -73,12 +51,12 @@ export const handlePrintfulError = (
 ): string => {
   // biome-ignore lint/suspicious/noExplicitAny: Error handling for unknown external error shapes
   const error = err as any;
-  let errorMessage = `${context}: ${error.response?.status} - ${error.response?.statusText || error.message}`;
+  let errorMessage = `${context}: ${error.response?.status || ""} - ${error.response?.statusText || error.message}`;
 
-  // Handle CORS errors specifically
-  if (error.message === "Network Error" || error.code === "ERR_NETWORK") {
+  // Handle network/CORS errors
+  if (error.message === "Network Error" || error.code === "ERR_NETWORK" || error.message?.includes("Failed to fetch")) {
     errorMessage =
-      "CORS Error: Unable to connect to Printful API. Please ensure the development server is running with the correct proxy configuration.";
+      "Network Error: Unable to connect to the backend API. Please check your connection.";
   }
 
   return errorMessage;
