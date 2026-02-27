@@ -68,7 +68,7 @@ interface LayoutProps {
   children: React.ReactNode;
   navItems: Record<string, string>;
   onMatrixActivate: () => void;
-  _onScrollActivate: () => void;
+  onScrollActivate: () => void;
   isInScroll: boolean;
   hideNavBar: boolean;
   showMatrix?: boolean;
@@ -222,7 +222,7 @@ const MatrixRouteSync = ({
 interface MainRoutesProps {
   navItems: Record<string, string>;
   onMatrixActivate: () => void;
-  _onScrollActivate: () => void;
+  onScrollActivate: () => void;
   isScrollMode: boolean;
   isUnlocked: boolean;
   isInScroll: boolean;
