@@ -68,7 +68,7 @@ interface LayoutProps {
   children: React.ReactNode;
   navItems: Record<string, string>;
   onMatrixActivate: () => void;
-  onScrollActivate: () => void;
+  // onScrollActivate: () => void; // Removed unused prop
   isInScroll: boolean;
   hideNavBar: boolean;
   showMatrix?: boolean;
@@ -82,7 +82,7 @@ const Layout = memo(
     children,
     navItems,
     onMatrixActivate,
-    onScrollActivate,
+    // onScrollActivate, // Removed unused prop
     isInScroll,
     hideNavBar,
   }: LayoutProps) => (
@@ -96,7 +96,6 @@ const Layout = memo(
         <NavBar
           items={navItems}
           onMatrixActivate={onMatrixActivate}
-
           isInShop={isInScroll}
         />
       )}
@@ -222,7 +221,7 @@ const MatrixRouteSync = ({
 interface MainRoutesProps {
   navItems: Record<string, string>;
   onMatrixActivate: () => void;
-  onScrollActivate: () => void;
+  // onScrollActivate: () => void; // Removed unused prop
   isScrollMode: boolean;
   isUnlocked: boolean;
   isInScroll: boolean;
@@ -234,7 +233,7 @@ interface MainRoutesProps {
 const MainRoutes = ({
   navItems,
   onMatrixActivate,
-  onScrollActivate,
+  // onScrollActivate, // Removed unused prop
   isScrollMode,
   isUnlocked,
   isInScroll,
@@ -252,7 +251,7 @@ const MainRoutes = ({
           <Layout
             navItems={navItems}
             onMatrixActivate={onMatrixActivate}
-            onScrollActivate={onScrollActivate}
+            // onScrollActivate={onScrollActivate} // Removed unused prop
             isInScroll={currentIsInScroll}
             showMatrix={showMatrix}
             onMatrixReady={onMatrixReady}
@@ -273,7 +272,7 @@ const MainRoutes = ({
           <Layout
             navItems={navItems}
             onMatrixActivate={onMatrixActivate}
-            onScrollActivate={onScrollActivate}
+            // onScrollActivate={onScrollActivate} // Removed unused prop
             isInScroll={true}
             showMatrix={showMatrix}
             onMatrixReady={onMatrixReady}
@@ -375,7 +374,7 @@ const AppContent = () => {
   const handleRouteMatrixChange = useCallback((shouldShow: boolean) => {
     setShowMatrix((prev) => (prev === shouldShow ? prev : shouldShow));
   }, []);
-  const handleScrollActivate = useCallback(() => setIsScrollMode(true), []);
+  // const handleScrollActivate = useCallback(() => setIsScrollMode(true), []); // Unused
 
   // Matrix ready callback - will be set by Matrix component
   const matrixReadyCallbackRef = useRef<(() => void) | null>(null);
@@ -410,7 +409,7 @@ const AppContent = () => {
           <MainRoutes
             navItems={NAV_ITEMS}
             onMatrixActivate={handleMatrixActivate}
-            onScrollActivate={handleScrollActivate}
+            // onScrollActivate={handleScrollActivate} // Removed unused prop
             isScrollMode={isScrollMode}
             isUnlocked={isUnlocked}
             isInScroll={isInScroll}
