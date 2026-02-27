@@ -185,7 +185,6 @@ interface MatrixProps {
 // * Sub-components (Consolidated)
 // * --------------------------------------------------------------------------------
 
-
 interface NuUhUhEasterEggProps {
   onClose: () => void;
   id?: number;
@@ -1230,7 +1229,11 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
+                  if (
+                    e.key === "Enter" ||
+                    e.key === " " ||
+                    e.key === "Spacebar"
+                  ) {
                     e.preventDefault();
                     handleViewportEngage();
                   }
