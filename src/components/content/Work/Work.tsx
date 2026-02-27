@@ -165,7 +165,7 @@ const MemoizedTimelineBar = React.memo(TimelineBar);
 
 interface WorkProps {
   db?: {
-    work: any[];
+    work: Job[];
   };
 }
 
@@ -197,7 +197,7 @@ function Work({ db: propsDb }: WorkProps = {}) {
 
   // Data processing
   // Make a deep copy to avoid mutating the original data in context
-  const jobs: Job[] = ((db?.work as any[]) || []).map((job) => ({
+  const jobs: Job[] = ((db?.work || []) as Job[]).map((job) => ({
     ...job,
   })) as Job[];
 
