@@ -1,0 +1,27 @@
+{
+  "files": {
+    "main.js": "/static/js/main.884345b0.js",
+    "static/css/933.f5f69b6e.chunk.css": "/static/css/933.f5f69b6e.chunk.css",
+    "static/js/933.3e423283.chunk.js": "/static/js/933.3e423283.chunk.js",
+    "static/js/608.573c0c6b.chunk.js": "/static/js/608.573c0c6b.chunk.js",
+    "static/js/759.b482bdcb.chunk.js": "/static/js/759.b482bdcb.chunk.js",
+    "static/media/profile2-nbg.png": "/static/media/profile2-nbg.141828b168292f75bbf4.png",
+    "static/media/nu-uh-uh.webp": "/static/media/nu-uh-uh.aea10a59a426161a4ee6.webp",
+    "static/media/shell.png": "/static/media/shell.0deee315480ba753c347.png",
+    "static/media/cv.pdf": "/static/media/cv.99370efea0054499516a.pdf",
+    "static/media/profile1-nbg.png": "/static/media/profile1-nbg.513780f1bba8cd9d7f04.png",
+    "static/media/profile3-nbg.png": "/static/media/profile3-nbg.217a086f01f4da8c21ae.png",
+    "static/media/didn't-say-the-magic-word.mp3": "/static/media/didn't-say-the-magic-word.da620a39acf228ccc11d.mp3",
+    "static/media/profile4.png": "/static/media/profile4.007a174959a1d7a6d0d2.png",
+    "index.html": "/index.html",
+    "static/media/didnt-say-the-magic-word.vtt": "/static/media/didnt-say-the-magic-word.b17d1e581ac28b276883.vtt",
+    "main.884345b0.js.map": "/static/js/main.884345b0.js.map",
+    "933.f5f69b6e.chunk.css.map": "/static/css/933.f5f69b6e.chunk.css.map",
+    "933.3e423283.chunk.js.map": "/static/js/933.3e423283.chunk.js.map",
+    "608.573c0c6b.chunk.js.map": "/static/js/608.573c0c6b.chunk.js.map",
+    "759.b482bdcb.chunk.js.map": "/static/js/759.b482bdcb.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/js/main.884345b0.js"
+  ]
+}

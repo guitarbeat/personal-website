@@ -80,7 +80,8 @@ const Layout = memo(
     children,
     navItems,
     onMatrixActivate,
-    _onScrollActivate,
+    // biome-ignore lint/correctness/noUnusedFunctionParameters: Used in other layouts but not here
+    onScrollActivate: _onScrollActivate,
     isInScroll,
     hideNavBar,
   }: LayoutProps) => (
@@ -232,7 +233,7 @@ interface MainRoutesProps {
 const MainRoutes = ({
   navItems,
   onMatrixActivate,
-  _onScrollActivate,
+  onScrollActivate,
   isScrollMode,
   isUnlocked,
   isInScroll,
