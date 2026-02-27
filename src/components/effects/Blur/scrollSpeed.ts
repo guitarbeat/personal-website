@@ -1,9 +1,9 @@
 import {
   copyPoint,
   createTimeout,
+  type Point,
   subtractPoints,
   throttleTS,
-  type Point,
 } from "../../../utils/commonUtils";
 
 function getElementScrollPosition(element: HTMLElement): Point {
@@ -61,9 +61,11 @@ export function initializeScrollSpeedWatcher(
       updateSpeed(newSpeed);
       clearSpeedTimeout();
       clearSpeedTimeout = createTimeout(clearSpeed, 30);
-    }
 
-    rafId = requestAnimationFrame(updateFrame);
+      rafId = requestAnimationFrame(updateFrame);
+    } else {
+      rafId = null;
+    }
   };
 
   // Throttle scroll handler to run at most every 8ms for more responsive updates
