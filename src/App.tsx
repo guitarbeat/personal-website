@@ -20,7 +20,6 @@ import {
 import { NotionProvider } from "./contexts/NotionContext";
 import "./sass/main.scss";
 import {
-  // GOOGLE_SHEETS_CONFIG,
   NAV_ITEMS,
 } from "./components/Core/constants";
 import { BlurSection } from "./components/effects/Blur/index";
@@ -68,7 +67,6 @@ interface LayoutProps {
   children: React.ReactNode;
   navItems: Record<string, string>;
   onMatrixActivate: () => void;
-  onScrollActivate: () => void;
   isInScroll: boolean;
   hideNavBar: boolean;
   showMatrix?: boolean;
@@ -82,7 +80,6 @@ const Layout = memo(
     children,
     navItems,
     onMatrixActivate,
-    onScrollActivate,
     isInScroll,
     hideNavBar,
   }: LayoutProps) => (
@@ -222,7 +219,6 @@ const MatrixRouteSync = ({
 interface MainRoutesProps {
   navItems: Record<string, string>;
   onMatrixActivate: () => void;
-  onScrollActivate: () => void;
   isScrollMode: boolean;
   isUnlocked: boolean;
   isInScroll: boolean;
@@ -234,7 +230,6 @@ interface MainRoutesProps {
 const MainRoutes = ({
   navItems,
   onMatrixActivate,
-  onScrollActivate,
   isScrollMode,
   isUnlocked,
   isInScroll,
@@ -252,7 +247,6 @@ const MainRoutes = ({
           <Layout
             navItems={navItems}
             onMatrixActivate={onMatrixActivate}
-            onScrollActivate={onScrollActivate}
             isInScroll={currentIsInScroll}
             showMatrix={showMatrix}
             onMatrixReady={onMatrixReady}
@@ -273,7 +267,6 @@ const MainRoutes = ({
           <Layout
             navItems={navItems}
             onMatrixActivate={onMatrixActivate}
-            onScrollActivate={onScrollActivate}
             isInScroll={true}
             showMatrix={showMatrix}
             onMatrixReady={onMatrixReady}
@@ -375,7 +368,7 @@ const AppContent = () => {
   const handleRouteMatrixChange = useCallback((shouldShow: boolean) => {
     setShowMatrix((prev) => (prev === shouldShow ? prev : shouldShow));
   }, []);
-  const handleScrollActivate = useCallback(() => setIsScrollMode(true), []);
+  // Removed handleScrollActivate as it's unused
 
   // Matrix ready callback - will be set by Matrix component
   const matrixReadyCallbackRef = useRef<(() => void) | null>(null);
@@ -410,7 +403,6 @@ const AppContent = () => {
           <MainRoutes
             navItems={NAV_ITEMS}
             onMatrixActivate={handleMatrixActivate}
-            onScrollActivate={handleScrollActivate}
             isScrollMode={isScrollMode}
             isUnlocked={isUnlocked}
             isInScroll={isInScroll}
