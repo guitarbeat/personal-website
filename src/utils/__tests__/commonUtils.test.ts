@@ -15,6 +15,16 @@ import {
 } from "../commonUtils";
 
 describe("commonUtils", () => {
+  // Use fake timers for the entire suite to avoid switching issues
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.clearAllTimers();
+    jest.useRealTimers();
+  });
+
   describe("clamp", () => {
     it("returns value when within range", () => {
       expect(clamp(5, 0, 10)).toBe(5);
@@ -143,8 +153,6 @@ describe("commonUtils", () => {
   });
 
   describe("createTimeout", () => {
-      jest.useFakeTimers();
-
       it("executes callback after delay", () => {
           const cb = jest.fn();
           createTimeout(cb, 100);
@@ -160,19 +168,9 @@ describe("commonUtils", () => {
           jest.advanceTimersByTime(100);
           expect(cb).not.toHaveBeenCalled();
       });
-
-      jest.useRealTimers();
   });
 
   describe("throttle", () => {
-    beforeEach(() => {
-      jest.useFakeTimers();
-    });
-
-    afterEach(() => {
-      jest.useRealTimers();
-    });
-
     it("executes immediately", () => {
       const func = jest.fn();
       const throttledFunc = throttle(func, 100);
@@ -200,14 +198,6 @@ describe("commonUtils", () => {
   });
 
   describe("debounce", () => {
-    beforeEach(() => {
-      jest.useFakeTimers();
-    });
-
-    afterEach(() => {
-      jest.useRealTimers();
-    });
-
     it("does not execute immediately by default", () => {
       const func = jest.fn();
       const debouncedFunc = debounce(func, 100);
@@ -246,14 +236,6 @@ describe("commonUtils", () => {
   });
 
   describe("throttleAdvanced", () => {
-    beforeEach(() => {
-      jest.useFakeTimers();
-    });
-
-    afterEach(() => {
-      jest.useRealTimers();
-    });
-
     it("executes leading edge and trailing edge by default", () => {
       const func = jest.fn();
       const throttledFunc = throttleAdvanced(func, 100);

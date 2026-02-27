@@ -1,7 +1,15 @@
 import { render } from "@testing-library/react";
 import moment from "moment";
-
 import Work from "./Work";
+
+// Mock useNotion
+jest.mock("../../../contexts/NotionContext", () => ({
+  useNotion: () => ({
+    db: { work: [] },
+    loading: false,
+    error: null,
+  }),
+}));
 
 describe("Work timeline", () => {
   beforeAll(() => {
