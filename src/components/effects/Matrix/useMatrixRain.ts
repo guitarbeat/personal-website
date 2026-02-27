@@ -283,11 +283,10 @@ export const useMatrixRain = (
     const isOldBrowser =
       !window.requestAnimationFrame || !window.cancelAnimationFrame;
         // biome-ignore lint/suspicious/noExplicitAny: Navigator extension properties
+    const nav: any = navigator;
     const isSlowDevice =
-            // biome-ignore lint/suspicious/noExplicitAny: Navigator extension properties
-      (navigator as any).deviceMemory && (navigator as any).deviceMemory < 4;
-        // biome-ignore lint/suspicious/noExplicitAny: Navigator extension properties
-    const _isLowBattery = (navigator as any)
+      nav.deviceMemory && nav.deviceMemory < 4;
+    const _isLowBattery = nav
       .getBattery?.()
             // biome-ignore lint/suspicious/noExplicitAny: Navigator extension properties
       .then((battery: any) => battery.level < 0.2);
