@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.3.5/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.4.4/schema.json",
   "linter": {
     "enabled": true,
     "rules": {
@@ -10,7 +10,19 @@
     }
   },
   "files": {
-    "includes": ["**", "!public/build", "!.vscode", "!src/css/styles.css"]
+    "includes": [
+      "src/**/*.ts",
+      "src/**/*.tsx",
+      "src/**/*.js",
+      "src/**/*.jsx",
+      "scripts/**/*.js",
+      "api/**/*.js",
+      "config/**/*.js",
+      "*.js",
+      "*.json",
+      "*.ts"
+    ],
+    "ignoreUnknown": true
   },
   "formatter": {
     "enabled": true,

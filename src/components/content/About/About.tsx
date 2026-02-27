@@ -36,7 +36,8 @@ function About() {
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
   const { db } = useNotion();
 
-  const aboutTexts = db.about || [];
+  const aboutTexts =
+    (db.about as { category: string; description: string }[]) || [];
 
   const handleSectionClick = (category: string) => {
     setExpandedSection(expandedSection === category ? null : category);

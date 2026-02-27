@@ -5,9 +5,10 @@ import { generateItemColors } from "../../../utils/colorUtils";
 import Projects from "./Projects";
 
 jest.mock("react-db-google-sheets", () => ({
-  withGoogleSheets: () => (Component: any) => (props: any) => (
-    <Component {...props} />
-  ),
+  withGoogleSheets:
+    () =>
+    (Component: React.ComponentType<unknown>) =>
+    (props: Record<string, unknown>) => <Component {...props} />,
 }));
 
 jest.mock("../../../utils/colorUtils", () => {
@@ -27,7 +28,7 @@ describe("Projects", () => {
       keyword: "React",
       link: "https://example.com/react",
       content: "React project",
-      image: null,
+      image: "",
     },
     {
       title: "Project Two",
@@ -36,7 +37,7 @@ describe("Projects", () => {
       keyword: "Node",
       link: "https://example.com/node",
       content: "Node project",
-      image: null,
+      image: "",
     },
   ];
 

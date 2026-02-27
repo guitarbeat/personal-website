@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNotion } from "../../../contexts/NotionContext";
 import { generateItemColors } from "../../../utils/colorUtils";
 import { clamp, cn } from "../../../utils/commonUtils";
+import type { ProjectItem } from "../../../utils/googleSheetsUtils";
 // import { processProjectsData } from "../../../utils/googleSheetsUtils";
 import PixelCanvas from "../../effects/PixelCanvas/PixelCanvas";
 
@@ -139,7 +140,7 @@ function ProjectCard({
 }
 interface ProjectsProps {
   db?: {
-    projects: any[];
+    projects: ProjectItem[];
   };
 }
 
@@ -150,8 +151,11 @@ function Projects({ db: propsDb }: ProjectsProps = {}) {
 
   const db = propsDb || contextDb;
 
-  const projectsData = useMemo(
-    () => (Array.isArray(db?.projects) ? db.projects : []),
+  const projectsData: ProjectItem[] = useMemo(
+    () =>
+      Array.isArray(db?.projects)
+        ? (db.projects as unknown as ProjectItem[])
+        : [],
     [db?.projects],
   );
 
@@ -164,7 +168,10 @@ function Projects({ db: propsDb }: ProjectsProps = {}) {
       ),
     );
 
-    const generatedTagColors = generateItemColors(projectsData, "keyword");
+    const generatedTagColors = generateItemColors(
+      projectsData as unknown as Record<string, unknown>[],
+      "keyword",
+    );
     setTagColors(generatedTagColors);
     setActiveFilters((prevFilters) => {
       if (prevFilters.length === 0) {
@@ -194,7 +201,10 @@ function Projects({ db: propsDb }: ProjectsProps = {}) {
         ),
       );
 
-      const regeneratedTagColors = generateItemColors(projectsData, "keyword");
+      const regeneratedTagColors = generateItemColors(
+        projectsData as unknown as Record<string, unknown>[],
+        "keyword",
+      );
       setTagColors(regeneratedTagColors);
       setActiveFilters((prevFilters) => {
         if (prevFilters.length === 0) {
@@ -243,21 +253,23 @@ function Projects({ db: propsDb }: ProjectsProps = {}) {
     a.date > b.date ? -1 : 1,
   );
 
-  const project_cards = sortedProjects.map((projectProps, index) => {
-    const isFiltered = !activeFilters.includes(projectProps.keyword);
-    const tagColor = tagColors[projectProps.keyword];
-    const effect = createProjectEffect(tagColor, index);
+  const project_cards = sortedProjects.map(
+    (projectProps: ProjectItem, index: number) => {
+      const isFiltered = !activeFilters.includes(projectProps.keyword);
+      const tagColor = tagColors[projectProps.keyword];
+      const effect = createProjectEffect(tagColor, index);
 
-    return (
-      <ProjectCard
-        key={projectProps.slug}
-        {...projectProps}
-        tagColor={tagColor}
-        className={isFiltered ? "filtered-out" : ""}
-        effect={effect}
-      />
-    );
-  });
+      return (
+        <ProjectCard
+          key={projectProps.slug as string}
+          {...projectProps}
+          tagColor={tagColor}
+          className={isFiltered ? "filtered-out" : ""}
+          effect={effect}
+        />
+      );
+    },
+  );
 
   return (
     <div className="container" id="projects">

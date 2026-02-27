@@ -26,7 +26,7 @@
     "start": "craco start --config config/craco.config.js",
     "dev": "craco start --config config/craco.config.js",
     "build": "craco build --config config/craco.config.js",
-    "test": "craco test --config config/craco.config.js --passWithNoTests",
+    "test": "craco test --passWithNoTests --no-watchman",
     "eject": "react-scripts eject",
     "format": "biome format ./src --write",
     "lint": "biome lint ./src",

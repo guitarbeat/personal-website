@@ -1,7 +1,6 @@
 const path = require("node:path");
 const { execSync } = require("node:child_process");
 
-// * Get git commit hash for version info
 const getGitCommitHash = () => {
   try {
     return execSync("git rev-parse HEAD", { encoding: "utf8" }).trim();
@@ -11,7 +10,6 @@ const getGitCommitHash = () => {
   }
 };
 
-// * Get build date
 const getBuildDate = () => {
   return new Date().toISOString();
 };
@@ -19,7 +17,6 @@ const getBuildDate = () => {
 module.exports = {
   webpack: {
     configure: (webpackConfig) => {
-      // * Inject version information as environment variables
       const commitHash = getGitCommitHash();
       const buildDate = getBuildDate();
 
@@ -29,7 +26,7 @@ module.exports = {
           "process.env.REACT_APP_GIT_COMMIT_HASH": JSON.stringify(commitHash),
           "process.env.REACT_APP_BUILD_DATE": JSON.stringify(buildDate),
           "process.env.REACT_APP_VERSION": JSON.stringify(
-            require("../package.json").version,
+            require("./package.json").version,
           ),
         }),
       );
@@ -47,9 +44,9 @@ module.exports = {
           outputStyle:
             process.env.NODE_ENV === "production" ? "compressed" : "expanded",
           includePaths: [
-            path.join(__dirname, "..", "src/sass"),
-            path.join(__dirname, "..", "src/sass/theme"),
-            path.join(__dirname, "..", "src/sass"),
+            path.join(__dirname, "src/sass"),
+            path.join(__dirname, "src/sass/theme"),
+            path.join(__dirname, "src/sass"),
           ],
           fiber: false,
         },
