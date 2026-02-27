@@ -1,6 +1,6 @@
 // About section content component for the personal website.
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 // import { processAboutData } from "../../../utils/googleSheetsUtils";
 import shell from "../../../assets/images/shell.png";
 // import { withGoogleSheets } from "react-db-google-sheets";
@@ -12,24 +12,24 @@ const SPOTIFY_PROFILE_URL =
 const SPOTIFY_IMAGE_URL =
   "https://spotify-github-profile.kittinanx.com/api/view.svg?uid=31skxfoaghlkljkdiluds3g3decy&cover_image=true&theme=default&show_offline=true&background_color=121212&interchange=true&bar_color=53b14f&bar_color_cover=true";
 
-function ColorChangeOnHover({ text = "" }) {
-  const words = text.split(/\s+/).filter(Boolean);
-  const wordOccurrences = new Map();
+export function ColorChangeOnHover({ text = "" }) {
+  const content = useMemo(() => {
+    const words = text.split(/\s+/).filter(Boolean);
+    const wordOccurrences = new Map();
 
-  return (
-    <>
-      {words.map((word) => {
-        const occurrence = (wordOccurrences.get(word) ?? 0) + 1;
-        wordOccurrences.set(word, occurrence);
+    return words.map((word) => {
+      const occurrence = (wordOccurrences.get(word) ?? 0) + 1;
+      wordOccurrences.set(word, occurrence);
 
-        return (
-          <span key={`${word}-${occurrence}`} className="hover-color-change">
-            {word}{" "}
-          </span>
-        );
-      })}
-    </>
-  );
+      return (
+        <span key={`${word}-${occurrence}`} className="hover-color-change">
+          {word}{" "}
+        </span>
+      );
+    });
+  }, [text]);
+
+  return <>{content}</>;
 }
 
 function About() {

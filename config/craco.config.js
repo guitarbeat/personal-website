@@ -34,8 +34,18 @@ module.exports = {
         }),
       );
 
+      // Explicitly disable ESLint plugin in webpack config
+      webpackConfig.plugins = webpackConfig.plugins.filter(
+        (plugin) => plugin.constructor.name !== "ESLintWebpackPlugin"
+      );
+
       return webpackConfig;
     },
+  },
+  // Ensure craco doesn't add it back
+  eslint: {
+    enable: false,
+    mode: 'file',
   },
   style: {
     sass: {
