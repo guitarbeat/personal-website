@@ -5,6 +5,7 @@
 const API_BASE = process.env.REACT_APP_API_BASE || "";
 
 // Fetch data from a Notion database via Vercel serverless function
+// biome-ignore lint/suspicious/noExplicitAny: API response is untyped
 const fetchNotionDatabase = async (databaseType: string): Promise<any[]> => {
   try {
     const response = await fetch(
@@ -24,42 +25,24 @@ const fetchNotionDatabase = async (databaseType: string): Promise<any[]> => {
     const data = await response.json();
     // Serverless function returns already-transformed data as an array
     return Array.isArray(data) ? data : [];
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(`Error fetching ${databaseType} from Notion:`, error);
     return [];
   }
 };
 
-// Data is already transformed by serverless function, just pass through
-const transformProjectsData = (data: any[]): any[] => {
-  return data;
-};
-
-// Data is already transformed by serverless function, just pass through
-const transformWorkData = (data: any[]): any[] => {
-  return data;
-};
-
-// Data is already transformed by serverless function, just pass through
-const transformAboutData = (data: any[]): any[] => {
-  return data;
-};
-
 // Main Notion Service class
 class NotionService {
   async getProjects() {
-    const pages = await fetchNotionDatabase("projects");
-    return transformProjectsData(pages);
+    return fetchNotionDatabase("projects");
   }
 
   async getWork() {
-    const pages = await fetchNotionDatabase("work");
-    return transformWorkData(pages);
+    return fetchNotionDatabase("work");
   }
 
   async getAbout() {
-    const pages = await fetchNotionDatabase("about");
-    return transformAboutData(pages);
+    return fetchNotionDatabase("about");
   }
 
   async getAllData() {

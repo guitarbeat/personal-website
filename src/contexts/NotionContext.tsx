@@ -4,8 +4,11 @@ import { createContext, useContext, useEffect, useState } from "react";
 import NotionService from "../services/notionService";
 
 interface NotionData {
+  // biome-ignore lint/suspicious/noExplicitAny: Context data is untyped
   projects: any[];
+  // biome-ignore lint/suspicious/noExplicitAny: Context data is untyped
   work: any[];
+  // biome-ignore lint/suspicious/noExplicitAny: Context data is untyped
   about: any[];
 }
 
@@ -43,9 +46,9 @@ export const NotionProvider = ({ children }: { children: React.ReactNode }) => {
         const notionService = new NotionService();
         const allData = await notionService.getAllData();
         setData(allData);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Error fetching Notion data:", err);
-        setError(err.message);
+        if (err instanceof Error) setError(err.message); else setError(String(err));
       } finally {
         setLoading(false);
       }

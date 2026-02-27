@@ -1,3 +1,4 @@
+import React from "react";
 import "@testing-library/jest-dom";
 import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -5,8 +6,8 @@ import { generateItemColors } from "../../../utils/colorUtils";
 import Projects from "./Projects";
 
 jest.mock("react-db-google-sheets", () => ({
-  withGoogleSheets: () => (Component: any) => (props: any) => (
-    <Component {...props} />
+  withGoogleSheets: () => (Component: unknown) => (props: unknown) => (
+    React.createElement(Component as React.ComponentType<unknown>, props as object)
   ),
 }));
 

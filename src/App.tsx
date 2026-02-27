@@ -82,7 +82,7 @@ const Layout = memo(
     children,
     navItems,
     onMatrixActivate,
-    onScrollActivate,
+    onScrollActivate: _onScrollActivate,
     isInScroll,
     hideNavBar,
   }: LayoutProps) => (
@@ -234,7 +234,7 @@ interface MainRoutesProps {
 const MainRoutes = ({
   navItems,
   onMatrixActivate,
-  onScrollActivate,
+  onScrollActivate: _onScrollActivate,
   isScrollMode,
   isUnlocked,
   isInScroll,
@@ -252,7 +252,7 @@ const MainRoutes = ({
           <Layout
             navItems={navItems}
             onMatrixActivate={onMatrixActivate}
-            onScrollActivate={onScrollActivate}
+            onScrollActivate={_onScrollActivate}
             isInScroll={currentIsInScroll}
             showMatrix={showMatrix}
             onMatrixReady={onMatrixReady}
@@ -273,7 +273,7 @@ const MainRoutes = ({
           <Layout
             navItems={navItems}
             onMatrixActivate={onMatrixActivate}
-            onScrollActivate={onScrollActivate}
+            onScrollActivate={_onScrollActivate}
             isInScroll={true}
             showMatrix={showMatrix}
             onMatrixReady={onMatrixReady}
