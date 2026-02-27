@@ -278,7 +278,7 @@ const NuUhUhEasterEgg = ({ onClose, id: _id }: NuUhUhEasterEggProps) => {
   }, []);
 
   return (
-    <button
+    <button type="button"
       type="button"
       ref={containerRef}
       className="nuuhuh-overlay"
@@ -297,7 +297,7 @@ const NuUhUhEasterEgg = ({ onClose, id: _id }: NuUhUhEasterEggProps) => {
         className="nuuhuh-overlay__content glitch-effect"
         aria-label="Access denied Easter egg"
       >
-        <button
+        <button type="button"
           type="button"
           className="nuuhuh-overlay__close-btn"
           onClick={onClose}
@@ -320,7 +320,7 @@ const NuUhUhEasterEgg = ({ onClose, id: _id }: NuUhUhEasterEggProps) => {
         <p className="nuuhuh-overlay__hint">
           Nu-uh-uh! You didn't say the magic word.
         </p>
-        <button
+        <button type="button"
           type="button"
           className="nuuhuh-overlay__close-btn"
           onClick={onClose}
@@ -1224,13 +1224,13 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                 </div>
                 <p className="hack-sequencer__feedback">{hackFeedback}</p>
               </div>
-              <div
-                className="hack-input-viewport"
+              <button type="button"
+                className="hack-input-viewport" onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") handleViewportEngage(); }}
                 onMouseDown={handleViewportEngage}
                 onTouchStart={handleViewportEngage}
               >
                 <div className="hack-input-stream" aria-hidden="true">
-                  {consoleDisplay.split("\n").map((line, i) => {
+                  {consoleDisplay.split("\n").map((line, i) => { const key = `${i}-${line.substring(0, 10)}`;
                     let className = "hack-line";
                     if (line.includes("[ERR]") || line.includes("failed"))
                       className += " error";
@@ -1247,7 +1247,7 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                       className += " prompt";
 
                     return (
-                      <div key={i} className={className}>
+                      <div key={key} className={className}>
                         {line}
                       </div>
                     );
@@ -1268,7 +1268,7 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                     </span>
                   </output>
                 )}
-              </div>
+              </button>
               <input
                 type="text"
                 ref={hackInputRef}
@@ -1295,7 +1295,7 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
           </div>
         </div>
       </div>
-      <button
+      <button type="button"
         type="button"
         className="matrix-close-btn"
         onClick={onSuccess}

@@ -139,7 +139,7 @@ function ProjectCard({
 }
 interface ProjectsProps {
   db?: {
-    projects: any[];
+    projects: ProjectCardProps[];
   };
 }
 
@@ -151,7 +151,7 @@ function Projects({ db: propsDb }: ProjectsProps = {}) {
   const db = propsDb || contextDb;
 
   const projectsData = useMemo(
-    () => (Array.isArray(db?.projects) ? db.projects : []),
+    () => (Array.isArray(db?.projects) ? db.projects as ProjectCardProps[] : []),
     [db?.projects],
   );
 
