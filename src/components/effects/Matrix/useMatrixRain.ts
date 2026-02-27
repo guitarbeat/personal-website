@@ -315,6 +315,7 @@ export const useMatrixRain = (
       navigator.hardwareConcurrency && navigator.hardwareConcurrency < 4;
     const isOldBrowser =
       !window.requestAnimationFrame || !window.cancelAnimationFrame;
+    // biome-ignore lint/suspicious/noExplicitAny: Navigator extension properties
     const isSlowDevice =
       (navigator as any).deviceMemory && (navigator as any).deviceMemory < 4;
     const _isLowBattery = (navigator as any)
