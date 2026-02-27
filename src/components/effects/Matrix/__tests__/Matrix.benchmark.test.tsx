@@ -23,7 +23,7 @@ describe("Matrix Performance", () => {
       shadowColor: "",
       globalAlpha: 1,
     });
-    HTMLCanvasElement.prototype.getContext = mockGetContext as any;
+    HTMLCanvasElement.prototype.getContext = mockGetContext as unknown as typeof HTMLCanvasElement.prototype.getContext;
 
     // Spy on canvas width setter
     widthSetterSpy = jest.spyOn(HTMLCanvasElement.prototype, 'width', 'set');

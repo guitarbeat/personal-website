@@ -5,7 +5,7 @@ import { generateItemColors } from "../../../utils/colorUtils";
 import Projects from "./Projects";
 
 jest.mock("react-db-google-sheets", () => ({
-  withGoogleSheets: () => (Component: any) => (props: any) => (
+  withGoogleSheets: () => (Component: React.ComponentType<unknown>) => (props: Record<string, unknown>) => (
     <Component {...props} />
   ),
 }));

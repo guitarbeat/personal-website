@@ -5,6 +5,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 // import { withGoogleSheets } from "react-db-google-sheets";
 import { useNotion } from "../../../contexts/NotionContext";
 import { cn } from "../../../utils/commonUtils";
+import type { WorkItem } from "../../../utils/googleSheetsUtils";
 // import { processWorkData } from "../../../utils/googleSheetsUtils";
 import PixelCanvas from "../../effects/PixelCanvas/PixelCanvas";
 
@@ -183,7 +184,7 @@ const MemoizedTimelineBar = React.memo(TimelineBar);
 
 interface WorkProps {
   db?: {
-    work: any[];
+    work: WorkItem[];
   };
 }
 
@@ -215,7 +216,7 @@ function Work({ db: propsDb }: WorkProps = {}) {
 
   // Data processing
   // Make a deep copy to avoid mutating the original data in context
-  const jobs: Job[] = ((db?.work as any[]) || []).map((job) => ({
+  const jobs: Job[] = ((db?.work as WorkItem[]) || []).map((job) => ({
     ...job,
   })) as Job[];
 
