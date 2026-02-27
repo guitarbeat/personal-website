@@ -1224,7 +1224,7 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                 </div>
                 <p className="hack-sequencer__feedback">{hackFeedback}</p>
               </div>
-              <div role="button" tabIndex={0} onKeyDown={handleHackKeyDown}
+              <button
                 className="hack-input-viewport"
                 onMouseDown={handleViewportEngage}
                 onTouchStart={handleViewportEngage}
@@ -1269,7 +1269,7 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                     </span>
                   </output>
                 )}
-              </div>
+              </button>
               <input
                 type="text"
                 ref={hackInputRef}
