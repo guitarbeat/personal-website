@@ -1,12 +1,9 @@
 // Health check endpoint for Vercel serverless function
 
-const ALLOWED_ORIGINS = [
-  "https://aaronwoods.info",
-  "https://www.aaronwoods.info",
-  "https://pixel-pal-follow.lovable.app",
-  "http://localhost:3000",
-  "http://localhost:5173",
-];
+const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || "")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 
 export default function handler(req, res) {
   const origin = req.headers.origin;

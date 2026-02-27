@@ -5,6 +5,7 @@
 const API_BASE = process.env.REACT_APP_API_BASE || "";
 
 // Fetch data from a Notion database via Vercel serverless function
+// biome-ignore lint/suspicious/noExplicitAny: External API data
 const fetchNotionDatabase = async (databaseType: string): Promise<any[]> => {
   try {
     const response = await fetch(
@@ -25,22 +26,26 @@ const fetchNotionDatabase = async (databaseType: string): Promise<any[]> => {
     // Serverless function returns already-transformed data as an array
     return Array.isArray(data) ? data : [];
   } catch (error: any) {
+    // biome-ignore lint/suspicious/noExplicitAny: Error handling
     console.error(`Error fetching ${databaseType} from Notion:`, error);
     return [];
   }
 };
 
 // Data is already transformed by serverless function, just pass through
+// biome-ignore lint/suspicious/noExplicitAny: Data transformation
 const transformProjectsData = (data: any[]): any[] => {
   return data;
 };
 
 // Data is already transformed by serverless function, just pass through
+// biome-ignore lint/suspicious/noExplicitAny: Data transformation
 const transformWorkData = (data: any[]): any[] => {
   return data;
 };
 
 // Data is already transformed by serverless function, just pass through
+// biome-ignore lint/suspicious/noExplicitAny: Data transformation
 const transformAboutData = (data: any[]): any[] => {
   return data;
 };
