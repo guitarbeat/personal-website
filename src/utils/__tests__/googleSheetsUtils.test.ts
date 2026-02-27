@@ -1,4 +1,8 @@
-import { processAboutData, processProjectsData, processWorkData } from "../googleSheetsUtils";
+import {
+  processAboutData,
+  processProjectsData,
+  processWorkData,
+} from "../googleSheetsUtils";
 
 describe("googleSheetsUtils", () => {
   describe("processAboutData", () => {
@@ -22,9 +26,7 @@ describe("googleSheetsUtils", () => {
       const input = [
         { category: "cat1", description: "desc1", extra: "ignore me" },
       ];
-      const expected = [
-        { category: "cat1", description: "desc1" },
-      ];
+      const expected = [{ category: "cat1", description: "desc1" }];
       expect(processAboutData(input)).toEqual(expected);
     });
   });
@@ -44,7 +46,7 @@ describe("googleSheetsUtils", () => {
           link: "http://example.com",
           content: "content1",
           image: "img1.png",
-          extra: "should be ignored"
+          extra: "should be ignored",
         },
       ];
       const expected = [
@@ -77,7 +79,7 @@ describe("googleSheetsUtils", () => {
           to: "2021",
           description: "Did stuff",
           slug: "role-1",
-          extra: "ignored"
+          extra: "ignored",
         },
       ];
       const expected = [

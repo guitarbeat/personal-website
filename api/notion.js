@@ -152,7 +152,7 @@ function validateFilter(filter, depth = 0) {
          try {
            newFilter[key] = JSON.parse(JSON.stringify(filter[key]));
            hasType = true;
-         } catch (e) {
+         } catch (_e) {
            continue;
          }
       }
@@ -168,13 +168,13 @@ function validateFilter(filter, depth = 0) {
           try {
               newFilter.created_time = JSON.parse(JSON.stringify(filter.created_time));
               return newFilter;
-          } catch (e) { return null; }
+          } catch (_e) { return null; }
       }
       if (filter.last_edited_time && typeof filter.last_edited_time === "object") {
           try {
               newFilter.last_edited_time = JSON.parse(JSON.stringify(filter.last_edited_time));
               return newFilter;
-          } catch (e) { return null; }
+          } catch (_e) { return null; }
       }
   }
 

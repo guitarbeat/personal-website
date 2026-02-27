@@ -185,7 +185,6 @@ interface MatrixProps {
 // * Sub-components (Consolidated)
 // * --------------------------------------------------------------------------------
 
-
 interface NuUhUhEasterEggProps {
   onClose: () => void;
   id?: number;
@@ -1230,7 +1229,8 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") handleViewportEngage();
+                  if (e.key === "Enter" || e.key === " ")
+                    handleViewportEngage();
                 }}
                 onMouseDown={handleViewportEngage}
                 onTouchStart={handleViewportEngage}
@@ -1253,7 +1253,10 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                       className += " prompt";
 
                     return (
-                      <div key={`${i}-${line.substring(0, 10)}`} className={className}>
+                      <div
+                        key={`${i}-${line.substring(0, 10)}`}
+                        className={className}
+                      >
                         {line}
                       </div>
                     );

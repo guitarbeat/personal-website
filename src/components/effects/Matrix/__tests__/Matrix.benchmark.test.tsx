@@ -1,7 +1,7 @@
-import { render } from "@testing-library/react";
+import { act, render } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import Matrix from "../Matrix";
 import { AuthProvider } from "../AuthContext";
+import Matrix from "../Matrix";
 
 describe("Matrix Performance", () => {
   let widthSetterSpy: jest.SpyInstance;
@@ -23,17 +23,23 @@ describe("Matrix Performance", () => {
       shadowColor: "",
       globalAlpha: 1,
     });
-    HTMLCanvasElement.prototype.getContext = mockGetContext as unknown as typeof HTMLCanvasElement.prototype.getContext;
+    HTMLCanvasElement.prototype.getContext =
+      mockGetContext as unknown as typeof HTMLCanvasElement.prototype.getContext;
 
     // Spy on canvas width setter
-    widthSetterSpy = jest.spyOn(HTMLCanvasElement.prototype, 'width', 'set');
+    widthSetterSpy = jest.spyOn(HTMLCanvasElement.prototype, "width", "set");
 
     // Mock audio
-    window.HTMLMediaElement.prototype.play = jest.fn().mockImplementation(() => Promise.resolve());
+    window.HTMLMediaElement.prototype.play = jest
+      .fn()
+      .mockImplementation(() => Promise.resolve());
     window.HTMLMediaElement.prototype.pause = jest.fn();
   });
 
   afterEach(() => {
+    act(() => {
+      jest.runOnlyPendingTimers();
+    });
     jest.useRealTimers();
     jest.restoreAllMocks();
   });
@@ -42,7 +48,7 @@ describe("Matrix Performance", () => {
     render(
       <AuthProvider>
         <Matrix isVisible={true} />
-      </AuthProvider>
+      </AuthProvider>,
     );
 
     // Initial render calls resizeCanvas once directly
@@ -52,16 +58,22 @@ describe("Matrix Performance", () => {
     widthSetterSpy.mockClear();
 
     // Trigger rapid resize events
-    const resizeEvent = new Event("resize");
-    for (let i = 0; i < 10; i++) {
-      window.dispatchEvent(resizeEvent);
-    }
+    // Wrap state updates triggered by resize in act()
+    act(() => {
+      const resizeEvent = new Event("resize");
+      for (let i = 0; i < 10; i++) {
+        window.dispatchEvent(resizeEvent);
+      }
+    });
 
     // Immediately after events, it should NOT have been called due to debounce
     expect(widthSetterSpy).toHaveBeenCalledTimes(0);
 
     // Advance timers by debounce duration (200ms)
-    jest.advanceTimersByTime(200);
+    // This triggers the debounced callback which might update state or DOM
+    act(() => {
+      jest.advanceTimersByTime(200);
+    });
 
     // Now it should have been called EXACTLY once
     expect(widthSetterSpy).toHaveBeenCalledTimes(1);

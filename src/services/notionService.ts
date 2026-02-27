@@ -5,7 +5,9 @@
 const API_BASE = process.env.REACT_APP_API_BASE || "";
 
 // Fetch data from a Notion database via Vercel serverless function
-const fetchNotionDatabase = async (databaseType: string): Promise<unknown[]> => {
+const fetchNotionDatabase = async (
+  databaseType: string,
+): Promise<unknown[]> => {
   try {
     const response = await fetch(
       `${API_BASE}/api/notion?database=${databaseType}`,

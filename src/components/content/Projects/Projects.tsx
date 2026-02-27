@@ -151,8 +151,11 @@ function Projects({ db: propsDb }: ProjectsProps = {}) {
 
   const db = propsDb || contextDb;
 
-  const projectsData = useMemo(
-    () => (Array.isArray(db?.projects) ? db.projects : []),
+  const projectsData: ProjectItem[] = useMemo(
+    () =>
+      Array.isArray(db?.projects)
+        ? (db.projects as unknown as ProjectItem[])
+        : [],
     [db?.projects],
   );
 
@@ -165,7 +168,7 @@ function Projects({ db: propsDb }: ProjectsProps = {}) {
       ),
     );
 
-    const generatedTagColors = generateItemColors(projectsData, "keyword");
+    const generatedTagColors = generateItemColors(projectsData as unknown as Record<string, unknown>[], "keyword");
     setTagColors(generatedTagColors);
     setActiveFilters((prevFilters) => {
       if (prevFilters.length === 0) {
@@ -195,7 +198,7 @@ function Projects({ db: propsDb }: ProjectsProps = {}) {
         ),
       );
 
-      const regeneratedTagColors = generateItemColors(projectsData, "keyword");
+      const regeneratedTagColors = generateItemColors(projectsData as unknown as Record<string, unknown>[], "keyword");
       setTagColors(regeneratedTagColors);
       setActiveFilters((prevFilters) => {
         if (prevFilters.length === 0) {

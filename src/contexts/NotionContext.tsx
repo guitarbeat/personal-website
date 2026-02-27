@@ -45,7 +45,8 @@ export const NotionProvider = ({ children }: { children: React.ReactNode }) => {
         setData(allData);
       } catch (err: unknown) {
         console.error("Error fetching Notion data:", err);
-        if (err instanceof Error) setError(err.message); else setError(String(err));
+        if (err instanceof Error) setError(err.message);
+        else setError(String(err));
       } finally {
         setLoading(false);
       }
