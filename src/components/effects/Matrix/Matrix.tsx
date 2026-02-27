@@ -249,6 +249,7 @@ const NuUhUhEasterEgg = ({ onClose, id: _id }: NuUhUhEasterEggProps) => {
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
 
+                    // biome-ignore lint/suspicious/noArrayIndexKey: Terminal output is append-only and static
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
@@ -271,12 +272,14 @@ const NuUhUhEasterEgg = ({ onClose, id: _id }: NuUhUhEasterEggProps) => {
 
     attemptPlayback();
 
+                    // biome-ignore lint/suspicious/noArrayIndexKey: Terminal output is append-only and static
     return () => {
       audioElement.pause();
       audioElement.currentTime = 0;
     };
   }, []);
 
+                    // biome-ignore lint/suspicious/noArrayIndexKey: Terminal output is append-only and static
   return (
     <button
       type="button"
@@ -619,6 +622,7 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
 
     onMatrixReady(focusHackInput);
 
+                    // biome-ignore lint/suspicious/noArrayIndexKey: Terminal output is append-only and static
     return () => {
       onMatrixReady(null);
     };
@@ -730,6 +734,7 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("keydown", handleKeyPress);
 
+                    // biome-ignore lint/suspicious/noArrayIndexKey: Terminal output is append-only and static
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keydown", handleKeyPress);
@@ -809,6 +814,7 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
       onSuccess?.();
     }, 2000);
 
+                    // biome-ignore lint/suspicious/noArrayIndexKey: Terminal output is append-only and static
     return () => {
       window.clearTimeout(closeTimeout);
     };
@@ -912,6 +918,7 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
       applyDecay(decay);
     }, PROGRESS_DECAY_INTERVAL);
 
+                    // biome-ignore lint/suspicious/noArrayIndexKey: Terminal output is append-only and static
     return () => {
       window.clearInterval(fallbackInterval);
     };
@@ -1129,6 +1136,7 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
 
     animate(performance.now());
 
+                    // biome-ignore lint/suspicious/noArrayIndexKey: Terminal output is append-only and static
     return () => {
       window.removeEventListener("resize", handleResize);
       window.cancelAnimationFrame(animationFrameId);
@@ -1141,6 +1149,7 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
     return null;
   }
 
+                    // biome-ignore lint/suspicious/noArrayIndexKey: Terminal output is append-only and static
   return (
     <dialog
       open
@@ -1225,7 +1234,7 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                 <p className="hack-sequencer__feedback">{hackFeedback}</p>
               </div>
               <div
-                className="hack-input-viewport"
+                className="hack-input-viewport" role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") handleViewportEngage(); }}
                 onMouseDown={handleViewportEngage}
                 onTouchStart={handleViewportEngage}
               >
@@ -1246,6 +1255,7 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                     )
                       className += " prompt";
 
+                    // biome-ignore lint/suspicious/noArrayIndexKey: Terminal output is append-only and static
                     return (
                       <div key={i} className={className}>
                         {line}
