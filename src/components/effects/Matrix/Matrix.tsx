@@ -1226,8 +1226,15 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
               </div>
               <div
                 className="hack-input-viewport"
+                role="button"
+                tabIndex={0}
                 onMouseDown={handleViewportEngage}
                 onTouchStart={handleViewportEngage}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    handleViewportEngage();
+                  }
+                }}
               >
                 <div className="hack-input-stream" aria-hidden="true">
                   {consoleDisplay.split("\n").map((line, i) => {
