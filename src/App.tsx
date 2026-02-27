@@ -33,13 +33,11 @@ import Matrix from "./components/effects/Matrix/Matrix";
 import ScrollToTopButton from "./components/effects/Matrix/ScrollToTopButton";
 import MagicComponent from "./components/effects/Moire/Moire";
 import { About, Header, NavBar, Projects, Work } from "./components/index";
-
 // * Loading fallback
 const CustomLoadingComponent = () => (
   <div className="loading-container">Loading...</div>
 );
 CustomLoadingComponent.displayName = "CustomLoadingComponent";
-
 const AnalyticsWrapper = memo(() => {
   if (process.env.REACT_APP_ENABLE_VERCEL_ANALYTICS !== "true") {
     return null;
@@ -47,15 +45,12 @@ const AnalyticsWrapper = memo(() => {
   return <Analytics />;
 });
 AnalyticsWrapper.displayName = "AnalyticsWrapper";
-
 // * Unlocked badge component
 const UnlockedBadge = memo(() => {
   const { isUnlocked } = useAuth();
-
   if (!isUnlocked) {
     return null;
   }
-
   return (
     <div className="unlocked-badge" role="img" aria-label="Site unlocked">
       <i className="fas fa-unlock" aria-hidden="true" />
@@ -63,7 +58,6 @@ const UnlockedBadge = memo(() => {
   );
 });
 UnlockedBadge.displayName = "UnlockedBadge";
-
 interface LayoutProps {
   children: React.ReactNode;
   navItems: Record<string, string>;
@@ -75,14 +69,13 @@ interface LayoutProps {
   onMatrixReady?: (callback: () => void) => void;
   isUnlocked?: boolean;
 }
-
 // * Layout wrapper
 const Layout = memo(
   ({
     children,
     navItems,
     onMatrixActivate,
-    onScrollActivate,
+    onScrollActivate: _onScrollActivate,
     isInScroll,
     hideNavBar,
   }: LayoutProps) => (
@@ -96,7 +89,6 @@ const Layout = memo(
         <NavBar
           items={navItems}
           onMatrixActivate={onMatrixActivate}
-
           isInShop={isInScroll}
         />
       )}
@@ -108,7 +100,6 @@ const Layout = memo(
   ),
 );
 Layout.displayName = "Layout";
-
 // * Home page content
 const HomePageContent = () => (
   <div>
@@ -118,13 +109,11 @@ const HomePageContent = () => (
     <Work />
   </div>
 );
-
 interface MatrixModalProps {
   showMatrix: boolean;
   onSuccess: () => void;
   onMatrixReady: (callback: (() => void) | null) => void;
 }
-
 // * Matrix modal wrapper
 const MatrixModal = ({
   showMatrix,
@@ -137,10 +126,8 @@ const MatrixModal = ({
     onMatrixReady={onMatrixReady}
   />
 );
-
 const MATRIX_DISABLED_VALUES = new Set(["0", "false", "off", "no"]);
 const MATRIX_ENABLED_VALUES = new Set(["1", "true", "on", "yes"]);
-
 const shouldShowMatrixFromSearch = (search: string | URLSearchParams) => {
   const params =
     typeof search === "string" || search instanceof URLSearchParams
@@ -149,49 +136,39 @@ const shouldShowMatrixFromSearch = (search: string | URLSearchParams) => {
   if (!params.has("matrix")) {
     return false;
   }
-
   const value = params.get("matrix");
   if (!value) {
     return false;
   }
   const normalizedValue = value.trim().toLowerCase();
-
   if (normalizedValue === "") {
     return false;
   }
-
   if (MATRIX_DISABLED_VALUES.has(normalizedValue)) {
     return false;
   }
-
   if (MATRIX_ENABLED_VALUES.has(normalizedValue)) {
     return true;
   }
-
   return false;
 };
-
 interface MatrixRouteSyncProps {
   showMatrix: boolean;
   onRouteMatrixChange: (shouldShow: boolean) => void;
 }
-
 const MatrixRouteSync = ({
   showMatrix,
   onRouteMatrixChange,
 }: MatrixRouteSyncProps) => {
   const location = useLocation();
   const navigate = useNavigate();
-
   useEffect(() => {
     const shouldShow = shouldShowMatrixFromSearch(location.search);
     onRouteMatrixChange(shouldShow);
   }, [location.search, onRouteMatrixChange]);
-
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const shouldShow = shouldShowMatrixFromSearch(params);
-
     if (showMatrix) {
       const currentValue = params.get("matrix");
       if (shouldShow && currentValue === "1") {
@@ -204,7 +181,6 @@ const MatrixRouteSync = ({
       }
       params.delete("matrix");
     }
-
     const searchString = params.toString();
     navigate(
       {
@@ -215,10 +191,8 @@ const MatrixRouteSync = ({
       { replace: true },
     );
   }, [showMatrix, location.pathname, location.search, location.hash, navigate]);
-
   return null;
 };
-
 interface MainRoutesProps {
   navItems: Record<string, string>;
   onMatrixActivate: () => void;
@@ -229,12 +203,11 @@ interface MainRoutesProps {
   showMatrix: boolean;
   onMatrixReady: (callback: () => void) => void;
 }
-
 // * Main routes
 const MainRoutes = ({
   navItems,
   onMatrixActivate,
-  onScrollActivate,
+  onScrollActivate: _onScrollActivate,
   isScrollMode,
   isUnlocked,
   isInScroll,
@@ -243,7 +216,6 @@ const MainRoutes = ({
 }: MainRoutesProps) => {
   const location = useLocation();
   const currentIsInScroll = location.pathname === "/scroll" || isInScroll;
-
   return (
     <Routes>
       <Route
@@ -252,7 +224,7 @@ const MainRoutes = ({
           <Layout
             navItems={navItems}
             onMatrixActivate={onMatrixActivate}
-            onScrollActivate={onScrollActivate}
+            onScrollActivate={_onScrollActivate}
             isInScroll={currentIsInScroll}
             showMatrix={showMatrix}
             onMatrixReady={onMatrixReady}
@@ -273,7 +245,7 @@ const MainRoutes = ({
           <Layout
             navItems={navItems}
             onMatrixActivate={onMatrixActivate}
-            onScrollActivate={onScrollActivate}
+            onScrollActivate={_onScrollActivate}
             isInScroll={true}
             showMatrix={showMatrix}
             onMatrixReady={onMatrixReady}
@@ -288,12 +260,10 @@ const MainRoutes = ({
           </Layout>
         }
       />
-
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 };
-
 // * Main app content logic
 const AppContent = () => {
   // --- State and refs ---
@@ -301,7 +271,6 @@ const AppContent = () => {
     if (typeof window === "undefined") {
       return false;
     }
-
     return shouldShowMatrixFromSearch(window.location.search);
   });
   const { isUnlocked } = useAuth();
@@ -309,9 +278,7 @@ const AppContent = () => {
   const [isInScroll, setIsInScroll] = useState(false);
   const scrollAnimationRef = useRef<number | null>(null);
   const scrollSpeedRef = useRef<number>(400);
-
   // --- Effects ---
-
   // Utility function to cleanup scroll animation
   const cleanupScrollAnimation = useCallback(() => {
     if (scrollAnimationRef.current) {
@@ -320,7 +287,6 @@ const AppContent = () => {
     }
     scrollSpeedRef.current = 400;
   }, []);
-
   // Scroll mode: fast, accelerating scroll
   useEffect(() => {
     if (!isScrollMode) {
@@ -340,7 +306,6 @@ const AppContent = () => {
     scrollAnimationRef.current = requestAnimationFrame(scrollStep);
     return cleanupScrollAnimation;
   }, [isScrollMode, cleanupScrollAnimation]);
-
   // Scroll transition and scroll page: handle key press to enter/exit
   useEffect(() => {
     if (!isScrollMode && !isInScroll) {
@@ -349,15 +314,12 @@ const AppContent = () => {
     const handleKeyDown = (event: KeyboardEvent) => {
       const { key } = event;
       const isToggleKey = key === "Enter" || key === " " || key === "Spacebar";
-
       if (!isToggleKey) {
         return;
       }
-
       if (key !== "Enter") {
         event.preventDefault();
       }
-
       if (isScrollMode) {
         setIsScrollMode(false);
         setIsInScroll(true);
@@ -368,7 +330,6 @@ const AppContent = () => {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isScrollMode, isInScroll]);
-
   // --- Handlers ---
   const handleMatrixActivate = useCallback(() => setShowMatrix(true), []);
   const handleMatrixSuccess = useCallback(() => setShowMatrix(false), []);
@@ -376,22 +337,18 @@ const AppContent = () => {
     setShowMatrix((prev) => (prev === shouldShow ? prev : shouldShow));
   }, []);
   const handleScrollActivate = useCallback(() => setIsScrollMode(true), []);
-
   // Matrix ready callback - will be set by Matrix component
   const matrixReadyCallbackRef = useRef<(() => void) | null>(null);
   const handleMatrixReady = useCallback((callback: (() => void) | null) => {
     matrixReadyCallbackRef.current =
       typeof callback === "function" ? callback : null;
   }, []);
-
   useEffect(() => {
     if (!showMatrix) {
       return;
     }
-
     matrixReadyCallbackRef.current?.();
   }, [showMatrix]);
-
   // --- Render ---
   return (
     <>
@@ -422,7 +379,6 @@ const AppContent = () => {
     </>
   );
 };
-
 // * App entry point
 const App = () => (
   <NotionProvider>
@@ -433,5 +389,4 @@ const App = () => (
     </AuthProvider>
   </NotionProvider>
 );
-
 export default App;
