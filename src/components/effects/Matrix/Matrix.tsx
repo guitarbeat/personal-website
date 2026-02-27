@@ -1224,10 +1224,16 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                 </div>
                 <p className="hack-sequencer__feedback">{hackFeedback}</p>
               </div>
-              <div
+              <button
+                type="button"
                 className="hack-input-viewport"
                 onMouseDown={handleViewportEngage}
                 onTouchStart={handleViewportEngage}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    handleViewportEngage();
+                  }
+                }}
               >
                 <div className="hack-input-stream" aria-hidden="true">
                   {consoleDisplay.split("\n").map((line, i) => {
@@ -1268,7 +1274,7 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                     </span>
                   </output>
                 )}
-              </div>
+              </button>
               <input
                 type="text"
                 ref={hackInputRef}
