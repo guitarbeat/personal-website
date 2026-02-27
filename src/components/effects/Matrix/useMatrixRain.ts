@@ -317,12 +317,9 @@ export const useMatrixRain = (
       !window.requestAnimationFrame || !window.cancelAnimationFrame;
     // biome-ignore lint/suspicious/noExplicitAny: Navigator extension properties
     const isSlowDevice =
-      // biome-ignore lint/suspicious/noExplicitAny: Navigator extension properties
       (navigator as any).deviceMemory && (navigator as any).deviceMemory < 4;
-    // biome-ignore lint/suspicious/noExplicitAny: Navigator extension properties
     const _isLowBattery = (navigator as any)
       .getBattery?.()
-      // biome-ignore lint/suspicious/noExplicitAny: Navigator extension properties
       .then((battery: any) => battery.level < 0.2);
 
     // Determine performance mode based on multiple factors
