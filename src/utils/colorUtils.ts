@@ -59,7 +59,8 @@ export const generateTagColors = (
  * @returns {Object} - Object mapping item keys to HSL color strings
  */
 export const generateItemColors = (
-  items: any[], // biome-ignore lint/suspicious/noExplicitAny: Generic items
+  // biome-ignore lint/suspicious/noExplicitAny: Generic items
+  items: any[],
   keyProperty: string = "keyword",
   baseColors: Record<string, HSL> = DEFAULT_BASE_COLORS,
 ): Record<string, string> => {

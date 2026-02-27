@@ -183,7 +183,8 @@ const MemoizedTimelineBar = React.memo(TimelineBar);
 
 interface WorkProps {
   db?: {
-    work: any[]; // biome-ignore lint/suspicious/noExplicitAny: External data
+    // biome-ignore lint/suspicious/noExplicitAny: External data
+    work: any[];
   };
 }
 

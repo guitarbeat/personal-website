@@ -28,7 +28,8 @@ interface BlurSectionProps {
   disabled?: boolean;
   blurCap?: number;
   blurAxis?: "x" | "y" | "both";
-  [key: string]: any; // biome-ignore lint/suspicious/noExplicitAny: Allow any other props
+  // biome-ignore lint/suspicious/noExplicitAny: Allow any other props
+  [key: string]: any;
 }
 
 const BlurSection = ({

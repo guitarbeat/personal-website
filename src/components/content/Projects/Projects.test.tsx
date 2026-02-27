@@ -9,7 +9,8 @@ jest.mock("react-db-google-sheets", () => ({
     () =>
     (Component: any) =>
     (
-      props: any, // biome-ignore lint/suspicious/noExplicitAny: Mocking external library
+      // biome-ignore lint/suspicious/noExplicitAny: Mocking external library
+      props: any,
     ) => <Component {...props} />,
 }));
 

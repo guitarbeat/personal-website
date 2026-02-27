@@ -23,7 +23,8 @@ describe("Matrix Performance", () => {
       shadowColor: "",
       globalAlpha: 1,
     });
-    HTMLCanvasElement.prototype.getContext = mockGetContext as any; // biome-ignore lint/suspicious/noExplicitAny: Mocking DOM API
+    // biome-ignore lint/suspicious/noExplicitAny: Mocking DOM API
+    HTMLCanvasElement.prototype.getContext = mockGetContext as any;
 
     // Spy on canvas width setter
     widthSetterSpy = jest.spyOn(HTMLCanvasElement.prototype, "width", "set");
