@@ -46,7 +46,8 @@ export const NotionProvider = ({ children }: { children: React.ReactNode }) => {
         const notionService = new NotionService();
         const allData = await notionService.getAllData();
         setData(allData);
-      } catch (err: any) { // biome-ignore lint/suspicious/noExplicitAny: Unknown error from fetch
+        // biome-ignore lint/suspicious/noExplicitAny: Unknown error from fetch
+      } catch (err: any) {
         console.error("Error fetching Notion data:", err);
         setError(err.message);
       } finally {

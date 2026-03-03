@@ -1223,8 +1223,8 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                 </div>
                 <p className="hack-sequencer__feedback">{hackFeedback}</p>
               </div>
-              // biome-ignore lint/a11y/noStaticElementInteractions: Matrix effect viewport needs specific mouse/touch handling without being a button
-              <div
+              {/* biome-ignore lint/a11y/useSemanticElements: Matrix effect viewport acts as global button without being semantic button to preserve layout */}
+              <div role="button" tabIndex={0} onKeyDown={handleViewportEngage}
                 className="hack-input-viewport"
                 onMouseDown={handleViewportEngage}
                 onTouchStart={handleViewportEngage}
