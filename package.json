@@ -23,10 +23,10 @@
     }
   },
   "scripts": {
-    "start": "craco start --config config/craco.config.js",
-    "dev": "craco start --config config/craco.config.js",
-    "build": "craco build --config config/craco.config.js",
-    "test": "react-scripts test --passWithNoTests",
+    "start": "craco start --config craco.config.js",
+    "dev": "craco start --config craco.config.js",
+    "build": "craco build --config craco.config.js",
+    "test": "craco test --passWithNoTests",
     "eject": "react-scripts eject",
     "format": "biome format ./src --write",
     "lint": "biome lint ./src",
@@ -115,7 +115,6 @@
     "@types/react-dom": "^19.2.3",
     "autoprefixer": "^10.4.27",
     "babel-eslint": "^10.1.0",
-    "cross-env": "^10.1.0",
     "css-select": "^6.0.0",
     "depcheck": "^1.4.7",
     "eslint": "^10.0.2",

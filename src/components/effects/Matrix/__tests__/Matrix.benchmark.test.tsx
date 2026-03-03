@@ -1,7 +1,15 @@
-import { render } from "@testing-library/react";
+import { render, act } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { AuthProvider } from "../AuthContext";
 import Matrix from "../Matrix";
+
+jest.mock("../../../../hooks/useMobileDetection", () => ({
+  useMobileDetection: () => ({
+    isMobile: false,
+    isTablet: false,
+    isDesktop: true,
+  }),
+}));
 
 describe("Matrix Performance", () => {
   let widthSetterSpy: jest.SpyInstance;
@@ -42,11 +50,13 @@ describe("Matrix Performance", () => {
   });
 
   it("should debounce resize events (optimization verification)", () => {
-    render(
-      <AuthProvider>
-        <Matrix isVisible={true} />
-      </AuthProvider>,
-    );
+    act(() => {
+      render(
+        <AuthProvider>
+          <Matrix isVisible={true} />
+        </AuthProvider>,
+      );
+    });
 
     // Initial render calls resizeCanvas once directly
     expect(widthSetterSpy).toHaveBeenCalledTimes(1);
@@ -64,7 +74,9 @@ describe("Matrix Performance", () => {
     expect(widthSetterSpy).toHaveBeenCalledTimes(0);
 
     // Advance timers by debounce duration (200ms)
-    jest.advanceTimersByTime(200);
+    act(() => {
+      jest.advanceTimersByTime(200);
+    });
 
     // Now it should have been called EXACTLY once
     expect(widthSetterSpy).toHaveBeenCalledTimes(1);

@@ -1,17 +1,17 @@
 import {
-  clamp,
-  cn,
-  copyPoint,
-  createTimeout,
-  debounce,
-  generateId,
-  getWindowDimensions,
   isAboveBreakpoint,
-  randomFloat,
-  randomInt,
-  subtractPoints,
   throttle,
+  debounce,
   throttleAdvanced,
+  clamp,
+  randomInt,
+  randomFloat,
+  cn,
+  getWindowDimensions,
+  generateId,
+  copyPoint,
+  subtractPoints,
+  createTimeout,
 } from "../commonUtils";
 
 describe("commonUtils", () => {
@@ -145,7 +145,13 @@ describe("commonUtils", () => {
   });
 
   describe("createTimeout", () => {
-    jest.useFakeTimers();
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
 
     it("executes callback after delay", () => {
       const cb = jest.fn();
