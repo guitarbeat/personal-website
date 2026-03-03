@@ -82,7 +82,7 @@ const Layout = memo(
     children,
     navItems,
     onMatrixActivate,
-    onScrollActivate,
+    onScrollActivate: _onScrollActivate,
     isInScroll,
     hideNavBar,
   }: LayoutProps) => (
@@ -375,7 +375,7 @@ const AppContent = () => {
   const handleRouteMatrixChange = useCallback((shouldShow: boolean) => {
     setShowMatrix((prev) => (prev === shouldShow ? prev : shouldShow));
   }, []);
-  const handleScrollActivate = useCallback(() => setIsScrollMode(true), []);
+  const _handleScrollActivate = useCallback(() => setIsScrollMode(true), []);
 
   // Matrix ready callback - will be set by Matrix component
   const matrixReadyCallbackRef = useRef<(() => void) | null>(null);
@@ -410,7 +410,7 @@ const AppContent = () => {
           <MainRoutes
             navItems={NAV_ITEMS}
             onMatrixActivate={handleMatrixActivate}
-            onScrollActivate={handleScrollActivate}
+            onScrollActivate={_handleScrollActivate}
             isScrollMode={isScrollMode}
             isUnlocked={isUnlocked}
             isInScroll={isInScroll}
