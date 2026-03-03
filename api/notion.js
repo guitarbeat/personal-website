@@ -211,14 +211,16 @@ function validateQueryBody(body) {
   return validated;
 }
 
-// CORS origin whitelist
-const ALLOWED_ORIGINS = [
-  "https://aaronwoods.info",
-  "https://www.aaronwoods.info",
-  "https://pixel-pal-follow.lovable.app",
-  "http://localhost:3000",
-  "http://localhost:5173",
-];
+// Get allowed origins from environment variable, fallback to defaults
+const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim())
+  : [
+      "https://aaronwoods.info",
+      "https://www.aaronwoods.info",
+      "https://pixel-pal-follow.lovable.app",
+      "http://localhost:3000",
+      "http://localhost:5173",
+    ];
 
 export default async function handler(req, res) {
   // Enable CORS with origin whitelist
