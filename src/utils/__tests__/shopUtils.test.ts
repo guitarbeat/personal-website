@@ -1,4 +1,4 @@
-import { parsePrintfulProduct } from "../shopUtils";
+import { handlePrintfulError, parsePrintfulProduct } from "../shopUtils";
 
 describe("parsePrintfulProduct", () => {
   it("should return default values for null product", () => {
@@ -82,5 +82,68 @@ describe("parsePrintfulProduct", () => {
     const result = parsePrintfulProduct(mockProduct);
 
     expect(result.price).toBe(0);
+  });
+});
+
+describe("handlePrintfulError", () => {
+  it("should format standard API errors with status and statusText", () => {
+    const error = {
+      response: {
+        status: 404,
+        statusText: "Not Found",
+      },
+    };
+    const result = handlePrintfulError(error);
+    expect(result).toBe("API Error: 404 - Not Found");
+  });
+
+  it("should use error.message if statusText is not available", () => {
+    const error = {
+      response: {
+        status: 500,
+      },
+      message: "Internal Server Error",
+    };
+    const result = handlePrintfulError(error);
+    expect(result).toBe("API Error: 500 - Internal Server Error");
+  });
+
+  it("should use custom context when provided", () => {
+    const error = {
+      response: {
+        status: 400,
+        statusText: "Bad Request",
+      },
+    };
+    const result = handlePrintfulError(error, "Custom Error");
+    expect(result).toBe("Custom Error: 400 - Bad Request");
+  });
+
+  it("should detect CORS error from Network Error message", () => {
+    const error = {
+      message: "Network Error",
+    };
+    const result = handlePrintfulError(error);
+    expect(result).toBe(
+      "CORS Error: Unable to connect to Printful API. Please ensure the development server is running with the correct proxy configuration.",
+    );
+  });
+
+  it("should detect CORS error from ERR_NETWORK code", () => {
+    const error = {
+      code: "ERR_NETWORK",
+    };
+    const result = handlePrintfulError(error);
+    expect(result).toBe(
+      "CORS Error: Unable to connect to Printful API. Please ensure the development server is running with the correct proxy configuration.",
+    );
+  });
+
+  it("should handle error with missing response property", () => {
+    const error = {
+      message: "Something went wrong",
+    };
+    const result = handlePrintfulError(error);
+    expect(result).toBe("API Error: undefined - Something went wrong");
   });
 });
