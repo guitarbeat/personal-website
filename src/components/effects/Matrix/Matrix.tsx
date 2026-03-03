@@ -1224,10 +1224,15 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                 </div>
                 <p className="hack-sequencer__feedback">{hackFeedback}</p>
               </div>
+              {/* biome-ignore lint/a11y/useSemanticElements: Layout reasons */}
+              {/* biome-ignore lint/a11y/noStaticElementInteractions: Layout reasons */}
               <div
                 className="hack-input-viewport"
                 onMouseDown={handleViewportEngage}
                 onTouchStart={handleViewportEngage}
+                onKeyDown={handleViewportEngage}
+                role="button"
+                tabIndex={0}
               >
                 <div className="hack-input-stream" aria-hidden="true">
                   {consoleDisplay.split("\n").map((line, i) => {
