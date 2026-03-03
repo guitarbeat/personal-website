@@ -50,7 +50,7 @@ describe("commonUtils", () => {
     });
 
     it("handles min equal to max", () => {
-        expect(randomFloat(3.14, 3.14)).toBe(3.14);
+      expect(randomFloat(3.14, 3.14)).toBe(3.14);
     });
   });
 
@@ -64,11 +64,13 @@ describe("commonUtils", () => {
     });
 
     it("filters falsy values", () => {
-      expect(cn("base", false && "foo", null, undefined, "bar", "")).toBe("base bar");
+      expect(cn("base", false && "foo", null, undefined, "bar", "")).toBe(
+        "base bar",
+      );
     });
 
     it("trims whitespace only strings", () => {
-        expect(cn("base", "   ", "foo")).toBe("base foo");
+      expect(cn("base", "   ", "foo")).toBe("base foo");
     });
   });
 
@@ -122,8 +124,8 @@ describe("commonUtils", () => {
     });
 
     it("uses default alphabet if not provided", () => {
-        const id = generateId(100);
-        expect(id).toMatch(/^[A-Za-z0-9]+$/);
+      const id = generateId(100);
+      expect(id).toMatch(/^[A-Za-z0-9]+$/);
     });
   });
 
@@ -143,30 +145,31 @@ describe("commonUtils", () => {
   });
 
   describe("createTimeout", () => {
-      jest.useFakeTimers();
+    jest.useFakeTimers({ legacyFakeTimers: true });
 
-      it("executes callback after delay", () => {
-          const cb = jest.fn();
-          createTimeout(cb, 100);
-          expect(cb).not.toHaveBeenCalled();
-          jest.advanceTimersByTime(100);
-          expect(cb).toHaveBeenCalled();
-      });
+    it("executes callback after delay", () => {
+      jest.useFakeTimers({ legacyFakeTimers: true });
+      const cb = jest.fn();
+      createTimeout(cb, 100);
+      expect(cb).not.toHaveBeenCalled();
+      jest.advanceTimersByTime(100);
+      expect(cb).toHaveBeenCalled();
+    });
 
-      it("can be cleared", () => {
-          const cb = jest.fn();
-          const clear = createTimeout(cb, 100);
-          clear();
-          jest.advanceTimersByTime(100);
-          expect(cb).not.toHaveBeenCalled();
-      });
+    it("can be cleared", () => {
+      const cb = jest.fn();
+      const clear = createTimeout(cb, 100);
+      clear();
+      jest.advanceTimersByTime(100);
+      expect(cb).not.toHaveBeenCalled();
+    });
 
-      jest.useRealTimers();
+    jest.useRealTimers();
   });
 
   describe("throttle", () => {
     beforeEach(() => {
-      jest.useFakeTimers();
+      jest.useFakeTimers({ legacyFakeTimers: true });
     });
 
     afterEach(() => {
@@ -201,7 +204,7 @@ describe("commonUtils", () => {
 
   describe("debounce", () => {
     beforeEach(() => {
-      jest.useFakeTimers();
+      jest.useFakeTimers({ legacyFakeTimers: true });
     });
 
     afterEach(() => {
@@ -247,7 +250,7 @@ describe("commonUtils", () => {
 
   describe("throttleAdvanced", () => {
     beforeEach(() => {
-      jest.useFakeTimers();
+      jest.useFakeTimers({ legacyFakeTimers: true });
     });
 
     afterEach(() => {

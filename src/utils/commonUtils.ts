@@ -162,9 +162,6 @@ export const throttleAdvanced = (
   return throttled;
 };
 
-// Legacy alias for backward compatibility
-export const throttleTS = throttle;
-
 /**
  * Debounce function to limit execution frequency
  * @param func - The function to debounce

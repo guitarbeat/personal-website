@@ -185,7 +185,6 @@ interface MatrixProps {
 // * Sub-components (Consolidated)
 // * --------------------------------------------------------------------------------
 
-
 interface NuUhUhEasterEggProps {
   onClose: () => void;
   id?: number;
@@ -1226,6 +1225,11 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
               </div>
               <div
                 className="hack-input-viewport"
+
+                // biome-ignore lint/a11y/useSemanticElements: Layout/styling reasons in terminal
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") handleViewportEngage(e); }}
                 onMouseDown={handleViewportEngage}
                 onTouchStart={handleViewportEngage}
               >
