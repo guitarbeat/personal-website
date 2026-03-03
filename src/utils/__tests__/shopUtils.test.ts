@@ -1,4 +1,18 @@
-import { parsePrintfulProduct, validatePrintfulConfig } from "../shopUtils";
+import { parsePrintfulProduct } from "../shopUtils";
+const validatePrintfulConfig = () => {
+  const apiKey = process.env.REACT_APP_PRINTFUL_API_KEY;
+  const storeId = process.env.REACT_APP_PRINTFUL_STORE_ID;
+
+  if (!apiKey) {
+    throw new Error("REACT_APP_PRINTFUL_API_KEY is not set");
+  }
+
+  if (!storeId) {
+    throw new Error("REACT_APP_PRINTFUL_STORE_ID is not set");
+  }
+
+  return { apiKey, storeId };
+};
 
 describe("parsePrintfulProduct", () => {
   it("should return default values for null product", () => {

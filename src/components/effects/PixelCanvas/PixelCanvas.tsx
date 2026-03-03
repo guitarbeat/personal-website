@@ -187,7 +187,12 @@ const PixelCanvas = ({
       return undefined;
     }
 
-    const context = canvas.getContext("2d");
+    let context;
+    try {
+        context = canvas.getContext("2d");
+    } catch (e) {
+        // Ignore jsdom errors when canvas is not fully implemented
+    }
 
     if (!context) {
       return undefined;
