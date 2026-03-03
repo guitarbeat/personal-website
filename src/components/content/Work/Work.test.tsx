@@ -7,6 +7,24 @@ jest.mock("react-db-google-sheets", () => ({
   withGoogleSheets: () => (Component: any) => Component,
 }));
 
+jest.mock("../../../contexts/NotionContext", () => ({
+  useNotion: () => ({
+    db: {
+      work: [
+        {
+          title: "Senior Developer",
+          company: "Acme Corp",
+          place: "Remote",
+          from: "01-2023",
+          to: "",
+          description: "Building resilient timelines.",
+          slug: "senior-developer",
+        },
+      ],
+    },
+  }),
+}));
+
 describe("Work timeline", () => {
   beforeAll(() => {
     class IntersectionObserverMock {
@@ -26,21 +44,7 @@ describe("Work timeline", () => {
     const currentMonth = moment().format("MM-YYYY");
 
     const { container } = render(
-      <Work
-        db={{
-          work: [
-            {
-              title: "Senior Developer",
-              company: "Acme Corp",
-              place: "Remote",
-              from: currentMonth,
-              to: "",
-              description: "Building resilient timelines.",
-              slug: "senior-developer",
-            },
-          ],
-        }}
-      />,
+      <Work />,
     );
 
     const timelineBar = container.querySelector(".work__timeline__subbar");

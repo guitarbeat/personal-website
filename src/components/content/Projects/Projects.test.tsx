@@ -18,6 +18,33 @@ jest.mock("../../../utils/colorUtils", () => {
   };
 });
 
+jest.mock("../../../contexts/NotionContext", () => ({
+  useNotion: () => ({
+    db: {
+      projects: [
+        {
+          title: "Project One",
+          slug: "project-one",
+          date: "2024",
+          keyword: "React",
+          link: "https://example.com/react",
+          content: "React project",
+          image: null,
+        },
+        {
+          title: "Project Two",
+          slug: "project-two",
+          date: "2023",
+          keyword: "Node",
+          link: "https://example.com/node",
+          content: "Node project",
+          image: null,
+        },
+      ],
+    },
+  }),
+}));
+
 describe("Projects", () => {
   const MOCK_PROJECTS = [
     {
@@ -55,7 +82,7 @@ describe("Projects", () => {
         Node: "hsl(40, 80%, 60%)",
       }));
 
-    render(<Projects db={{ projects: MOCK_PROJECTS }} />);
+    render(<Projects />);
 
     const reactFilter = await screen.findByRole("button", { name: "React" });
 
@@ -93,7 +120,7 @@ describe("Projects", () => {
 
     const user = userEvent.setup();
 
-    render(<Projects db={{ projects: MOCK_PROJECTS }} />);
+    render(<Projects />);
 
     const reactFilter = await screen.findByRole("button", { name: "React" });
     const nodeFilter = await screen.findByRole("button", { name: "Node" });
