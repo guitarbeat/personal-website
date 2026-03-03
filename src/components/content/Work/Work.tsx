@@ -2,10 +2,8 @@ import moment from "moment";
 import PropTypes from "prop-types";
 // Import required libraries and components
 import React, { useCallback, useEffect, useRef, useState } from "react";
-// import { withGoogleSheets } from "react-db-google-sheets";
 import { useNotion } from "../../../contexts/NotionContext";
 import { cn } from "../../../utils/commonUtils";
-// import { processWorkData } from "../../../utils/googleSheetsUtils";
 import PixelCanvas from "../../effects/PixelCanvas/PixelCanvas";
 
 interface Job {

@@ -4,12 +4,6 @@ import userEvent from "@testing-library/user-event";
 import { generateItemColors } from "../../../utils/colorUtils";
 import Projects from "./Projects";
 
-jest.mock("react-db-google-sheets", () => ({
-  withGoogleSheets: () => (Component: any) => (props: any) => (
-    <Component {...props} />
-  ),
-}));
-
 jest.mock("../../../utils/colorUtils", () => {
   const actual = jest.requireActual("../../../utils/colorUtils");
   return {
