@@ -1224,6 +1224,7 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                 </div>
                 <p className="hack-sequencer__feedback">{hackFeedback}</p>
               </div>
+              {/* biome-ignore lint/a11y/noStaticElementInteractions: Terminal input area needs custom event handling without standard button semantics */}
               <div
                 className="hack-input-viewport"
                 onMouseDown={handleViewportEngage}
@@ -1247,6 +1248,7 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                       className += " prompt";
 
                     return (
+                      // biome-ignore lint/suspicious/noArrayIndexKey: Terminal lines are append-only, index is stable
                       <div key={i} className={className}>
                         {line}
                       </div>
