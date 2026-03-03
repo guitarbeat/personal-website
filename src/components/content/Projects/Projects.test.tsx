@@ -1,8 +1,8 @@
 import "@testing-library/jest-dom";
 import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { generateItemColors } from "../../../utils/colorUtils";
 import { NotionContext } from "../../../contexts/NotionContext";
+import { generateItemColors } from "../../../utils/colorUtils";
 
 jest.mock("../../../components/effects/PixelCanvas/PixelCanvas", () => {
   return function MockPixelCanvas() {
@@ -13,6 +13,7 @@ jest.mock("../../../components/effects/PixelCanvas/PixelCanvas", () => {
 import Projects from "./Projects";
 
 jest.mock("react-db-google-sheets", () => ({
+  // biome-ignore lint/suspicious/noExplicitAny: legacy mock
   withGoogleSheets: () => (Component: any) => (props: any) => (
     <Component {...props} />
   ),
@@ -63,7 +64,17 @@ describe("Projects", () => {
         Node: "hsl(40, 80%, 60%)",
       }));
 
-    render(<NotionContext.Provider value={{ db: { projects: MOCK_PROJECTS } as any, loading: false, error: null }}><Projects /></NotionContext.Provider>);
+    render(
+      <NotionContext.Provider
+        value={{
+          db: { projects: MOCK_PROJECTS } as any,
+          loading: false,
+          error: null,
+        }}
+      >
+        <Projects />
+      </NotionContext.Provider>,
+    );
 
     const reactFilter = await screen.findByRole("button", { name: "React" });
 
@@ -97,7 +108,17 @@ describe("Projects", () => {
 
     const user = userEvent.setup();
 
-    render(<NotionContext.Provider value={{ db: { projects: MOCK_PROJECTS } as any, loading: false, error: null }}><Projects /></NotionContext.Provider>);
+    render(
+      <NotionContext.Provider
+        value={{
+          db: { projects: MOCK_PROJECTS } as any,
+          loading: false,
+          error: null,
+        }}
+      >
+        <Projects />
+      </NotionContext.Provider>,
+    );
 
     const reactFilter = await screen.findByRole("button", { name: "React" });
     const nodeFilter = await screen.findByRole("button", { name: "Node" });

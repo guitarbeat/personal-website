@@ -1,7 +1,7 @@
-import { render, act } from "@testing-library/react";
+import { act, render } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import Matrix from "../Matrix";
 import { AuthProvider } from "../AuthContext";
+import Matrix from "../Matrix";
 
 describe("Matrix Performance", () => {
   let widthSetterSpy: jest.SpyInstance;
@@ -26,10 +26,12 @@ describe("Matrix Performance", () => {
     HTMLCanvasElement.prototype.getContext = mockGetContext as any;
 
     // Spy on canvas width setter
-    widthSetterSpy = jest.spyOn(HTMLCanvasElement.prototype, 'width', 'set');
+    widthSetterSpy = jest.spyOn(HTMLCanvasElement.prototype, "width", "set");
 
     // Mock audio
-    window.HTMLMediaElement.prototype.play = jest.fn().mockImplementation(() => Promise.resolve());
+    window.HTMLMediaElement.prototype.play = jest
+      .fn()
+      .mockImplementation(() => Promise.resolve());
     window.HTMLMediaElement.prototype.pause = jest.fn();
   });
 
@@ -42,7 +44,7 @@ describe("Matrix Performance", () => {
     render(
       <AuthProvider>
         <Matrix isVisible={true} />
-      </AuthProvider>
+      </AuthProvider>,
     );
 
     // Initial render calls resizeCanvas once directly
@@ -54,14 +56,18 @@ describe("Matrix Performance", () => {
     // Trigger rapid resize events
     const resizeEvent = new Event("resize");
     for (let i = 0; i < 10; i++) {
-      act(() => { window.dispatchEvent(resizeEvent); });
+      act(() => {
+        window.dispatchEvent(resizeEvent);
+      });
     }
 
     // Immediately after events, it should NOT have been called due to debounce
     expect(widthSetterSpy).toHaveBeenCalledTimes(0);
 
     // Advance timers by debounce duration (200ms)
-    act(() => { jest.advanceTimersByTime(200); });
+    act(() => {
+      jest.advanceTimersByTime(200);
+    });
 
     // Now it should have been called EXACTLY once
     expect(widthSetterSpy).toHaveBeenCalledTimes(1);

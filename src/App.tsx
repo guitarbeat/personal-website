@@ -82,7 +82,7 @@ const Layout = memo(
     children,
     navItems,
     onMatrixActivate,
-    onScrollActivate,
+    onScrollActivate: _onScrollActivate,
     isInScroll,
     hideNavBar,
   }: LayoutProps) => (
@@ -96,7 +96,6 @@ const Layout = memo(
         <NavBar
           items={navItems}
           onMatrixActivate={onMatrixActivate}
-
           isInShop={isInScroll}
         />
       )}
