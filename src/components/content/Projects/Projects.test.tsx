@@ -75,7 +75,9 @@ describe("Projects", () => {
     await waitFor(() => {
       // Since we pass an inline CSS variable string, it may map to the style prop directly depending on component logic
       // But let's check it's present using an alternative approach
-      expect(reactFilter.style.getPropertyValue('--tag-color')).toBe('hsl(0, 0%, 50%)');
+      expect(reactFilter.style.getPropertyValue("--tag-color")).toBe(
+        "hsl(0, 0%, 50%)",
+      );
     });
 
     act(() => {
@@ -89,7 +91,9 @@ describe("Projects", () => {
     );
 
     await waitFor(() => {
-      expect(reactFilter.style.getPropertyValue('--tag-color')).toBe('hsl(200, 60%, 55%)');
+      expect(reactFilter.style.getPropertyValue("--tag-color")).toBe(
+        "hsl(200, 60%, 55%)",
+      );
       expect(reactFilter).toHaveClass("active");
     });
   });

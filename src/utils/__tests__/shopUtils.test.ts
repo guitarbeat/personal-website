@@ -1,4 +1,5 @@
 import { parsePrintfulProduct } from "../shopUtils";
+
 const validatePrintfulConfig = () => {
   const apiKey = process.env.REACT_APP_PRINTFUL_API_KEY;
   const storeId = process.env.REACT_APP_PRINTFUL_STORE_ID;

@@ -189,9 +189,9 @@ const PixelCanvas = ({
 
     let context: CanvasRenderingContext2D | null = null;
     try {
-        context = canvas.getContext("2d") as CanvasRenderingContext2D | null;
+      context = canvas.getContext("2d") as CanvasRenderingContext2D | null;
     } catch (_e) {
-        // Ignore jsdom errors when canvas is not fully implemented
+      // Ignore jsdom errors when canvas is not fully implemented
     }
 
     if (!context) {
