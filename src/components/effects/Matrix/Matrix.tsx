@@ -1224,6 +1224,7 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                 </div>
                 <p className="hack-sequencer__feedback">{hackFeedback}</p>
               </div>
+              {/* biome-ignore lint/a11y/noStaticElementInteractions: terminal scroll container */}
               <div
                 className="hack-input-viewport"
                 onMouseDown={handleViewportEngage}
@@ -1247,6 +1248,7 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                       className += " prompt";
 
                     return (
+                      // biome-ignore lint/suspicious/noArrayIndexKey: append-only console lines
                       <div key={i} className={className}>
                         {line}
                       </div>

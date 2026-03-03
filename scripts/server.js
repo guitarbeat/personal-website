@@ -23,8 +23,30 @@ const DATABASE_IDS = {
   ABOUT: "aab0a96e279d48b6833f6727e6301266",
 };
 
-// Enable CORS for local development
-app.use(cors());
+// Enable CORS for local development and allowed origins
+const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim())
+  : [
+      "https://aaronwoods.info",
+      "https://www.aaronwoods.info",
+      "https://pixel-pal-follow.lovable.app",
+      "http://localhost:3000",
+      "http://localhost:5173",
+      "http://127.0.0.1:3000",
+      "http://127.0.0.1:5173"
+    ];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    if (ALLOWED_ORIGINS.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  }
+}));
 app.use(express.json());
 
 // Health check endpoint
