@@ -147,6 +147,7 @@ describe("commonUtils", () => {
 
       it("executes callback after delay", () => {
           const cb = jest.fn();
+          jest.useFakeTimers();
           createTimeout(cb, 100);
           expect(cb).not.toHaveBeenCalled();
           jest.advanceTimersByTime(100);
@@ -155,6 +156,7 @@ describe("commonUtils", () => {
 
       it("can be cleared", () => {
           const cb = jest.fn();
+          jest.useFakeTimers();
           const clear = createTimeout(cb, 100);
           clear();
           jest.advanceTimersByTime(100);
