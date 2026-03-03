@@ -2,9 +2,10 @@ import { render } from "@testing-library/react";
 import moment from "moment";
 
 import Work from "./Work";
+import { NotionProvider } from "../../../contexts/NotionContext";
 
 jest.mock("react-db-google-sheets", () => ({
-  withGoogleSheets: () => (Component: any) => Component,
+  withGoogleSheets: () => (Component: any) => (props: any) => <Component {...props} />,
 }));
 
 describe("Work timeline", () => {
@@ -26,7 +27,8 @@ describe("Work timeline", () => {
     const currentMonth = moment().format("MM-YYYY");
 
     const { container } = render(
-      <Work
+      <NotionProvider>
+        <Work
         db={{
           work: [
             {
@@ -40,7 +42,8 @@ describe("Work timeline", () => {
             },
           ],
         }}
-      />,
+      />
+      </NotionProvider>,
     );
 
     const timelineBar = container.querySelector(".work__timeline__subbar");

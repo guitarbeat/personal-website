@@ -1224,10 +1224,14 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                 </div>
                 <p className="hack-sequencer__feedback">{hackFeedback}</p>
               </div>
+              {/* biome-ignore lint/a11y/useSemanticElements: Custom styled element */}
               <div
                 className="hack-input-viewport"
                 onMouseDown={handleViewportEngage}
                 onTouchStart={handleViewportEngage}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") handleViewportEngage(e as any); }}
               >
                 <div className="hack-input-stream" aria-hidden="true">
                   {consoleDisplay.split("\n").map((line, i) => {
@@ -1247,6 +1251,7 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                       className += " prompt";
 
                     return (
+                      // biome-ignore lint/suspicious/noArrayIndexKey: Array index is safe here as this is append-only log
                       <div key={i} className={className}>
                         {line}
                       </div>
