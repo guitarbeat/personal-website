@@ -45,13 +45,8 @@ class AudioManager {
 
     // Add error handling
     this.audioElement.addEventListener("error", (e) => {
-      console.warn("Audio loading error:", e);
+      console.warn("Failed to load audio:", e);
       this.handleAudioError();
-    });
-
-    // Add load event
-    this.audioElement.addEventListener("canplaythrough", () => {
-      console.log("Knight Rider theme loaded and ready");
     });
 
     return this.audioElement;
@@ -120,7 +115,7 @@ class AudioManager {
       this.cachedBuffer = buffer; // Cache the buffer
       return buffer;
     } catch (error) {
-      console.error("Error creating synthetic Knight Rider theme:", error);
+      console.error("Failed to create synthetic Knight Rider theme:", error);
       return null;
     }
   }
@@ -168,11 +163,9 @@ class AudioManager {
           this.isPlaying = false;
         }
       };
-
-      console.log("Synthetic Knight Rider theme started playing");
       return true;
     } catch (error) {
-      console.error("Error playing synthetic Knight Rider theme:", error);
+      console.error("Failed to play synthetic Knight Rider theme:", error);
       this.handleAudioError();
       return false;
     }
@@ -184,8 +177,6 @@ class AudioManager {
       // Initialize audio context
       await this.initAudioContext();
 
-      console.log("Attempting to play Knight Rider theme...");
-
       // First, try to use a synthetic version (more reliable)
       const syntheticSuccess = await this.playSyntheticKnightRiderTheme();
       if (syntheticSuccess) {
@@ -193,10 +184,9 @@ class AudioManager {
       }
 
       // If synthetic fails, try file-based approach as fallback
-      console.log("Synthetic audio failed, trying file-based approach...");
       return await this.playKnightRiderThemeFromFile();
     } catch (error) {
-      console.error("Error playing Knight Rider theme:", error);
+      console.error("Failed to play Knight Rider theme:", error);
       this.handleAudioError();
       return false;
     }
@@ -210,7 +200,6 @@ class AudioManager {
 
       for (const url of knightRiderUrls) {
         try {
-          console.log(`Attempting to play from: ${url}`);
           this.createAudioElement(url);
 
           if (!this.audioElement) {
@@ -223,8 +212,6 @@ class AudioManager {
 
           // Fade in effect
           this.fadeIn();
-
-          console.log(`Knight Rider theme started playing from ${url}`);
           return true;
         } catch (error) {
           console.warn(`Failed to play Knight Rider theme from ${url}:`, error);
@@ -235,7 +222,7 @@ class AudioManager {
       // If all sources fail
       throw new Error("All audio sources failed");
     } catch (error) {
-      console.error("Error playing Knight Rider theme from file:", error);
+      console.error("Failed to play Knight Rider theme from file:", error);
       throw error;
     }
   }
@@ -293,10 +280,8 @@ class AudioManager {
         this.audioElement.currentTime = 0;
         this.audioElement = null;
       }
-
-      console.log("Knight Rider theme stopped");
     } catch (error) {
-      console.error("Error stopping audio:", error);
+      console.error("Failed to stop audio:", error);
     }
   }
 
@@ -386,10 +371,7 @@ class AudioManager {
 
   // Handle audio errors gracefully
   handleAudioError(): void {
-    console.warn("Audio playback failed - continuing without background music");
-    console.log(
-      "This is normal if the audio source is not available or blocked by browser policies",
-    );
+    console.warn("Failed to play audio - continuing without background music");
     this.isPlaying = false;
     if (this.audioElement) {
       this.audioElement = null;
