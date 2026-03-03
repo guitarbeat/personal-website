@@ -3,9 +3,36 @@ import moment from "moment";
 
 import Work from "./Work";
 
-jest.mock("react-db-google-sheets", () => ({
-  withGoogleSheets: () => (Component: any) => Component,
+jest.mock("../../../contexts/NotionContext", () => ({
+  useNotion: () => ({
+    getProjects: () => [],
+    getWork: () => MOCK_JOBS,
+    db: {
+      projects: [],
+      work: MOCK_JOBS,
+    },
+    isLoading: false,
+    error: null,
+  }),
 }));
+
+const MOCK_JOBS = [
+  {
+    slug: "current-job",
+    title: "Software Engineer",
+    company: "Tech Corp",
+    place: "Remote",
+    from: "2024-01-01",
+    to: "Present",
+    type: "Full-time",
+  },
+];
+
+jest.mock("../../effects/PixelCanvas/PixelCanvas", () => {
+  return function MockPixelCanvas() {
+    return <div data-testid="pixel-canvas-mock" />;
+  };
+});
 
 describe("Work timeline", () => {
   beforeAll(() => {
