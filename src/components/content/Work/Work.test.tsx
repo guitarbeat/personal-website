@@ -4,7 +4,10 @@ import moment from "moment";
 import Work from "./Work";
 
 jest.mock("react-db-google-sheets", () => ({
-  withGoogleSheets: () => (Component: any) => Component,
+  withGoogleSheets:
+    () =>
+    (Component: /* biome-ignore lint/suspicious/noExplicitAny: Mock */ any) =>
+      Component,
 }));
 
 describe("Work timeline", () => {

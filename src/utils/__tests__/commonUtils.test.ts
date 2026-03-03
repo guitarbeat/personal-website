@@ -1,17 +1,17 @@
 import {
-  isAboveBreakpoint,
-  throttle,
-  debounce,
-  throttleAdvanced,
   clamp,
-  randomInt,
-  randomFloat,
   cn,
-  getWindowDimensions,
-  generateId,
   copyPoint,
-  subtractPoints,
   createTimeout,
+  debounce,
+  generateId,
+  getWindowDimensions,
+  isAboveBreakpoint,
+  randomFloat,
+  randomInt,
+  subtractPoints,
+  throttle,
+  throttleAdvanced,
 } from "../commonUtils";
 
 describe("commonUtils", () => {
