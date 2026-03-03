@@ -317,7 +317,6 @@ export const useMatrixRain = (
       !window.requestAnimationFrame || !window.cancelAnimationFrame;
 
     const isSlowDevice =
-
       (navigator as any).deviceMemory && (navigator as any).deviceMemory < 4;
 
     const _isLowBattery = (navigator as any)

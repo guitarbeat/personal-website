@@ -185,7 +185,6 @@ interface MatrixProps {
 // * Sub-components (Consolidated)
 // * --------------------------------------------------------------------------------
 
-
 interface NuUhUhEasterEggProps {
   onClose: () => void;
   id?: number;
@@ -1231,7 +1230,10 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                 onTouchStart={handleViewportEngage}
                 role="button"
                 tabIndex={0}
-                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") handleViewportEngage(e as any); }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ")
+                    handleViewportEngage();
+                }}
               >
                 <div className="hack-input-stream" aria-hidden="true">
                   {consoleDisplay.split("\n").map((line, i) => {

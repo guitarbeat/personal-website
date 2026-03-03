@@ -1,11 +1,12 @@
 import { render } from "@testing-library/react";
 import moment from "moment";
-
-import Work from "./Work";
 import { NotionProvider } from "../../../contexts/NotionContext";
+import Work from "./Work";
 
 jest.mock("react-db-google-sheets", () => ({
-  withGoogleSheets: () => (Component: any) => (props: any) => <Component {...props} />,
+  withGoogleSheets: () => (Component: any) => (props: any) => (
+    <Component {...props} />
+  ),
 }));
 
 describe("Work timeline", () => {
@@ -29,20 +30,20 @@ describe("Work timeline", () => {
     const { container } = render(
       <NotionProvider>
         <Work
-        db={{
-          work: [
-            {
-              title: "Senior Developer",
-              company: "Acme Corp",
-              place: "Remote",
-              from: currentMonth,
-              to: "",
-              description: "Building resilient timelines.",
-              slug: "senior-developer",
-            },
-          ],
-        }}
-      />
+          db={{
+            work: [
+              {
+                title: "Senior Developer",
+                company: "Acme Corp",
+                place: "Remote",
+                from: currentMonth,
+                to: "",
+                description: "Building resilient timelines.",
+                slug: "senior-developer",
+              },
+            ],
+          }}
+        />
       </NotionProvider>,
     );
 
