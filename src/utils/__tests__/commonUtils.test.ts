@@ -145,13 +145,7 @@ describe("commonUtils", () => {
   });
 
   describe("createTimeout", () => {
-    beforeEach(() => {
-      jest.useFakeTimers();
-    });
-
-    afterEach(() => {
-      jest.useRealTimers();
-    });
+    jest.useFakeTimers();
 
     it("executes callback after delay", () => {
       const cb = jest.fn();
@@ -168,6 +162,8 @@ describe("commonUtils", () => {
       jest.advanceTimersByTime(100);
       expect(cb).not.toHaveBeenCalled();
     });
+
+    jest.useRealTimers();
   });
 
   describe("throttle", () => {

@@ -1,4 +1,4 @@
-import { render, act } from "@testing-library/react";
+import { render } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { AuthProvider } from "../AuthContext";
 import Matrix from "../Matrix";
@@ -63,7 +63,7 @@ describe("Matrix Performance", () => {
     expect(widthSetterSpy).toHaveBeenCalledTimes(0);
 
     // Advance timers by debounce duration (200ms)
-    act(() => { jest.advanceTimersByTime(200); });
+    jest.advanceTimersByTime(200);
 
     // Now it should have been called EXACTLY once
     expect(widthSetterSpy).toHaveBeenCalledTimes(1);
