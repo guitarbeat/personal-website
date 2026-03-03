@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useMemo } from "react";
 
 const BUFFER_COUNT = 5; // Number of content copies for shop mode
 
@@ -192,12 +192,15 @@ const InfiniteScrollEffect = ({
 
   // Render 5 copies in shop mode, 2 in normal mode
   const copies = shopMode ? BUFFER_COUNT : 2;
-  const seedArray = Array.from({ length: copies }, () =>
-    Math.random().toString(36).slice(2),
-  );
-  const contentArray = seedArray.map((seed) => (
-    <React.Fragment key={`content-copy-${seed}`}>{children}</React.Fragment>
-  ));
+  const contentArray = useMemo(() => {
+    const arr = [];
+    for (let i = 0; i < copies; i++) {
+      arr.push(
+        <React.Fragment key={`content-copy-${i}`}>{children}</React.Fragment>,
+      );
+    }
+    return arr;
+  }, [children, copies]);
 
   return (
     <div ref={containerRef} style={containerStyle}>
