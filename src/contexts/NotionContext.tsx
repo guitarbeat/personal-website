@@ -4,8 +4,11 @@ import { createContext, useContext, useEffect, useState } from "react";
 import NotionService from "../services/notionService";
 
 interface NotionData {
+  // biome-ignore lint/suspicious/noExplicitAny: Data shapes vary widely from Notion API
   projects: any[];
+  // biome-ignore lint/suspicious/noExplicitAny: Data shapes vary widely from Notion API
   work: any[];
+  // biome-ignore lint/suspicious/noExplicitAny: Data shapes vary widely from Notion API
   about: any[];
 }
 
@@ -43,7 +46,7 @@ export const NotionProvider = ({ children }: { children: React.ReactNode }) => {
         const notionService = new NotionService();
         const allData = await notionService.getAllData();
         setData(allData);
-      } catch (err: any) {
+      } catch (err: any) { // biome-ignore lint/suspicious/noExplicitAny: Unknown error from fetch
         console.error("Error fetching Notion data:", err);
         setError(err.message);
       } finally {
