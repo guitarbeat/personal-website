@@ -32,6 +32,41 @@ function ColorChangeOnHover({ text = "" }) {
   );
 }
 
+interface AboutTextItemProps {
+  category: string;
+  description: string;
+  expandedSection: string | null;
+  handleSectionClick: (category: string) => void;
+}
+
+function AboutTextItem({
+  category,
+  description,
+  expandedSection,
+  handleSectionClick,
+}: AboutTextItemProps) {
+  return (
+    <button
+      type="button"
+      className={cn(
+        "about-me__text",
+        expandedSection === category && "expanded",
+      )}
+      onClick={() => handleSectionClick(category)}
+    >
+      <div className="text-background">
+        <h2>{category}</h2>
+        <p>
+          <ColorChangeOnHover text={description} />
+        </p>
+        <div className="expand-indicator" aria-hidden="true">
+          {expandedSection === category ? "−" : "+"}
+        </div>
+      </div>
+    </button>
+  );
+}
+
 function About() {
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
   const { db } = useNotion();
@@ -134,31 +169,6 @@ function About() {
     openSpotifyProfile();
   }, []);
 
-  const renderAboutTexts = (
-    texts: { category: string; description: string }[],
-  ) =>
-    texts.map(({ category, description }) => (
-      <button
-        key={category}
-        type="button"
-        className={cn(
-          "about-me__text",
-          expandedSection === category && "expanded",
-        )}
-        onClick={() => handleSectionClick(category)}
-      >
-        <div className="text-background">
-          <h2>{category}</h2>
-          <p>
-            <ColorChangeOnHover text={description} />
-          </p>
-          <div className="expand-indicator" aria-hidden="true">
-            {expandedSection === category ? "−" : "+"}
-          </div>
-        </div>
-      </button>
-    ));
-
   return (
     <div id="about" className="container">
       <div className="container__content">
@@ -166,7 +176,15 @@ function About() {
           <h1>About Me</h1>
           <div className="about-me__content">
             <div className="about-me__text-container">
-              {renderAboutTexts(aboutTexts)}
+              {aboutTexts.map(({ category, description }) => (
+                <AboutTextItem
+                  key={category}
+                  category={category}
+                  description={description}
+                  expandedSection={expandedSection}
+                  handleSectionClick={handleSectionClick}
+                />
+              ))}
             </div>
             <div className="about-me__spotify">
               <a
