@@ -315,9 +315,9 @@ export const useMatrixRain = (
       navigator.hardwareConcurrency && navigator.hardwareConcurrency < 4;
     const isOldBrowser =
       !window.requestAnimationFrame || !window.cancelAnimationFrame;
-        // biome-ignore lint/suspicious/noExplicitAny: Navigator extension properties
-    const nav: any = navigator; const isSlowDevice =
-      nav.deviceMemory && nav.deviceMemory < 4;
+    // biome-ignore lint/suspicious/noExplicitAny: Navigator extension properties
+    const nav: any = navigator;
+    const isSlowDevice = nav.deviceMemory && nav.deviceMemory < 4;
     const _isLowBattery = nav
       .getBattery?.()
       .then((battery: any) => battery.level < 0.2);

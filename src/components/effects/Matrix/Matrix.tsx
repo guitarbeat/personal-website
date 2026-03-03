@@ -1223,13 +1223,15 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                 </div>
                 <p className="hack-sequencer__feedback">{hackFeedback}</p>
               </div>
+              {/* biome-ignore lint/a11y/useSemanticElements: Layout/styling reasons in terminal */}
               <div
                 className="hack-input-viewport"
-
-                // biome-ignore lint/a11y/useSemanticElements: Layout/styling reasons in terminal
                 role="button"
                 tabIndex={0}
-                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") handleViewportEngage(e); }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ")
+                    handleViewportEngage(e);
+                }}
                 onMouseDown={handleViewportEngage}
                 onTouchStart={handleViewportEngage}
               >
@@ -1251,7 +1253,11 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                       className += " prompt";
 
                     return (
-                      <div key={i} className={className}>
+                      <div
+                        // biome-ignore lint/suspicious/noArrayIndexKey: log display append-only
+                        key={i}
+                        className={className}
+                      >
                         {line}
                       </div>
                     );
