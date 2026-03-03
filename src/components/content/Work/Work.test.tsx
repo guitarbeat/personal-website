@@ -8,6 +8,16 @@ jest.mock("react-db-google-sheets", () => ({
   withGoogleSheets: () => (Component: any) => Component,
 }));
 
+jest.mock("../../../contexts/NotionContext", () => ({
+  useNotion: () => ({
+    work: [],
+    projects: [],
+    about: [],
+    loading: false,
+    error: null,
+  }),
+}));
+
 describe("Work timeline", () => {
   beforeAll(() => {
     class IntersectionObserverMock {

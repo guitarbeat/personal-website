@@ -19,7 +19,7 @@ HTMLCanvasElement.prototype.getContext = jest.fn(() => {
     restore: jest.fn(),
     scale: jest.fn(),
     translate: jest.fn(),
-  } as unknown as CanvasRenderingContext2D;
+  };
   // biome-ignore lint/suspicious/noExplicitAny: Mocking canvas context
 }) as any;
 
@@ -31,9 +31,9 @@ describe("PixelCanvas", () => {
   });
 
   it("initializes canvas dimensions", () => {
-     render(<PixelCanvas />);
-     // The logic inside useEffect needs to run.
-     // Since we cannot easily trigger real resize events in JSDOM that work with our mock,
-     // we are mainly ensuring that the component logic runs without runtime errors.
+    render(<PixelCanvas />);
+    // The logic inside useEffect needs to run.
+    // Since we cannot easily trigger real resize events in JSDOM that work with our mock,
+    // we are mainly ensuring that the component logic runs without runtime errors.
   });
 });
