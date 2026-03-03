@@ -13,8 +13,12 @@ describe("ErrorDisplay", () => {
     render(<ErrorDisplay error={errorMessage} />);
 
     expect(screen.getByText(errorMessage)).toBeInTheDocument();
-    expect(screen.queryByText("Environment Variables Required")).not.toBeInTheDocument();
-    expect(screen.queryByText("Proxy Configuration Issue")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("Environment Variables Required"),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("Proxy Configuration Issue"),
+    ).not.toBeInTheDocument();
   });
 
   it("renders environment variable help when error contains 'not set'", () => {
@@ -22,7 +26,9 @@ describe("ErrorDisplay", () => {
     render(<ErrorDisplay error={errorMessage} />);
 
     expect(screen.getByText(errorMessage)).toBeInTheDocument();
-    expect(screen.getByText("Environment Variables Required")).toBeInTheDocument();
+    expect(
+      screen.getByText("Environment Variables Required"),
+    ).toBeInTheDocument();
     expect(screen.getByText(/REACT_APP_PRINTFUL_API_KEY/)).toBeInTheDocument();
   });
 
@@ -32,6 +38,8 @@ describe("ErrorDisplay", () => {
 
     expect(screen.getByText(errorMessage)).toBeInTheDocument();
     expect(screen.getByText("Proxy Configuration Issue")).toBeInTheDocument();
-    expect(screen.getByText(/The application is configured to use a proxy/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/The application is configured to use a proxy/),
+    ).toBeInTheDocument();
   });
 });
