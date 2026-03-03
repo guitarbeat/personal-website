@@ -16,13 +16,10 @@ import {
   useLocation,
   useNavigate,
 } from "react-router-dom";
-// import GoogleSheetsProvider from "react-db-google-sheets";
+
 import { NotionProvider } from "./contexts/NotionContext";
 import "./sass/main.scss";
-import {
-  // GOOGLE_SHEETS_CONFIG,
-  NAV_ITEMS,
-} from "./components/Core/constants";
+import { NAV_ITEMS } from "./components/Core/constants";
 import { BlurSection } from "./components/effects/Blur/index";
 import CustomCursor from "./components/effects/CustomCursor/CustomCursor";
 import InfiniteScrollEffect from "./components/effects/InfiniteScrollEffect";
@@ -82,7 +79,7 @@ const Layout = memo(
     children,
     navItems,
     onMatrixActivate,
-    onScrollActivate,
+    onScrollActivate: _onScrollActivate,
     isInScroll,
     hideNavBar,
   }: LayoutProps) => (
@@ -96,7 +93,6 @@ const Layout = memo(
         <NavBar
           items={navItems}
           onMatrixActivate={onMatrixActivate}
-
           isInShop={isInScroll}
         />
       )}
@@ -234,7 +230,7 @@ interface MainRoutesProps {
 const MainRoutes = ({
   navItems,
   onMatrixActivate,
-  onScrollActivate,
+  onScrollActivate: _onScrollActivate,
   isScrollMode,
   isUnlocked,
   isInScroll,
