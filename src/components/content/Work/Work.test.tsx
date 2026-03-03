@@ -26,7 +26,7 @@ describe("Work timeline", () => {
   it("renders a current-month job with a finite timeline", () => {
     const currentMonth = moment().format("MM-YYYY");
 
-    let container: HTMLElement | undefined = undefined;
+    let container: HTMLElement | undefined;
     act(() => {
       const result = render(
         <NotionProvider>
@@ -50,7 +50,7 @@ describe("Work timeline", () => {
       container = result.container;
     });
 
-    const timelineBar = container!.querySelector(".work__timeline__subbar");
+    const timelineBar = container?.querySelector(".work__timeline__subbar");
 
     expect(timelineBar).not.toBeNull();
     expect((timelineBar as HTMLElement).style.height).toBe("100%");
