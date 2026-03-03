@@ -150,7 +150,7 @@ function validateFilter(filter, depth = 0) {
       if (ALLOWED_FILTER_TYPES.includes(key) && filter[key] && typeof filter[key] === "object") {
          // Deep copy the condition object to prevent prototype pollution or weird getters
          try {
-           newFilter[key] = JSON.parse(JSON.stringify(filter[key]));
+           newFilter[key] = structuredClone(filter[key]);
            hasType = true;
          } catch (e) {
            continue;
@@ -166,13 +166,13 @@ function validateFilter(filter, depth = 0) {
       const newFilter = { timestamp: filter.timestamp };
       if (filter.created_time && typeof filter.created_time === "object") {
           try {
-              newFilter.created_time = JSON.parse(JSON.stringify(filter.created_time));
+              newFilter.created_time = structuredClone(filter.created_time);
               return newFilter;
           } catch (e) { return null; }
       }
       if (filter.last_edited_time && typeof filter.last_edited_time === "object") {
           try {
-              newFilter.last_edited_time = JSON.parse(JSON.stringify(filter.last_edited_time));
+              newFilter.last_edited_time = structuredClone(filter.last_edited_time);
               return newFilter;
           } catch (e) { return null; }
       }
