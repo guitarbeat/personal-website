@@ -30,36 +30,21 @@ const fetchNotionDatabase = async (databaseType: string): Promise<any[]> => {
   }
 };
 
-// Data is already transformed by serverless function, just pass through
-const transformProjectsData = (data: any[]): any[] => {
-  return data;
-};
-
-// Data is already transformed by serverless function, just pass through
-const transformWorkData = (data: any[]): any[] => {
-  return data;
-};
-
-// Data is already transformed by serverless function, just pass through
-const transformAboutData = (data: any[]): any[] => {
-  return data;
-};
-
 // Main Notion Service class
 class NotionService {
   async getProjects() {
     const pages = await fetchNotionDatabase("projects");
-    return transformProjectsData(pages);
+    return pages;
   }
 
   async getWork() {
     const pages = await fetchNotionDatabase("work");
-    return transformWorkData(pages);
+    return pages;
   }
 
   async getAbout() {
     const pages = await fetchNotionDatabase("about");
-    return transformAboutData(pages);
+    return pages;
   }
 
   async getAllData() {
