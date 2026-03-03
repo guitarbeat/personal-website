@@ -77,11 +77,7 @@ interface NavBarProps {
   isInShop?: boolean;
 }
 
-function NavBar({
-  items,
-  onMatrixActivate,
-  isInShop = false,
-}: NavBarProps) {
+function NavBar({ items, onMatrixActivate, isInShop = false }: NavBarProps) {
   const themeClickTimesRef = useRef<number[]>([]);
   const themeSwitchRef = useRef<HTMLButtonElement>(null);
   const [isLightTheme, setIsLightTheme] = useState(getInitialTheme);
@@ -294,7 +290,9 @@ function NavBar({
     (e: React.MouseEvent, href: string, label: string) => {
       // * Clear any existing timeout
       if (vfxTimeoutRef.current) {
-        if (typeof vfxTimeoutRef.current === "number") clearTimeout(vfxTimeoutRef.current); else clearTimeout(vfxTimeoutRef.current as unknown as number);
+        if (typeof vfxTimeoutRef.current === "number")
+          clearTimeout(vfxTimeoutRef.current);
+        else clearTimeout(vfxTimeoutRef.current as unknown as number);
         vfxTimeoutRef.current = null;
       }
 
