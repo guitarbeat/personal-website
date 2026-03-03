@@ -15,6 +15,12 @@ jest.mock("react-db-google-sheets", () => ({
     ) => <Component {...props} />,
 }));
 
+jest.mock("../../../contexts/NotionContext", () => ({
+  useNotion: () => ({
+    db: { projects: [] },
+  }),
+}));
+
 jest.mock("../../../utils/colorUtils", () => {
   const actual = jest.requireActual("../../../utils/colorUtils");
   return {
@@ -67,9 +73,9 @@ describe("Projects", () => {
     expect(generateItemColors).toHaveBeenCalledWith(MOCK_PROJECTS, "keyword");
 
     await waitFor(() => {
-      expect(reactFilter).toHaveStyle({
-        borderLeft: "4px solid hsl(0, 0%, 50%)",
-      });
+      // Since we pass an inline CSS variable string, it may map to the style prop directly depending on component logic
+      // But let's check it's present using an alternative approach
+      expect(reactFilter.style.getPropertyValue('--tag-color')).toBe('hsl(0, 0%, 50%)');
     });
 
     act(() => {
@@ -83,9 +89,7 @@ describe("Projects", () => {
     );
 
     await waitFor(() => {
-      expect(reactFilter).toHaveStyle({
-        borderLeft: "4px solid hsl(200, 60%, 55%)",
-      });
+      expect(reactFilter.style.getPropertyValue('--tag-color')).toBe('hsl(200, 60%, 55%)');
       expect(reactFilter).toHaveClass("active");
     });
   });
