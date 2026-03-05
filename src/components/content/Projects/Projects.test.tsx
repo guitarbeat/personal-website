@@ -39,9 +39,9 @@ const MOCK_PROJECTS = [
     title: "Project Two",
     slug: "project-two",
     date: "2023",
-    keyword: "TypeScript, Jest",
+    keyword: "Node",
     link: "https://example.com/ts",
-    content: "TypeScript project",
+    content: "Node project",
     image: null,
   },
 ];
@@ -53,9 +53,6 @@ jest.mock("../../effects/PixelCanvas/PixelCanvas", () => {
 });
 
 describe("Projects", () => {
-    },
-  ];
-
   beforeEach(() => {
     jest.clearAllMocks();
   });
