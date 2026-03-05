@@ -62,7 +62,7 @@ describe("Work timeline", () => {
             },
           ],
         }}
-      />
+      />,
     );
 
     const timelineBar = container.querySelector(".work__timeline__subbar");
