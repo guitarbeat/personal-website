@@ -4,12 +4,6 @@ import userEvent from "@testing-library/user-event";
 import { generateItemColors } from "../../../utils/colorUtils";
 import Projects from "./Projects";
 
-jest.mock("react-db-google-sheets", () => ({
-  withGoogleSheets: () => (Component: any) => (props: any) => (
-    <Component {...props} />
-  ),
-}));
-
 jest.mock("../../../utils/colorUtils", () => {
   const actual = jest.requireActual("../../../utils/colorUtils");
   return {
@@ -18,28 +12,47 @@ jest.mock("../../../utils/colorUtils", () => {
   };
 });
 
-describe("Projects", () => {
-  const MOCK_PROJECTS = [
-    {
-      title: "Project One",
-      slug: "project-one",
-      date: "2024",
-      keyword: "React",
-      link: "https://example.com/react",
-      content: "React project",
-      image: null,
+jest.mock("../../../contexts/NotionContext", () => ({
+  useNotion: () => ({
+    getProjects: () => MOCK_PROJECTS,
+    getWork: () => [],
+    db: {
+      projects: MOCK_PROJECTS,
+      work: [],
     },
-    {
-      title: "Project Two",
-      slug: "project-two",
-      date: "2023",
-      keyword: "Node",
-      link: "https://example.com/node",
-      content: "Node project",
-      image: null,
-    },
-  ];
+    isLoading: false,
+    error: null,
+  }),
+}));
 
+const MOCK_PROJECTS = [
+  {
+    title: "Project One",
+    slug: "project-one",
+    date: "2024",
+    keyword: "React",
+    link: "https://example.com/react",
+    content: "React project",
+    image: null,
+  },
+  {
+    title: "Project Two",
+    slug: "project-two",
+    date: "2023",
+    keyword: "Node",
+    link: "https://example.com/ts",
+    content: "Node project",
+    image: null,
+  },
+];
+
+jest.mock("../../effects/PixelCanvas/PixelCanvas", () => {
+  return function MockPixelCanvas() {
+    return <div data-testid="pixel-canvas-mock" />;
+  };
+});
+
+describe("Projects", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -63,7 +76,7 @@ describe("Projects", () => {
 
     await waitFor(() => {
       expect(reactFilter).toHaveStyle({
-        borderLeft: "4px solid hsl(0, 0%, 50%)",
+        "--tag-color": "hsl(0, 0%, 50%)",
       });
     });
 
@@ -79,7 +92,7 @@ describe("Projects", () => {
 
     await waitFor(() => {
       expect(reactFilter).toHaveStyle({
-        borderLeft: "4px solid hsl(200, 60%, 55%)",
+        "--tag-color": "hsl(200, 60%, 55%)",
       });
       expect(reactFilter).toHaveClass("active");
     });

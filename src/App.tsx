@@ -230,7 +230,7 @@ interface MainRoutesProps {
 const MainRoutes = ({
   navItems,
   onMatrixActivate,
-  onScrollActivate: _onScrollActivate,
+  onScrollActivate,
   isScrollMode,
   isUnlocked,
   isInScroll,

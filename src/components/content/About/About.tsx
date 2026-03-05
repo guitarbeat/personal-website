@@ -1,9 +1,7 @@
 // About section content component for the personal website.
 
 import { useCallback, useEffect, useState } from "react";
-// import { processAboutData } from "../../../utils/googleSheetsUtils";
 import shell from "../../../assets/images/shell.png";
-// import { withGoogleSheets } from "react-db-google-sheets";
 import { useNotion } from "../../../contexts/NotionContext";
 import { cn } from "../../../utils/commonUtils";
 

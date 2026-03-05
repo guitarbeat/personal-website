@@ -120,7 +120,7 @@ personal-website/
 
 | File | Type | Purpose | Dependencies | Status |
 |------|------|---------|--------------|--------|
-| `App.js` | React Component | Main application component with routing, authentication, and layout management | React Router, Google Sheets, Matrix effects | ✅ Active |
+| `App.js` | React Component | Main application component with routing, authentication, and layout management | React Router, Matrix effects | ✅ Active |
 | `index.js` | Entry Point | Application entry point with error boundaries and lazy loading | React, React DOM | ✅ Active |
 
 #### Custom Hooks
@@ -150,7 +150,7 @@ personal-website/
 
 | File | Type | Purpose | Dependencies | Status |
 |------|------|---------|--------------|--------|
-| `components/Core/constants.js` | Configuration | Application constants including Google Sheets config and navigation items | None | ✅ Active |
+| `components/Core/constants.js` | Configuration | Application constants including navigation items | None | ✅ Active |
 | `components/Core/ErrorBoundary.js` | React Component | Error boundary for catching and handling React errors | React | ✅ Active |
 | `components/index.js` | Barrel Export | Centralized exports for all main components | React Components | ✅ Active |
 | `components/shared/ErrorDisplay.js` | React Component | Reusable error display component | React | ✅ Active |
@@ -159,7 +159,7 @@ personal-website/
 
 | File | Type | Purpose | Dependencies | Status |
 |------|------|---------|--------------|--------|
-| `components/content/About/About.js` | React Component | About section with expandable content and Google Sheets integration | React, Google Sheets | ✅ Active |
+| `components/content/About/About.js` | React Component | About section with expandable content and Notion integration | React | ✅ Active |
 | `components/content/About/about.scss` | Styles | About component styling | SCSS | ✅ Active |
 | `components/content/Header/Header.js` | React Component | Main header with profile images, social links, and scramble effect | React, Custom Hook | ✅ Active |
 | `components/content/Header/header.scss` | Styles | Header component styling | SCSS | ✅ Active |

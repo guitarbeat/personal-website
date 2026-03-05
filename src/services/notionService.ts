@@ -25,7 +25,7 @@ const fetchNotionDatabase = async (databaseType: string): Promise<any[]> => {
     const data = await response.json();
     // Serverless function returns already-transformed data as an array
     return Array.isArray(data) ? data : [];
-  // biome-ignore lint/suspicious/noExplicitAny: Error shape varies from fetch operations
+    // biome-ignore lint/suspicious/noExplicitAny: Error shape varies from fetch operations
   } catch (error: any) {
     console.error(`Error fetching ${databaseType} from Notion:`, error);
     return [];
@@ -33,16 +33,19 @@ const fetchNotionDatabase = async (databaseType: string): Promise<any[]> => {
 };
 
 // Data is already transformed by serverless function, just pass through
+// biome-ignore lint/suspicious/noExplicitAny: Pass through data
 const transformProjectsData = (data: any[]): any[] => {
   return data;
 };
 
 // Data is already transformed by serverless function, just pass through
+// biome-ignore lint/suspicious/noExplicitAny: Pass through data
 const transformWorkData = (data: any[]): any[] => {
   return data;
 };
 
 // Data is already transformed by serverless function, just pass through
+// biome-ignore lint/suspicious/noExplicitAny: Pass through data
 const transformAboutData = (data: any[]): any[] => {
   return data;
 };

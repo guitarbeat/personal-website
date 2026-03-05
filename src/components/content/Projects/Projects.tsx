@@ -1,9 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-// import { withGoogleSheets } from "react-db-google-sheets";
 import { useNotion } from "../../../contexts/NotionContext";
 import { generateItemColors } from "../../../utils/colorUtils";
 import { clamp, cn } from "../../../utils/commonUtils";
-// import { processProjectsData } from "../../../utils/googleSheetsUtils";
 import PixelCanvas from "../../effects/PixelCanvas/PixelCanvas";
 
 const DEFAULT_PROJECT_EFFECT = {
@@ -139,6 +137,7 @@ function ProjectCard({
 }
 interface ProjectsProps {
   db?: {
+    // biome-ignore lint/suspicious/noExplicitAny: Data structure varies
     projects: any[];
   };
 }
