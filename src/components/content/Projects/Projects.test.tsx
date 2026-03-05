@@ -4,10 +4,39 @@ import userEvent from "@testing-library/user-event";
 import { generateItemColors } from "../../../utils/colorUtils";
 import Projects from "./Projects";
 
-jest.mock("react-db-google-sheets", () => ({
-  withGoogleSheets: () => (Component: any) => (props: any) => (
-    <Component {...props} />
-  ),
+jest.mock("../../effects/PixelCanvas/PixelCanvas", () => {
+  return function MockPixelCanvas() {
+    return <div data-testid="pixel-canvas" />;
+  };
+});
+
+jest.mock("../../../contexts/NotionContext", () => ({
+  useNotion: () => ({
+    projects: [
+      {
+        title: "Project One",
+        slug: "project-one",
+        date: "2024",
+        keyword: "React",
+        link: "https://example.com/react",
+        content: "React project",
+        image: null,
+      },
+      {
+        title: "Project Two",
+        slug: "project-two",
+        date: "2023",
+        keyword: "Node",
+        link: "https://example.com/node",
+        content: "Node project",
+        image: null,
+      },
+    ],
+    work: [],
+    about: [],
+    loading: false,
+    error: null,
+  }),
 }));
 
 jest.mock("../../../utils/colorUtils", () => {
