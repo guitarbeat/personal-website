@@ -2,6 +2,14 @@ name: Lighthouse CI
 
 on:
   pull_request:
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'vite.config.ts'
+      - '.lighthouserc.json'
+      - 'index.html'
 
 jobs:
   lighthouse-ci:
@@ -40,8 +48,5 @@ jobs:
       - name: Build project
         run: pnpm run build:dev
 
-      - name: Install Lighthouse CI CLI
-        run: npm install -g @lhci/cli@0.14.x
-
       - name: Run Lighthouse CI
-        run: lhci autorun --upload.target=temporary-public-storage
+        run: pnpm dlx @lhci/cli@0.14.x autorun --upload.target=temporary-public-storage
