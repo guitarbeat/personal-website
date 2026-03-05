@@ -4,7 +4,7 @@
  */
 
 import { motion, useMotionValue, useSpring } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import "./custom-cursor.scss";
 
@@ -30,6 +30,10 @@ const CustomCursor = ({ label: defaultLabel = "View" }: CustomCursorProps) => {
   const x = useSpring(mouseX, springConfig);
   const y = useSpring(mouseY, springConfig);
 
+  // Throttled using requestAnimationFrame to avoid expensive DOM traversal on every mouseover event
+  const rafId = useRef<number | null>(null);
+  const lastTarget = useRef<EventTarget | null>(null);
+
   useEffect(() => {
     // 1. Position tracking (high frequency, minimal logic)
     // * Performance optimization: decoupled from state updates to prevent expensive DOM traversal on every frame
@@ -39,9 +43,10 @@ const CustomCursor = ({ label: defaultLabel = "View" }: CustomCursorProps) => {
     };
 
     // 2. Hover state detection (event-driven, no polling on mousemove)
-    const handleMouseOver = (e: MouseEvent) => {
-      const target = e.target;
+    const processHover = () => {
+      const target = lastTarget.current;
       if (!(target instanceof Element)) {
+        rafId.current = null;
         return;
       }
 
@@ -52,15 +57,14 @@ const CustomCursor = ({ label: defaultLabel = "View" }: CustomCursorProps) => {
         if (text) {
           setCursorText(text);
           setIsHovering(true);
+          rafId.current = null;
           return;
         }
       }
 
       // Check for clickable elements
-      const clickable =
-        target.closest("button") ??
-        target.closest("a") ??
-        target.closest('[data-hover="true"]');
+      // Optimization: Combined selector to reduce DOM traversal
+      const clickable = target.closest('button, a, [data-hover="true"]');
 
       if (clickable) {
         setCursorText(defaultLabel);
@@ -68,10 +72,22 @@ const CustomCursor = ({ label: defaultLabel = "View" }: CustomCursorProps) => {
       } else {
         setIsHovering(false);
       }
+      rafId.current = null;
+    };
+
+    const handleMouseOver = (e: MouseEvent) => {
+      lastTarget.current = e.target;
+      if (rafId.current === null) {
+        rafId.current = requestAnimationFrame(processHover);
+      }
     };
 
     const handleMouseLeave = () => {
       setIsHovering(false);
+      if (rafId.current !== null) {
+        cancelAnimationFrame(rafId.current);
+        rafId.current = null;
+      }
     };
 
     window.addEventListener("mousemove", updateMousePosition, {
@@ -88,6 +104,10 @@ const CustomCursor = ({ label: defaultLabel = "View" }: CustomCursorProps) => {
       window.removeEventListener("mousemove", updateMousePosition);
       window.removeEventListener("mouseover", handleMouseOver);
       document.removeEventListener("mouseleave", handleMouseLeave);
+      if (rafId.current !== null) {
+        cancelAnimationFrame(rafId.current);
+        rafId.current = null;
+      }
     };
   }, [mouseX, mouseY, defaultLabel]);
 
