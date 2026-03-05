@@ -1,7 +1,7 @@
 import { render } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import Matrix from "../Matrix";
 import { AuthProvider } from "../AuthContext";
+import Matrix from "../Matrix";
 
 describe("Matrix Performance", () => {
   let widthSetterSpy: jest.SpyInstance;

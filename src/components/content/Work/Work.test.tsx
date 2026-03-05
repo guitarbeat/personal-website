@@ -3,8 +3,32 @@ import moment from "moment";
 
 import Work from "./Work";
 
-jest.mock("react-db-google-sheets", () => ({
-  withGoogleSheets: () => (Component: any) => Component,
+jest.mock("../../effects/PixelCanvas/PixelCanvas", () => {
+  return function MockPixelCanvas() {
+    return <div data-testid="pixel-canvas" />;
+  };
+});
+
+const mockCurrentMonth = moment().format("MM-YYYY");
+
+jest.mock("../../../contexts/NotionContext", () => ({
+  useNotion: () => ({
+    work: [
+      {
+        title: "Senior Developer",
+        company: "Acme Corp",
+        place: "Remote",
+        from: mockCurrentMonth,
+        to: "",
+        description: "Building resilient timelines.",
+        slug: "senior-developer",
+      },
+    ],
+    projects: [],
+    about: [],
+    loading: false,
+    error: null,
+  }),
 }));
 
 describe("Work timeline", () => {
@@ -23,8 +47,6 @@ describe("Work timeline", () => {
   });
 
   it("renders a current-month job with a finite timeline", () => {
-    const currentMonth = moment().format("MM-YYYY");
-
     const { container } = render(
       <Work
         db={{
@@ -33,7 +55,7 @@ describe("Work timeline", () => {
               title: "Senior Developer",
               company: "Acme Corp",
               place: "Remote",
-              from: currentMonth,
+              from: mockCurrentMonth,
               to: "",
               description: "Building resilient timelines.",
               slug: "senior-developer",
