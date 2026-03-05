@@ -53,24 +53,6 @@ jest.mock("../../effects/PixelCanvas/PixelCanvas", () => {
 });
 
 describe("Projects", () => {
-  const MOCK_PROJECTS = [
-    {
-      title: "Project One",
-      slug: "project-one",
-      date: "2024",
-      keyword: "React",
-      link: "https://example.com/react",
-      content: "React project",
-      image: null,
-    },
-    {
-      title: "Project Two",
-      slug: "project-two",
-      date: "2023",
-      keyword: "Node",
-      link: "https://example.com/node",
-      content: "Node project",
-      image: null,
     },
   ];
 
