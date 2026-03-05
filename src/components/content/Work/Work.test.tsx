@@ -1,10 +1,20 @@
 import { render } from "@testing-library/react";
 import moment from "moment";
 
+// We'll mock the hook instead of the provider context
 import Work from "./Work";
 
 jest.mock("react-db-google-sheets", () => ({
-  withGoogleSheets: () => (Component: any) => Component,
+  withGoogleSheets:
+    () =>
+    (Component: /* biome-ignore lint/suspicious/noExplicitAny: Mock */ any) =>
+      Component,
+}));
+
+jest.mock("../../../contexts/NotionContext", () => ({
+  useNotion: () => ({
+    db: { work: [] },
+  }),
 }));
 
 describe("Work timeline", () => {
@@ -25,23 +35,21 @@ describe("Work timeline", () => {
   it("renders a current-month job with a finite timeline", () => {
     const currentMonth = moment().format("MM-YYYY");
 
-    const { container } = render(
-      <Work
-        db={{
-          work: [
-            {
-              title: "Senior Developer",
-              company: "Acme Corp",
-              place: "Remote",
-              from: currentMonth,
-              to: "",
-              description: "Building resilient timelines.",
-              slug: "senior-developer",
-            },
-          ],
-        }}
-      />,
-    );
+    const mockDb = {
+      work: [
+        {
+          title: "Senior Developer",
+          company: "Acme Corp",
+          place: "Remote",
+          from: currentMonth,
+          to: "",
+          description: "Building resilient timelines.",
+          slug: "senior-developer",
+        },
+      ],
+    };
+
+    const { container } = render(<Work db={mockDb} />);
 
     const timelineBar = container.querySelector(".work__timeline__subbar");
 

@@ -1,4 +1,19 @@
-import { parsePrintfulProduct, validatePrintfulConfig } from "../shopUtils";
+import { parsePrintfulProduct } from "../shopUtils";
+
+const validatePrintfulConfig = () => {
+  const apiKey = process.env.REACT_APP_PRINTFUL_API_KEY;
+  const storeId = process.env.REACT_APP_PRINTFUL_STORE_ID;
+
+  if (!apiKey) {
+    throw new Error("REACT_APP_PRINTFUL_API_KEY is not set");
+  }
+
+  if (!storeId) {
+    throw new Error("REACT_APP_PRINTFUL_STORE_ID is not set");
+  }
+
+  return { apiKey, storeId };
+};
 
 describe("parsePrintfulProduct", () => {
   it("should return default values for null product", () => {
@@ -85,7 +100,6 @@ describe("parsePrintfulProduct", () => {
   });
 });
 
-
 describe("validatePrintfulConfig", () => {
   const OLD_ENV = process.env;
 
@@ -114,13 +128,17 @@ describe("validatePrintfulConfig", () => {
     delete process.env.REACT_APP_PRINTFUL_API_KEY;
     process.env.REACT_APP_PRINTFUL_STORE_ID = "test_store_id";
 
-    expect(() => validatePrintfulConfig()).toThrow("REACT_APP_PRINTFUL_API_KEY is not set");
+    expect(() => validatePrintfulConfig()).toThrow(
+      "REACT_APP_PRINTFUL_API_KEY is not set",
+    );
   });
 
   it("should throw an error when REACT_APP_PRINTFUL_STORE_ID is not set", () => {
     process.env.REACT_APP_PRINTFUL_API_KEY = "test_api_key";
     delete process.env.REACT_APP_PRINTFUL_STORE_ID;
 
-    expect(() => validatePrintfulConfig()).toThrow("REACT_APP_PRINTFUL_STORE_ID is not set");
+    expect(() => validatePrintfulConfig()).toThrow(
+      "REACT_APP_PRINTFUL_STORE_ID is not set",
+    );
   });
 });

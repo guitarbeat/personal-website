@@ -187,7 +187,12 @@ const PixelCanvas = ({
       return undefined;
     }
 
-    const context = canvas.getContext("2d");
+    let context: CanvasRenderingContext2D | null = null;
+    try {
+      context = canvas.getContext("2d") as CanvasRenderingContext2D | null;
+    } catch (_e) {
+      // Ignore jsdom errors when canvas is not fully implemented
+    }
 
     if (!context) {
       return undefined;
@@ -266,7 +271,7 @@ const PixelCanvas = ({
       }
 
       timePrevious = timeNow - (timePassed % timeInterval);
-      context.clearRect(0, 0, canvas.width, canvas.height);
+      context?.clearRect(0, 0, canvas.width, canvas.height);
 
       for (let i = 0; i < pixels.length; i += 1) {
         pixels[i][fnName]();

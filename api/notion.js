@@ -99,31 +99,47 @@ function transformAboutData(results) {
 // Validate sorts array
 function validateSorts(sorts) {
   if (!Array.isArray(sorts)) return undefined;
-  return sorts.map((sort) => {
-    if (!sort || typeof sort !== "object") return null;
-    const { property, timestamp, direction } = sort;
+  return sorts
+    .map((sort) => {
+      if (!sort || typeof sort !== "object") return null;
+      const { property, timestamp, direction } = sort;
 
-    // Only allow 'ascending' or 'descending'
-    if (direction !== "ascending" && direction !== "descending") return null;
+      // Only allow 'ascending' or 'descending'
+      if (direction !== "ascending" && direction !== "descending") return null;
 
-    const newSort = { direction };
+      const newSort = { direction };
 
-    if (typeof property === "string") {
-      newSort.property = property;
-    } else if (timestamp === "created_time" || timestamp === "last_edited_time") {
-      newSort.timestamp = timestamp;
-    } else {
-      return null;
-    }
-    return newSort;
-  }).filter(Boolean);
+      if (typeof property === "string") {
+        newSort.property = property;
+      } else if (
+        timestamp === "created_time" ||
+        timestamp === "last_edited_time"
+      ) {
+        newSort.timestamp = timestamp;
+      } else {
+        return null;
+      }
+      return newSort;
+    })
+    .filter(Boolean);
 }
 
 // Allowed filter types (Notion API v1)
 const ALLOWED_FILTER_TYPES = [
-  "title", "rich_text", "url", "email", "phone_number", "number",
-  "checkbox", "select", "multi_select", "status", "date", "people",
-  "files", "relation"
+  "title",
+  "rich_text",
+  "url",
+  "email",
+  "phone_number",
+  "number",
+  "checkbox",
+  "select",
+  "multi_select",
+  "status",
+  "date",
+  "people",
+  "files",
+  "relation",
 ];
 
 // Validate filter object (recursive with depth limit)
@@ -133,11 +149,15 @@ function validateFilter(filter, depth = 0) {
 
   // Handle compound filters
   if (Array.isArray(filter.and)) {
-    const validAnd = filter.and.map((f) => validateFilter(f, depth + 1)).filter(Boolean);
+    const validAnd = filter.and
+      .map((f) => validateFilter(f, depth + 1))
+      .filter(Boolean);
     return validAnd.length > 0 ? { and: validAnd } : null;
   }
   if (Array.isArray(filter.or)) {
-    const validOr = filter.or.map((f) => validateFilter(f, depth + 1)).filter(Boolean);
+    const validOr = filter.or
+      .map((f) => validateFilter(f, depth + 1))
+      .filter(Boolean);
     return validOr.length > 0 ? { or: validOr } : null;
   }
 
@@ -147,14 +167,16 @@ function validateFilter(filter, depth = 0) {
     let hasType = false;
 
     for (const key of Object.keys(filter)) {
-      if (ALLOWED_FILTER_TYPES.includes(key) && filter[key] && typeof filter[key] === "object") {
-         // Deep copy the condition object to prevent prototype pollution or weird getters
-         try {
-           newFilter[key] = JSON.parse(JSON.stringify(filter[key]));
-           hasType = true;
-         } catch (e) {
-           continue;
-         }
+      if (
+        ALLOWED_FILTER_TYPES.includes(key) &&
+        filter[key] &&
+        typeof filter[key] === "object"
+      ) {
+        // Deep copy the condition object to prevent prototype pollution or weird getters
+        try {
+          newFilter[key] = JSON.parse(JSON.stringify(filter[key]));
+          hasType = true;
+        } catch (_e) {}
       }
     }
 
@@ -162,20 +184,34 @@ function validateFilter(filter, depth = 0) {
   }
 
   // Also support timestamp filters (created_time, last_edited_time)
-  if (filter.timestamp === "created_time" || filter.timestamp === "last_edited_time") {
-      const newFilter = { timestamp: filter.timestamp };
-      if (filter.created_time && typeof filter.created_time === "object") {
-          try {
-              newFilter.created_time = JSON.parse(JSON.stringify(filter.created_time));
-              return newFilter;
-          } catch (e) { return null; }
+  if (
+    filter.timestamp === "created_time" ||
+    filter.timestamp === "last_edited_time"
+  ) {
+    const newFilter = { timestamp: filter.timestamp };
+    if (filter.created_time && typeof filter.created_time === "object") {
+      try {
+        newFilter.created_time = JSON.parse(
+          JSON.stringify(filter.created_time),
+        );
+        return newFilter;
+      } catch (_e) {
+        return null;
       }
-      if (filter.last_edited_time && typeof filter.last_edited_time === "object") {
-          try {
-              newFilter.last_edited_time = JSON.parse(JSON.stringify(filter.last_edited_time));
-              return newFilter;
-          } catch (e) { return null; }
+    }
+    if (
+      filter.last_edited_time &&
+      typeof filter.last_edited_time === "object"
+    ) {
+      try {
+        newFilter.last_edited_time = JSON.parse(
+          JSON.stringify(filter.last_edited_time),
+        );
+        return newFilter;
+      } catch (_e) {
+        return null;
       }
+    }
   }
 
   return null;
