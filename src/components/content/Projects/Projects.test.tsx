@@ -1,13 +1,17 @@
 import "@testing-library/jest-dom";
 import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { NotionProvider } from "../../../contexts/NotionContext";
 import { generateItemColors } from "../../../utils/colorUtils";
 import Projects from "./Projects";
 
 jest.mock("react-db-google-sheets", () => ({
-  withGoogleSheets: () => (Component: any) => (props: any) => (
-    <Component {...props} />
-  ),
+  withGoogleSheets:
+    () =>
+    // biome-ignore lint/suspicious/noExplicitAny: mocked component
+    (Component: any) =>
+    // biome-ignore lint/suspicious/noExplicitAny: mocked props
+    (props: any) => <Component {...props} />,
 }));
 
 jest.mock("../../../utils/colorUtils", () => {
@@ -55,16 +59,22 @@ describe("Projects", () => {
         Node: "hsl(40, 80%, 60%)",
       }));
 
-    render(<Projects db={{ projects: MOCK_PROJECTS }} />);
+    act(() => {
+      render(
+        <NotionProvider>
+          <Projects db={{ projects: MOCK_PROJECTS }} />
+        </NotionProvider>,
+      );
+    });
 
     const reactFilter = await screen.findByRole("button", { name: "React" });
 
     expect(generateItemColors).toHaveBeenCalledWith(MOCK_PROJECTS, "keyword");
 
     await waitFor(() => {
-      expect(reactFilter).toHaveStyle({
-        borderLeft: "4px solid hsl(0, 0%, 50%)",
-      });
+      expect(reactFilter.style.getPropertyValue("--tag-color")).toBe(
+        "hsl(0, 0%, 50%)",
+      );
     });
 
     act(() => {
@@ -78,9 +88,9 @@ describe("Projects", () => {
     );
 
     await waitFor(() => {
-      expect(reactFilter).toHaveStyle({
-        borderLeft: "4px solid hsl(200, 60%, 55%)",
-      });
+      expect(reactFilter.style.getPropertyValue("--tag-color")).toBe(
+        "hsl(200, 60%, 55%)",
+      );
       expect(reactFilter).toHaveClass("active");
     });
   });
@@ -93,7 +103,13 @@ describe("Projects", () => {
 
     const user = userEvent.setup();
 
-    render(<Projects db={{ projects: MOCK_PROJECTS }} />);
+    act(() => {
+      render(
+        <NotionProvider>
+          <Projects db={{ projects: MOCK_PROJECTS }} />
+        </NotionProvider>,
+      );
+    });
 
     const reactFilter = await screen.findByRole("button", { name: "React" });
     const nodeFilter = await screen.findByRole("button", { name: "Node" });

@@ -1,7 +1,7 @@
-import { render } from "@testing-library/react";
+import { act, render } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import Matrix from "../Matrix";
 import { AuthProvider } from "../AuthContext";
+import Matrix from "../Matrix";
 
 describe("Matrix Performance", () => {
   let widthSetterSpy: jest.SpyInstance;
@@ -23,6 +23,7 @@ describe("Matrix Performance", () => {
       shadowColor: "",
       globalAlpha: 1,
     });
+    // biome-ignore lint/suspicious/noExplicitAny: mocking context
     HTMLCanvasElement.prototype.getContext = mockGetContext as any;
 
     // Spy on canvas width setter
@@ -41,11 +42,13 @@ describe("Matrix Performance", () => {
   });
 
   it("should debounce resize events (optimization verification)", () => {
-    render(
-      <AuthProvider>
-        <Matrix isVisible={true} />
-      </AuthProvider>,
-    );
+    act(() => {
+      render(
+        <AuthProvider>
+          <Matrix isVisible={true} />
+        </AuthProvider>,
+      );
+    });
 
     // Initial render calls resizeCanvas once directly
     expect(widthSetterSpy).toHaveBeenCalledTimes(1);
@@ -55,15 +58,19 @@ describe("Matrix Performance", () => {
 
     // Trigger rapid resize events
     const resizeEvent = new Event("resize");
-    for (let i = 0; i < 10; i++) {
-      window.dispatchEvent(resizeEvent);
-    }
+    act(() => {
+      for (let i = 0; i < 10; i++) {
+        window.dispatchEvent(resizeEvent);
+      }
+    });
 
     // Immediately after events, it should NOT have been called due to debounce
     expect(widthSetterSpy).toHaveBeenCalledTimes(0);
 
     // Advance timers by debounce duration (200ms)
-    jest.advanceTimersByTime(200);
+    act(() => {
+      jest.advanceTimersByTime(200);
+    });
 
     // Now it should have been called EXACTLY once
     expect(widthSetterSpy).toHaveBeenCalledTimes(1);
