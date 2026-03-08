@@ -1,5 +1,6 @@
 import { render } from "@testing-library/react";
 import moment from "moment";
+import { NotionProvider } from "../../../contexts/NotionContext";
 
 import Work from "./Work";
 
@@ -26,21 +27,23 @@ describe("Work timeline", () => {
     const currentMonth = moment().format("MM-YYYY");
 
     const { container } = render(
-      <Work
-        db={{
-          work: [
-            {
-              title: "Senior Developer",
-              company: "Acme Corp",
-              place: "Remote",
-              from: currentMonth,
-              to: "",
-              description: "Building resilient timelines.",
-              slug: "senior-developer",
-            },
-          ],
-        }}
-      />,
+      <NotionProvider>
+        <Work
+          db={{
+            work: [
+              {
+                title: "Senior Developer",
+                company: "Acme Corp",
+                place: "Remote",
+                from: currentMonth,
+                to: "",
+                description: "Building resilient timelines.",
+                slug: "senior-developer",
+              },
+            ],
+          }}
+        />
+      </NotionProvider>,
     );
 
     const timelineBar = container.querySelector(".work__timeline__subbar");
