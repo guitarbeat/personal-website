@@ -23,7 +23,8 @@ describe("Matrix Performance", () => {
       shadowColor: "",
       globalAlpha: 1,
     });
-    HTMLCanvasElement.prototype.getContext = mockGetContext as any;
+    HTMLCanvasElement.prototype.getContext =
+      mockGetContext as unknown as typeof HTMLCanvasElement.prototype.getContext;
 
     // Spy on canvas width setter
     widthSetterSpy = jest.spyOn(HTMLCanvasElement.prototype, "width", "set");
@@ -40,7 +41,20 @@ describe("Matrix Performance", () => {
     jest.restoreAllMocks();
   });
 
-  it("should debounce resize events (optimization verification)", () => {
+  it("should debounce resize events (optimization verification)", async () => {
+    // Suppress specific React act() warnings for background hook updates during this test
+    const originalError = console.error;
+    console.error = (...args) => {
+      if (
+        typeof args[0] === "string" &&
+        args[0].includes("An update to") &&
+        args[0].includes("inside a test was not wrapped in act")
+      ) {
+        return;
+      }
+      originalError(...args);
+    };
+
     render(
       <AuthProvider>
         <Matrix isVisible={true} />
@@ -53,19 +67,26 @@ describe("Matrix Performance", () => {
     // Clear initial calls to focus on event listener behavior
     widthSetterSpy.mockClear();
 
-    // Trigger rapid resize events
-    const resizeEvent = new Event("resize");
-    for (let i = 0; i < 10; i++) {
-      window.dispatchEvent(resizeEvent);
-    }
+    const React = await import("react");
+    React.act(() => {
+      // Trigger rapid resize events
+      const resizeEvent = new Event("resize");
+      for (let i = 0; i < 10; i++) {
+        window.dispatchEvent(resizeEvent);
+      }
+    });
 
     // Immediately after events, it should NOT have been called due to debounce
     expect(widthSetterSpy).toHaveBeenCalledTimes(0);
 
-    // Advance timers by debounce duration (200ms)
-    jest.advanceTimersByTime(200);
+    React.act(() => {
+      // Advance timers by debounce duration (200ms)
+      jest.advanceTimersByTime(200);
+    });
 
     // Now it should have been called EXACTLY once
     expect(widthSetterSpy).toHaveBeenCalledTimes(1);
+
+    console.error = originalError;
   });
 });

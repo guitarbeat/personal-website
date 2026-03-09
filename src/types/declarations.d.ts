@@ -37,5 +37,5 @@ declare module "*.pdf" {
 }
 
 declare module "https://esm.sh/@vfx-js/core" {
-  export const VFX: any;
+  export const VFX: unknown;
 }
