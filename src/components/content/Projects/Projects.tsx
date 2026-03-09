@@ -145,7 +145,6 @@ export interface ProjectData {
   keyword: string;
   date: string;
   image?: string | null;
-  [key: string]: unknown;
 }
 
 interface ProjectsProps {

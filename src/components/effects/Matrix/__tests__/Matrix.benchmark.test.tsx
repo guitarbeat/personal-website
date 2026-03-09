@@ -55,38 +55,40 @@ describe("Matrix Performance", () => {
       originalError(...args);
     };
 
-    render(
-      <AuthProvider>
-        <Matrix isVisible={true} />
-      </AuthProvider>,
-    );
+    try {
+      render(
+        <AuthProvider>
+          <Matrix isVisible={true} />
+        </AuthProvider>,
+      );
 
-    // Initial render calls resizeCanvas once directly
-    expect(widthSetterSpy).toHaveBeenCalledTimes(1);
+      // Initial render calls resizeCanvas once directly
+      expect(widthSetterSpy).toHaveBeenCalledTimes(1);
 
-    // Clear initial calls to focus on event listener behavior
-    widthSetterSpy.mockClear();
+      // Clear initial calls to focus on event listener behavior
+      widthSetterSpy.mockClear();
 
-    const React = await import("react");
-    React.act(() => {
-      // Trigger rapid resize events
-      const resizeEvent = new Event("resize");
-      for (let i = 0; i < 10; i++) {
-        window.dispatchEvent(resizeEvent);
-      }
-    });
+      const React = await import("react");
+      React.act(() => {
+        // Trigger rapid resize events
+        const resizeEvent = new Event("resize");
+        for (let i = 0; i < 10; i++) {
+          window.dispatchEvent(resizeEvent);
+        }
+      });
 
-    // Immediately after events, it should NOT have been called due to debounce
-    expect(widthSetterSpy).toHaveBeenCalledTimes(0);
+      // Immediately after events, it should NOT have been called due to debounce
+      expect(widthSetterSpy).toHaveBeenCalledTimes(0);
 
-    React.act(() => {
-      // Advance timers by debounce duration (200ms)
-      jest.advanceTimersByTime(200);
-    });
+      React.act(() => {
+        // Advance timers by debounce duration (200ms)
+        jest.advanceTimersByTime(200);
+      });
 
-    // Now it should have been called EXACTLY once
-    expect(widthSetterSpy).toHaveBeenCalledTimes(1);
-
-    console.error = originalError;
+      // Now it should have been called EXACTLY once
+      expect(widthSetterSpy).toHaveBeenCalledTimes(1);
+    } finally {
+      console.error = originalError;
+    }
   });
 });
