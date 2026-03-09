@@ -216,8 +216,8 @@ function Work({ db: propsDb }: WorkProps = {}) {
   // Data processing
   // Make a deep copy to avoid mutating the original data in context
   const jobs: Job[] = ((db?.work as unknown[]) || []).map((job) => ({
-    ...(job as Record<string, unknown>),
-  })) as Job[];
+    ...(job as Job),
+  }));
 
   let first_date = moment();
 

@@ -1,4 +1,4 @@
-import { render } from "@testing-library/react";
+import { act, render } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { AuthProvider } from "../AuthContext";
 import Matrix from "../Matrix";
@@ -41,7 +41,7 @@ describe("Matrix Performance", () => {
     jest.restoreAllMocks();
   });
 
-  it("should debounce resize events (optimization verification)", async () => {
+  it("should debounce resize events (optimization verification)", () => {
     // Suppress specific React act() warnings for background hook updates during this test
     const originalError = console.error;
     console.error = (...args) => {
@@ -68,8 +68,7 @@ describe("Matrix Performance", () => {
       // Clear initial calls to focus on event listener behavior
       widthSetterSpy.mockClear();
 
-      const React = await import("react");
-      React.act(() => {
+      act(() => {
         // Trigger rapid resize events
         const resizeEvent = new Event("resize");
         for (let i = 0; i < 10; i++) {
@@ -80,7 +79,7 @@ describe("Matrix Performance", () => {
       // Immediately after events, it should NOT have been called due to debounce
       expect(widthSetterSpy).toHaveBeenCalledTimes(0);
 
-      React.act(() => {
+      act(() => {
         // Advance timers by debounce duration (200ms)
         jest.advanceTimersByTime(200);
       });
