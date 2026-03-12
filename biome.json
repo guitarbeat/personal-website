@@ -11,13 +11,21 @@
   },
   "files": {
     "includes": [
-      "!dist/**",
-      "!build/**",
-      "!node_modules/**",
+      "src/**/*.ts",
+      "src/**/*.tsx",
+      "src/**/*.js",
+      "src/**/*.jsx",
+      "src/**/*.json",
+      "api/**/*.js",
+      "api/**/*.ts",
+      "scripts/**/*.js",
+      "scripts/**/*.ts",
+      "*.js",
+      "*.ts",
+      "*.json",
       "!.vscode",
       "!src/css/styles.css",
-      "!public/build",
-      "**"
+      "!public/build"
     ]
   },
   "formatter": {
