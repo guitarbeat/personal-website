@@ -1,0 +1,35 @@
+
+> portfolio@0.1.0 build:dev /app
+> vite build --mode development
+
+vite v7.3.1 building client environment for development...
+transforming...
+✓ 674 modules transformed.
+rendering chunks...
+[esbuild css minify]
+▲ [WARNING] "transitionDuration" is not a known CSS property [unsupported-css-property]
+
+    <stdin>:17196:2:
+      17196 │   transitionDuration: 0.3s;
+            │   ~~~~~~~~~~~~~~~~~~
+            ╵   transition-duration
+
+  Did you mean "transition-duration" instead?
+
+
+computing gzip size...
+dist/index.html                                         2.29 kB │ gzip:   0.99 kB
+dist/assets/profile4-CbMkXQhf.png                      33.16 kB
+dist/assets/didn't-say-the-magic-word-RcGKx_59.mp3     56.83 kB
+dist/assets/profile3-nbg-C_1LoHBy.png                  89.32 kB
+dist/assets/profile1-nbg-C1QMsK15.png                 102.80 kB
+dist/assets/cv-Cs0Sb_BC.pdf                           148.98 kB
+dist/assets/shell-RDy3BuVh.png                        209.27 kB
+dist/assets/nu-uh-uh-DUAx4LNn.webp                    368.82 kB
+dist/assets/profile2-nbg-ChG7iEmA.png               2,647.89 kB
+dist/assets/App-DtXgP7n0.css                          452.26 kB │ gzip:  40.64 kB
+dist/assets/index-CjHK8NEM.js                           0.93 kB │ gzip:   0.56 kB
+dist/assets/ErrorBoundary-DTqQqHaD.js                   1.00 kB │ gzip:   0.60 kB
+dist/assets/index-D7oyuR2Z.js                         195.25 kB │ gzip:  61.60 kB
+dist/assets/App-wxg0IufP.js                           420.38 kB │ gzip: 142.31 kB
+✓ built in 7.62s
