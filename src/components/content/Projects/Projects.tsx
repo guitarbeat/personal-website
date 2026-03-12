@@ -47,14 +47,32 @@ const createPaletteFromHsl = (color: string) => {
   return [accent, base, shadow];
 };
 
-const createProjectEffect = (tagColor: string, index: number) => {
-  const palette = createPaletteFromHsl(tagColor);
+interface ProjectEffect {
+  colors: string[];
+  gap: number;
+  speed: number;
+}
 
-  return {
-    colors: palette,
-    gap: 8 + (index % 3) * 2,
-    speed: 18 + (index % 4) * 3,
-  };
+const effectCache = new Map<string, ProjectEffect>();
+
+const createProjectEffect = (
+  tagColor: string,
+  index: number,
+): ProjectEffect => {
+  const cacheKey = `${tagColor}-${index % 12}`;
+  let effect = effectCache.get(cacheKey);
+
+  if (!effect) {
+    const palette = createPaletteFromHsl(tagColor);
+    effect = {
+      colors: palette,
+      gap: 8 + (index % 3) * 2,
+      speed: 18 + (index % 4) * 3,
+    };
+    effectCache.set(cacheKey, effect);
+  }
+
+  return effect;
 };
 
 interface ProjectCardProps {
@@ -139,7 +157,7 @@ function ProjectCard({
 }
 interface ProjectsProps {
   db?: {
-    projects: any[];
+    projects: unknown[];
   };
 }
 
@@ -239,25 +257,27 @@ function Projects({ db: propsDb }: ProjectsProps = {}) {
 
   const projects = projectsData;
 
-  const sortedProjects = [...projects].sort((a, b) =>
-    a.date > b.date ? -1 : 1,
-  );
+  const sortedProjects = useMemo(() => {
+    return [...projects].sort((a, b) => (a.date > b.date ? -1 : 1));
+  }, [projects]);
 
-  const project_cards = sortedProjects.map((projectProps, index) => {
-    const isFiltered = !activeFilters.includes(projectProps.keyword);
-    const tagColor = tagColors[projectProps.keyword];
-    const effect = createProjectEffect(tagColor, index);
+  const project_cards = useMemo(() => {
+    return sortedProjects.map((projectProps, index) => {
+      const isFiltered = !activeFilters.includes(projectProps.keyword);
+      const tagColor = tagColors[projectProps.keyword];
+      const effect = createProjectEffect(tagColor, index);
 
-    return (
-      <ProjectCard
-        key={projectProps.slug}
-        {...projectProps}
-        tagColor={tagColor}
-        className={isFiltered ? "filtered-out" : ""}
-        effect={effect}
-      />
-    );
-  });
+      return (
+        <ProjectCard
+          key={projectProps.slug}
+          {...projectProps}
+          tagColor={tagColor}
+          className={isFiltered ? "filtered-out" : ""}
+          effect={effect}
+        />
+      );
+    });
+  }, [sortedProjects, activeFilters, tagColors]);
 
   return (
     <div className="container" id="projects">
