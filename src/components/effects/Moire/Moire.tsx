@@ -18,7 +18,7 @@ function _Magic(containerEl: Element | null) {
   let width: number;
   let height: number;
   let wWidth: number;
-  // let wHeight; // Remove this line
+
   let mouse: InstanceType<typeof Vec2>;
   let mouseOver = false;
 
@@ -265,7 +265,6 @@ function _Magic(containerEl: Element | null) {
     camera.perspective({ aspect: width / height });
     const wSize = getWorldSize(camera);
     wWidth = wSize[0];
-    // wHeight = wSize[1]; // Remove this line
     if (points) {
       initPointsMesh();
     }
