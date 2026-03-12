@@ -19,9 +19,7 @@ jobs:
           node-version: '20'
           
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
+        run: npm install -g pnpm@9
           
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -42,9 +40,7 @@ jobs:
           node-version: '20'
           
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
+        run: npm install -g pnpm@9
           
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
