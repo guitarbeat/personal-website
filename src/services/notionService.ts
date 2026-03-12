@@ -5,8 +5,9 @@
 const API_BASE = process.env.REACT_APP_API_BASE || "";
 
 // Fetch data from a Notion database via Vercel serverless function
-// biome-ignore lint/suspicious/noExplicitAny: Data is highly dynamic from Notion API
-const fetchNotionDatabase = async (databaseType: string): Promise<any[]> => {
+const fetchNotionDatabase = async (
+  databaseType: string,
+): Promise<unknown[]> => {
   try {
     const response = await fetch(
       `${API_BASE}/api/notion?database=${databaseType}`,
@@ -33,17 +34,17 @@ const fetchNotionDatabase = async (databaseType: string): Promise<any[]> => {
 };
 
 // Data is already transformed by serverless function, just pass through
-const transformProjectsData = (data: any[]): any[] => {
+const transformProjectsData = <T>(data: T[]): T[] => {
   return data;
 };
 
 // Data is already transformed by serverless function, just pass through
-const transformWorkData = (data: any[]): any[] => {
+const transformWorkData = <T>(data: T[]): T[] => {
   return data;
 };
 
 // Data is already transformed by serverless function, just pass through
-const transformAboutData = (data: any[]): any[] => {
+const transformAboutData = <T>(data: T[]): T[] => {
   return data;
 };
 
