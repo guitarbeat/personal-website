@@ -1052,8 +1052,8 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
 
         // * Performance Optimization: Batch drawing by font size to minimize state changes
         // * Reset buckets without reallocation
-        for (const key in buckets) {
-          buckets[key].length = 0;
+        for (const bucket of Object.values(buckets)) {
+          bucket.length = 0;
         }
 
         // Group drops by font size
@@ -1066,8 +1066,7 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
         }
 
         // Iterate through buckets
-        for (const fontSizeStr in buckets) {
-          const bucket = buckets[fontSizeStr];
+        for (const [fontSizeStr, bucket] of Object.entries(buckets)) {
           if (bucket.length === 0) continue;
           // Set font once per bucket
           context.font = `${fontSizeStr}px monospace`;

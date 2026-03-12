@@ -58,9 +58,9 @@ export const generateTagColors = (
  * @param {Object} baseColors - Base colors object (optional)
  * @returns {Object} - Object mapping item keys to HSL color strings
  */
-export const generateItemColors = (
-  items: any[],
-  keyProperty: string = "keyword",
+export const generateItemColors = <T extends object>(
+  items: T[],
+  keyProperty: keyof T = "keyword" as keyof T,
   baseColors: Record<string, HSL> = DEFAULT_BASE_COLORS,
 ): Record<string, string> => {
   const uniqueKeys = Array.from(
