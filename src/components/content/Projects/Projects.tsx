@@ -137,9 +137,19 @@ function ProjectCard({
     </a>
   );
 }
+export type ProjectData = {
+  title: string;
+  content: string;
+  slug: string;
+  link: string;
+  keyword: string;
+  date: string;
+  image?: string | null;
+};
+
 interface ProjectsProps {
   db?: {
-    projects: any[];
+    projects: unknown[];
   };
 }
 
@@ -151,7 +161,7 @@ function Projects({ db: propsDb }: ProjectsProps = {}) {
   const db = propsDb || contextDb;
 
   const projectsData = useMemo(
-    () => (Array.isArray(db?.projects) ? db.projects : []),
+    () => (Array.isArray(db?.projects) ? (db.projects as ProjectData[]) : []),
     [db?.projects],
   );
 
