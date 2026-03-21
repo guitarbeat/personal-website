@@ -16,7 +16,10 @@ export class Drop {
   constructor(x: number) {
     this.x = x;
     this.y = -100;
-    this.char = MATRIX_RAIN.ALPHABET[Math.floor(Math.random() * MATRIX_RAIN.ALPHABET.length)];
+    this.char =
+      MATRIX_RAIN.ALPHABET[
+        Math.floor(Math.random() * MATRIX_RAIN.ALPHABET.length)
+      ];
     this.changeInterval = Math.random() * 50 + 15;
     this.frame = 0;
     this.brightness = Math.random() > 0.95;
@@ -28,7 +31,9 @@ export class Drop {
   initializeCharacterProperties() {
     this.speed = Math.random() * 2 + 0.8;
     this.fontSize = Math.floor(
-      Math.random() * (MATRIX_RAIN.FONT_SIZES.MAX - MATRIX_RAIN.FONT_SIZES.MIN) + MATRIX_RAIN.FONT_SIZES.MIN,
+      Math.random() *
+        (MATRIX_RAIN.FONT_SIZES.MAX - MATRIX_RAIN.FONT_SIZES.MIN) +
+        MATRIX_RAIN.FONT_SIZES.MIN,
     );
     this.opacity = Math.random() * 0.6 + 0.3;
   }
@@ -44,7 +49,10 @@ export class Drop {
     }
 
     if (this.frame >= this.changeInterval) {
-      this.char = MATRIX_RAIN.ALPHABET[Math.floor(Math.random() * MATRIX_RAIN.ALPHABET.length)];
+      this.char =
+        MATRIX_RAIN.ALPHABET[
+          Math.floor(Math.random() * MATRIX_RAIN.ALPHABET.length)
+        ];
       this.frame = 0;
       this.brightness = Math.random() > 0.97;
     }

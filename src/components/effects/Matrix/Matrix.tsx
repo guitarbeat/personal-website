@@ -9,13 +9,13 @@ import { useAuth } from "./AuthContext";
 // Components
 // Styles
 import "./matrix.scss";
-import { Drop } from "./MatrixDrop";
-import { MATRIX_RAIN } from "./constants";
 
 // Asset imports
 import deniedAudio from "../../../assets/audio/didn't-say-the-magic-word.mp3";
 import deniedCaptions from "../../../assets/audio/didnt-say-the-magic-word.vtt";
 import deniedImage from "../../../assets/images/nu-uh-uh.webp";
+import { MATRIX_RAIN } from "./constants";
+import { Drop } from "./MatrixDrop";
 
 const PROGRESS_DECAY_INTERVAL = 140;
 const PROGRESS_DECAY_BASE = 0.5; // Increased from 0.18
@@ -959,7 +959,6 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
     resizeCanvas();
     window.addEventListener("resize", handleResize);
 
-
     const columns = Math.floor(canvas.width / MATRIX_RAIN.FONT_SIZES.MIN);
     const drops = Array(columns)
       .fill(null)
@@ -972,7 +971,11 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
     // * Performance Optimization: Pre-allocate buckets to prevent per-frame garbage collection
     // * We reuse these arrays every frame instead of creating new ones
     const buckets: Record<number, Drop[]> = {};
-    for (let size = MATRIX_RAIN.FONT_SIZES.MIN; size <= MATRIX_RAIN.FONT_SIZES.MAX; size++) {
+    for (
+      let size = MATRIX_RAIN.FONT_SIZES.MIN;
+      size <= MATRIX_RAIN.FONT_SIZES.MAX;
+      size++
+    ) {
       buckets[size] = [];
     }
 
