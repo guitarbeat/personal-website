@@ -43,12 +43,15 @@ importers:
       '@vercel/analytics':
         specifier: ^1.6.1
         version: 1.6.1(react@19.2.4)
+      '@vercel/kv':
+        specifier: ^3.0.0
+        version: 3.0.0
       '@vercel/speed-insights':
         specifier: ^1.3.1
         version: 1.3.1(react@19.2.4)
       '@vitejs/plugin-react':
         specifier: ^5.1.4
-        version: 5.1.4(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))
+        version: 5.1.4(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))
       ajv:
         specifier: ^8.18.0
         version: 8.18.0
@@ -89,14 +92,14 @@ importers:
         specifier: ^5.2.1
         version: 5.2.1
       framer-motion:
-        specifier: ^12.35.1
-        version: 12.35.1(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: ^12.38.0
+        version: 12.38.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       gsap:
         specifier: ^3.14.2
         version: 3.14.2
       lovable-tagger:
         specifier: ^1.1.13
-        version: 1.1.13(tsx@4.21.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))(yaml@2.8.2)
+        version: 1.1.13(tsx@4.21.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))(yaml@2.8.2)
       moment:
         specifier: ^2.30.1
         version: 2.30.1
@@ -134,20 +137,20 @@ importers:
         specifier: ^6.1.3
         version: 6.1.3
       sass:
-        specifier: ^1.97.3
-        version: 1.97.3
+        specifier: ^1.98.0
+        version: 1.98.0
       styled-components:
         specifier: ^6.3.11
         version: 6.3.11(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       terser-webpack-plugin:
-        specifier: ^5.3.17
-        version: 5.3.17(webpack@5.105.2)
+        specifier: ^5.4.0
+        version: 5.4.0(webpack@5.105.2)
       tone:
         specifier: ^15.1.22
         version: 15.1.22
       vite:
         specifier: ^7.3.1
-        version: 7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)
+        version: 7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)
       web-vitals:
         specifier: ^4.2.4
         version: 4.2.4
@@ -163,7 +166,7 @@ importers:
         version: 2.4.7
       '@craco/craco':
         specifier: ^7.1.0
-        version: 7.1.0(@types/node@25.5.0)(postcss@8.5.8)(react-scripts@5.0.1(@babel/plugin-syntax-flow@7.28.6(@babel/core@7.29.0))(@babel/plugin-transform-react-jsx@7.28.6(@babel/core@7.29.0))(@types/babel__core@7.20.5)(clean-css@5.3.3)(eslint@10.0.3(jiti@1.21.7))(react@19.2.4)(sass@1.97.3)(ts-node@10.9.2(@types/node@25.5.0)(typescript@5.9.3))(tsx@4.21.0)(type-fest@0.21.3)(typescript@5.9.3)(yaml@2.8.2))(typescript@5.9.3)
+        version: 7.1.0(@types/node@25.5.0)(postcss@8.5.8)(react-scripts@5.0.1(@babel/plugin-syntax-flow@7.28.6(@babel/core@7.29.0))(@babel/plugin-transform-react-jsx@7.28.6(@babel/core@7.29.0))(@types/babel__core@7.20.5)(clean-css@5.3.3)(eslint@10.0.3(jiti@1.21.7))(react@19.2.4)(sass@1.98.0)(ts-node@10.9.2(@types/node@25.5.0)(typescript@5.9.3))(tsx@4.21.0)(type-fest@0.21.3)(typescript@5.9.3)(yaml@2.8.2))(typescript@5.9.3)
       '@svgr/webpack':
         specifier: ^8.1.0
         version: 8.1.0(typescript@5.9.3)
@@ -244,13 +247,13 @@ importers:
         version: 3.8.1
       react-scripts:
         specifier: ^5.0.1
-        version: 5.0.1(@babel/plugin-syntax-flow@7.28.6(@babel/core@7.29.0))(@babel/plugin-transform-react-jsx@7.28.6(@babel/core@7.29.0))(@types/babel__core@7.20.5)(clean-css@5.3.3)(eslint@10.0.3(jiti@1.21.7))(react@19.2.4)(sass@1.97.3)(ts-node@10.9.2(@types/node@25.5.0)(typescript@5.9.3))(tsx@4.21.0)(type-fest@0.21.3)(typescript@5.9.3)(yaml@2.8.2)
+        version: 5.0.1(@babel/plugin-syntax-flow@7.28.6(@babel/core@7.29.0))(@babel/plugin-transform-react-jsx@7.28.6(@babel/core@7.29.0))(@types/babel__core@7.20.5)(clean-css@5.3.3)(eslint@10.0.3(jiti@1.21.7))(react@19.2.4)(sass@1.98.0)(ts-node@10.9.2(@types/node@25.5.0)(typescript@5.9.3))(tsx@4.21.0)(type-fest@0.21.3)(typescript@5.9.3)(yaml@2.8.2)
       resolve-url-loader:
         specifier: ^5.0.0
         version: 5.0.0
       sass-loader:
         specifier: ^13.3.2
-        version: 13.3.3(sass@1.97.3)(webpack@5.105.2)
+        version: 13.3.3(sass@1.98.0)(webpack@5.105.2)
       stylelint:
         specifier: ^17.4.0
         version: 17.4.0(typescript@5.9.3)
@@ -3042,6 +3045,9 @@ packages:
     resolution: {integrity: sha512-07ny+LHRzQXepkGg6w0mFY41fVUNBrL2Roj/++7V1txKugfjm/Ci/qSND03r2RhlJhJYMcTn9AhhSSqQp0Ysyw==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
 
+  '@upstash/redis@1.37.0':
+    resolution: {integrity: sha512-LqOJ3+XWPLSZ2rGSed5DYG3ixybxb8EhZu3yQqF7MdZX1wLBG/FRcI6xcUZXHy/SS7mmXWyadrud0HJHkOc+uw==}
+
   '@vercel/analytics@1.6.1':
     resolution: {integrity: sha512-oH9He/bEM+6oKlv3chWuOOcp8Y6fo6/PSro8hEkgCW3pu9/OiCXiUpRUogDh3Fs3LH2sosDrx8CxeOLBEE+afg==}
     peerDependencies:
@@ -3126,6 +3132,11 @@ packages:
 
   '@vercel/koa@0.1.31':
     resolution: {integrity: sha512-Gj4sjqNA80/gnHpC0tRPCTtVEct69tUK21fsjVmawCa+nDNQ4bqXu3dSewna7GtCcp9KnrWgzAIaeVAQUl53mQ==}
+
+  '@vercel/kv@3.0.0':
+    resolution: {integrity: sha512-pKT8fRnfyYk2MgvyB6fn6ipJPCdfZwiKDdw7vB+HL50rjboEBHDVBEcnwfkEpVSp2AjNtoaOUH7zG+bVC/rvSg==}
+    engines: {node: '>=14.6'}
+    deprecated: 'Vercel KV is deprecated. If you had an existing KV store, it should have moved to Upstash Redis which you will see under Vercel Integrations. For new projects, install a Redis integration from Vercel Marketplace: https://vercel.com/marketplace?category=storage&search=redis'
 
   '@vercel/nestjs@0.2.52':
     resolution: {integrity: sha512-yfy4rpWJ1BRWZ1xBBPew0egVIblFe6G7laCKDzyESnbw19zY0F16g9HCu1H/0IfuKIQvOc95dtbmBsqLm9jyqw==}
@@ -5212,8 +5223,8 @@ packages:
   fraction.js@5.3.4:
     resolution: {integrity: sha512-1X1NTtiJphryn/uLQz3whtY6jK3fTqoE3ohKs0tT+Ujr1W59oopxmoEh7Lu5p6vBaPbgoM0bzveAW4Qi5RyWDQ==}
 
-  framer-motion@12.35.1:
-    resolution: {integrity: sha512-rL8cLrjYZNShZqKV3U0Qj6Y5WDiZXYEM5giiTLfEqsIZxtspzMDCkKmrO5po76jWfvOg04+Vk+sfBvTD0iMmLw==}
+  framer-motion@12.38.0:
+    resolution: {integrity: sha512-rFYkY/pigbcswl1XQSb7q424kSTQ8q6eAC+YUsSKooHQYuLdzdHjrt6uxUC+PRAO++q5IS7+TamgIw1AphxR+g==}
     peerDependencies:
       '@emotion/is-prop-valid': '*'
       react: ^18.0.0 || ^19.0.0
@@ -5638,8 +5649,8 @@ packages:
   immer@9.0.21:
     resolution: {integrity: sha512-bc4NBHqOqSfRW7POMkHd51LvClaeMXpm8dx0e8oE2GORbq5aRK7Bxl4FyzVLdGtLmvLKL7BTDBG5ACQm4HWjTA==}
 
-  immutable@5.1.4:
-    resolution: {integrity: sha512-p6u1bG3YSnINT5RQmx/yRZBpenIl30kVxkTLDyHLIMk0gict704Q9n+thfDI7lTRm9vXdDYutVzXhzcThxTnXA==}
+  immutable@5.1.5:
+    resolution: {integrity: sha512-t7xcm2siw+hlUM68I+UEOK+z84RzmN59as9DZ7P1l0994DKUWV7UXBMQZVxaoMSRQ+PBZbHCOoBt7a2wxOMt+A==}
 
   import-fresh@3.3.1:
     resolution: {integrity: sha512-TR3KfrTZTYLPB6jUjfx6MF9WcWrHL9su5TObK4ZkYgBdWKPOFoSoQIdEuTuR82pmtxH2spWG9h6etwfr1pLBqQ==}
@@ -6889,11 +6900,11 @@ packages:
   moment@2.30.1:
     resolution: {integrity: sha512-uEmtNhbDOrWPFS+hdjFCBfy9f2YoyzRpwcl+DqpC6taX21FzsTLQVbMV/W7PzNSX6x/bhC1zA3c2UQ5NzH6how==}
 
-  motion-dom@12.35.1:
-    resolution: {integrity: sha512-7n6r7TtNOsH2UFSAXzTkfzOeO5616v9B178qBIjmu/WgEyJK0uqwytCEhwKBTuM/HJA40ptAw7hLFpxtPAMRZQ==}
+  motion-dom@12.38.0:
+    resolution: {integrity: sha512-pdkHLD8QYRp8VfiNLb8xIBJis1byQ9gPT3Jnh2jqfFtAsWUA3dEepDlsWe/xMpO8McV+VdpKVcp+E+TGJEtOoA==}
 
-  motion-utils@12.29.2:
-    resolution: {integrity: sha512-G3kc34H2cX2gI63RqU+cZq+zWRRPSsNIOjpdl9TN4AQwC4sgwYPl/Q/Obf/d53nOm569T0fYK+tcoSV50BWx8A==}
+  motion-utils@12.36.0:
+    resolution: {integrity: sha512-eHWisygbiwVvf6PZ1vhaHCLamvkSbPIeAYxWUuL3a2PD/TROgE7FvfHWTIH4vMl798QLfMw15nRqIaRDXTlYRg==}
 
   mri@1.2.0:
     resolution: {integrity: sha512-tzzskb3bG8LvYGFF/mDTpq3jpI6Q9wc3LEmBaghu+DdCssd1FakN7Bc0hVNmEyGq1bq3RgfkCb3cmQLpNPOroA==}
@@ -8370,8 +8381,8 @@ packages:
       sass-embedded:
         optional: true
 
-  sass@1.97.3:
-    resolution: {integrity: sha512-fDz1zJpd5GycprAbu4Q2PV/RprsRtKC/0z82z0JLgdytmcq0+ujJbJ/09bPGDxCLkKY3Np5cRAOcWiVkLXJURg==}
+  sass@1.98.0:
+    resolution: {integrity: sha512-+4N/u9dZ4PrgzGgPlKnaaRQx64RO0JBKs9sDhQ2pLgN6JQZ25uPQZKQYaBJU48Kd5BxgXoJ4e09Dq7nMcOUW3A==}
     engines: {node: '>=14.0.0'}
     hasBin: true
 
@@ -8987,8 +8998,8 @@ packages:
     resolution: {integrity: sha512-un0FmiRUQNr5PJqy9kP7c40F5BOfpGlYTrxonDChEZB7pzZxRNp/bt+ymiy9/npwXya9KH99nJ/GXFIiUkYGFQ==}
     engines: {node: '>=8'}
 
-  terser-webpack-plugin@5.3.17:
-    resolution: {integrity: sha512-YR7PtUp6GMU91BgSJmlaX/rS2lGDbAF7D+Wtq7hRO+MiljNmodYvqslzCFiYVAgW+Qoaaia/QUIP4lGXufjdZw==}
+  terser-webpack-plugin@5.4.0:
+    resolution: {integrity: sha512-Bn5vxm48flOIfkdl5CaD2+1CiUVbonWQ3KQPyP7/EuIl9Gbzq/gQFOzaMFUEgVjB1396tcK0SG8XcNJ/2kDH8g==}
     engines: {node: '>= 10.13.0'}
     peerDependencies:
       '@swc/core': '*'
@@ -9228,6 +9239,9 @@ packages:
   unbox-primitive@1.1.0:
     resolution: {integrity: sha512-nWJ91DjeOkej/TA8pXQ3myruKpKEYgqvpw9lz4OPHj/NWFNluYrjbz9j01CJ8yKQd2g4jFoOkINCTW2I5LEEyw==}
     engines: {node: '>= 0.4'}
+
+  uncrypto@0.1.3:
+    resolution: {integrity: sha512-Ql87qFHB3s/De2ClA9e0gsnS6zXG27SkTiSJwjCc9MebbfapQfuPzumMIUMi38ezPZVNFcHI9sUIepeQfw8J8Q==}
 
   underscore@1.13.6:
     resolution: {integrity: sha512-+A5Sja4HP1M08MaXya7p5LvjuM7K6q/2EaC0+iovj/wOcMsTzMvDFbasi/oSapiwOlt252IqsKqPjCl7huKS0A==}
@@ -10726,14 +10740,14 @@ snapshots:
       hashery: 1.5.0
       keyv: 5.6.0
 
-  '@craco/craco@7.1.0(@types/node@25.5.0)(postcss@8.5.8)(react-scripts@5.0.1(@babel/plugin-syntax-flow@7.28.6(@babel/core@7.29.0))(@babel/plugin-transform-react-jsx@7.28.6(@babel/core@7.29.0))(@types/babel__core@7.20.5)(clean-css@5.3.3)(eslint@10.0.3(jiti@1.21.7))(react@19.2.4)(sass@1.97.3)(ts-node@10.9.2(@types/node@25.5.0)(typescript@5.9.3))(tsx@4.21.0)(type-fest@0.21.3)(typescript@5.9.3)(yaml@2.8.2))(typescript@5.9.3)':
+  '@craco/craco@7.1.0(@types/node@25.5.0)(postcss@8.5.8)(react-scripts@5.0.1(@babel/plugin-syntax-flow@7.28.6(@babel/core@7.29.0))(@babel/plugin-transform-react-jsx@7.28.6(@babel/core@7.29.0))(@types/babel__core@7.20.5)(clean-css@5.3.3)(eslint@10.0.3(jiti@1.21.7))(react@19.2.4)(sass@1.98.0)(ts-node@10.9.2(@types/node@25.5.0)(typescript@5.9.3))(tsx@4.21.0)(type-fest@0.21.3)(typescript@5.9.3)(yaml@2.8.2))(typescript@5.9.3)':
     dependencies:
       autoprefixer: 10.4.27(postcss@8.5.8)
       cosmiconfig: 7.1.0
       cosmiconfig-typescript-loader: 1.0.9(@types/node@25.5.0)(cosmiconfig@7.1.0)(typescript@5.9.3)
       cross-spawn: 7.0.6
       lodash: 4.17.23
-      react-scripts: 5.0.1(@babel/plugin-syntax-flow@7.28.6(@babel/core@7.29.0))(@babel/plugin-transform-react-jsx@7.28.6(@babel/core@7.29.0))(@types/babel__core@7.20.5)(clean-css@5.3.3)(eslint@10.0.3(jiti@1.21.7))(react@19.2.4)(sass@1.97.3)(ts-node@10.9.2(@types/node@25.5.0)(typescript@5.9.3))(tsx@4.21.0)(type-fest@0.21.3)(typescript@5.9.3)(yaml@2.8.2)
+      react-scripts: 5.0.1(@babel/plugin-syntax-flow@7.28.6(@babel/core@7.29.0))(@babel/plugin-transform-react-jsx@7.28.6(@babel/core@7.29.0))(@types/babel__core@7.20.5)(clean-css@5.3.3)(eslint@10.0.3(jiti@1.21.7))(react@19.2.4)(sass@1.98.0)(ts-node@10.9.2(@types/node@25.5.0)(typescript@5.9.3))(tsx@4.21.0)(type-fest@0.21.3)(typescript@5.9.3)(yaml@2.8.2)
       semver: 7.7.4
       webpack-merge: 5.10.0
     transitivePeerDependencies:
@@ -12514,6 +12528,10 @@ snapshots:
       '@typescript-eslint/types': 5.62.0
       eslint-visitor-keys: 3.4.3
 
+  '@upstash/redis@1.37.0':
+    dependencies:
+      uncrypto: 0.1.3
+
   '@vercel/analytics@1.6.1(react@19.2.4)':
     optionalDependencies:
       react: 19.2.4
@@ -12671,6 +12689,10 @@ snapshots:
       - rollup
       - supports-color
 
+  '@vercel/kv@3.0.0':
+    dependencies:
+      '@upstash/redis': 1.37.0
+
   '@vercel/nestjs@0.2.52(rollup@2.80.0)':
     dependencies:
       '@vercel/node': 5.6.15(rollup@2.80.0)
@@ -12818,7 +12840,7 @@ snapshots:
       json-schema-to-ts: 1.6.4
       ts-morph: 12.0.0
 
-  '@vitejs/plugin-react@5.1.4(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))':
+  '@vitejs/plugin-react@5.1.4(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))':
     dependencies:
       '@babel/core': 7.29.0
       '@babel/plugin-transform-react-jsx-self': 7.27.1(@babel/core@7.29.0)
@@ -12826,7 +12848,7 @@ snapshots:
       '@rolldown/pluginutils': 1.0.0-rc.3
       '@types/babel__core': 7.20.5
       react-refresh: 0.18.0
-      vite: 7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)
+      vite: 7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)
     transitivePeerDependencies:
       - supports-color
 
@@ -15326,10 +15348,10 @@ snapshots:
 
   fraction.js@5.3.4: {}
 
-  framer-motion@12.35.1(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
+  framer-motion@12.38.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
     dependencies:
-      motion-dom: 12.35.1
-      motion-utils: 12.29.2
+      motion-dom: 12.38.0
+      motion-utils: 12.36.0
       tslib: 2.8.1
     optionalDependencies:
       '@emotion/is-prop-valid': 1.4.0
@@ -15797,7 +15819,7 @@ snapshots:
 
   immer@9.0.21: {}
 
-  immutable@5.1.4: {}
+  immutable@5.1.5: {}
 
   import-fresh@3.3.1:
     dependencies:
@@ -17185,11 +17207,11 @@ snapshots:
     dependencies:
       js-tokens: 4.0.0
 
-  lovable-tagger@1.1.13(tsx@4.21.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))(yaml@2.8.2):
+  lovable-tagger@1.1.13(tsx@4.21.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))(yaml@2.8.2):
     dependencies:
       esbuild: 0.25.12
       tailwindcss: 3.4.19(tsx@4.21.0)(yaml@2.8.2)
-      vite: 7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)
+      vite: 7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)
     transitivePeerDependencies:
       - tsx
       - yaml
@@ -17588,11 +17610,11 @@ snapshots:
 
   moment@2.30.1: {}
 
-  motion-dom@12.35.1:
+  motion-dom@12.38.0:
     dependencies:
-      motion-utils: 12.29.2
+      motion-utils: 12.36.0
 
-  motion-utils@12.29.2: {}
+  motion-utils@12.36.0: {}
 
   mri@1.2.0: {}
 
@@ -18873,7 +18895,7 @@ snapshots:
     optionalDependencies:
       react-dom: 19.2.4(react@19.2.4)
 
-  react-scripts@5.0.1(@babel/plugin-syntax-flow@7.28.6(@babel/core@7.29.0))(@babel/plugin-transform-react-jsx@7.28.6(@babel/core@7.29.0))(@types/babel__core@7.20.5)(clean-css@5.3.3)(eslint@10.0.3(jiti@1.21.7))(react@19.2.4)(sass@1.97.3)(ts-node@10.9.2(@types/node@25.5.0)(typescript@5.9.3))(tsx@4.21.0)(type-fest@0.21.3)(typescript@5.9.3)(yaml@2.8.2):
+  react-scripts@5.0.1(@babel/plugin-syntax-flow@7.28.6(@babel/core@7.29.0))(@babel/plugin-transform-react-jsx@7.28.6(@babel/core@7.29.0))(@types/babel__core@7.20.5)(clean-css@5.3.3)(eslint@10.0.3(jiti@1.21.7))(react@19.2.4)(sass@1.98.0)(ts-node@10.9.2(@types/node@25.5.0)(typescript@5.9.3))(tsx@4.21.0)(type-fest@0.21.3)(typescript@5.9.3)(yaml@2.8.2):
     dependencies:
       '@babel/core': 7.29.0
       '@pmmmwh/react-refresh-webpack-plugin': 0.5.17(react-refresh@0.11.0)(type-fest@0.21.3)(webpack-dev-server@4.15.2(webpack@5.105.2))(webpack@5.105.2)
@@ -18913,12 +18935,12 @@ snapshots:
       react-refresh: 0.11.0
       resolve: 1.22.11
       resolve-url-loader: 5.0.0
-      sass-loader: 13.3.3(sass@1.97.3)(webpack@5.105.2)
+      sass-loader: 13.3.3(sass@1.98.0)(webpack@5.105.2)
       semver: 7.7.4
       source-map-loader: 3.0.2(webpack@5.105.2)
       style-loader: 3.3.4(webpack@5.105.2)
       tailwindcss: 3.4.19(tsx@4.21.0)(yaml@2.8.2)
-      terser-webpack-plugin: 5.3.17(webpack@5.105.2)
+      terser-webpack-plugin: 5.4.0(webpack@5.105.2)
       webpack: 5.105.2
       webpack-dev-server: 4.15.2(webpack@5.105.2)
       webpack-manifest-plugin: 4.1.1(webpack@5.105.2)
@@ -19273,17 +19295,17 @@ snapshots:
 
   sanitize.css@13.0.0: {}
 
-  sass-loader@13.3.3(sass@1.97.3)(webpack@5.105.2):
+  sass-loader@13.3.3(sass@1.98.0)(webpack@5.105.2):
     dependencies:
       neo-async: 2.6.2
       webpack: 5.105.2
     optionalDependencies:
-      sass: 1.97.3
+      sass: 1.98.0
 
-  sass@1.97.3:
+  sass@1.98.0:
     dependencies:
       chokidar: 4.0.3
-      immutable: 5.1.4
+      immutable: 5.1.5
       source-map-js: 1.2.1
     optionalDependencies:
       '@parcel/watcher': 2.5.6
@@ -20067,7 +20089,7 @@ snapshots:
       ansi-escapes: 4.3.2
       supports-hyperlinks: 2.3.0
 
-  terser-webpack-plugin@5.3.17(webpack@5.105.2):
+  terser-webpack-plugin@5.4.0(webpack@5.105.2):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
       jest-worker: 27.5.1
@@ -20300,6 +20322,8 @@ snapshots:
       has-symbols: 1.1.0
       which-boxed-primitive: 1.1.1
 
+  uncrypto@0.1.3: {}
+
   underscore@1.13.6: {}
 
   undici-types@5.26.5: {}
@@ -20446,7 +20470,7 @@ snapshots:
       - supports-color
       - typescript
 
-  vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2):
+  vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2):
     dependencies:
       esbuild: 0.27.3
       fdir: 6.5.0(picomatch@4.0.3)
@@ -20458,7 +20482,7 @@ snapshots:
       '@types/node': 25.5.0
       fsevents: 2.3.3
       jiti: 1.21.7
-      sass: 1.97.3
+      sass: 1.98.0
       terser: 5.46.0
       tsx: 4.21.0
       yaml: 2.8.2
@@ -20599,7 +20623,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 4.3.3
       tapable: 2.3.0
-      terser-webpack-plugin: 5.3.17(webpack@5.105.2)
+      terser-webpack-plugin: 5.4.0(webpack@5.105.2)
       watchpack: 2.5.1
       webpack-sources: 3.3.4
     transitivePeerDependencies:
