@@ -41,7 +41,7 @@ export default defineConfig(({ mode }) => ({
     },
   },
   server: {
-    port: 8080,
+    port: Number(process.env.PORT || 8080),
     host: "::",
   },
   publicDir: "public",
