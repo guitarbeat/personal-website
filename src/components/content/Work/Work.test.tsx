@@ -13,21 +13,26 @@ const mockCurrentMonth = moment().format("MM-YYYY");
 
 jest.mock("../../../contexts/NotionContext", () => ({
   useNotion: () => ({
-    work: [
-      {
-        title: "Senior Developer",
-        company: "Acme Corp",
-        place: "Remote",
-        from: mockCurrentMonth,
-        to: "",
-        description: "Building resilient timelines.",
-        slug: "senior-developer",
-      },
-    ],
-    projects: [],
-    about: [],
+    db: {
+      work: [
+        {
+          title: "Senior Developer",
+          company: "Acme Corp",
+          place: "Remote",
+          from: mockCurrentMonth,
+          to: "",
+          description: "Building resilient timelines.",
+          slug: "senior-developer",
+        },
+      ],
+      projects: [],
+      about: [],
+    },
+    meta: null,
     loading: false,
     error: null,
+    isDegraded: false,
+    lastUpdated: null,
   }),
 }));
 

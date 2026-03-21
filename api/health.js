@@ -1,72 +1,35 @@
-// Health check endpoint for Vercel serverless function
+import { applyCors } from "../src/server/apiCors.js";
+import { createErrorPayload, getHealthSummary } from "../src/server/notionContent.js";
 
-// CORS configuration and module-level cache
-let corsConfigCache = null;
-
-const PRODUCTION_WHITELIST = [
-  "https://aaronwoods.info",
-  "https://www.aaronwoods.info",
-  "https://pixel-pal-follow.lovable.app",
-];
-
-function isOriginAllowed(origin) {
-  if (!origin) return false;
-
-  // Build the cache if it doesn't exist
-  if (!corsConfigCache) {
-    const envOrigins = process.env.ALLOWED_ORIGINS;
-
-    if (!envOrigins) {
-      corsConfigCache = {
-        exact: PRODUCTION_WHITELIST,
-        regexes: [],
-        allowAll: false,
-      };
-    } else if (envOrigins === "*") {
-      corsConfigCache = {
-        exact: [],
-        regexes: [],
-        allowAll: true,
-      };
-    } else {
-      const parts = envOrigins
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean);
-      const exact = [];
-      const regexes = [];
-
-      for (const part of parts) {
-        if (part.includes("*")) {
-          // Escape regex chars except *
-          const escaped = part.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-          // Replace \* with .* or [^.]+
-          const regexStr = `^${escaped.replace(/\\\*/g, ".*")}$`;
-          regexes.push(new RegExp(regexStr));
-        } else {
-          exact.push(part);
-        }
-      }
-
-      corsConfigCache = { exact, regexes, allowAll: false };
-    }
-  }
-
-  if (corsConfigCache.allowAll) return true;
-  if (corsConfigCache.exact.includes(origin)) return true;
-  return corsConfigCache.regexes.some((regex) => regex.test(origin));
-}
-
-export default function handler(req, res) {
-  const origin = req.headers.origin;
-  if (isOriginAllowed(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-  }
-  res.setHeader("Access-Control-Allow-Methods", "GET");
-
-  res.status(200).json({
-    status: "ok",
-    timestamp: new Date().toISOString(),
-    environment: "vercel-serverless",
+export default async function handler(req, res) {
+  applyCors(req, res, {
+    methods: "GET, OPTIONS",
   });
+
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
+  if (req.method !== "GET") {
+    return res.status(405).json({
+      error: {
+        code: "METHOD_NOT_ALLOWED",
+        message: "Method not allowed",
+        failureType: "method_not_allowed",
+      },
+    });
+  }
+
+  try {
+    const summary = await getHealthSummary({
+      env: process.env,
+    });
+    const statusCode = summary.status === "failed" ? 503 : 200;
+
+    res.setHeader("Cache-Control", "no-store");
+    return res.status(statusCode).json(summary);
+  } catch (error) {
+    res.setHeader("Cache-Control", "no-store");
+    return res.status(error?.status || 500).json(createErrorPayload(error));
+  }
 }

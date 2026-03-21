@@ -17,7 +17,7 @@ import {
   useNavigate,
 } from "react-router-dom";
 
-import { NotionProvider } from "./contexts/NotionContext";
+import { NotionProvider, useNotion } from "./contexts/NotionContext";
 import "./sass/main.scss";
 import { NAV_ITEMS } from "./components/Core/constants";
 import { BlurSection } from "./components/effects/Blur/index";
@@ -36,6 +36,32 @@ const CustomLoadingComponent = () => (
   <div className="loading-container">Loading...</div>
 );
 CustomLoadingComponent.displayName = "CustomLoadingComponent";
+
+const SiteStatusPill = memo(() => (
+  <div className="site-status-pill" role="status">
+    Showing cached content. Live refresh is unavailable.
+  </div>
+));
+SiteStatusPill.displayName = "SiteStatusPill";
+
+const ContentUnavailableState = ({ error }: { error: string | null }) => (
+  <div className="content-unavailable">
+    <div className="content-unavailable__panel">
+      <p className="content-unavailable__eyebrow">Content unavailable</p>
+      <h1>Site content is temporarily unavailable.</h1>
+      <p>
+        The live content refresh failed and there is no cached snapshot
+        available yet. Please try again shortly.
+      </p>
+      <button type="button" onClick={() => window.location.reload()}>
+        Reload page
+      </button>
+      {process.env.NODE_ENV === "development" && error ? (
+        <pre>{error}</pre>
+      ) : null}
+    </div>
+  </div>
+);
 
 const AnalyticsWrapper = memo(() => {
   if (process.env.REACT_APP_ENABLE_VERCEL_ANALYTICS !== "true") {
@@ -68,6 +94,7 @@ interface LayoutProps {
   onScrollActivate: () => void;
   isInScroll: boolean;
   hideNavBar: boolean;
+  isDegraded: boolean;
   showMatrix?: boolean;
   onMatrixReady?: (callback: () => void) => void;
   isUnlocked?: boolean;
@@ -82,6 +109,7 @@ const Layout = memo(
     onScrollActivate: _onScrollActivate,
     isInScroll,
     hideNavBar,
+    isDegraded,
   }: LayoutProps) => (
     <div className="app-layout">
       <LoadingSequence onComplete={() => {}} />
@@ -89,6 +117,7 @@ const Layout = memo(
       <div className="vignette-bottom" />
       <div className="vignette-left" />
       <div className="vignette-right" />
+      {isDegraded ? <SiteStatusPill /> : null}
       {!hideNavBar && (
         <NavBar
           items={navItems}
@@ -222,6 +251,7 @@ interface MainRoutesProps {
   isScrollMode: boolean;
   isUnlocked: boolean;
   isInScroll: boolean;
+  isDegraded: boolean;
   showMatrix: boolean;
   onMatrixReady: (callback: () => void) => void;
 }
@@ -234,6 +264,7 @@ const MainRoutes = ({
   isScrollMode,
   isUnlocked,
   isInScroll,
+  isDegraded,
   showMatrix,
   onMatrixReady,
 }: MainRoutesProps) => {
@@ -253,6 +284,7 @@ const MainRoutes = ({
             showMatrix={showMatrix}
             onMatrixReady={onMatrixReady}
             isUnlocked={isUnlocked}
+            isDegraded={isDegraded}
             hideNavBar={false}
           >
             <BlurSection as="div" disabled={!isUnlocked} className="">
@@ -274,6 +306,7 @@ const MainRoutes = ({
             showMatrix={showMatrix}
             onMatrixReady={onMatrixReady}
             isUnlocked={true}
+            isDegraded={isDegraded}
             hideNavBar={true}
           >
             <BlurSection as="div" disabled={false} className="">
@@ -293,6 +326,7 @@ const MainRoutes = ({
 // * Main app content logic
 const AppContent = () => {
   // --- State and refs ---
+  const { db, error, isDegraded, loading } = useNotion();
   const [showMatrix, setShowMatrix] = useState(() => {
     if (typeof window === "undefined") {
       return false;
@@ -388,6 +422,17 @@ const AppContent = () => {
     matrixReadyCallbackRef.current?.();
   }, [showMatrix]);
 
+  const hasRenderableContent =
+    db.about.length > 0 || db.projects.length > 0 || db.work.length > 0;
+
+  if (loading && !hasRenderableContent) {
+    return <CustomLoadingComponent />;
+  }
+
+  if (!loading && error && !hasRenderableContent) {
+    return <ContentUnavailableState error={error} />;
+  }
+
   // --- Render ---
   return (
     <>
@@ -410,6 +455,7 @@ const AppContent = () => {
             isScrollMode={isScrollMode}
             isUnlocked={isUnlocked}
             isInScroll={isInScroll}
+            isDegraded={isDegraded}
             showMatrix={showMatrix}
             onMatrixReady={handleMatrixReady}
           />

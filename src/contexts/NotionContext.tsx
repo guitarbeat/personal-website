@@ -1,21 +1,20 @@
-// Notion Context Provider for managing Notion data across the app
-
 import { createContext, useContext, useEffect, useState } from "react";
 import NotionService from "../services/notionService";
+import type { ContentMeta, NotionData } from "../types/content";
 
-interface NotionData {
-  // biome-ignore lint/suspicious/noExplicitAny: Data shapes vary widely from Notion API
-  projects: any[];
-  // biome-ignore lint/suspicious/noExplicitAny: Data shapes vary widely from Notion API
-  work: any[];
-  // biome-ignore lint/suspicious/noExplicitAny: Data shapes vary widely from Notion API
-  about: any[];
-}
+const EMPTY_DATA: NotionData = {
+  projects: [],
+  work: [],
+  about: [],
+};
 
-interface NotionContextType {
+export interface NotionContextType {
   db: NotionData;
+  meta: ContentMeta | null;
   loading: boolean;
   error: string | null;
+  isDegraded: boolean;
+  lastUpdated: string | null;
 }
 
 const NotionContext = createContext<NotionContextType | null>(null);
@@ -29,39 +28,61 @@ export const useNotion = () => {
 };
 
 export const NotionProvider = ({ children }: { children: React.ReactNode }) => {
-  const [data, setData] = useState<NotionData>({
-    projects: [],
-    work: [],
-    about: [],
-  });
+  const [data, setData] = useState<NotionData>(EMPTY_DATA);
+  const [meta, setMeta] = useState<ContentMeta | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    let isMounted = true;
+
     const fetchData = async () => {
       try {
         setLoading(true);
         setError(null);
 
         const notionService = new NotionService();
-        const allData = await notionService.getAllData();
-        setData(allData);
-        // biome-ignore lint/suspicious/noExplicitAny: Unknown error from fetch
-      } catch (err: any) {
+        const content = await notionService.getAllData();
+
+        if (!isMounted) {
+          return;
+        }
+
+        setData(content.data);
+        setMeta(content.meta);
+      } catch (err) {
+        if (!isMounted) {
+          return;
+        }
+
+        const message =
+          err instanceof Error ? err.message : "Failed to load content.";
+
         console.error("Error fetching Notion data:", err);
-        setError(err.message);
+        setData(EMPTY_DATA);
+        setMeta(null);
+        setError(message);
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchData();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const value: NotionContextType = {
     db: data,
+    meta,
     loading,
     error,
+    isDegraded: meta?.degraded ?? false,
+    lastUpdated: meta?.snapshotUpdatedAt || meta?.fetchedAt || null,
   };
 
   return (
