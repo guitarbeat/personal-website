@@ -34,17 +34,17 @@ const fetchNotionDatabase = async (
 };
 
 // Data is already transformed by serverless function, just pass through
-const transformProjectsData = (data: unknown[]): unknown[] => {
+const transformProjectsData = <T>(data: T[]): T[] => {
   return data;
 };
 
 // Data is already transformed by serverless function, just pass through
-const transformWorkData = (data: unknown[]): unknown[] => {
+const transformWorkData = <T>(data: T[]): T[] => {
   return data;
 };
 
 // Data is already transformed by serverless function, just pass through
-const transformAboutData = (data: unknown[]): unknown[] => {
+const transformAboutData = <T>(data: T[]): T[] => {
   return data;
 };
 

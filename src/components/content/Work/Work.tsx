@@ -1,5 +1,4 @@
 import moment from "moment";
-import PropTypes from "prop-types";
 // Import required libraries and components
 import React, { useCallback, useEffect, useRef, useState } from "react";
 // import { withGoogleSheets } from "react-db-google-sheets";
@@ -136,23 +135,6 @@ function TimelineBar({
   );
 }
 
-TimelineBar.propTypes = {
-  first_year: PropTypes.string.isRequired,
-  job_bars: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)).isRequired,
-  activeCards: PropTypes.instanceOf(Set).isRequired,
-  hoveredJob: PropTypes.shape({
-    bar_start: PropTypes.number,
-    bar_height: PropTypes.number,
-    duration: PropTypes.number,
-  }),
-  jobs: PropTypes.arrayOf(
-    PropTypes.shape({
-      slug: PropTypes.string.isRequired,
-      bar_start: PropTypes.number.isRequired,
-      bar_height: PropTypes.number.isRequired,
-    }),
-  ).isRequired,
-};
 
 const CARD_EFFECTS = [
   {
@@ -183,7 +165,11 @@ const MemoizedTimelineBar = React.memo(TimelineBar);
 
 interface WorkProps {
   db?: {
+<<<<<<< HEAD
     work: unknown[];
+=======
+    work: Job[];
+>>>>>>> origin/main
   };
 }
 
@@ -215,8 +201,8 @@ function Work({ db: propsDb }: WorkProps = {}) {
 
   // Data processing
   // Make a deep copy to avoid mutating the original data in context
-  const jobs: Job[] = ((db?.work as unknown[]) || []).map((job) => ({
-    ...(job as Job),
+  const jobs: Job[] = ((db?.work || []) as Job[]).map((job) => ({
+    ...job,
   })) as Job[];
 
   let first_date = moment();
@@ -335,20 +321,5 @@ function Work({ db: propsDb }: WorkProps = {}) {
   );
 }
 
-Work.propTypes = {
-  db: PropTypes.shape({
-    work: PropTypes.arrayOf(
-      PropTypes.shape({
-        title: PropTypes.string.isRequired,
-        company: PropTypes.string.isRequired,
-        place: PropTypes.string.isRequired,
-        from: PropTypes.string.isRequired,
-        to: PropTypes.string,
-        description: PropTypes.string.isRequired,
-        slug: PropTypes.string.isRequired,
-      }),
-    ).isRequired,
-  }).isRequired,
-};
 
 export default Work;
