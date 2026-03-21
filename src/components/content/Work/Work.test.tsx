@@ -59,7 +59,8 @@ describe("Work timeline", () => {
               to: "",
               description: "Building resilient timelines.",
               slug: "senior-developer",
-            },
+              // biome-ignore lint/suspicious/noExplicitAny: Mock data for test
+            } as any,
           ],
         }}
       />,
