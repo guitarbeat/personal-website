@@ -15,7 +15,9 @@
       "!public/build",
       "!.vscode",
       "!src/css/styles.css",
-      "!dist"
+      "!dist",
+      "!build",
+      "!node_modules"
     ]
   },
   "formatter": {
