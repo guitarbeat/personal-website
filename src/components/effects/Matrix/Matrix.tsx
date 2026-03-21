@@ -1223,7 +1223,11 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                 </div>
                 <p className="hack-sequencer__feedback">{hackFeedback}</p>
               </div>
-              <button type="button"
+              {/* biome-ignore lint/a11y/useSemanticElements: Matrix effect viewport acts as global button without being semantic button to preserve layout */}
+              <div
+                role="button"
+                tabIndex={0}
+                onKeyDown={handleViewportEngage}
                 className="hack-input-viewport"
                 onMouseDown={handleViewportEngage}
                 onTouchStart={handleViewportEngage}
@@ -1246,7 +1250,7 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                       className += " prompt";
 
                     return (
-                    // biome-ignore lint/suspicious/noArrayIndexKey: Console logs are append-only and order is stable
+                      // biome-ignore lint/suspicious/noArrayIndexKey: Log list relies on array order and does not reorder
                       <div key={i} className={className}>
                         {line}
                       </div>
@@ -1268,7 +1272,7 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                     </span>
                   </output>
                 )}
-              </button>
+              </div>
               <input
                 type="text"
                 ref={hackInputRef}
