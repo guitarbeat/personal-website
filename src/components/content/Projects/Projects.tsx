@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 // import { withGoogleSheets } from "react-db-google-sheets";
 import { useNotion } from "../../../contexts/NotionContext";
 import type { ProjectItem } from "../../../types/content";
-import { generateTagColors } from "../../../utils/colorUtils";
+import { generateItemColors } from "../../../utils/colorUtils";
 import { clamp, cn } from "../../../utils/commonUtils";
 // import { processProjectsData } from "../../../utils/googleSheetsUtils";
 import PixelCanvas from "../../effects/PixelCanvas/PixelCanvas";
@@ -165,7 +165,7 @@ function Projects({ db: propsDb }: ProjectsProps = {}) {
       ),
     );
 
-    const generatedTagColors = generateTagColors(uniqueKeywords);
+    const generatedTagColors = generateItemColors(projectsData, "keyword");
     setTagColors(generatedTagColors);
     setActiveFilters((prevFilters) => {
       if (prevFilters.length === 0) {
@@ -195,7 +195,7 @@ function Projects({ db: propsDb }: ProjectsProps = {}) {
         ),
       );
 
-      const regeneratedTagColors = generateTagColors(uniqueKeywords);
+      const regeneratedTagColors = generateItemColors(projectsData, "keyword");
       setTagColors(regeneratedTagColors);
       setActiveFilters((prevFilters) => {
         if (prevFilters.length === 0) {
