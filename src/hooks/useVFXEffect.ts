@@ -42,7 +42,8 @@ export const useVFXEffect = ({
     // ! Dynamic import to avoid SSR issues
     import(/* webpackIgnore: true */ "https://esm.sh/@vfx-js/core")
       .then(({ VFX }) => {
-        vfxRef.current = new VFX();
+        // biome-ignore lint/suspicious/noExplicitAny: VFX core has no typings
+        vfxRef.current = new (VFX as any)();
       })
       .catch((error) => {
         console.warn("Failed to load VFX core:", error);

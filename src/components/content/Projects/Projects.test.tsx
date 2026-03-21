@@ -56,7 +56,7 @@ describe("Projects", () => {
       keyword: "React",
       link: "https://example.com/react",
       content: "React project",
-      image: null,
+      image: "",
     },
     {
       title: "Project Two",
@@ -65,7 +65,7 @@ describe("Projects", () => {
       keyword: "Node",
       link: "https://example.com/node",
       content: "Node project",
-      image: null,
+      image: "",
     },
   ];
 

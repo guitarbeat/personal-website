@@ -33,7 +33,7 @@ app.get("/api/health", (_req, res) => {
 });
 
 // Proxy endpoint for querying Notion databases
-app.post("/api/notion/database/:databaseType/query", async (req, res) => {
+app.post("/api/notion/database/:databaseType/query", async (_req, res) => {
   try {
     const { databaseType } = req.params;
     const databaseId = DATABASE_IDS[databaseType.toUpperCase()];
