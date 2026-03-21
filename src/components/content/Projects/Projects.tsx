@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 // import { withGoogleSheets } from "react-db-google-sheets";
 import { useNotion } from "../../../contexts/NotionContext";
-import { generateItemColors } from "../../../utils/colorUtils";
+import type { ProjectItem } from "../../../types/content";
+import { generateTagColors } from "../../../utils/colorUtils";
 import { clamp, cn } from "../../../utils/commonUtils";
 // import { processProjectsData } from "../../../utils/googleSheetsUtils";
 import PixelCanvas from "../../effects/PixelCanvas/PixelCanvas";
@@ -61,9 +62,9 @@ interface ProjectCardProps {
   title: string;
   content: string;
   slug: string;
-  link: string;
+  link?: string | null;
   keyword: string;
-  date: string;
+  date: string | number | null;
   image?: string | null;
   tagColor?: string;
   className?: string;
@@ -97,9 +98,9 @@ function ProjectCard({
 
   return (
     <a
-      href={link}
-      target="_blank"
-      rel="noreferrer"
+      href={link || undefined}
+      target={link ? "_blank" : undefined}
+      rel={link ? "noreferrer" : undefined}
       className={cn(`projects__card ${className}`.trim(), image && "has-image")}
       key={slug}
       onClick={handleClick}
@@ -129,7 +130,7 @@ function ProjectCard({
           className={cn("date", isClicked ? "show-text" : "")}
           style={{ fontStyle: "italic", color: "var(--color-sage-light)" }}
         >
-          {date}
+          {date ?? ""}
         </p>
         <p className={cn("", isClicked ? "show-text" : "")}>{content}</p>
         {image && <img src={image} className="project-image" alt="Project" />}
@@ -139,7 +140,7 @@ function ProjectCard({
 }
 interface ProjectsProps {
   db?: {
-    projects: unknown[];
+    projects: ProjectItem[];
   };
 }
 
@@ -164,7 +165,7 @@ function Projects({ db: propsDb }: ProjectsProps = {}) {
       ),
     );
 
-    const generatedTagColors = generateItemColors(projectsData, "keyword");
+    const generatedTagColors = generateTagColors(uniqueKeywords);
     setTagColors(generatedTagColors);
     setActiveFilters((prevFilters) => {
       if (prevFilters.length === 0) {
@@ -194,7 +195,7 @@ function Projects({ db: propsDb }: ProjectsProps = {}) {
         ),
       );
 
-      const regeneratedTagColors = generateItemColors(projectsData, "keyword");
+      const regeneratedTagColors = generateTagColors(uniqueKeywords);
       setTagColors(regeneratedTagColors);
       setActiveFilters((prevFilters) => {
         if (prevFilters.length === 0) {
@@ -240,7 +241,7 @@ function Projects({ db: propsDb }: ProjectsProps = {}) {
   const projects = projectsData;
 
   const sortedProjects = [...projects].sort((a, b) =>
-    a.date > b.date ? -1 : 1,
+    String(b.date ?? "").localeCompare(String(a.date ?? "")),
   );
 
   const project_cards = sortedProjects.map((projectProps, index) => {
