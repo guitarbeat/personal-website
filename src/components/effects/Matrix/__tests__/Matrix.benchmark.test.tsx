@@ -23,7 +23,7 @@ describe("Matrix Performance", () => {
       shadowColor: "",
       globalAlpha: 1,
     });
-    // biome-ignore lint/suspicious/noExplicitAny: Mock casting
+    // biome-ignore lint/suspicious/noExplicitAny: Mocking getContext for tests
     HTMLCanvasElement.prototype.getContext = mockGetContext as any;
 
     // Spy on canvas width setter
