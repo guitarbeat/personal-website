@@ -1,1 +1,56 @@
-import{R as t,j as e}from"./index-CScC_6E6.js";import{P as n}from"./index-DSZFy4ax.js";class s extends t.Component{constructor(r){super(r),this.state={hasError:!1,error:null,errorInfo:null}}static getDerivedStateFromError(r){return{hasError:!0,error:r}}componentDidCatch(r,o){this.setState({error:r,errorInfo:o}),console.error("ErrorBoundary caught an error:",r,o)}render(){return this.state.hasError?e.jsxs("div",{style:{display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center",height:"100dvh",width:"100dvw",position:"fixed",top:0,left:0,padding:"20px",backgroundColor:"rgba(0,0,0,0.9)",color:"white"},children:[e.jsx("h1",{children:"Something went wrong"}),!1,e.jsx("button",{type:"button",onClick:()=>window.location.reload(),style:{padding:"10px 20px",marginTop:"20px",backgroundColor:"white",color:"black",border:"none",borderRadius:"4px",cursor:"pointer"},children:"Reload Page"})]}):this.props.children}}s.propTypes={children:n.node.isRequired};export{s as default};
+import { j as e, R as t } from "./index-CScC_6E6.js";
+import { P as n } from "./index-DSZFy4ax.js";
+
+class s extends t.Component {
+  constructor(r) {
+    super(r), (this.state = { hasError: !1, error: null, errorInfo: null });
+  }
+  static getDerivedStateFromError(r) {
+    return { hasError: !0, error: r };
+  }
+  componentDidCatch(r, o) {
+    this.setState({ error: r, errorInfo: o }),
+      console.error("ErrorBoundary caught an error:", r, o);
+  }
+  render() {
+    return this.state.hasError
+      ? e.jsxs("div", {
+          style: {
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100dvh",
+            width: "100dvw",
+            position: "fixed",
+            top: 0,
+            left: 0,
+            padding: "20px",
+            backgroundColor: "rgba(0,0,0,0.9)",
+            color: "white",
+          },
+          children: [
+            e.jsx("h1", { children: "Something went wrong" }),
+            !1,
+            e.jsx("button", {
+              type: "button",
+              onClick: () => window.location.reload(),
+              style: {
+                padding: "10px 20px",
+                marginTop: "20px",
+                backgroundColor: "white",
+                color: "black",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer",
+              },
+              children: "Reload Page",
+            }),
+          ],
+        })
+      : this.props.children;
+  }
+}
+s.propTypes = { children: n.node.isRequired };
+
+export { s as default };
