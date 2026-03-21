@@ -1,6 +1,7 @@
 // @ts-nocheck - Legacy OGL implementation with complex types
 import chroma from "chroma-js"; // Import the chroma-js library from the specified CDN
 import * as ogl from "ogl";
+import type { CSSProperties } from "react";
 import { useEffect, useRef } from "react";
 import { debounce, throttle } from "../../../utils/commonUtils";
 import RippleEffect from "./RippleEffect";
@@ -302,8 +303,19 @@ function _Magic(containerEl: Element | null) {
   };
 }
 
-function MagicComponent() {
+interface MagicComponentProps {
+  isVisible?: boolean;
+  opacity?: number;
+}
+
+function MagicComponent({
+  isVisible = true,
+  opacity = 0.2,
+}: MagicComponentProps) {
   const containerRef = useRef(null);
+  const visibilityStyle = {
+    opacity: isVisible ? opacity : 0,
+  } satisfies CSSProperties;
 
   useEffect(() => {
     // We capture the cleanup logic from the async initialization
@@ -567,7 +579,7 @@ function MagicComponent() {
     };
   }, []);
 
-  return <div id="magicContainer" ref={containerRef} />;
+  return <div id="magicContainer" ref={containerRef} style={visibilityStyle} />;
 }
 
 export default MagicComponent;

@@ -1,54 +1,51 @@
-import { fireEvent, render } from "@testing-library/react";
+import "@testing-library/jest-dom";
+import { fireEvent, render, screen } from "@testing-library/react";
 
 jest.mock("./useScrambleEffect", () => jest.fn());
 
 import Header from "./Header";
 
-describe("ChatBubble interactions", () => {
-  it("reveals the first hint and updates the prompt when activated via keyboard", () => {
+describe("Header avatar", () => {
+  it("renders the avatar button without the removed chat bubble hint", () => {
     const { container } = render(<Header />);
-    const chatBubble = container.querySelector(".chat-bubble");
-    const firstHint = container.querySelector(".hint-section.first");
-    let prompt = container.querySelector(".hint-prompt");
 
-    expect(chatBubble).not.toBeNull();
-    expect(firstHint).not.toBeNull();
-    expect(prompt).not.toBeNull();
-    expect(firstHint?.classList.contains("visible")).toBe(false);
-    expect(prompt?.textContent).toBe("Tap for more...");
-
-    if (chatBubble) {
-      fireEvent.keyUp(chatBubble, { key: "Enter" });
-    }
-
-    expect(firstHint?.classList.contains("visible")).toBe(true);
-    prompt = container.querySelector(".hint-prompt");
-    expect(prompt).not.toBeNull();
-    expect(prompt?.textContent).toBe("One more line...");
+    expect(
+      screen.getByRole("button", { name: /change profile image/i }),
+    ).toBeInTheDocument();
+    expect(container.querySelector(".chat-bubble")).toBeNull();
+    expect(container.querySelectorAll(".avatar.active")).toHaveLength(1);
   });
 
-  it("advances hints up to the maximum level on repeated interactions", () => {
+  it("cycles through profile images and wraps back to the starting avatar", () => {
     const { container } = render(<Header />);
-    const chatBubble = container.querySelector(".chat-bubble");
-    const secondHint = container.querySelector(".hint-section.second");
+    const avatarButton = screen.getByRole("button", {
+      name: /change profile image/i,
+    });
+    const avatars = Array.from(
+      container.querySelectorAll<HTMLImageElement>(".avatar"),
+    );
+    const getActiveAvatar = () =>
+      container.querySelector<HTMLImageElement>(".avatar.active");
 
-    expect(chatBubble).not.toBeNull();
-    expect(secondHint).not.toBeNull();
-    expect(secondHint?.classList.contains("visible")).toBe(false);
+    expect(avatars.length).toBeGreaterThan(1);
 
-    if (chatBubble) {
-      fireEvent.click(chatBubble);
-      fireEvent.click(chatBubble);
+    const initialAvatar = getActiveAvatar();
+    expect(initialAvatar).not.toBeNull();
+
+    const initialSrc = initialAvatar?.getAttribute("src");
+
+    fireEvent.click(avatarButton);
+
+    const nextAvatar = getActiveAvatar();
+    expect(nextAvatar).not.toBeNull();
+    expect(nextAvatar?.getAttribute("src")).not.toBe(initialSrc);
+    expect(container.querySelectorAll(".avatar.active")).toHaveLength(1);
+
+    for (let clickCount = 1; clickCount < avatars.length; clickCount += 1) {
+      fireEvent.click(avatarButton);
     }
 
-    expect(secondHint?.classList.contains("visible")).toBe(true);
-    expect(container.querySelector(".hint-prompt")).toBeNull();
-
-    if (chatBubble) {
-      fireEvent.click(chatBubble);
-    }
-
-    expect(chatBubble?.classList.contains("level-2")).toBe(true);
-    expect(chatBubble?.classList.contains("level-3")).toBe(false);
+    expect(getActiveAvatar()?.getAttribute("src")).toBe(initialSrc);
+    expect(container.querySelectorAll(".avatar.active")).toHaveLength(1);
   });
 });

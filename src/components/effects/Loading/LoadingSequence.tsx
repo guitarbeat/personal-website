@@ -1,86 +1,126 @@
-// LoadingSequence.js
-import { useEffect } from "react";
-import styled from "styled-components";
+import { useEffect, useRef, useState } from "react";
 
-const MaskCommon = styled.div`
-        position: fixed;
-        left: 0;
-        width: 100%;
-        height: 50%;
-        background: #999;
-        z-index: 20000;
-        transition: transform 1s ease-in-out;
-        mix-blend-mode: difference;
-`;
+import "./loading-sequence.scss";
 
-const MaskTop = styled(MaskCommon)`
-        top: 0;
-        transform-origin: top;
-`;
+const INITIAL_LOADER_ID = "initial-loader";
+const STATIC_SHELL_HANDOFF_MS = 180;
+const DEFAULT_EXIT_DURATION_MS = 1100;
+const REDUCED_MOTION_EXIT_DURATION_MS = 260;
 
-const MaskBottom = styled(MaskCommon)`
-        bottom: 0;
-        transform-origin: bottom;
-`;
+const getExitDuration = () => {
+  if (
+    typeof window !== "undefined" &&
+    window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
+  ) {
+    return REDUCED_MOTION_EXIT_DURATION_MS;
+  }
+
+  return DEFAULT_EXIT_DURATION_MS;
+};
 
 interface LoadingSequenceProps {
-  onComplete?: () => void;
+  isVisible: boolean;
+  isReadyToReveal: boolean;
+  onExitComplete?: () => void;
 }
 
-const LoadingSequence = ({ onComplete }: LoadingSequenceProps) => {
-  useEffect(() => {
-    const maskTop = document.getElementById("MaskTop");
-    const maskBottom = document.getElementById("MaskBottom");
-    const magicContainer = document.getElementById("magicContainer");
+const LoadingSequence = ({
+  isVisible,
+  isReadyToReveal,
+  onExitComplete,
+}: LoadingSequenceProps) => {
+  const [isExiting, setIsExiting] = useState(false);
+  const hasStartedExitRef = useRef(false);
 
-    // Initial state
-    if (magicContainer) {
-      magicContainer.style.opacity = "0";
+  useEffect(() => {
+    if (!isVisible) {
+      hasStartedExitRef.current = false;
+      setIsExiting(false);
+    }
+  }, [isVisible]);
+
+  useEffect(() => {
+    if (!isVisible) {
+      return;
     }
 
-    // Start revealing content
-    const t1 = setTimeout(() => {
-      if (maskTop) maskTop.style.transform = "scaleY(0)";
-      if (maskBottom) maskBottom.style.transform = "scaleY(0)";
-    }, 500);
+    const initialLoader = document.getElementById(INITIAL_LOADER_ID);
+    if (!initialLoader) {
+      return;
+    }
 
-    // Fade in magic container
-    const t2 = setTimeout(() => {
-      if (magicContainer) {
-        magicContainer.style.opacity = "0.2";
-      }
-    }, 700);
+    initialLoader.setAttribute("data-react-mounted", "true");
 
-    // Clean up
-    const t3 = setTimeout(() => {
-      if (maskTop) maskTop.style.display = "none";
-      if (maskBottom) maskBottom.style.display = "none";
-      document.body.style.overflow = "";
-      if (onComplete) {
-        onComplete();
-      }
-    }, 2000);
+    const cleanupTimeout = window.setTimeout(() => {
+      initialLoader.remove();
+    }, STATIC_SHELL_HANDOFF_MS);
+
+    return () => window.clearTimeout(cleanupTimeout);
+  }, [isVisible]);
+
+  useEffect(() => {
+    if (!isVisible) {
+      return;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
 
     return () => {
-      if (t1) clearTimeout(t1);
-      if (t2) clearTimeout(t2);
-      if (t3) clearTimeout(t3);
-      if (maskTop) {
-        maskTop.style.transform = "";
-        maskTop.style.display = "";
-      }
-      if (maskBottom) {
-        maskBottom.style.transform = "";
-        maskBottom.style.display = "";
-      }
+      document.body.style.overflow = previousOverflow;
     };
-  }, [onComplete]);
+  }, [isVisible]);
+
+  useEffect(() => {
+    if (!isVisible || !isReadyToReveal || hasStartedExitRef.current) {
+      return;
+    }
+
+    hasStartedExitRef.current = true;
+    setIsExiting(true);
+
+    const exitTimeout = window.setTimeout(() => {
+      onExitComplete?.();
+    }, getExitDuration());
+
+    return () => {
+      window.clearTimeout(exitTimeout);
+    };
+  }, [isVisible, isReadyToReveal, onExitComplete]);
+
+  if (!isVisible) {
+    return null;
+  }
 
   return (
-    <>
-      <MaskTop id="MaskTop" />
-      <MaskBottom id="MaskBottom" />
-    </>
+    <div
+      className={`loading-sequence${isExiting ? " is-exiting" : ""}`}
+      role="status"
+      aria-live="polite"
+      aria-label="Loading portfolio"
+      data-testid="site-loader"
+    >
+      <div
+        className="loading-sequence__veil loading-sequence__veil--top"
+        aria-hidden="true"
+      />
+      <div
+        className="loading-sequence__veil loading-sequence__veil--bottom"
+        aria-hidden="true"
+      />
+      <div className="loading-sequence__frame" aria-hidden="true" />
+      <div className="loading-sequence__frame-inner" aria-hidden="true" />
+      <div className="loading-sequence__content">
+        <p className="loading-sequence__eyebrow">Loading portfolio</p>
+        <h1 className="loading-sequence__title">Aaron Lorenzo Woods</h1>
+        <p className="loading-sequence__meta">Engineer Artist Scientist</p>
+        <div className="loading-sequence__signal" aria-hidden="true">
+          <span />
+          <span />
+          <span />
+        </div>
+      </div>
+    </div>
   );
 };
 

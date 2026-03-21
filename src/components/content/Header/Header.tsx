@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 // Third-party imports
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 
 import cvFile from "../../../assets/documents/cv.pdf";
 // Asset imports
@@ -12,7 +12,6 @@ import profile4 from "../../../assets/images/profile4.png";
 // Local imports
 import { cn } from "../../../utils/commonUtils";
 import useScrambleEffect from "./useScrambleEffect";
-import "./text.scss";
 
 interface SocialMediaProps {
   keyword: string;
@@ -72,98 +71,6 @@ SocialMedia.propTypes = {
   link: PropTypes.string.isRequired,
   tooltip: PropTypes.string.isRequired,
   customIcon: PropTypes.string,
-};
-
-const ChatBubblePart = ({ part }: { part: string }) => (
-  <div className={`bub-part-${part}`} />
-);
-
-const ChatBubbleArrow = () => {
-  // * SVG arrow provides crisp rendering, perfect borders, and rounded corners
-  // * Single element replaces 4 divs, improving performance and maintainability
-  return (
-    <svg
-      className="speech-arrow"
-      width="26"
-      height="14"
-      viewBox="0 0 26 14"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <path
-        d="M 0 14 Q 0 14 2.5 11.5 L 11 3 Q 13 1 13 1 Q 13 1 15 3 L 23.5 11.5 Q 26 14 26 14"
-        fill="var(--bubble-background)"
-        stroke="var(--bubble-border)"
-        strokeWidth="1.5"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-};
-
-const ChatBubble = ({ isVisible }: { isVisible: boolean }) => {
-  const [hintLevel, setHintLevel] = useState(0);
-
-  const handleClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent click from affecting other elements
-    setHintLevel((prev) => (prev < 2 ? prev + 1 : prev));
-  };
-
-  const handleKeyUp = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      setHintLevel((prev) => (prev < 2 ? prev + 1 : prev));
-    }
-  };
-
-  return (
-    <button
-      type="button"
-      className={cn(
-        "chat-bubble",
-        isVisible && "visible",
-        hintLevel > 0 && `level-${hintLevel}`,
-      )}
-      onClick={handleClick}
-      onKeyUp={handleKeyUp}
-    >
-      {["a", "b", "c"].map((part) => (
-        <ChatBubblePart key={part} part={part} />
-      ))}
-      <div className="speech-txt">
-        <div
-          className={cn("hint-section", "initial", hintLevel >= 0 && "visible")}
-        >
-          <span className="hint-text">A glitch in the matrix awaits...</span>
-          <div className="hint-divider" />
-        </div>
-        <div
-          className={cn("hint-section", "first", hintLevel >= 1 && "visible")}
-        >
-          <span className="hint-text">Where binary worlds collide,</span>
-          <div className="hint-divider" />
-        </div>
-        <div
-          className={cn("hint-section", "second", hintLevel >= 2 && "visible")}
-        >
-          <span className="hint-text">Five rapid shifts unlock the code.</span>
-        </div>
-        {hintLevel < 2 && (
-          <div className="hint-prompt">
-            {hintLevel === 0 ? "Tap for more..." : "One more line..."}
-          </div>
-        )}
-      </div>
-      {["c", "b", "a"].map((part) => (
-        <ChatBubblePart key={`bottom-${part}`} part={part} />
-      ))}
-      <ChatBubbleArrow />
-    </button>
-  );
-};
-
-ChatBubble.propTypes = {
-  isVisible: PropTypes.bool.isRequired,
 };
 
 interface HeaderTextProps {
@@ -272,61 +179,11 @@ function Header() {
   const [profileIndex, setProfileIndex] = useState<number>(() =>
     Math.floor(Math.random() * PROFILE_IMAGES.length),
   );
-  const [isBubbleVisible, setIsBubbleVisible] = useState<boolean>(false);
-  const hoverCountRef = useRef<number>(0);
-  const clickTimesRef = useRef<number[]>([]);
-  const lastHoverTimeRef = useRef<number | null>(null);
-  const timerRef = useRef<NodeJS.Timeout | number | null>(null);
 
   useScrambleEffect(headerRef);
 
   const handleClick = () => {
-    const now = Date.now();
-    clickTimesRef.current.push(now);
-
-    // Keep only clicks within last 3 seconds
-    clickTimesRef.current = clickTimesRef.current.filter(
-      (time) => now - time < 3000,
-    );
-
-    // If 3+ clicks in quick succession, show hint
-    if (clickTimesRef.current.length >= 3 && !isBubbleVisible) {
-      setIsBubbleVisible(true);
-      clickTimesRef.current = [];
-    }
-
     setProfileIndex((prev) => (prev + 1) % PROFILE_IMAGES.length);
-  };
-
-  const handleMouseEnter = () => {
-    const now = Date.now();
-
-    // Track rapid hover entries (unusual behavior)
-    if (lastHoverTimeRef.current && now - lastHoverTimeRef.current < 1000) {
-      hoverCountRef.current += 1;
-    } else {
-      hoverCountRef.current = 1;
-    }
-
-    lastHoverTimeRef.current = now;
-
-    // Only show if user hovers multiple times quickly (5+ times)
-    if (hoverCountRef.current >= 5 && !isBubbleVisible) {
-      setIsBubbleVisible(true);
-      hoverCountRef.current = 0;
-    }
-  };
-
-  const handleMouseLeave = () => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-      timerRef.current = null;
-    }
-    // Don't hide immediately - let it fade naturally if user moves away
-    timerRef.current = setTimeout(() => {
-      setIsBubbleVisible(false);
-      hoverCountRef.current = 0;
-    }, 2000);
   };
 
   const handleImageError = (
@@ -337,14 +194,6 @@ function Header() {
     target.src = FALLBACK_PROFILE_SRC;
   };
 
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-      }
-    };
-  }, []);
-
   return (
     <div className="container" id="header" ref={headerRef}>
       <div className="container__content">
@@ -352,8 +201,6 @@ function Header() {
           <div className="header__image-container">
             <button
               type="button"
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
               onClick={handleClick}
               aria-label="Change profile image"
             >
@@ -367,7 +214,6 @@ function Header() {
                 />
               ))}
             </button>
-            <ChatBubble isVisible={isBubbleVisible} />
           </div>
           <div className="header__text">
             {HEADER_SECTIONS.map((section) => (

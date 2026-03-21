@@ -46,9 +46,196 @@
       gtag('js', new Date());
       gtag('config', 'G-Z7MFE7S5K9');
     </script>
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        background: #1a1a1d;
+        color: #d8e3e7;
+      }
+
+      #initial-loader {
+        position: fixed;
+        inset: 0;
+        z-index: 1200;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        background:
+          radial-gradient(circle at top, rgba(69, 142, 109, 0.14), transparent 52%),
+          radial-gradient(circle at bottom, rgba(196, 69, 48, 0.12), transparent 58%),
+          linear-gradient(135deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01)),
+          #1a1a1d;
+        transition: opacity 180ms ease, visibility 180ms ease;
+      }
+
+      #initial-loader[data-react-mounted="true"] {
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      #initial-loader .loading-sequence__veil {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        height: 50.5%;
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01)),
+          rgba(26, 26, 29, 0.96);
+        box-shadow: inset 0 0 0 1px rgba(216, 227, 231, 0.05);
+      }
+
+      #initial-loader .loading-sequence__veil--top {
+        top: 0;
+        border-bottom: 1px solid rgba(216, 227, 231, 0.06);
+      }
+
+      #initial-loader .loading-sequence__veil--bottom {
+        bottom: 0;
+        border-top: 1px solid rgba(216, 227, 231, 0.06);
+      }
+
+      #initial-loader .loading-sequence__frame,
+      #initial-loader .loading-sequence__frame-inner {
+        position: absolute;
+        inset: 1.25rem;
+        border-radius: 1.8rem;
+        border: 1px solid rgba(216, 227, 231, 0.14);
+      }
+
+      #initial-loader .loading-sequence__frame-inner {
+        inset: 2rem;
+        border-color: rgba(69, 142, 109, 0.22);
+      }
+
+      #initial-loader .loading-sequence__content {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        gap: 0.9rem;
+        width: min(100%, 34rem);
+        padding: 2rem;
+        text-align: center;
+      }
+
+      #initial-loader .loading-sequence__eyebrow,
+      #initial-loader .loading-sequence__meta {
+        margin: 0;
+        font-size: 0.78rem;
+        letter-spacing: 0.34em;
+        text-transform: uppercase;
+        color: rgba(216, 227, 231, 0.68);
+      }
+
+      #initial-loader .loading-sequence__title {
+        margin: 0;
+        font-size: clamp(2.2rem, 7vw, 4.4rem);
+        line-height: 0.94;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      #initial-loader .loading-sequence__meta {
+        letter-spacing: 0.24em;
+      }
+
+      #initial-loader .loading-sequence__signal {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        gap: 0.7rem;
+        margin-top: 0.3rem;
+      }
+
+      #initial-loader .loading-sequence__signal span {
+        width: 3.8rem;
+        height: 0.18rem;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #458e6d, #c64530, #e4aa3d);
+        opacity: 0.44;
+        animation: loader-pulse 1.4s ease-in-out infinite;
+      }
+
+      #initial-loader .loading-sequence__signal span:nth-child(2) {
+        animation-delay: 0.15s;
+      }
+
+      #initial-loader .loading-sequence__signal span:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+
+      @keyframes loader-pulse {
+        0%, 100% {
+          opacity: 0.25;
+          transform: scaleX(0.85);
+        }
+
+        50% {
+          opacity: 1;
+          transform: scaleX(1);
+        }
+      }
+
+      @media (max-width: 640px) {
+        #initial-loader .loading-sequence__frame {
+          inset: 0.8rem;
+          border-radius: 1.4rem;
+        }
+
+        #initial-loader .loading-sequence__frame-inner {
+          inset: 1.35rem;
+          border-radius: 1.1rem;
+        }
+
+        #initial-loader .loading-sequence__content {
+          padding: 1.5rem;
+          gap: 0.8rem;
+        }
+
+        #initial-loader .loading-sequence__signal span {
+          width: 3rem;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        #initial-loader,
+        #initial-loader .loading-sequence__signal span {
+          transition: none;
+          animation: none;
+        }
+      }
+    </style>
   </head>
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <noscript><style>#initial-loader{display:none}</style>You need to enable JavaScript to run this app.</noscript>
+    <div
+      id="initial-loader"
+      class="loading-sequence loading-sequence--shell"
+      role="status"
+      aria-live="polite"
+      aria-label="Loading portfolio"
+    >
+      <div class="loading-sequence__veil loading-sequence__veil--top" aria-hidden="true"></div>
+      <div class="loading-sequence__veil loading-sequence__veil--bottom" aria-hidden="true"></div>
+      <div class="loading-sequence__frame" aria-hidden="true"></div>
+      <div class="loading-sequence__frame-inner" aria-hidden="true"></div>
+      <div class="loading-sequence__content">
+        <p class="loading-sequence__eyebrow">Loading portfolio</p>
+        <h1 class="loading-sequence__title">Aaron Lorenzo Woods</h1>
+        <p class="loading-sequence__meta">Engineer Artist Scientist</p>
+        <div class="loading-sequence__signal" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/index.tsx"></script>
   </body>

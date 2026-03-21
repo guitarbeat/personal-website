@@ -31,11 +31,7 @@ import ScrollToTopButton from "./components/effects/Matrix/ScrollToTopButton";
 import MagicComponent from "./components/effects/Moire/Moire";
 import { About, Header, NavBar, Projects, Work } from "./components/index";
 
-// * Loading fallback
-const CustomLoadingComponent = () => (
-  <div className="loading-container">Loading...</div>
-);
-CustomLoadingComponent.displayName = "CustomLoadingComponent";
+const INITIAL_LOADER_MIN_DURATION_MS = 500;
 
 const SiteStatusPill = memo(() => (
   <div className="site-status-pill" role="status">
@@ -95,6 +91,7 @@ interface LayoutProps {
   isInScroll: boolean;
   hideNavBar: boolean;
   isDegraded: boolean;
+  isBackgroundVisible: boolean;
   showMatrix?: boolean;
   onMatrixReady?: (callback: () => void) => void;
   isUnlocked?: boolean;
@@ -110,9 +107,9 @@ const Layout = memo(
     isInScroll,
     hideNavBar,
     isDegraded,
+    isBackgroundVisible,
   }: LayoutProps) => (
     <div className="app-layout">
-      <LoadingSequence onComplete={() => {}} />
       <div className="vignette-top" />
       <div className="vignette-bottom" />
       <div className="vignette-left" />
@@ -125,7 +122,7 @@ const Layout = memo(
           isInShop={isInScroll}
         />
       )}
-      <MagicComponent />
+      <MagicComponent isVisible={isBackgroundVisible} opacity={0.2} />
       <FrameEffect>{children}</FrameEffect>
       <ScrollToTopButton />
       <UnlockedBadge />
@@ -254,6 +251,7 @@ interface MainRoutesProps {
   isDegraded: boolean;
   showMatrix: boolean;
   onMatrixReady: (callback: () => void) => void;
+  isBackgroundVisible: boolean;
 }
 
 // * Main routes
@@ -267,6 +265,7 @@ const MainRoutes = ({
   isDegraded,
   showMatrix,
   onMatrixReady,
+  isBackgroundVisible,
 }: MainRoutesProps) => {
   const location = useLocation();
   const currentIsInScroll = location.pathname === "/scroll" || isInScroll;
@@ -285,6 +284,7 @@ const MainRoutes = ({
             onMatrixReady={onMatrixReady}
             isUnlocked={isUnlocked}
             isDegraded={isDegraded}
+            isBackgroundVisible={isBackgroundVisible}
             hideNavBar={false}
           >
             <BlurSection as="div" disabled={!isUnlocked} className="">
@@ -307,6 +307,7 @@ const MainRoutes = ({
             onMatrixReady={onMatrixReady}
             isUnlocked={true}
             isDegraded={isDegraded}
+            isBackgroundVisible={isBackgroundVisible}
             hideNavBar={true}
           >
             <BlurSection as="div" disabled={false} className="">
@@ -337,10 +338,23 @@ const AppContent = () => {
   const { isUnlocked } = useAuth();
   const [isScrollMode, setIsScrollMode] = useState(false);
   const [isInScroll, setIsInScroll] = useState(false);
+  const [isInitialLoaderVisible, setIsInitialLoaderVisible] = useState(true);
+  const [hasMinimumLoaderDurationElapsed, setHasMinimumLoaderDurationElapsed] =
+    useState(false);
   const scrollAnimationRef = useRef<number | null>(null);
   const scrollSpeedRef = useRef<number>(400);
 
   // --- Effects ---
+
+  useEffect(() => {
+    const minimumLoaderDurationTimeout = window.setTimeout(() => {
+      setHasMinimumLoaderDurationElapsed(true);
+    }, INITIAL_LOADER_MIN_DURATION_MS);
+
+    return () => {
+      window.clearTimeout(minimumLoaderDurationTimeout);
+    };
+  }, []);
 
   // Utility function to cleanup scroll animation
   const cleanupScrollAnimation = useCallback(() => {
@@ -424,43 +438,55 @@ const AppContent = () => {
 
   const hasRenderableContent =
     db.about.length > 0 || db.projects.length > 0 || db.work.length > 0;
-
-  if (loading && !hasRenderableContent) {
-    return <CustomLoadingComponent />;
-  }
-
-  if (!loading && error && !hasRenderableContent) {
-    return <ContentUnavailableState error={error} />;
-  }
+  const showUnavailableState = !loading && !hasRenderableContent;
+  const hasInitialViewReady = hasRenderableContent || showUnavailableState;
+  const canRevealInitialLoader =
+    isInitialLoaderVisible &&
+    hasMinimumLoaderDurationElapsed &&
+    hasInitialViewReady;
+  const isBackgroundVisible = !isInitialLoaderVisible || canRevealInitialLoader;
+  const handleInitialLoaderExit = useCallback(() => {
+    setIsInitialLoaderVisible(false);
+  }, []);
 
   // --- Render ---
   return (
     <>
+      <LoadingSequence
+        isVisible={isInitialLoaderVisible}
+        isReadyToReveal={canRevealInitialLoader}
+        onExitComplete={handleInitialLoaderExit}
+      />
       <MatrixModal
         showMatrix={showMatrix}
         onSuccess={handleMatrixSuccess}
         onMatrixReady={handleMatrixReady}
       />
       {isUnlocked ? <CustomCursor /> : null}
-      <BrowserRouter>
-        <MatrixRouteSync
-          showMatrix={showMatrix}
-          onRouteMatrixChange={handleRouteMatrixChange}
-        />
-        <Suspense fallback={<CustomLoadingComponent />}>
-          <MainRoutes
-            navItems={NAV_ITEMS}
-            onMatrixActivate={handleMatrixActivate}
-            onScrollActivate={_handleScrollActivate}
-            isScrollMode={isScrollMode}
-            isUnlocked={isUnlocked}
-            isInScroll={isInScroll}
-            isDegraded={isDegraded}
+      {showUnavailableState ? (
+        <ContentUnavailableState error={error} />
+      ) : hasRenderableContent ? (
+        <BrowserRouter>
+          <MatrixRouteSync
             showMatrix={showMatrix}
-            onMatrixReady={handleMatrixReady}
+            onRouteMatrixChange={handleRouteMatrixChange}
           />
-        </Suspense>
-      </BrowserRouter>
+          <Suspense fallback={null}>
+            <MainRoutes
+              navItems={NAV_ITEMS}
+              onMatrixActivate={handleMatrixActivate}
+              onScrollActivate={_handleScrollActivate}
+              isScrollMode={isScrollMode}
+              isUnlocked={isUnlocked}
+              isInScroll={isInScroll}
+              isDegraded={isDegraded}
+              showMatrix={showMatrix}
+              onMatrixReady={handleMatrixReady}
+              isBackgroundVisible={isBackgroundVisible}
+            />
+          </Suspense>
+        </BrowserRouter>
+      ) : null}
     </>
   );
 };
