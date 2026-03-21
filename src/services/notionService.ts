@@ -1,82 +1,93 @@
-// Notion Service - handles fetching data from Notion databases via Vercel serverless functions
+import type { ContentResponse } from "../types/content";
 
-// In production (Vercel), use relative paths which resolve to /api/*
-// In development, can use local proxy server or Vercel dev server
 const API_BASE = process.env.REACT_APP_API_BASE || "";
 
-// Fetch data from a Notion database via Vercel serverless function
+const parseApiError = (payload: unknown, fallbackMessage: string) => {
+  if (
+    payload &&
+    typeof payload === "object" &&
+    "error" in payload &&
+    payload.error &&
+    typeof payload.error === "object"
+  ) {
+    const nestedError = payload.error as {
+      message?: string;
+      failureType?: string;
+      code?: string;
+    };
 
-const fetchNotionDatabase = async (
-  databaseType: string,
-): Promise<unknown[]> => {
-  try {
-    const response = await fetch(
-      `${API_BASE}/api/notion?database=${databaseType}`,
-      {
-        method: "GET",
-      },
-    );
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(
-        `Notion API error: ${error.message || response.statusText}`,
-      );
-    }
-
-    const data = await response.json();
-    // Serverless function returns already-transformed data as an array
-    return Array.isArray(data) ? data : [];
-  } catch (error: unknown) {
-    console.error(`Error fetching ${databaseType} from Notion:`, error);
-    return [];
+    return nestedError.message || nestedError.failureType || nestedError.code;
   }
+
+  if (
+    payload &&
+    typeof payload === "object" &&
+    "message" in payload &&
+    typeof payload.message === "string"
+  ) {
+    return payload.message;
+  }
+
+  return fallbackMessage;
 };
 
-// Data is already transformed by serverless function, just pass through
-const transformProjectsData = <T>(data: T[]): T[] => {
-  return data;
+// biome-ignore lint/suspicious/noExplicitAny: Notion compatibility endpoint remains dynamic
+const fetchNotionDatabase = async (databaseType: string): Promise<any[]> => {
+  const response = await fetch(
+    `${API_BASE}/api/notion?database=${databaseType}`,
+    {
+      method: "GET",
+    },
+  );
+
+  const payload = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throw new Error(
+      `Notion API error: ${parseApiError(payload, response.statusText)}`,
+    );
+  }
+
+  return Array.isArray(payload) ? payload : [];
 };
 
-// Data is already transformed by serverless function, just pass through
-const transformWorkData = <T>(data: T[]): T[] => {
-  return data;
+const fetchContent = async (): Promise<ContentResponse> => {
+  const response = await fetch(`${API_BASE}/api/content`, {
+    method: "GET",
+  });
+  const payload = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throw new Error(parseApiError(payload, response.statusText));
+  }
+
+  if (
+    !payload ||
+    typeof payload !== "object" ||
+    !("data" in payload) ||
+    !("meta" in payload)
+  ) {
+    throw new Error("Content API returned an invalid response.");
+  }
+
+  return payload as ContentResponse;
 };
 
-// Data is already transformed by serverless function, just pass through
-const transformAboutData = <T>(data: T[]): T[] => {
-  return data;
-};
-
-// Main Notion Service class
 class NotionService {
   async getProjects() {
-    const pages = await fetchNotionDatabase("projects");
-    return transformProjectsData(pages);
+    return fetchNotionDatabase("projects");
   }
 
   async getWork() {
-    const pages = await fetchNotionDatabase("work");
-    return transformWorkData(pages);
+    return fetchNotionDatabase("work");
   }
 
   async getAbout() {
-    const pages = await fetchNotionDatabase("about");
-    return transformAboutData(pages);
+    return fetchNotionDatabase("about");
   }
 
   async getAllData() {
-    const [projects, work, about] = await Promise.all([
-      this.getProjects(),
-      this.getWork(),
-      this.getAbout(),
-    ]);
-
-    return {
-      projects,
-      work,
-      about,
-    };
+    return fetchContent();
   }
 }
 

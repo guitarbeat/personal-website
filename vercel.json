@@ -1,9 +1,16 @@
 {
   "outputDirectory": "dist",
-  "rewrites": [
+  "routes": [
     {
-      "source": "/api/:path*",
-      "destination": "/api/:path*"
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/((?!.*\\.).*)",
+      "dest": "/"
     }
   ],
   "headers": [
@@ -16,7 +23,7 @@
         },
         {
           "key": "Access-Control-Allow-Headers",
-          "value": "Content-Type"
+          "value": "Content-Type, Authorization, x-cron-secret"
         }
       ]
     }

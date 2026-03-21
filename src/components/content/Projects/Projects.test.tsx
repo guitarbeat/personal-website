@@ -12,30 +12,35 @@ jest.mock("../../effects/PixelCanvas/PixelCanvas", () => {
 
 jest.mock("../../../contexts/NotionContext", () => ({
   useNotion: () => ({
-    projects: [
-      {
-        title: "Project One",
-        slug: "project-one",
-        date: "2024",
-        keyword: "React",
-        link: "https://example.com/react",
-        content: "React project",
-        image: null,
-      },
-      {
-        title: "Project Two",
-        slug: "project-two",
-        date: "2023",
-        keyword: "Node",
-        link: "https://example.com/node",
-        content: "Node project",
-        image: null,
-      },
-    ],
-    work: [],
-    about: [],
+    db: {
+      projects: [
+        {
+          title: "Project One",
+          slug: "project-one",
+          date: "2024",
+          keyword: "React",
+          link: "https://example.com/react",
+          content: "React project",
+          image: null,
+        },
+        {
+          title: "Project Two",
+          slug: "project-two",
+          date: "2023",
+          keyword: "Node",
+          link: "https://example.com/node",
+          content: "Node project",
+          image: null,
+        },
+      ],
+      work: [],
+      about: [],
+    },
+    meta: null,
     loading: false,
     error: null,
+    isDegraded: false,
+    lastUpdated: null,
   }),
 }));
 
