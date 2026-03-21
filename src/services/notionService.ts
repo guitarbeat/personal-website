@@ -33,17 +33,17 @@ const fetchNotionDatabase = async (databaseType: string): Promise<any[]> => {
 };
 
 // Data is already transformed by serverless function, just pass through
-const transformProjectsData = (data: any[]): any[] => {
+const transformProjectsData = (data: unknown[]): unknown[] => {
   return data;
 };
 
 // Data is already transformed by serverless function, just pass through
-const transformWorkData = (data: any[]): any[] => {
+const transformWorkData = (data: unknown[]): unknown[] => {
   return data;
 };
 
 // Data is already transformed by serverless function, just pass through
-const transformAboutData = (data: any[]): any[] => {
+const transformAboutData = (data: unknown[]): unknown[] => {
   return data;
 };
 
