@@ -9,14 +9,14 @@ import { useAuth } from "./AuthContext";
 // Components
 // Styles
 import "./matrix.scss";
+import { Drop } from "./MatrixDrop";
+import { MATRIX_RAIN } from "./constants";
 
 // Asset imports
 import deniedAudio from "../../../assets/audio/didn't-say-the-magic-word.mp3";
 import deniedCaptions from "../../../assets/audio/didnt-say-the-magic-word.vtt";
 import deniedImage from "../../../assets/images/nu-uh-uh.webp";
 
-const MIN_FONT_SIZE = 12;
-const MAX_FONT_SIZE = 18;
 const PROGRESS_DECAY_INTERVAL = 140;
 const PROGRESS_DECAY_BASE = 0.5; // Increased from 0.18
 const PROGRESS_DECAY_RAMP = [
@@ -393,8 +393,6 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
   const successTelemetryRef = useRef<SuccessConsoleParams | null>(null);
 
   // * Configuration constants
-  const ALPHABET =
-    "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*";
 
   const updateHackDisplay = useCallback(
     (direction: "forward" | "backward", magnitude: number) => {
@@ -961,76 +959,20 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
     resizeCanvas();
     window.addEventListener("resize", handleResize);
 
-    class Drop {
-      x: number;
-      y: number;
-      char: string;
-      changeInterval: number;
-      frame: number;
-      brightness: boolean;
-      trailLength: number;
-      trail: { char: string; y: number }[];
-      speed!: number;
-      fontSize!: number;
-      opacity!: number;
 
-      constructor(x: number) {
-        this.x = x;
-        this.y = -100;
-        this.char = ALPHABET[Math.floor(Math.random() * ALPHABET.length)];
-        this.changeInterval = Math.random() * 50 + 15;
-        this.frame = 0;
-        this.brightness = Math.random() > 0.95;
-        this.trailLength = Math.floor(Math.random() * 3) + 2;
-        this.trail = [];
-        this.initializeCharacterProperties();
-      }
-
-      initializeCharacterProperties() {
-        this.speed = Math.random() * 2 + 0.8;
-        this.fontSize = Math.floor(
-          Math.random() * (MAX_FONT_SIZE - MIN_FONT_SIZE) + MIN_FONT_SIZE,
-        );
-        this.opacity = Math.random() * 0.6 + 0.3;
-      }
-
-      update() {
-        this.y += this.speed;
-        this.frame++;
-
-        // * Update trail
-        this.trail.push({ char: this.char, y: this.y });
-        if (this.trail.length > this.trailLength) {
-          this.trail.shift();
-        }
-
-        if (this.frame >= this.changeInterval) {
-          this.char = ALPHABET[Math.floor(Math.random() * ALPHABET.length)];
-          this.frame = 0;
-          this.brightness = Math.random() > 0.97;
-        }
-
-        if (canvas && this.y * this.fontSize > canvas.height) {
-          this.y = -100 / this.fontSize;
-          this.initializeCharacterProperties();
-          this.trail = [];
-        }
-      }
-    }
-
-    const columns = Math.floor(canvas.width / MIN_FONT_SIZE);
+    const columns = Math.floor(canvas.width / MATRIX_RAIN.FONT_SIZES.MIN);
     const drops = Array(columns)
       .fill(null)
       .map((_, i) => {
-        const drop = new Drop(i * MIN_FONT_SIZE);
-        drop.y = (Math.random() * canvas.height) / MIN_FONT_SIZE;
+        const drop = new Drop(i * MATRIX_RAIN.FONT_SIZES.MIN);
+        drop.y = (Math.random() * canvas.height) / MATRIX_RAIN.FONT_SIZES.MIN;
         return drop;
       });
 
     // * Performance Optimization: Pre-allocate buckets to prevent per-frame garbage collection
     // * We reuse these arrays every frame instead of creating new ones
     const buckets: Record<number, Drop[]> = {};
-    for (let size = MIN_FONT_SIZE; size <= MAX_FONT_SIZE; size++) {
+    for (let size = MATRIX_RAIN.FONT_SIZES.MIN; size <= MATRIX_RAIN.FONT_SIZES.MAX; size++) {
       buckets[size] = [];
     }
 
@@ -1047,7 +989,7 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
 
         // * Update all drops first
         for (const drop of drops) {
-          drop.update();
+          drop.update(canvas.height);
         }
 
         // * Performance Optimization: Batch drawing by font size to minimize state changes
