@@ -10,7 +10,14 @@
     }
   },
   "files": {
-    "includes": ["**", "!public/build", "!.vscode", "!src/css/styles.css"]
+    "includes": [
+      "**",
+      "!public/build",
+      "!.vscode",
+      "!src/css/styles.css",
+      "!dist",
+      "!build"
+    ]
   },
   "formatter": {
     "enabled": true,
