@@ -135,7 +135,7 @@ export const LAYOUT = {
 export const MATRIX_RAIN = {
   // Character Sets
   ALPHABET:
-    "01ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*<>{}[]()/\\|~`^+-=!@#$%^&*()_+-=[]{}|;':\",./<>?",
+    "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*",
 
   // Animation Properties
   SPEED_RANGE: { min: 1, max: 3 },
@@ -143,6 +143,12 @@ export const MATRIX_RAIN = {
 
   // Visual Effects
   BRIGHTNESS_CHANCE: 0.95,
+
+  // Font Sizes
+  FONT_SIZES: {
+    MIN: 12,
+    MAX: 18,
+  },
 };
 
 // * Security Constants
