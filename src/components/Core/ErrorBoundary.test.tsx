@@ -16,16 +16,20 @@ describe("ErrorBoundary", () => {
     console.error = jest.fn();
 
     // Mock window.location.reload
-    // Need to use verify writable/configurable property for window.location in JSDOM
-    // biome-ignore lint/suspicious/noExplicitAny: Mocking read-only property
-    delete (window as any).location;
-    // biome-ignore lint/suspicious/noExplicitAny: Mocking read-only property
-    window.location = { ...originalLocation, reload: jest.fn() } as any;
+    Object.defineProperty(window, "location", {
+      value: { ...originalLocation, reload: jest.fn() },
+      configurable: true,
+      writable: true,
+    });
   });
 
   afterAll(() => {
     console.error = originalConsoleError;
-    window.location = originalLocation;
+    Object.defineProperty(window, "location", {
+      value: originalLocation,
+      configurable: true,
+      writable: true,
+    });
   });
 
   afterEach(() => {
@@ -68,7 +72,10 @@ describe("ErrorBoundary", () => {
 
   it("displays error details in development mode", () => {
     const originalEnv = process.env.NODE_ENV;
-    process.env.NODE_ENV = "development";
+    Object.defineProperty(process.env, "NODE_ENV", {
+      value: "development",
+      configurable: true,
+    });
 
     render(
       <ErrorBoundary>
@@ -78,12 +85,18 @@ describe("ErrorBoundary", () => {
 
     expect(screen.getByText("Error: Test Error")).toBeInTheDocument();
 
-    process.env.NODE_ENV = originalEnv;
+    Object.defineProperty(process.env, "NODE_ENV", {
+      value: originalEnv,
+      configurable: true,
+    });
   });
 
   it("hides error details in production mode", () => {
     const originalEnv = process.env.NODE_ENV;
-    process.env.NODE_ENV = "production";
+    Object.defineProperty(process.env, "NODE_ENV", {
+      value: "production",
+      configurable: true,
+    });
 
     render(
       <ErrorBoundary>
@@ -94,6 +107,9 @@ describe("ErrorBoundary", () => {
     // In production, the detailed error message should not be present
     expect(screen.queryByText("Error: Test Error")).not.toBeInTheDocument();
 
-    process.env.NODE_ENV = originalEnv;
+    Object.defineProperty(process.env, "NODE_ENV", {
+      value: originalEnv,
+      configurable: true,
+    });
   });
 });
