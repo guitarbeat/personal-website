@@ -165,7 +165,8 @@ const MemoizedTimelineBar = React.memo(TimelineBar);
 
 interface WorkProps {
   db?: {
-    work: Job[];
+
+    work: unknown[];
   };
 }
 
