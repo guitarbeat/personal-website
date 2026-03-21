@@ -121,7 +121,7 @@ const createUnlockStateFromSession = () => {
     const storedTimestamp = getSessionData(keys.timestampKey);
 
     if (isStoredUnlocked && storedTimestamp) {
-      const sessionAge = Date.now() - storedTimestamp;
+      const sessionAge = Date.now() - (storedTimestamp as number);
       if (sessionAge < maxSessionAge) {
         unlockState[device] = true;
       } else {
