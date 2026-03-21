@@ -10,7 +10,16 @@
     }
   },
   "files": {
-    "includes": ["**", "!public/build", "!.vscode", "!src/css/styles.css"]
+    "includes": [
+      "src/**",
+      "api/**",
+      "scripts/**",
+      "!dist",
+      "!build",
+      "!public/build",
+      "!**/*.min.js",
+      "!node_modules"
+    ]
   },
   "formatter": {
     "enabled": true,

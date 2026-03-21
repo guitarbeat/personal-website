@@ -1170,7 +1170,15 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
         role="img"
         aria-label="Matrix rain animation"
       />
-      <div className="hack-terminal-frame">
+      {/* biome-ignore lint/a11y/useSemanticElements: Matrix effect viewport acts as global button without being semantic button to preserve layout */}
+      <div
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") handleViewportEngage();
+        }}
+        className="hack-terminal-frame"
+      >
         <div className="hack-terminal-titlebar">
           <div className="hack-terminal-titlebar__label">
             {hackProgress < 33
