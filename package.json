@@ -32,7 +32,7 @@
     "lint": "biome lint ./src",
     "check": "biome check --write .",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
+    "deploy": "gh-pages -d dist",
     "sass:check": "sass --no-source-map --no-error-css --verbose src:public/build/css",
     "lint:md": "markdownlint-cli2 \"**/*.md\" \"#node_modules\"",
     "lint:md:fix": "markdownlint-cli2 --fix \"**/*.md\" \"#node_modules\"",
