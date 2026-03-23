@@ -14,12 +14,6 @@ $theme-colors: tokens.$theme-colors;
 $track-padding: 2px;
 $spacing-ratio: 0.15;
 
-// Export for use in other files
-:export {
-  // transitionTiming: $transition-timing;
-  // transitionDuration: $transition-duration;
-}
-
 // ======================================
 // Variables and Root Definitions
 // ======================================
@@ -300,4 +294,3 @@ body,
     scrollbar-width: none !important;  /* Firefox */
   }
 }
-
