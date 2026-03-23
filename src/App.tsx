@@ -16,10 +16,13 @@ import {
   useLocation,
   useNavigate,
 } from "react-router-dom";
-
+// import GoogleSheetsProvider from "react-db-google-sheets";
 import { NotionProvider } from "./contexts/NotionContext";
 import "./sass/main.scss";
-import { NAV_ITEMS } from "./components/Core/constants";
+import {
+  // GOOGLE_SHEETS_CONFIG,
+  NAV_ITEMS,
+} from "./components/Core/constants";
 import { BlurSection } from "./components/effects/Blur/index";
 import CustomCursor from "./components/effects/CustomCursor/CustomCursor";
 import InfiniteScrollEffect from "./components/effects/InfiniteScrollEffect";
@@ -79,7 +82,7 @@ const Layout = memo(
     children,
     navItems,
     onMatrixActivate,
-    onScrollActivate: _onScrollActivate,
+    onScrollActivate,
     isInScroll,
     hideNavBar,
   }: LayoutProps) => (
@@ -93,6 +96,7 @@ const Layout = memo(
         <NavBar
           items={navItems}
           onMatrixActivate={onMatrixActivate}
+          onShopActivate={onScrollActivate}
           isInShop={isInScroll}
         />
       )}
@@ -371,7 +375,7 @@ const AppContent = () => {
   const handleRouteMatrixChange = useCallback((shouldShow: boolean) => {
     setShowMatrix((prev) => (prev === shouldShow ? prev : shouldShow));
   }, []);
-  const _handleScrollActivate = useCallback(() => setIsScrollMode(true), []);
+  const handleScrollActivate = useCallback(() => setIsScrollMode(true), []);
 
   // Matrix ready callback - will be set by Matrix component
   const matrixReadyCallbackRef = useRef<(() => void) | null>(null);
@@ -406,7 +410,7 @@ const AppContent = () => {
           <MainRoutes
             navItems={NAV_ITEMS}
             onMatrixActivate={handleMatrixActivate}
-            onScrollActivate={_handleScrollActivate}
+            onScrollActivate={handleScrollActivate}
             isScrollMode={isScrollMode}
             isUnlocked={isUnlocked}
             isInScroll={isInScroll}

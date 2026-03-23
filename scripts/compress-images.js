@@ -24,7 +24,7 @@ async function compressImages() {
   const imagemin = await loadImagemin();
   const imageminMozjpeg = await loadMozjpeg();
   const imageminPngquant = await loadPngquant();
-  const _imageminAvif = await loadAvif();
+  const imageminAvif = await loadAvif();
 
   try {
     const allFiles = await listFiles(imagesDir);

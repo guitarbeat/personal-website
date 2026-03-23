@@ -46,4 +46,4 @@ jobs:
         run: pnpm test
         
       - name: Build project
-        run: pnpm run build:dev
+        run: pnpm run build

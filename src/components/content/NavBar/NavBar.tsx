@@ -74,10 +74,16 @@ const updateThemeColor = (isLight: boolean) => {
 interface NavBarProps {
   items: Record<string, string>;
   onMatrixActivate: () => void;
+  onShopActivate?: () => void;
   isInShop?: boolean;
 }
 
-function NavBar({ items, onMatrixActivate, isInShop = false }: NavBarProps) {
+function NavBar({
+  items,
+  onMatrixActivate,
+  onShopActivate,
+  isInShop = false,
+}: NavBarProps) {
   const themeClickTimesRef = useRef<number[]>([]);
   const themeSwitchRef = useRef<HTMLButtonElement>(null);
   const [isLightTheme, setIsLightTheme] = useState(getInitialTheme);
@@ -290,9 +296,7 @@ function NavBar({ items, onMatrixActivate, isInShop = false }: NavBarProps) {
     (e: React.MouseEvent, href: string, label: string) => {
       // * Clear any existing timeout
       if (vfxTimeoutRef.current) {
-        if (typeof vfxTimeoutRef.current === "number")
-          clearTimeout(vfxTimeoutRef.current);
-        else clearTimeout(vfxTimeoutRef.current as unknown as number);
+        clearTimeout(vfxTimeoutRef.current as any);
         vfxTimeoutRef.current = null;
       }
 

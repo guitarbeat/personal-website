@@ -1223,14 +1223,16 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                 </div>
                 <p className="hack-sequencer__feedback">{hackFeedback}</p>
               </div>
-              {/* biome-ignore lint/a11y/useSemanticElements: Matrix effect viewport acts as global button without being semantic button to preserve layout */}
+              {/* biome-ignore lint/a11y/useSemanticElements: Styling requires div structure */}
               <div
+                className="hack-input-viewport"
                 role="button"
                 tabIndex={0}
-                onKeyDown={handleViewportEngage}
-                className="hack-input-viewport"
                 onMouseDown={handleViewportEngage}
                 onTouchStart={handleViewportEngage}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") handleViewportEngage();
+                }}
               >
                 <div className="hack-input-stream" aria-hidden="true">
                   {consoleDisplay.split("\n").map((line, i) => {
@@ -1250,7 +1252,7 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                       className += " prompt";
 
                     return (
-                      // biome-ignore lint/suspicious/noArrayIndexKey: Log list relies on array order and does not reorder
+                      // biome-ignore lint/suspicious/noArrayIndexKey: Console lines are immutable
                       <div key={i} className={className}>
                         {line}
                       </div>

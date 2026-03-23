@@ -74,6 +74,31 @@ const getSessionData = (key: string) => {
   }
 };
 
+// biome-ignore lint/suspicious/noExplicitAny: Session data can be anything
+const setSessionData = (key: string, value: any) => {
+  if (!hasSessionStorage()) {
+    return;
+  }
+
+  try {
+    window.sessionStorage.setItem(key, JSON.stringify(value));
+  // biome-ignore lint/suspicious/noExplicitAny: Error type is unknown
+  } catch (error: any) {
+    console.warn(`${ERROR_MESSAGES.STORAGE_ERROR} for ${key}:`, error);
+    if (error.name === "QuotaExceededError") {
+      try {
+        Object.values(SESSION_KEYS).forEach((k) => { clearSessionData(k); });
+        window.sessionStorage.setItem(key, JSON.stringify(value));
+      } catch (retryError) {
+        console.error(
+          `${ERROR_MESSAGES.STORAGE_ERROR} even after cleanup:`,
+          retryError,
+        );
+      }
+    }
+  }
+};
+
 const clearSessionData = (key: string) => {
   if (!hasSessionStorage()) {
     return;
@@ -83,32 +108,6 @@ const clearSessionData = (key: string) => {
     window.sessionStorage.removeItem(key);
   } catch (error) {
     console.warn(`${ERROR_MESSAGES.STORAGE_ERROR} for ${key}:`, error);
-  }
-};
-
-// biome-ignore lint/suspicious/noExplicitAny: Generic value for storage
-const setSessionData = (key: string, value: any) => {
-  if (!hasSessionStorage()) {
-    return;
-  }
-
-  try {
-    window.sessionStorage.setItem(key, JSON.stringify(value));
-  } catch (error) {
-    console.warn(`${ERROR_MESSAGES.STORAGE_ERROR} for ${key}:`, error);
-    // biome-ignore lint/suspicious/noExplicitAny: Generic error handling
-    if ((error as any).name === "QuotaExceededError") {
-      try {
-        // biome-ignore lint/suspicious/useIterableCallbackReturn: forEach used for side effect
-        Object.values(SESSION_KEYS).forEach((k) => clearSessionData(k));
-        window.sessionStorage.setItem(key, JSON.stringify(value));
-      } catch (retryError) {
-        console.error(
-          `${ERROR_MESSAGES.STORAGE_ERROR} even after cleanup:`,
-          retryError,
-        );
-      }
-    }
   }
 };
 
@@ -250,7 +249,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     [DEVICE_KEYS.MOBILE]: isMobileUnlocked,
   } = unlockState;
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: Explicit dependency management
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Dependencies are conditionally used
   const toolsAccessible = useMemo(() => {
     if (isMobile) {
       return isMobileUnlocked;
@@ -260,7 +259,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      // biome-ignore lint/correctness/useExhaustiveDependencies: Explicit dependency management
+      // biome-ignore lint/correctness/useExhaustiveDependencies: Dependencies are necessary
       value={useMemo(
         () => ({
           isUnlocked,

@@ -48,6 +48,12 @@ class AudioManager {
       console.warn("Audio loading error:", e);
       this.handleAudioError();
     });
+
+    // Add load event
+    this.audioElement.addEventListener("canplaythrough", () => {
+      console.log("Knight Rider theme loaded and ready");
+    });
+
     return this.audioElement;
   }
 
@@ -163,6 +169,7 @@ class AudioManager {
         }
       };
 
+      console.log("Synthetic Knight Rider theme started playing");
       return true;
     } catch (error) {
       console.error("Error playing synthetic Knight Rider theme:", error);
@@ -177,6 +184,8 @@ class AudioManager {
       // Initialize audio context
       await this.initAudioContext();
 
+      console.log("Attempting to play Knight Rider theme...");
+
       // First, try to use a synthetic version (more reliable)
       const syntheticSuccess = await this.playSyntheticKnightRiderTheme();
       if (syntheticSuccess) {
@@ -184,6 +193,7 @@ class AudioManager {
       }
 
       // If synthetic fails, try file-based approach as fallback
+      console.log("Synthetic audio failed, trying file-based approach...");
       return await this.playKnightRiderThemeFromFile();
     } catch (error) {
       console.error("Error playing Knight Rider theme:", error);
@@ -195,43 +205,33 @@ class AudioManager {
   // Fallback method to try loading from file
   async playKnightRiderThemeFromFile(): Promise<boolean> {
     try {
-      // Get the Knight Rider audio URLs
-      const knightRiderUrls = this.getKnightRiderAudioUrls();
+      // Get the Knight Rider audio URL
+      const knightRiderUrl = this.getKnightRiderAudioUrl();
+      this.createAudioElement(knightRiderUrl);
 
-      for (const url of knightRiderUrls) {
-        try {
-          this.createAudioElement(url);
-
-          if (!this.audioElement) {
-            continue;
-          }
-
-          // Start playing
-          await this.audioElement.play();
-          this.isPlaying = true;
-
-          // Fade in effect
-          this.fadeIn();
-
-          return true;
-        } catch (error) {
-          console.warn(`Failed to play Knight Rider theme from ${url}:`, error);
-          // Continue to next source
-        }
+      if (!this.audioElement) {
+        throw new Error("Failed to create audio element");
       }
 
-      // If all sources fail
-      throw new Error("All audio sources failed");
+      // Start playing
+      await this.audioElement.play();
+      this.isPlaying = true;
+
+      // Fade in effect
+      this.fadeIn();
+
+      console.log("Knight Rider theme started playing from file");
+      return true;
     } catch (error) {
       console.error("Error playing Knight Rider theme from file:", error);
       throw error;
     }
   }
 
-  // Get Knight Rider audio URLs - using multiple fallback sources
-  getKnightRiderAudioUrls(): string[] {
+  // Get Knight Rider audio URL - using multiple fallback sources
+  getKnightRiderAudioUrl(): string {
     // Try multiple sources in order of preference (local first)
-    return [
+    const audioSources = [
       // Primary: Local asset (most reliable and fast)
       "/assets/audio/knight-rider-theme.mp3",
 
@@ -241,6 +241,9 @@ class AudioManager {
       // Fallback 2: Another source (last resort)
       "https://www.soundjay.com/misc/sounds/bell-ringing-05.wav",
     ];
+
+    // Return the first source (local asset)
+    return audioSources[0];
   }
 
   // Stop audio with fade out
@@ -281,6 +284,8 @@ class AudioManager {
         this.audioElement.currentTime = 0;
         this.audioElement = null;
       }
+
+      console.log("Knight Rider theme stopped");
     } catch (error) {
       console.error("Error stopping audio:", error);
     }
@@ -373,6 +378,9 @@ class AudioManager {
   // Handle audio errors gracefully
   handleAudioError(): void {
     console.warn("Audio playback failed - continuing without background music");
+    console.log(
+      "This is normal if the audio source is not available or blocked by browser policies",
+    );
     this.isPlaying = false;
     if (this.audioElement) {
       this.audioElement = null;

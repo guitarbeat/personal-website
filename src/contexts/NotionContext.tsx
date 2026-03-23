@@ -4,11 +4,11 @@ import { createContext, useContext, useEffect, useState } from "react";
 import NotionService from "../services/notionService";
 
 interface NotionData {
-  // biome-ignore lint/suspicious/noExplicitAny: Data shapes vary widely from Notion API
+  // biome-ignore lint/suspicious/noExplicitAny: Dynamic data
   projects: any[];
-  // biome-ignore lint/suspicious/noExplicitAny: Data shapes vary widely from Notion API
+  // biome-ignore lint/suspicious/noExplicitAny: Dynamic data
   work: any[];
-  // biome-ignore lint/suspicious/noExplicitAny: Data shapes vary widely from Notion API
+  // biome-ignore lint/suspicious/noExplicitAny: Dynamic data
   about: any[];
 }
 
@@ -46,7 +46,7 @@ export const NotionProvider = ({ children }: { children: React.ReactNode }) => {
         const notionService = new NotionService();
         const allData = await notionService.getAllData();
         setData(allData);
-        // biome-ignore lint/suspicious/noExplicitAny: Unknown error from fetch
+      // biome-ignore lint/suspicious/noExplicitAny: Error unknown
       } catch (err: any) {
         console.error("Error fetching Notion data:", err);
         setError(err.message);

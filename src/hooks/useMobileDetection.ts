@@ -39,8 +39,6 @@ export const useMobileDetection = (): MobileDetectionResult => {
   const [screenHeight, setScreenHeight] = useState<number>(0);
 
   const updateScreenSize = useCallback(() => {
-    if (typeof window === "undefined") return;
-
     const width = window.innerWidth;
     const height = window.innerHeight;
 
