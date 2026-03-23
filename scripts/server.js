@@ -23,8 +23,26 @@ const DATABASE_IDS = {
   ABOUT: "aab0a96e279d48b6833f6727e6301266",
 };
 
-// Enable CORS for local development
-app.use(cors());
+// Enable CORS for local development with restricted origins
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:5173",
+  "http://127.0.0.1:3000",
+  "http://127.0.0.1:5173",
+];
+
+if (process.env.ALLOWED_ORIGINS) {
+  const extraOrigins = process.env.ALLOWED_ORIGINS.split(",").map((s) =>
+    s.trim(),
+  );
+  allowedOrigins.push(...extraOrigins);
+}
+
+app.use(
+  cors({
+    origin: allowedOrigins,
+  }),
+);
 app.use(express.json());
 
 // Health check endpoint

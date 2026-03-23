@@ -28,6 +28,7 @@ interface BlurSectionProps {
   disabled?: boolean;
   blurCap?: number;
   blurAxis?: "x" | "y" | "both";
+  // biome-ignore lint/suspicious/noExplicitAny: dynamic props
   [key: string]: any;
 }
 

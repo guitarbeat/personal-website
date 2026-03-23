@@ -33,16 +33,19 @@ const fetchNotionDatabase = async (databaseType: string): Promise<any[]> => {
 };
 
 // Data is already transformed by serverless function, just pass through
+// biome-ignore lint/suspicious/noExplicitAny: pass through
 const transformProjectsData = (data: any[]): any[] => {
   return data;
 };
 
 // Data is already transformed by serverless function, just pass through
+// biome-ignore lint/suspicious/noExplicitAny: pass through
 const transformWorkData = (data: any[]): any[] => {
   return data;
 };
 
 // Data is already transformed by serverless function, just pass through
+// biome-ignore lint/suspicious/noExplicitAny: pass through
 const transformAboutData = (data: any[]): any[] => {
   return data;
 };
