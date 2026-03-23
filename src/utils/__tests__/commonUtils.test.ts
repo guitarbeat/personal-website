@@ -145,6 +145,10 @@ describe("commonUtils", () => {
   });
 
   describe("createTimeout", () => {
+<<<<<<< HEAD
+    jest.useFakeTimers();
+
+=======
     beforeEach(() => {
       jest.useFakeTimers();
     });
@@ -153,6 +157,7 @@ describe("commonUtils", () => {
       jest.useRealTimers();
     });
 
+>>>>>>> origin/main
     it("executes callback after delay", () => {
       const cb = jest.fn();
       createTimeout(cb, 100);

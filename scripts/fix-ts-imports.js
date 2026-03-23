@@ -1,5 +1,10 @@
+<<<<<<< HEAD
+const fs = require("fs");
+const path = require("path");
+=======
 const fs = require("node:fs");
 const path = require("node:path");
+>>>>>>> origin/main
 
 function walkDir(dir, callback) {
   fs.readdirSync(dir).forEach((f) => {

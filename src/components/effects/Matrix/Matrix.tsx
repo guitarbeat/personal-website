@@ -1223,12 +1223,28 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                 </div>
                 <p className="hack-sequencer__feedback">{hackFeedback}</p>
               </div>
+<<<<<<< HEAD
+              {/* biome-ignore lint/a11y/useSemanticElements: preserving div structure for css */}
+=======
               {/* biome-ignore lint/a11y/useSemanticElements: Matrix effect viewport acts as global button without being semantic button to preserve layout */}
+>>>>>>> origin/main
               <div
                 role="button"
                 tabIndex={0}
                 onKeyDown={handleViewportEngage}
                 className="hack-input-viewport"
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (
+                    e.key === "Enter" ||
+                    e.key === " " ||
+                    e.key === "Spacebar"
+                  ) {
+                    e.preventDefault();
+                    handleViewportEngage();
+                  }
+                }}
                 onMouseDown={handleViewportEngage}
                 onTouchStart={handleViewportEngage}
               >
@@ -1250,7 +1266,11 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                       className += " prompt";
 
                     return (
+<<<<<<< HEAD
+                      // biome-ignore lint/suspicious/noArrayIndexKey: index is stable for static terminal output
+=======
                       // biome-ignore lint/suspicious/noArrayIndexKey: Log list relies on array order and does not reorder
+>>>>>>> origin/main
                       <div key={i} className={className}>
                         {line}
                       </div>

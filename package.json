@@ -23,10 +23,17 @@
     }
   },
   "scripts": {
+<<<<<<< HEAD
+    "start": "craco start",
+    "dev": "craco start",
+    "build": "craco build",
+    "test": "craco test --passWithNoTests",
+=======
     "start": "craco start --config config/craco.config.js",
     "dev": "craco start --config config/craco.config.js",
     "build": "craco build --config config/craco.config.js",
     "test": "react-scripts test --watchAll=false --passWithNoTests",
+>>>>>>> origin/main
     "eject": "react-scripts eject",
     "format": "biome format ./src --write",
     "lint": "biome lint ./src",
