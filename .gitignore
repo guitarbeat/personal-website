@@ -6,4 +6,5 @@ node_modules
 .env
 .vercel
 .env*.local
+.env.vercel*
 .playwright-cli/

@@ -74,6 +74,30 @@ jest.mock("./components/effects/InfiniteScrollEffect", () => {
 jest.mock("./components/effects/Loading/FrameEffect", () => {
   return ({ children }: { children: ReactNode }) => children;
 });
+jest.mock("./components/effects/Loading/LoadingSequence", () => {
+  const React = require("react");
+
+  return {
+    __esModule: true,
+    default: ({
+      isVisible,
+      isReadyToReveal,
+      onExitComplete,
+    }: {
+      isVisible: boolean;
+      isReadyToReveal: boolean;
+      onExitComplete?: () => void;
+    }) => {
+      React.useEffect(() => {
+        if (isVisible && isReadyToReveal) {
+          onExitComplete?.();
+        }
+      }, [isVisible, isReadyToReveal, onExitComplete]);
+
+      return isVisible ? <div role="status">Loading portfolio...</div> : null;
+    },
+  };
+});
 jest.mock("./components/effects/Matrix/AuthContext", () => ({
   AuthProvider: ({ children }: { children: ReactNode }) => children,
   useAuth: () => ({
@@ -99,7 +123,7 @@ describe("App reliability states", () => {
     jest.useRealTimers();
   });
 
-  it("hides main content while initial content is still loading", () => {
+  it("renders the simple loader while initial content is still loading", () => {
     mockUseNotion.mockReturnValue({
       db: {
         about: [],
@@ -115,6 +139,7 @@ describe("App reliability states", () => {
 
     render(<App />);
 
+    expect(screen.getByText("Loading portfolio...")).toBeInTheDocument();
     expect(screen.queryByText("Header section")).not.toBeInTheDocument();
   });
 
@@ -147,7 +172,7 @@ describe("App reliability states", () => {
     expect(screen.getByText("Header section")).toBeInTheDocument();
   });
 
-  it("renders the main content once data is ready", () => {
+  it("dismisses the loader after the minimum intro duration once content is ready", () => {
     mockUseNotion.mockReturnValue({
       db: {
         about: [{ category: "Bio", description: "Hello" }],
@@ -170,11 +195,14 @@ describe("App reliability states", () => {
 
     render(<App />);
 
+    expect(screen.getByText("Loading portfolio...")).toBeInTheDocument();
     expect(screen.getByText("Header section")).toBeInTheDocument();
 
     act(() => {
-      jest.runOnlyPendingTimers();
+      jest.advanceTimersByTime(500);
     });
+
+    expect(screen.queryByText("Loading portfolio...")).not.toBeInTheDocument();
   });
 
   it("reveals the unavailable state after loading resolves with no content", () => {
@@ -193,6 +221,8 @@ describe("App reliability states", () => {
 
     render(<App />);
 
+    expect(screen.getByText("Loading portfolio...")).toBeInTheDocument();
+
     act(() => {
       jest.advanceTimersByTime(500);
     });
@@ -200,6 +230,7 @@ describe("App reliability states", () => {
     expect(
       screen.getByText("Site content is temporarily unavailable."),
     ).toBeInTheDocument();
+    expect(screen.queryByText("Loading portfolio...")).not.toBeInTheDocument();
     expect(screen.queryByText("Header section")).not.toBeInTheDocument();
   });
 });

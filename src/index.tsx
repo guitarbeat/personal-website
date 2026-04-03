@@ -30,7 +30,6 @@ try {
   );
 } catch (error) {
   console.error("Failed to initialize React application:", error);
-  document.getElementById("initial-loader")?.remove();
   root.innerHTML =
     '<div style="color: red; padding: 20px;">Failed to load application. Please refresh the page.</div>';
 }

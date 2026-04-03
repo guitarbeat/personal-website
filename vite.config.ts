@@ -1,7 +1,19 @@
+import { existsSync } from "node:fs";
 import path from "node:path";
 import react from "@vitejs/plugin-react";
+import dotenv from "dotenv";
 import { componentTagger } from "lovable-tagger";
 import { defineConfig, loadEnv } from "vite";
+
+/** Vercel CLI writes here (not .env.local) so pulls do not wipe manual secrets. */
+function mergeVercelCliEnvFiles() {
+  for (const name of [".env.vercel.development", ".env.vercel.production"]) {
+    const filePath = path.join(process.cwd(), name);
+    if (existsSync(filePath)) {
+      dotenv.config({ path: filePath, override: false });
+    }
+  }
+}
 
 type ApiModule = {
   default: (
@@ -13,7 +25,10 @@ type ApiModule = {
     res: NodeJS.WritableStream & {
       end: (chunk?: string | Uint8Array) => void;
       getHeader: (name: string) => number | string | string[] | undefined;
-      setHeader: (name: string, value: number | string | readonly string[]) => void;
+      setHeader: (
+        name: string,
+        value: number | string | readonly string[],
+      ) => void;
       statusCode: number;
       writableEnded: boolean;
     } & ApiResponseHelpers,
@@ -57,21 +72,19 @@ const decorateApiResponse = (response: ApiResponse) => {
   return response;
 };
 
-const attachLocalApiRoutes = (
-  middlewares: {
-    use: (
-      handler: (
-        req: NodeJS.ReadableStream & {
-          headers: Record<string, string | string[] | undefined>;
-          method?: string;
-          url?: string;
-        },
-        res: ApiResponse,
-        next: (error?: Error) => void,
-      ) => void | Promise<void>,
-    ) => void;
-  },
-) => {
+const attachLocalApiRoutes = (middlewares: {
+  use: (
+    handler: (
+      req: NodeJS.ReadableStream & {
+        headers: Record<string, string | string[] | undefined>;
+        method?: string;
+        url?: string;
+      },
+      res: ApiResponse,
+      next: (error?: Error) => void,
+    ) => void | Promise<void>,
+  ) => void;
+}) => {
   middlewares.use(async (req, res, next) => {
     const pathname = req.url?.split("?")[0];
 
@@ -104,15 +117,28 @@ const attachLocalApiRoutes = (
 
 const localApiRoutesPlugin = () => ({
   name: "local-api-routes",
-  configureServer(server: { middlewares: { use: typeof attachLocalApiRoutes extends (middlewares: infer T) => void ? T["use"] : never } }) {
+  configureServer(server: {
+    middlewares: {
+      use: typeof attachLocalApiRoutes extends (middlewares: infer T) => void
+        ? T["use"]
+        : never;
+    };
+  }) {
     attachLocalApiRoutes(server.middlewares);
   },
-  configurePreviewServer(server: { middlewares: { use: typeof attachLocalApiRoutes extends (middlewares: infer T) => void ? T["use"] : never } }) {
+  configurePreviewServer(server: {
+    middlewares: {
+      use: typeof attachLocalApiRoutes extends (middlewares: infer T) => void
+        ? T["use"]
+        : never;
+    };
+  }) {
     attachLocalApiRoutes(server.middlewares);
   },
 });
 
 export default defineConfig(({ mode }) => {
+  mergeVercelCliEnvFiles();
   const env = loadEnv(mode, process.cwd(), "");
   Object.assign(process.env, env);
 

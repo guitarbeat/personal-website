@@ -19,6 +19,12 @@ const getBuildDate = () => {
 module.exports = {
   webpack: {
     configure: (webpackConfig) => {
+      webpackConfig.resolve = webpackConfig.resolve ?? {};
+      webpackConfig.resolve.alias = {
+        ...webpackConfig.resolve.alias,
+        "@": path.join(__dirname, "..", "src"),
+      };
+
       // * Inject version information as environment variables
       const commitHash = getGitCommitHash();
       const buildDate = getBuildDate();

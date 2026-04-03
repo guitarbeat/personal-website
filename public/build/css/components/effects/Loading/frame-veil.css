@@ -1,0 +1,67 @@
+.frame {
+  position: relative;
+  isolation: isolate;
+}
+
+.frame-veils {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.frame-veil {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 50.5%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01)), rgba(26, 26, 29, 0.42);
+  box-shadow: inset 0 0 0 1px rgba(216, 227, 231, 0.05);
+  mix-blend-mode: difference;
+  will-change: transform;
+}
+.frame-veil--top {
+  top: 0;
+  transform-origin: top center;
+  border-bottom: 1px solid rgba(216, 227, 231, 0.06);
+  animation: frame-veil-drift-top 14s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+}
+.frame-veil--bottom {
+  bottom: 0;
+  transform-origin: bottom center;
+  border-top: 1px solid rgba(216, 227, 231, 0.06);
+  animation: frame-veil-drift-bottom 14s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+  animation-delay: -2.25s;
+}
+
+@keyframes frame-veil-drift-top {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-2.8%);
+  }
+}
+@keyframes frame-veil-drift-bottom {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(2.8%);
+  }
+}
+@media (max-width: 640px) {
+  .frame-veil--top {
+    animation-duration: 16s;
+  }
+  .frame-veil--bottom {
+    animation-duration: 16s;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .frame-veil {
+    animation: none;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01)), rgba(26, 26, 29, 0.28);
+  }
+}
