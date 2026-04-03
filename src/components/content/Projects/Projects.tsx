@@ -116,33 +116,35 @@ function ProjectCard({
         speed={effect.speed}
       />
       <div className="projects__card__content">
-        <div className="projects__card__keywords">
-          {_link}
-          {keywords.map((keyword) => (
-            <div
-              key={keyword}
-              className="projects__card__label"
-              style={{
-                backgroundColor:
-                  tagColors?.[keyword] ||
-                  primaryTagColor ||
-                  "rgba(255, 255, 255, 0.25)",
-                mixBlendMode: "multiply",
-                filter: "contrast(1.1) brightness(1.1)",
-              }}
-            >
-              {keyword}
-            </div>
-          ))}
+        <div className="projects__card__meta">
+          <p
+            className="projects__card__year"
+            style={{ fontStyle: "italic", color: "var(--color-sage-light)" }}
+          >
+            {date ?? ""}
+          </p>
+          <div className="projects__card__keywords">
+            {_link}
+            {keywords.map((keyword) => (
+              <div
+                key={keyword}
+                className="projects__card__label"
+                style={{
+                  backgroundColor:
+                    tagColors?.[keyword] ||
+                    primaryTagColor ||
+                    "rgba(255, 255, 255, 0.25)",
+                  mixBlendMode: "multiply",
+                  filter: "contrast(1.1) brightness(1.1)",
+                }}
+              >
+                {keyword}
+              </div>
+            ))}
+          </div>
         </div>
         <h3>{title}</h3>
         <p className="projects__card__hook">{hook}</p>
-        <p
-          className={cn("date", isClicked ? "show-text" : "")}
-          style={{ fontStyle: "italic", color: "var(--color-sage-light)" }}
-        >
-          {date ?? ""}
-        </p>
         <p className={cn("projects__card__detail", isClicked ? "show-text" : "")}>
           {detail}
         </p>

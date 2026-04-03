@@ -24,7 +24,6 @@ import { BlurSection } from "./components/effects/Blur/index";
 import CustomCursor from "./components/effects/CustomCursor/CustomCursor";
 import InfiniteScrollEffect from "./components/effects/InfiniteScrollEffect";
 import FrameEffect from "./components/effects/Loading/FrameEffect";
-import LoadingSequence from "./components/effects/Loading/LoadingSequence";
 import { AuthProvider, useAuth } from "./components/effects/Matrix/AuthContext";
 import Matrix from "./components/effects/Matrix/Matrix";
 import ScrollToTopButton from "./components/effects/Matrix/ScrollToTopButton";
@@ -32,6 +31,20 @@ import MagicComponent from "./components/effects/Moire/Moire";
 import { About, Header, NavBar, Projects, Work } from "./components/index";
 
 const INITIAL_LOADER_MIN_DURATION_MS = 500;
+const INITIAL_LOADER_EXIT_DURATION_MS = 1100;
+const INITIAL_LOADER_REDUCED_EXIT_DURATION_MS = 260;
+const INITIAL_LOADER_ID = "initial-loader";
+
+const getInitialLoaderExitDuration = () => {
+  if (
+    typeof window !== "undefined" &&
+    window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
+  ) {
+    return INITIAL_LOADER_REDUCED_EXIT_DURATION_MS;
+  }
+
+  return INITIAL_LOADER_EXIT_DURATION_MS;
+};
 
 const SiteStatusPill = memo(() => (
   <div className="site-status-pill" role="status">
@@ -356,6 +369,19 @@ const AppContent = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (!isInitialLoaderVisible) {
+      return;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isInitialLoaderVisible]);
+
   // Utility function to cleanup scroll animation
   const cleanupScrollAnimation = useCallback(() => {
     if (scrollAnimationRef.current) {
@@ -449,14 +475,33 @@ const AppContent = () => {
     setIsInitialLoaderVisible(false);
   }, []);
 
+  useEffect(() => {
+    if (!isInitialLoaderVisible || !canRevealInitialLoader) {
+      return;
+    }
+
+    const initialLoader = document.getElementById(INITIAL_LOADER_ID);
+
+    if (!initialLoader) {
+      setIsInitialLoaderVisible(false);
+      return;
+    }
+
+    initialLoader.classList.add("is-exiting");
+
+    const exitTimeout = window.setTimeout(() => {
+      initialLoader.remove();
+      handleInitialLoaderExit();
+    }, getInitialLoaderExitDuration());
+
+    return () => {
+      window.clearTimeout(exitTimeout);
+    };
+  }, [canRevealInitialLoader, handleInitialLoaderExit, isInitialLoaderVisible]);
+
   // --- Render ---
   return (
     <>
-      <LoadingSequence
-        isVisible={isInitialLoaderVisible}
-        isReadyToReveal={canRevealInitialLoader}
-        onExitComplete={handleInitialLoaderExit}
-      />
       <MatrixModal
         showMatrix={showMatrix}
         onSuccess={handleMatrixSuccess}

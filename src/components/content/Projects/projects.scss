@@ -83,6 +83,21 @@
       text-transform: uppercase;
     }
 
+    &__meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    &__year {
+      margin: 0;
+      font-size: 1.35rem;
+      line-height: 1;
+      flex: 0 0 auto;
+    }
+
     &__keywords {
       display: flex;
       justify-content: flex-end;
@@ -90,6 +105,7 @@
       gap: 0.5rem;
       text-align: right;
       flex-wrap: wrap; // Allow wrapping on small screens
+      margin-left: auto;
     }
 
     &__label {
@@ -173,8 +189,7 @@
   }
 }
 
-.projects__card__detail,
-.projects__card p.date {
+.projects__card__detail {
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.5s ease-in-out;
@@ -183,9 +198,7 @@
 }
 
 .projects__card__detail.show-text,
-.projects__card:hover .projects__card__detail,
-.projects__card:hover p.date,
-.projects__card p.date.show-text {
+.projects__card:hover .projects__card__detail {
   max-height: 1000px; // Use large fixed value instead of 'none' for smooth transition
   overflow: visible; // Allow text to flow naturally when expanded
 }
