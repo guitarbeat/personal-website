@@ -9,8 +9,9 @@ import { cn } from "../../../utils/commonUtils";
 
 const SPOTIFY_PROFILE_URL =
   "https://spotify-github-profile.kittinanx.com/api/view.svg?uid=31skxfoaghlkljkdiluds3g3decy&redirect=true";
+// Widget template uses `#{{background_color}}`; 8-digit hex gives a transparent fill.
 const SPOTIFY_IMAGE_URL =
-  "https://spotify-github-profile.kittinanx.com/api/view.svg?uid=31skxfoaghlkljkdiluds3g3decy&cover_image=true&theme=default&show_offline=true&background_color=121212&interchange=true&bar_color=53b14f&bar_color_cover=true";
+  "https://spotify-github-profile.kittinanx.com/api/view.svg?uid=31skxfoaghlkljkdiluds3g3decy&cover_image=true&theme=default&show_offline=true&background_color=00000000&interchange=true&bar_color=53b14f&bar_color_cover=true";
 
 export function ColorChangeOnHover({ text = "" }) {
   const content = useMemo(() => {
@@ -168,15 +169,14 @@ function About() {
             <div className="about-me__text-container">
               {renderAboutTexts(aboutTexts)}
             </div>
-            <div className="about-me__spotify">
-              <a
-                href={SPOTIFY_PROFILE_URL}
-                onClick={handleSpotifyClick}
-                aria-label="View Spotify profile"
-              >
-                <img src={SPOTIFY_IMAGE_URL} alt="Spotify GitHub profile" />
-              </a>
-            </div>
+            <a
+              className="about-me__spotify"
+              href={SPOTIFY_PROFILE_URL}
+              onClick={handleSpotifyClick}
+              aria-label="View Spotify profile"
+            >
+              <img src={SPOTIFY_IMAGE_URL} alt="Spotify GitHub profile" />
+            </a>
           </div>
           <div className="about-me__img">
             <img src={shell} alt="shell background" />
