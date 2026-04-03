@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 // import { withGoogleSheets } from "react-db-google-sheets";
 import { useNotion } from "../../../contexts/NotionContext";
 import type { ProjectItem } from "../../../types/content";
-import { generateItemColors } from "../../../utils/colorUtils";
+import { generateTagColors } from "../../../utils/colorUtils";
 import { clamp, cn } from "../../../utils/commonUtils";
 // import { processProjectsData } from "../../../utils/googleSheetsUtils";
 import PixelCanvas from "../../effects/PixelCanvas/PixelCanvas";
@@ -13,7 +13,7 @@ const DEFAULT_PROJECT_EFFECT = {
   speed: 24,
 };
 
-const parseHsl = (color: string) => {
+const parseHsl = (color: string | undefined) => {
   if (typeof color !== "string") {
     return null;
   }
@@ -33,7 +33,7 @@ const parseHsl = (color: string) => {
   };
 };
 
-const createPaletteFromHsl = (color: string) => {
+const createPaletteFromHsl = (color: string | undefined) => {
   const parsed = parseHsl(color);
 
   if (!parsed) {
@@ -48,7 +48,7 @@ const createPaletteFromHsl = (color: string) => {
   return [accent, base, shadow];
 };
 
-const createProjectEffect = (tagColor: string, index: number) => {
+const createProjectEffect = (tagColor: string | undefined, index: number) => {
   const palette = createPaletteFromHsl(tagColor);
 
   return {
@@ -60,26 +60,30 @@ const createProjectEffect = (tagColor: string, index: number) => {
 
 interface ProjectCardProps {
   title: string;
-  content: string;
+  hook: string;
+  detail: string;
   slug: string;
   link?: string | null;
-  keyword: string;
+  keywords: string[];
   date: string | number | null;
   image?: string | null;
-  tagColor?: string;
+  tagColors?: Record<string, string>;
+  primaryTagColor?: string;
   className?: string;
   effect?: { colors: string[]; gap: number; speed: number };
 }
 
 function ProjectCard({
   title,
-  content,
+  hook,
+  detail,
   slug,
   link,
-  keyword,
+  keywords,
   date,
   image,
-  tagColor,
+  tagColors,
+  primaryTagColor,
   className = "",
   effect = DEFAULT_PROJECT_EFFECT,
 }: ProjectCardProps) {
@@ -114,25 +118,34 @@ function ProjectCard({
       <div className="projects__card__content">
         <div className="projects__card__keywords">
           {_link}
-          <div
-            className="projects__card__label"
-            style={{
-              backgroundColor: tagColor || "rgba(255, 255, 255, 0.25)",
-              mixBlendMode: "multiply",
-              filter: "contrast(1.1) brightness(1.1)",
-            }}
-          >
-            {keyword}
-          </div>
+          {keywords.map((keyword) => (
+            <div
+              key={keyword}
+              className="projects__card__label"
+              style={{
+                backgroundColor:
+                  tagColors?.[keyword] ||
+                  primaryTagColor ||
+                  "rgba(255, 255, 255, 0.25)",
+                mixBlendMode: "multiply",
+                filter: "contrast(1.1) brightness(1.1)",
+              }}
+            >
+              {keyword}
+            </div>
+          ))}
         </div>
         <h3>{title}</h3>
+        <p className="projects__card__hook">{hook}</p>
         <p
           className={cn("date", isClicked ? "show-text" : "")}
           style={{ fontStyle: "italic", color: "var(--color-sage-light)" }}
         >
           {date ?? ""}
         </p>
-        <p className={cn("", isClicked ? "show-text" : "")}>{content}</p>
+        <p className={cn("projects__card__detail", isClicked ? "show-text" : "")}>
+          {detail}
+        </p>
         {image && <img src={image} className="project-image" alt="Project" />}
       </div>
     </a>
@@ -155,59 +168,57 @@ function Projects({ db: propsDb }: ProjectsProps = {}) {
     () => (Array.isArray(db?.projects) ? db.projects : []),
     [db?.projects],
   );
+  const allKeywords = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          projectsData.flatMap((project) =>
+            Array.isArray(project.keywords) ? project.keywords : [],
+          ),
+        ),
+      ).filter(
+        (keyword): keyword is string =>
+          typeof keyword === "string" && keyword.trim().length > 0,
+      ),
+    [projectsData],
+  );
 
   useEffect(() => {
-    const uniqueKeywords = Array.from(
-      new Set(
-        projectsData
-          .map((project) => project.keyword)
-          .filter((k): k is string => typeof k === "string"),
-      ),
-    );
-
-    const generatedTagColors = generateItemColors(projectsData, "keyword");
+    const generatedTagColors = generateTagColors(allKeywords);
     setTagColors(generatedTagColors);
     setActiveFilters((prevFilters) => {
       if (prevFilters.length === 0) {
-        return uniqueKeywords;
+        return allKeywords;
       }
 
       const filtered = prevFilters.filter((filter) =>
-        uniqueKeywords.includes(filter),
+        allKeywords.includes(filter),
       );
 
       if (filtered.length === 0) {
-        return uniqueKeywords;
+        return allKeywords;
       }
 
       return filtered;
     });
-  }, [projectsData]);
+  }, [allKeywords]);
 
   // Add theme change listener
   useEffect(() => {
     const handleThemeChange = () => {
-      const uniqueKeywords = Array.from(
-        new Set(
-          projectsData
-            .map((project) => project.keyword)
-            .filter((k): k is string => typeof k === "string"),
-        ),
-      );
-
-      const regeneratedTagColors = generateItemColors(projectsData, "keyword");
+      const regeneratedTagColors = generateTagColors(allKeywords);
       setTagColors(regeneratedTagColors);
       setActiveFilters((prevFilters) => {
         if (prevFilters.length === 0) {
-          return uniqueKeywords;
+          return allKeywords;
         }
 
         const filtered = prevFilters.filter((filter) =>
-          uniqueKeywords.includes(filter),
+          allKeywords.includes(filter),
         );
 
         if (filtered.length === 0) {
-          return uniqueKeywords;
+          return allKeywords;
         }
 
         return filtered;
@@ -220,14 +231,14 @@ function Projects({ db: propsDb }: ProjectsProps = {}) {
     return () => {
       document.body.removeEventListener("theme-changed", handleThemeChange);
     };
-  }, [projectsData]);
+  }, [allKeywords]);
 
   const toggleFilter = useCallback(
     (filter: string) => {
       setActiveFilters((prevFilters) => {
         if (prevFilters.includes(filter)) {
           if (prevFilters.length === 1) {
-            return [...Object.keys(tagColors)];
+            return [...allKeywords];
           }
           return prevFilters.filter((f) => f !== filter);
         }
@@ -235,25 +246,23 @@ function Projects({ db: propsDb }: ProjectsProps = {}) {
         return [...prevFilters, filter];
       });
     },
-    [tagColors],
+    [allKeywords],
   );
 
-  const projects = projectsData;
-
-  const sortedProjects = [...projects].sort((a, b) =>
-    String(b.date ?? "").localeCompare(String(a.date ?? "")),
-  );
-
-  const project_cards = sortedProjects.map((projectProps, index) => {
-    const isFiltered = !activeFilters.includes(projectProps.keyword);
-    const tagColor = tagColors[projectProps.keyword];
-    const effect = createProjectEffect(tagColor, index);
+  const project_cards = projectsData.map((projectProps, index) => {
+    const primaryKeyword = projectProps.keywords[0] || "";
+    const primaryTagColor = tagColors[primaryKeyword];
+    const isFiltered =
+      projectProps.keywords.length > 0 &&
+      !projectProps.keywords.some((keyword) => activeFilters.includes(keyword));
+    const effect = createProjectEffect(primaryTagColor, index);
 
     return (
       <ProjectCard
         key={projectProps.slug}
         {...projectProps}
-        tagColor={tagColor}
+        tagColors={tagColors}
+        primaryTagColor={primaryTagColor}
         className={isFiltered ? "filtered-out" : ""}
         effect={effect}
       />
@@ -265,7 +274,7 @@ function Projects({ db: propsDb }: ProjectsProps = {}) {
       <div className="container__content">
         <h1>Some of my Projects</h1>
         <div className="filter-buttons">
-          {Object.keys(tagColors).map((filter) => (
+          {allKeywords.map((filter) => (
             <button
               type="button"
               key={filter}

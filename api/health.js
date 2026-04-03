@@ -30,6 +30,7 @@ export default async function handler(req, res) {
     return res.status(statusCode).json(summary);
   } catch (error) {
     res.setHeader("Cache-Control", "no-store");
+    console.error(error);
     return res.status(error?.status || 500).json(createErrorPayload(error));
   }
 }

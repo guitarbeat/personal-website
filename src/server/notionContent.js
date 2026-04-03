@@ -5,9 +5,9 @@ export const CACHE_CONTROL_HEADER =
   "public, s-maxage=300, stale-while-revalidate=3600";
 export const HEALTH_DEGRADED_AFTER_SECONDS = 1800;
 export const HEALTH_FAILED_AFTER_SECONDS = 86400;
-export const SCHEMA_VERSION = 1;
-export const SNAPSHOT_KEY = "content:snapshot:v1";
-export const SNAPSHOT_META_KEY = "content:snapshot:meta:v1";
+export const SCHEMA_VERSION = 3;
+export const SNAPSHOT_KEY = "content:snapshot:v3";
+export const SNAPSHOT_META_KEY = "content:snapshot:meta:v3";
 
 export const DATABASE_IDS = {
   projects: "29dda682bcf6806eaa2efe20631dab6c",
@@ -93,6 +93,119 @@ function extractFileUrl(fileList) {
   return null;
 }
 
+function extractMultiSelectNames(options) {
+  if (!Array.isArray(options)) {
+    return [];
+  }
+
+  return options
+    .map((option) => option?.name)
+    .filter((name) => typeof name === "string" && name.trim().length > 0);
+}
+
+function extractCheckboxValue(...candidates) {
+  for (const candidate of candidates) {
+    if (typeof candidate?.checkbox === "boolean") {
+      return candidate.checkbox;
+    }
+  }
+
+  return null;
+}
+
+function extractNumberValue(...candidates) {
+  for (const candidate of candidates) {
+    if (
+      typeof candidate?.number === "number" &&
+      Number.isFinite(candidate.number)
+    ) {
+      return candidate.number;
+    }
+  }
+
+  return null;
+}
+
+function extractProjectHook(rawHook, detail, title) {
+  const explicitHook = rawHook.trim();
+
+  if (explicitHook.length > 0) {
+    return explicitHook;
+  }
+
+  const fallbackParagraph = detail
+    .split(/\n\s*\n/)
+    .map((paragraph) => paragraph.trim())
+    .find((paragraph) => paragraph.length > 0);
+
+  if (fallbackParagraph) {
+    return fallbackParagraph;
+  }
+
+  return title;
+}
+
+function projectDateSortValue(value) {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return value;
+  }
+
+  if (typeof value !== "string" || value.trim().length === 0) {
+    return null;
+  }
+
+  const parsedDate = Date.parse(value);
+
+  if (!Number.isNaN(parsedDate)) {
+    return parsedDate;
+  }
+
+  const numericValue = Number(value);
+
+  if (Number.isFinite(numericValue)) {
+    return numericValue;
+  }
+
+  return value;
+}
+
+function compareProjectRecords(a, b) {
+  const sortOrderA =
+    typeof a.sortOrder === "number" ? a.sortOrder : Number.POSITIVE_INFINITY;
+  const sortOrderB =
+    typeof b.sortOrder === "number" ? b.sortOrder : Number.POSITIVE_INFINITY;
+
+  if (sortOrderA !== sortOrderB) {
+    return sortOrderA - sortOrderB;
+  }
+
+  const dateA = projectDateSortValue(a.date);
+  const dateB = projectDateSortValue(b.date);
+
+  if (typeof dateA === "number" && typeof dateB === "number") {
+    if (dateA !== dateB) {
+      return dateB - dateA;
+    }
+  } else {
+    const stringCompare = String(b.date ?? "").localeCompare(
+      String(a.date ?? ""),
+    );
+
+    if (stringCompare !== 0) {
+      return stringCompare;
+    }
+  }
+
+  return String(a.title).localeCompare(String(b.title));
+}
+
+function prepareProjectsForPublicDisplay(records) {
+  return records
+    .filter((record) => record.published !== false)
+    .sort(compareProjectRecords)
+    .map(({ published, sortOrder, ...publicRecord }) => publicRecord);
+}
+
 function convertToMMYYYY(dateString) {
   if (!dateString) {
     return null;
@@ -107,18 +220,54 @@ function convertToMMYYYY(dateString) {
   return `${parts[1]}-${parts[0]}`;
 }
 
-function transformProjectsData(results) {
+const TEXT_BLOCK_TYPES = [
+  "bulleted_list_item",
+  "callout",
+  "heading_1",
+  "heading_2",
+  "heading_3",
+  "numbered_list_item",
+  "paragraph",
+  "quote",
+  "to_do",
+  "toggle",
+];
+
+function extractBlockPlainText(block) {
+  if (!block || typeof block !== "object") {
+    return "";
+  }
+
+  const blockType = typeof block.type === "string" ? block.type : "";
+
+  if (!TEXT_BLOCK_TYPES.includes(blockType)) {
+    return "";
+  }
+
+  return extractRichText(block[blockType]?.rich_text || []);
+}
+
+function transformProjectsData(results, projectContentByPageId = new Map()) {
   return results.map((page) => {
     const props = page.properties || {};
+    const titleText =
+      props.title?.title?.[0]?.plain_text ||
+      props.Name?.title?.[0]?.plain_text ||
+      "";
+    const detail =
+      extractRichText(
+        props.Detail?.rich_text ||
+          props.detail?.rich_text ||
+          props.content?.rich_text ||
+          props.Description?.rich_text ||
+          [],
+      ) || projectContentByPageId.get(page.id) || "";
+    const rawHook = extractRichText(props.Hook?.rich_text || props.hook?.rich_text || []);
 
     return {
-      title:
-        props.title?.title?.[0]?.plain_text ||
-        props.Name?.title?.[0]?.plain_text ||
-        "",
-      content: extractRichText(
-        props.content?.rich_text || props.Description?.rich_text || [],
-      ),
+      title: titleText,
+      hook: extractProjectHook(rawHook, detail, titleText),
+      detail,
       date:
         props.date?.number ||
         props.Date?.number ||
@@ -135,10 +284,16 @@ function transformProjectsData(results) {
           props.image?.rich_text || props.Image?.rich_text || [],
         ) ||
         null,
-      keyword:
-        props.Keyword?.multi_select?.[0]?.name ||
-        props.keyword?.multi_select?.[0]?.name ||
-        "",
+      keywords: extractMultiSelectNames(
+        props.Keyword?.multi_select || props.keyword?.multi_select || [],
+      ),
+      published:
+        extractCheckboxValue(props.Published, props.published) ?? true,
+      sortOrder: extractNumberValue(
+        props["Sort Order"],
+        props.SortOrder,
+        props.sortOrder,
+      ),
     };
   });
 }
@@ -226,6 +381,15 @@ function isMonthYear(value) {
   return typeof value === "string" && /^\d{2}-\d{4}$/.test(value);
 }
 
+function isKeywordList(value) {
+  return (
+    Array.isArray(value) &&
+    value.every(
+      (keyword) => typeof keyword === "string" && keyword.trim().length > 0,
+    )
+  );
+}
+
 function assertValidRecord(condition, dataset, index, field, message, value) {
   if (condition) {
     return;
@@ -284,12 +448,20 @@ function validateProjectRecords(records) {
       record.slug,
     );
     assertValidRecord(
-      typeof record.content === "string",
+      isNonEmptyString(record.hook),
       "projects",
       index,
-      "content",
-      "Project content must be a string.",
-      record.content,
+      "hook",
+      "Project hook must be a non-empty string.",
+      record.hook,
+    );
+    assertValidRecord(
+      typeof record.detail === "string",
+      "projects",
+      index,
+      "detail",
+      "Project detail must be a string.",
+      record.detail,
     );
     assertValidRecord(
       isProjectDate(record.date),
@@ -316,12 +488,12 @@ function validateProjectRecords(records) {
       record.image,
     );
     assertValidRecord(
-      typeof record.keyword === "string",
+      isKeywordList(record.keywords),
       "projects",
       index,
-      "keyword",
-      "Project keyword must be a string.",
-      record.keyword,
+      "keywords",
+      "Project keywords must be an array of non-empty strings.",
+      record.keywords,
     );
   });
 }
@@ -594,6 +766,106 @@ async function parseResponseJson(response) {
   }
 }
 
+async function fetchNotionBlockChildren({
+  blockId,
+  fetchImpl = fetch,
+  notionToken,
+}) {
+  const rawBlocks = [];
+  let nextCursor = null;
+  let hasMore = true;
+
+  while (hasMore) {
+    const query = new URLSearchParams({ page_size: "100" });
+
+    if (nextCursor) {
+      query.set("start_cursor", nextCursor);
+    }
+
+    let response;
+
+    try {
+      response = await fetchImpl(
+        `${NOTION_API_BASE}/blocks/${blockId}/children?${query.toString()}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${notionToken}`,
+            "Notion-Version": NOTION_VERSION,
+          },
+        },
+      );
+    } catch (error) {
+      throw new ContentError("Failed to reach Notion block API.", {
+        code: "NOTION_REQUEST_FAILED",
+        status: 502,
+        failureType: "notion_request_failed",
+        details: {
+          blockId,
+          message: error instanceof Error ? error.message : String(error),
+        },
+      });
+    }
+
+    const data = await parseResponseJson(response);
+
+    if (!response.ok) {
+      throw new ContentError("Notion block request failed.", {
+        code: "NOTION_API_ERROR",
+        status: response.status,
+        failureType: "notion_api_error",
+        details: {
+          blockId,
+          response: data,
+        },
+      });
+    }
+
+    rawBlocks.push(...(Array.isArray(data?.results) ? data.results : []));
+    nextCursor = data?.next_cursor || null;
+    hasMore = Boolean(data?.has_more && nextCursor);
+  }
+
+  return rawBlocks;
+}
+
+async function fetchProjectContentByPageId({
+  pages,
+  fetchImpl = fetch,
+  notionToken,
+}) {
+  const contentEntries = await Promise.all(
+    pages.map(async (page) => {
+      const props = page.properties || {};
+      const inlineContent = extractRichText(
+        props.Detail?.rich_text ||
+          props.detail?.rich_text ||
+          props.content?.rich_text ||
+          props.Description?.rich_text ||
+          [],
+      );
+
+      if (inlineContent) {
+        return [page.id, inlineContent];
+      }
+
+      const blocks = await fetchNotionBlockChildren({
+        blockId: page.id,
+        fetchImpl,
+        notionToken,
+      });
+      const pageContent = blocks
+        .map(extractBlockPlainText)
+        .filter((blockText) => typeof blockText === "string" && blockText.length)
+        .join("\n\n");
+
+      return [page.id, pageContent];
+    }),
+  );
+
+  return new Map(contentEntries);
+}
+
 export async function queryNotionDatabase({
   databaseType,
   requestBody = {},
@@ -678,7 +950,19 @@ export async function queryNotionDatabase({
     hasMore = Boolean(data?.has_more && nextCursor);
   }
 
-  const records = getDatasetTransformer(databaseType)(rawResults);
+  const records =
+    databaseType === "projects"
+      ? prepareProjectsForPublicDisplay(
+          transformProjectsData(
+            rawResults,
+            await fetchProjectContentByPageId({
+              pages: rawResults,
+              fetchImpl,
+              notionToken,
+            }),
+          ),
+        )
+      : getDatasetTransformer(databaseType)(rawResults);
 
   return validateDatasetRecords(databaseType, records);
 }
@@ -1038,14 +1322,8 @@ export function isAuthorizedCronRequest(req, env = process.env) {
 
   const authorization = req.headers.authorization;
   const headerSecret = req.headers["x-cron-secret"];
-  const querySecret =
-    typeof req.query?.secret === "string" ? req.query.secret : null;
 
-  return (
-    authorization === `Bearer ${secret}` ||
-    headerSecret === secret ||
-    querySecret === secret
-  );
+  return authorization === `Bearer ${secret}` || headerSecret === secret;
 }
 
 export function buildStructuredLog(event, telemetry) {
@@ -1062,22 +1340,15 @@ export function createErrorPayload(error) {
         code: error.code,
         message: error.message,
         failureType: error.failureType,
-        details: error.details,
       },
     };
   }
 
   return {
-    error: {
-      code: "INTERNAL_SERVER_ERROR",
-      message: "Internal server error",
-      failureType: "internal_server_error",
-      details:
-        error instanceof Error
-          ? {
-              message: error.message,
-            }
-          : null,
-    },
-  };
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Internal server error",
+        failureType: "internal_server_error",
+      },
+    };
 }

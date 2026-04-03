@@ -1,10 +1,4 @@
 import { applyCors } from "../src/server/apiCors.js";
-import {
-  buildStructuredLog,
-  CACHE_CONTROL_HEADER,
-  createErrorPayload,
-  queryNotionDatabase,
-} from "../src/server/notionContent.js";
 
 export default async function handler(req, res) {
   applyCors(req, res, {
@@ -25,46 +19,13 @@ export default async function handler(req, res) {
     });
   }
 
-  const requestStartedAt = Date.now();
+  res.setHeader("Cache-Control", "no-store");
 
-  try {
-    const { database } = req.query;
-    const records = await queryNotionDatabase({
-      databaseType: String(database || "").toLowerCase(),
-      requestBody: req.method === "POST" ? req.body : {},
-      env: process.env,
-    });
-
-    if (req.method === "GET") {
-      res.setHeader("Cache-Control", CACHE_CONTROL_HEADER);
-    }
-
-    console.log(
-      buildStructuredLog("notion.dataset.request", {
-        source: "live",
-        failureType: null,
-        notionLatencyMs: Date.now() - requestStartedAt,
-        datasetCounts: {
-          [String(database || "unknown")]: records.length,
-        },
-        snapshotAgeSeconds: null,
-      }),
-    );
-
-    return res.status(200).json(records);
-  } catch (error) {
-    const payload = createErrorPayload(error);
-
-    console.error(
-      buildStructuredLog("notion.dataset.request", {
-        source: "live",
-        failureType: payload.error.failureType,
-        notionLatencyMs: Date.now() - requestStartedAt,
-        datasetCounts: null,
-        snapshotAgeSeconds: null,
-      }),
-    );
-
-    return res.status(error?.status || 500).json(payload);
-  }
+  return res.status(410).json({
+    error: {
+      code: "ENDPOINT_RETIRED",
+      message: "The /api/notion endpoint has been retired. Use /api/content instead.",
+      failureType: "endpoint_retired",
+    },
+  });
 }

@@ -62,6 +62,7 @@ export default async function handler(req, res) {
         snapshotAgeSeconds: null,
       }),
     );
+    console.error(error);
 
     return res.status(error?.status || 500).json(payload);
   }

@@ -49,17 +49,17 @@ Notion provides a robust API that can serve as a headless CMS/database, offering
 
 ```mermaid
 graph TD
-    A[React App] -->|HTTP GET /api/notion| B[Vercel Serverless API]
-    B -->|Authenticated Request| C[Notion API]
-    C -->|JSON Response| B
-    B -->|Transformed JSON| A
+    A[React App] -->|HTTP GET /api/content| B[Vercel Serverless API]
+    B -->|Live refresh with snapshot fallback| C[Notion API + KV]
+    C -->|Structured content response| B
+    B -->|data + meta| A
 ```
 
 ### Data Flow
 
-1. Notion Database queries via API.
-2. Serverless Function transforms and caches data.
-3. React Components render processed data.
+1. Serverless content API queries Notion and refreshes the snapshot.
+2. KV stores the latest successful content snapshot for degraded-mode fallback.
+3. React fetches `/api/content` and renders the transformed response.
 
 ### Database Schemas
 
@@ -73,9 +73,12 @@ graph TD
 - `Title` (Title)
 - `Slug` (Text)
 - `Date` (Date)
-- `Keyword` (Select/Multi-select)
+- `Published` (Checkbox)
+- `Sort Order` (Number)
+- `Keyword` (Multi-select)
 - `Link` (URL)
-- `Content` (Rich Text)
+- `Hook` (Rich Text)
+- `Detail` (Rich Text)
 - `Image` (Files & Media)
 
 #### Work Database
@@ -107,9 +110,12 @@ graph TD
 | title | title | title |
 | slug | text | slug |
 | date | number | date |
-| Keyword | multi_select | keyword |
+| Published | checkbox | publish control |
+| Sort Order | number | manual order |
+| Keyword | multi_select | keywords[] |
 | link | url | link |
-| content | text | content |
+| Hook | text | hook |
+| Detail | text | detail |
 | image | text | image |
 
 ---

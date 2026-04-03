@@ -5,12 +5,13 @@ export interface AboutItem {
 
 export interface ProjectItem {
   title: string;
-  content: string;
+  hook: string;
+  detail: string;
   date: string | number | null;
   link: string | null;
   slug: string;
   image: string | null;
-  keyword: string;
+  keywords: string[];
 }
 
 export interface WorkItem {
@@ -35,7 +36,7 @@ export interface ContentMeta {
   fetchedAt: string;
   snapshotUpdatedAt: string | null;
   snapshotAgeSeconds: number | null;
-  schemaVersion: 1;
+  schemaVersion: 3;
 }
 
 export interface ContentResponse {

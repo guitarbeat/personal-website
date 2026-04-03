@@ -14,7 +14,7 @@ const PORT = 3001;
 // Notion API configuration
 const NOTION_API_BASE = "https://api.notion.com/v1";
 const NOTION_VERSION = "2022-06-28";
-const NOTION_TOKEN = process.env.REACT_APP_NOTION_TOKEN;
+const NOTION_TOKEN = process.env.NOTION_TOKEN;
 
 // Database IDs
 const DATABASE_IDS = {

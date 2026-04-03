@@ -41,19 +41,20 @@ describe("NotionProvider", () => {
         fetchedAt: "2026-03-21T12:00:00.000Z",
         snapshotUpdatedAt: "2026-03-21T10:00:00.000Z",
         snapshotAgeSeconds: 7200,
-        schemaVersion: 1,
+        schemaVersion: 3,
       },
       data: {
         about: [],
         projects: [
           {
             title: "Project One",
-            content: "Cached project",
+            hook: "Cached hook",
+            detail: "Cached detail",
             date: 2024,
             link: "https://example.com/project-one",
             slug: "project-one",
             image: null,
-            keyword: "Cached",
+            keywords: ["Cached"],
           },
         ],
         work: [],

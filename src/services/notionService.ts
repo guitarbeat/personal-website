@@ -31,26 +31,6 @@ const parseApiError = (payload: unknown, fallbackMessage: string) => {
   return fallbackMessage;
 };
 
-// biome-ignore lint/suspicious/noExplicitAny: Notion compatibility endpoint remains dynamic
-const fetchNotionDatabase = async (databaseType: string): Promise<any[]> => {
-  const response = await fetch(
-    `${API_BASE}/api/notion?database=${databaseType}`,
-    {
-      method: "GET",
-    },
-  );
-
-  const payload = await response.json().catch(() => null);
-
-  if (!response.ok) {
-    throw new Error(
-      `Notion API error: ${parseApiError(payload, response.statusText)}`,
-    );
-  }
-
-  return Array.isArray(payload) ? payload : [];
-};
-
 const fetchContent = async (): Promise<ContentResponse> => {
   const response = await fetch(`${API_BASE}/api/content`, {
     method: "GET",
@@ -74,18 +54,6 @@ const fetchContent = async (): Promise<ContentResponse> => {
 };
 
 class NotionService {
-  async getProjects() {
-    return fetchNotionDatabase("projects");
-  }
-
-  async getWork() {
-    return fetchNotionDatabase("work");
-  }
-
-  async getAbout() {
-    return fetchNotionDatabase("about");
-  }
-
   async getAllData() {
     return fetchContent();
   }

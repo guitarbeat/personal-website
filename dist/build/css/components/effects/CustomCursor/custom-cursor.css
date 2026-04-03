@@ -1,0 +1,115 @@
+:root {
+  --shadow-0: none;
+  --shadow-1: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-2: 0 4px 8px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-3: 0 8px 16px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.05);
+  --shadow-4: 0 16px 24px rgba(0, 0, 0, 0.1), 0 6px 12px rgba(0, 0, 0, 0.05);
+  --shadow-hover: 0 4px 8px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-active: 0 2px 4px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-focus: 0 0 0 2px rgba(var(--color-primary-rgb), 0.2);
+  --shadow-card: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-dropdown: 0 4px 8px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-modal: 0 8px 16px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.05);
+  --shadow-toast: 0 16px 24px rgba(0, 0, 0, 0.1), 0 6px 12px rgba(0, 0, 0, 0.05);
+  --shadow-button: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-button-hover: 0 4px 8px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-input-focus: 0 0 0 2px rgba(var(--color-primary-rgb), 0.2);
+  --inner-shadow-subtle: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+  --inner-shadow-medium: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  --inner-shadow-strong: inset 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.dark-theme {
+  --shadow-0: none;
+  --shadow-1: 0 2px 4px rgba(0, 0, 0, 0.2);
+  --shadow-2: 0 4px 8px rgba(0, 0, 0, 0.25), 0 2px 4px rgba(0, 0, 0, 0.15);
+  --shadow-3: 0 8px 16px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2);
+  --shadow-4: 0 16px 24px rgba(0, 0, 0, 0.35), 0 6px 12px rgba(0, 0, 0, 0.25);
+  --shadow-hover: 0 4px 8px rgba(0, 0, 0, 0.25), 0 2px 4px rgba(0, 0, 0, 0.15);
+  --shadow-active: 0 2px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.15);
+  --shadow-focus: 0 0 0 2px rgba(var(--color-primary-rgb), 0.4);
+  --shadow-card: 0 2px 4px rgba(0, 0, 0, 0.2);
+  --shadow-dropdown: 0 4px 8px rgba(0, 0, 0, 0.25), 0 2px 4px rgba(0, 0, 0, 0.15);
+  --shadow-modal: 0 8px 16px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2);
+  --shadow-toast: 0 16px 24px rgba(0, 0, 0, 0.35), 0 6px 12px rgba(0, 0, 0, 0.25);
+  --shadow-button: 0 2px 4px rgba(0, 0, 0, 0.2);
+  --shadow-button-hover: 0 4px 8px rgba(0, 0, 0, 0.25), 0 2px 4px rgba(0, 0, 0, 0.15);
+  --shadow-input-focus: 0 0 0 2px rgba(var(--color-primary-rgb), 0.4);
+  --inner-shadow-subtle: inset 0 1px 2px rgba(0, 0, 0, 0.15);
+  --inner-shadow-medium: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+  --inner-shadow-strong: inset 0 4px 8px rgba(0, 0, 0, 0.25);
+}
+
+:export {
+  breakpointLarge: 62.5em;
+  themeSageBase: #0b7abd;
+  themeCoralBase: #e15b18;
+  themeSandBase: #a8958c;
+  themeIndigoBase: #1a1a1d;
+}
+
+/**
+ * Get a scale value
+ * @param {String} $size - Size of the scale (sm, md, lg)
+ * @return {Number} Scale value
+ */
+/**
+ * Get a component token safely with fallback
+ * @param {String} $component - Component name
+ * @param {String} $category - Category within component
+ * @param {String} $token - Token name
+ * @param {*} $fallback - Fallback value if token doesn't exist
+ * @return {*} Token value or fallback
+ */
+/**
+ * Get a theme color safely with fallback
+ * @param {String} $name - Color name
+ * @param {String} $variant - Color variant (base, light, dark, alt)
+ * @param {*} $fallback - Fallback value if color doesn't exist
+ * @return {*} Color value or fallback
+ */
+/**
+ * Get a spacing value safely with fallback
+ * @param {String} $size - Spacing size
+ * @param {*} $fallback - Fallback value if spacing doesn't exist
+ * @return {*} Spacing value or fallback
+ */
+.custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  pointer-events: none;
+  mix-blend-mode: difference;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: transform;
+  display: none;
+}
+@media (min-width: 768px) {
+  .custom-cursor {
+    display: flex;
+  }
+}
+.custom-cursor__body {
+  position: relative;
+  border-radius: 50%;
+  background-color: white;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+}
+.custom-cursor__label {
+  z-index: 10;
+  color: black;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.875rem;
+  overflow: hidden;
+  white-space: nowrap;
+}

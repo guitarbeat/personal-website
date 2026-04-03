@@ -1,7 +1,7 @@
 import "@testing-library/jest-dom";
-import { act, render, screen, waitFor } from "@testing-library/react";
+import { act, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { generateItemColors } from "../../../utils/colorUtils";
+import { generateTagColors } from "../../../utils/colorUtils";
 import Projects from "./Projects";
 
 jest.mock("../../effects/PixelCanvas/PixelCanvas", () => {
@@ -18,18 +18,20 @@ jest.mock("../../../contexts/NotionContext", () => ({
           title: "Project One",
           slug: "project-one",
           date: "2024",
-          keyword: "React",
+          keywords: ["React", "Data"],
           link: "https://example.com/react",
-          content: "React project",
+          hook: "React hook",
+          detail: "React detail",
           image: null,
         },
         {
           title: "Project Two",
           slug: "project-two",
           date: "2023",
-          keyword: "Node",
+          keywords: ["Node"],
           link: "https://example.com/node",
-          content: "Node project",
+          hook: "Node hook",
+          detail: "Node detail",
           image: null,
         },
       ],
@@ -48,7 +50,7 @@ jest.mock("../../../utils/colorUtils", () => {
   const actual = jest.requireActual("../../../utils/colorUtils");
   return {
     ...actual,
-    generateItemColors: jest.fn() as jest.Mock,
+    generateTagColors: jest.fn() as jest.Mock,
   };
 });
 
@@ -58,18 +60,20 @@ describe("Projects", () => {
       title: "Project One",
       slug: "project-one",
       date: "2024",
-      keyword: "React",
+      keywords: ["React", "Data"],
       link: "https://example.com/react",
-      content: "React project",
+      hook: "React hook",
+      detail: "React detail",
       image: null,
     },
     {
       title: "Project Two",
       slug: "project-two",
       date: "2023",
-      keyword: "Node",
+      keywords: ["Node"],
       link: "https://example.com/node",
-      content: "Node project",
+      hook: "Node hook",
+      detail: "Node detail",
       image: null,
     },
   ];
@@ -79,13 +83,15 @@ describe("Projects", () => {
   });
 
   it("regenerates tag colors when the theme changes", async () => {
-    (generateItemColors as jest.Mock)
+    (generateTagColors as jest.Mock)
       .mockImplementationOnce(() => ({
         React: "hsl(0, 0%, 50%)",
+        Data: "hsl(280, 50%, 50%)",
         Node: "hsl(120, 100%, 50%)",
       }))
       .mockImplementation(() => ({
         React: "hsl(200, 60%, 55%)",
+        Data: "hsl(260, 50%, 60%)",
         Node: "hsl(40, 80%, 60%)",
       }));
 
@@ -93,7 +99,7 @@ describe("Projects", () => {
 
     const reactFilter = await screen.findByRole("button", { name: "React" });
 
-    expect(generateItemColors).toHaveBeenCalledWith(MOCK_PROJECTS, "keyword");
+    expect(generateTagColors).toHaveBeenCalledWith(["React", "Data", "Node"]);
 
     await waitFor(() => {
       expect(reactFilter).toHaveStyle({
@@ -105,11 +111,12 @@ describe("Projects", () => {
       document.body.dispatchEvent(new CustomEvent("theme-changed"));
     });
 
-    expect(generateItemColors).toHaveBeenCalledTimes(2);
-    expect(generateItemColors).toHaveBeenLastCalledWith(
-      MOCK_PROJECTS,
-      "keyword",
-    );
+    expect(generateTagColors).toHaveBeenCalledTimes(2);
+    expect(generateTagColors).toHaveBeenLastCalledWith([
+      "React",
+      "Data",
+      "Node",
+    ]);
 
     await waitFor(() => {
       expect(reactFilter).toHaveStyle({
@@ -119,9 +126,35 @@ describe("Projects", () => {
     });
   });
 
-  it("filters projects by keyword and restores cards when toggling the last active filter", async () => {
-    (generateItemColors as jest.Mock).mockReturnValue({
+  it("renders project hooks immediately and reveals detail on click", async () => {
+    (generateTagColors as jest.Mock).mockReturnValue({
       React: "hsl(0, 0%, 50%)",
+      Data: "hsl(280, 50%, 50%)",
+      Node: "hsl(120, 100%, 50%)",
+    });
+
+    const user = userEvent.setup();
+
+    render(<Projects db={{ projects: MOCK_PROJECTS }} />);
+
+    const projectCard = await screen.findByRole("link", { name: /Project One/i });
+
+    expect(within(projectCard).getByText("React hook")).toBeInTheDocument();
+
+    const detail = within(projectCard).getByText("React detail");
+    expect(detail).not.toHaveClass("show-text");
+
+    await user.click(projectCard);
+
+    await waitFor(() => {
+      expect(detail).toHaveClass("show-text");
+    });
+  });
+
+  it("renders multiple project tags and filters by any active keyword", async () => {
+    (generateTagColors as jest.Mock).mockReturnValue({
+      React: "hsl(0, 0%, 50%)",
+      Data: "hsl(280, 50%, 50%)",
       Node: "hsl(120, 100%, 50%)",
     });
 
@@ -130,15 +163,30 @@ describe("Projects", () => {
     render(<Projects db={{ projects: MOCK_PROJECTS }} />);
 
     const reactFilter = await screen.findByRole("button", { name: "React" });
+    const dataFilter = await screen.findByRole("button", { name: "Data" });
     const nodeFilter = await screen.findByRole("button", { name: "Node" });
 
     const reactProject = screen.getByRole("link", { name: /Project One/i });
     const nodeProject = screen.getByRole("link", { name: /Project Two/i });
 
+    expect(within(reactProject).getByText("React")).toBeInTheDocument();
+    expect(within(reactProject).getByText("Data")).toBeInTheDocument();
+
     await user.click(reactFilter);
 
     await waitFor(() => {
       expect(reactFilter).not.toHaveClass("active");
+      expect(dataFilter).toHaveClass("active");
+      expect(nodeFilter).toHaveClass("active");
+      expect(reactProject).not.toHaveClass("filtered-out");
+      expect(nodeProject).not.toHaveClass("filtered-out");
+    });
+
+    await user.click(dataFilter);
+
+    await waitFor(() => {
+      expect(reactFilter).not.toHaveClass("active");
+      expect(dataFilter).not.toHaveClass("active");
       expect(nodeFilter).toHaveClass("active");
       expect(reactProject).toHaveClass("filtered-out");
       expect(nodeProject).not.toHaveClass("filtered-out");
@@ -148,21 +196,8 @@ describe("Projects", () => {
 
     await waitFor(() => {
       expect(reactFilter).toHaveClass("active");
+      expect(dataFilter).toHaveClass("active");
       expect(nodeFilter).toHaveClass("active");
-      expect(reactProject).not.toHaveClass("filtered-out");
-      expect(nodeProject).not.toHaveClass("filtered-out");
-    });
-
-    await user.click(reactFilter);
-
-    await waitFor(() => {
-      expect(reactProject).toHaveClass("filtered-out");
-      expect(nodeProject).not.toHaveClass("filtered-out");
-    });
-
-    await user.click(nodeFilter);
-
-    await waitFor(() => {
       expect(reactProject).not.toHaveClass("filtered-out");
       expect(nodeProject).not.toHaveClass("filtered-out");
     });

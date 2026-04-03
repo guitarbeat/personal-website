@@ -1,6 +1,8 @@
 import {
+  createErrorPayload,
   getContentResponse,
   getHealthSummary,
+  isAuthorizedCronRequest,
   queryNotionDatabase,
   refreshContentSnapshot,
   SNAPSHOT_KEY,
@@ -24,15 +26,31 @@ const createAboutPage = (category, description) => ({
   },
 });
 
-const createProjectPage = (titleText, slug, keyword = "React") => ({
+const createProjectPage = ({
+  titleText,
+  slug,
+  keywords = ["React"],
+  hook = `${titleText} hook`,
+  detail = `${titleText} detail`,
+  published = true,
+  sortOrder = null,
+  date = 2024,
+} = {}) => ({
   id: `${slug}-page`,
   properties: {
     Name: { title: title(titleText) },
-    Description: { rich_text: richText(`${titleText} description`) },
-    Date: { number: 2024 },
+    Hook: { rich_text: hook ? richText(hook) : [] },
+    Detail: { rich_text: detail ? richText(detail) : [] },
+    Date: { number: date },
     Link: { url: `https://example.com/${slug}` },
     Slug: { rich_text: richText(slug) },
-    Keyword: { multi_select: [{ name: keyword }] },
+    Published: { checkbox: published },
+    "Sort Order": { number: sortOrder },
+    Keyword: {
+      multi_select: keywords.map((keyword) => ({
+        name: keyword,
+      })),
+    },
   },
 });
 
@@ -55,7 +73,7 @@ const createWorkPage = ({
 });
 
 const snapshotEnvelope = {
-  schemaVersion: 1,
+  schemaVersion: 3,
   updatedAt: "2026-03-21T10:00:00.000Z",
   datasetCounts: {
     about: 1,
@@ -67,12 +85,13 @@ const snapshotEnvelope = {
     projects: [
       {
         title: "Snapshot Project",
-        content: "Cached content",
+        hook: "Cached hook",
+        detail: "Cached detail",
         date: 2024,
         link: "https://example.com/snapshot-project",
         slug: "snapshot-project",
         image: null,
-        keyword: "Cached",
+        keywords: ["Cached"],
       },
     ],
     work: [
@@ -95,14 +114,25 @@ describe("notionContent server helpers", () => {
       .fn()
       .mockResolvedValueOnce(
         mockResponse({
-          results: [createProjectPage("Project One", "project-one")],
+          results: [
+            createProjectPage({
+              titleText: "Project One",
+              slug: "project-one",
+            }),
+          ],
           has_more: true,
           next_cursor: "cursor-1",
         }),
       )
       .mockResolvedValueOnce(
         mockResponse({
-          results: [createProjectPage("Project Two", "project-two", "Node")],
+          results: [
+            createProjectPage({
+              titleText: "Project Two",
+              slug: "project-two",
+              keywords: ["Node"],
+            }),
+          ],
           has_more: false,
           next_cursor: null,
         }),
@@ -121,6 +151,159 @@ describe("notionContent server helpers", () => {
     });
   });
 
+  it("returns every selected Notion project keyword", async () => {
+    const fetchImpl = jest.fn().mockResolvedValue(
+      mockResponse({
+        results: [
+          createProjectPage({
+            titleText: "Project One",
+            slug: "project-one",
+            keywords: ["React", "Data"],
+          }),
+        ],
+        has_more: false,
+        next_cursor: null,
+      }),
+    );
+
+    const records = await queryNotionDatabase({
+      databaseType: "projects",
+      fetchImpl,
+      env: { NOTION_TOKEN: "test-token" },
+    });
+
+    expect(records[0].keywords).toEqual(["React", "Data"]);
+  });
+
+  it("falls back to page body content when the project detail is stored in blocks", async () => {
+    const fetchImpl = jest
+      .fn()
+      .mockResolvedValueOnce(
+        mockResponse({
+          results: [
+            {
+              id: "project-one-page",
+              properties: {
+                Name: { title: title("Project One") },
+                Date: { number: 2024 },
+                Link: { url: "https://example.com/project-one" },
+                Slug: { rich_text: richText("project-one") },
+                Published: { checkbox: true },
+                Keyword: { multi_select: [{ name: "React" }] },
+              },
+            },
+          ],
+          has_more: false,
+          next_cursor: null,
+        }),
+      )
+      .mockResolvedValueOnce(
+        mockResponse({
+          results: [
+            {
+              type: "paragraph",
+              paragraph: {
+                rich_text: richText("Project One body content"),
+              },
+            },
+          ],
+          has_more: false,
+          next_cursor: null,
+        }),
+      );
+
+    const records = await queryNotionDatabase({
+      databaseType: "projects",
+      fetchImpl,
+      env: { NOTION_TOKEN: "test-token" },
+    });
+
+    expect(records[0].hook).toBe("Project One body content");
+    expect(records[0].detail).toBe("Project One body content");
+    expect(fetchImpl).toHaveBeenNthCalledWith(
+      2,
+      expect.stringContaining("/blocks/project-one-page/children"),
+      expect.objectContaining({
+        method: "GET",
+      }),
+    );
+  });
+
+  it("filters unpublished projects and sorts by sort order before date", async () => {
+    const fetchImpl = jest.fn().mockResolvedValue(
+      mockResponse({
+        results: [
+          createProjectPage({
+            titleText: "Zeta Project",
+            slug: "zeta-project",
+            sortOrder: null,
+            date: 2022,
+          }),
+          createProjectPage({
+            titleText: "Alpha Project",
+            slug: "alpha-project",
+            sortOrder: 20,
+            date: 2020,
+          }),
+          createProjectPage({
+            titleText: "Beta Project",
+            slug: "beta-project",
+            sortOrder: 10,
+            date: 2026,
+          }),
+          createProjectPage({
+            titleText: "Hidden Project",
+            slug: "hidden-project",
+            published: false,
+            sortOrder: 1,
+          }),
+        ],
+        has_more: false,
+        next_cursor: null,
+      }),
+    );
+
+    const records = await queryNotionDatabase({
+      databaseType: "projects",
+      fetchImpl,
+      env: { NOTION_TOKEN: "test-token" },
+    });
+
+    expect(records.map((record) => record.slug)).toEqual([
+      "beta-project",
+      "alpha-project",
+      "zeta-project",
+    ]);
+  });
+
+  it("falls back to the project detail when the hook is missing", async () => {
+    const fetchImpl = jest.fn().mockResolvedValue(
+      mockResponse({
+        results: [
+          createProjectPage({
+            titleText: "Project One",
+            slug: "project-one",
+            hook: "",
+            detail: "Project One detail",
+          }),
+        ],
+        has_more: false,
+        next_cursor: null,
+      }),
+    );
+
+    const records = await queryNotionDatabase({
+      databaseType: "projects",
+      fetchImpl,
+      env: { NOTION_TOKEN: "test-token" },
+    });
+
+    expect(records[0]).toMatchObject({
+      hook: "Project One detail",
+      detail: "Project One detail",
+    });
+  });
+
   it("writes the KV snapshot after a successful refresh", async () => {
     const fetchImpl = jest
       .fn()
@@ -133,7 +316,12 @@ describe("notionContent server helpers", () => {
       )
       .mockResolvedValueOnce(
         mockResponse({
-          results: [createProjectPage("Project One", "project-one")],
+          results: [
+            createProjectPage({
+              titleText: "Project One",
+              slug: "project-one",
+            }),
+          ],
           has_more: false,
           next_cursor: null,
         }),
@@ -235,7 +423,12 @@ describe("notionContent server helpers", () => {
       )
       .mockResolvedValueOnce(
         mockResponse({
-          results: [createProjectPage("Project One", "project-one")],
+          results: [
+            createProjectPage({
+              titleText: "Project One",
+              slug: "project-one",
+            }),
+          ],
           has_more: false,
           next_cursor: null,
         }),
@@ -273,7 +466,7 @@ describe("notionContent server helpers", () => {
         snapshotExists: true,
         updatedAt: "2026-03-21T11:20:00.000Z",
         datasetCounts: snapshotEnvelope.datasetCounts,
-        schemaVersion: 1,
+        schemaVersion: 3,
       }),
       setJson: jest.fn(),
     };
@@ -293,7 +486,7 @@ describe("notionContent server helpers", () => {
         snapshotExists: true,
         updatedAt: "2026-03-20T10:00:00.000Z",
         datasetCounts: snapshotEnvelope.datasetCounts,
-        schemaVersion: 1,
+        schemaVersion: 3,
       }),
       setJson: jest.fn(),
     };
@@ -305,5 +498,61 @@ describe("notionContent server helpers", () => {
 
     expect(summary.status).toBe("failed");
     expect(summary.snapshotAgeSeconds).toBe(93600);
+  });
+
+  it("accepts only header-based cron authorization", () => {
+    expect(
+      isAuthorizedCronRequest(
+        {
+          headers: {
+            authorization: "Bearer top-secret",
+          },
+          query: {
+            secret: "top-secret",
+          },
+        },
+        { CRON_SECRET: "top-secret" },
+      ),
+    ).toBe(true);
+
+    expect(
+      isAuthorizedCronRequest(
+        {
+          headers: {
+            "x-cron-secret": "top-secret",
+          },
+          query: {
+            secret: "top-secret",
+          },
+        },
+        { CRON_SECRET: "top-secret" },
+      ),
+    ).toBe(true);
+
+    expect(
+      isAuthorizedCronRequest(
+        {
+          headers: {},
+          query: {
+            secret: "top-secret",
+          },
+        },
+        { CRON_SECRET: "top-secret" },
+      ),
+    ).toBe(false);
+  });
+
+  it("sanitizes public error payloads", () => {
+    const payload = createErrorPayload(
+      new Error("upstream details should stay private"),
+    );
+
+    expect(payload).toEqual({
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Internal server error",
+        failureType: "internal_server_error",
+      },
+    });
   });
 });
