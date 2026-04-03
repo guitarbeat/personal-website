@@ -1,15 +1,9 @@
 import { Pixel } from "./Pixel";
 
 describe("Pixel", () => {
-  let mockCanvas: HTMLCanvasElement;
   let mockCtx: CanvasRenderingContext2D;
 
   beforeEach(() => {
-    mockCanvas = {
-      width: 800,
-      height: 600,
-    } as HTMLCanvasElement;
-
     mockCtx = {
       fillRect: jest.fn(),
       globalAlpha: 1,
@@ -18,7 +12,7 @@ describe("Pixel", () => {
   });
 
   it("should initialize with correct values", () => {
-    const pixel = new Pixel(mockCanvas, mockCtx, 100, 200, "#fff", 10, 0);
+    const pixel = new Pixel(mockCtx, 800, 600, 100, 200, "#fff", 10, 0);
     expect(pixel.x).toBe(100);
     expect(pixel.y).toBe(200);
     expect(pixel.width).toBe(800);
@@ -27,7 +21,7 @@ describe("Pixel", () => {
   });
 
   it("should draw itself", () => {
-    const pixel = new Pixel(mockCanvas, mockCtx, 100, 200, "#fff", 10, 0);
+    const pixel = new Pixel(mockCtx, 800, 600, 100, 200, "#fff", 10, 0);
     pixel.size = 10;
     pixel.draw();
     expect(mockCtx.fillRect).toHaveBeenCalled();
@@ -36,7 +30,7 @@ describe("Pixel", () => {
 
   it("should handle appear animation", () => {
     // Use negative delay to ensure immediate draw call
-    const pixel = new Pixel(mockCanvas, mockCtx, 100, 200, "#fff", 10, -1);
+    const pixel = new Pixel(mockCtx, 800, 600, 100, 200, "#fff", 10, -1);
     pixel.appear();
     expect(mockCtx.fillRect).toHaveBeenCalled();
     expect(pixel.isIdle).toBe(false);

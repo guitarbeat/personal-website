@@ -117,12 +117,7 @@ function ProjectCard({
       />
       <div className="projects__card__content">
         <div className="projects__card__meta">
-          <p
-            className="projects__card__year"
-            style={{ fontStyle: "italic", color: "var(--color-sage-light)" }}
-          >
-            {date ?? ""}
-          </p>
+          <p className="projects__card__year">{date ?? ""}</p>
           <div className="projects__card__keywords">
             {_link}
             {keywords.map((keyword) => (
@@ -134,8 +129,6 @@ function ProjectCard({
                     tagColors?.[keyword] ||
                     primaryTagColor ||
                     "rgba(255, 255, 255, 0.25)",
-                  mixBlendMode: "multiply",
-                  filter: "contrast(1.1) brightness(1.1)",
                 }}
               >
                 {keyword}

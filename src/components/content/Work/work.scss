@@ -160,8 +160,8 @@ $mobile-breakpoint: 37.5em;
       z-index: 0;
       pointer-events: none;
       mix-blend-mode: soft-light;
-      opacity: 0.35;
-      filter: saturate(0.85) brightness(1.05);
+      opacity: 0.28;
+      filter: saturate(0.8) brightness(1.02);
       transition: opacity 0.3s ease;
 
       canvas {
@@ -172,7 +172,7 @@ $mobile-breakpoint: 37.5em;
     }
 
     &:hover &__pixel-canvas {
-      opacity: 0.45;
+      opacity: 0.36;
     }
 
     &__content {

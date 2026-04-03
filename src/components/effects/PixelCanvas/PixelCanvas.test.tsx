@@ -18,7 +18,9 @@ HTMLCanvasElement.prototype.getContext = jest.fn(() => {
     save: jest.fn(),
     restore: jest.fn(),
     scale: jest.fn(),
+    setTransform: jest.fn(),
     translate: jest.fn(),
+    imageSmoothingEnabled: true,
   } as unknown as CanvasRenderingContext2D;
   // biome-ignore lint/suspicious/noExplicitAny: Mocking canvas context
 }) as any;

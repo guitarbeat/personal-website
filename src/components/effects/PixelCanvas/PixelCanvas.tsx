@@ -2,6 +2,8 @@ import { useEffect, useMemo, useRef } from "react";
 import { debounce } from "../../../utils/commonUtils";
 import { Pixel } from "./Pixel";
 
+const MAX_DEVICE_PIXEL_RATIO = 2;
+
 const clampGap = (value: number) => {
   const min = 4;
   const max = 50;
@@ -86,6 +88,8 @@ const PixelCanvas = ({
     const parsedSpeed = normalizeSpeed(speed, reducedMotion);
 
     let pixels: Pixel[] = [];
+    let logicalWidth = 0;
+    let logicalHeight = 0;
     let animationFrameId: number | undefined;
     const getNow = () =>
       typeof performance !== "undefined" && performance.now
@@ -103,22 +107,30 @@ const PixelCanvas = ({
     };
 
     const getDistanceToCanvasCenter = (x: number, y: number) => {
-      if (!canvas) return 0;
-      const dx = x - canvas.width / 2;
-      const dy = y - canvas.height / 2;
+      const dx = x - logicalWidth / 2;
+      const dy = y - logicalHeight / 2;
       return Math.sqrt(dx * dx + dy * dy);
     };
 
     const createPixels = () => {
       pixels = [];
-      for (let x = 0; x < canvas.width; x += parsedGap) {
-        for (let y = 0; y < canvas.height; y += parsedGap) {
+      for (let x = 0; x < logicalWidth; x += parsedGap) {
+        for (let y = 0; y < logicalHeight; y += parsedGap) {
           const color =
             colorPalette[Math.floor(Math.random() * colorPalette.length)];
           const delay = reducedMotion ? 0 : getDistanceToCanvasCenter(x, y);
 
           pixels.push(
-            new Pixel(canvas, context, x, y, color, parsedSpeed, delay),
+            new Pixel(
+              context,
+              logicalWidth,
+              logicalHeight,
+              x,
+              y,
+              color,
+              parsedSpeed,
+              delay,
+            ),
           );
         }
       }
@@ -126,13 +138,21 @@ const PixelCanvas = ({
 
     const init = () => {
       const rect = wrapper.getBoundingClientRect();
-      const width = Math.floor(rect.width);
-      const height = Math.floor(rect.height);
+      logicalWidth = Math.max(0, Math.floor(rect.width));
+      logicalHeight = Math.max(0, Math.floor(rect.height));
 
-      canvas.width = width;
-      canvas.height = height;
-      canvas.style.width = `${width}px`;
-      canvas.style.height = `${height}px`;
+      const dpr = Math.min(
+        typeof window !== "undefined" ? (window.devicePixelRatio ?? 1) : 1,
+        MAX_DEVICE_PIXEL_RATIO,
+      );
+
+      canvas.width = logicalWidth * dpr;
+      canvas.height = logicalHeight * dpr;
+      canvas.style.width = `${logicalWidth}px`;
+      canvas.style.height = `${logicalHeight}px`;
+
+      context.setTransform(dpr, 0, 0, dpr, 0, 0);
+      context.imageSmoothingEnabled = false;
 
       createPixels();
     };
@@ -148,7 +168,7 @@ const PixelCanvas = ({
       }
 
       timePrevious = timeNow - (timePassed % timeInterval);
-      context.clearRect(0, 0, canvas.width, canvas.height);
+      context.clearRect(0, 0, logicalWidth, logicalHeight);
 
       for (let i = 0; i < pixels.length; i += 1) {
         pixels[i][fnName]();
@@ -217,6 +237,7 @@ const PixelCanvas = ({
 
     return () => {
       clearAnimation();
+      context.setTransform(1, 0, 0, 1, 0, 0);
       if (resizeObserver) {
         resizeObserver.disconnect();
       }

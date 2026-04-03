@@ -38,7 +38,8 @@
     min-width: 25rem;
     color: inherit;
     background-color: rgb(255 255 255 / 20%);
-    padding: 2rem;
+    // Generous inset for title + body; &__meta uses negative margin to sit nearer corners
+    padding: 2.75rem;
     text-decoration: none;
     backdrop-filter: blur(3px);
     box-shadow: rgb(0 0 0 / 8%) 0 0 5px;
@@ -79,33 +80,51 @@
 
     h3 {
       font-size: 2rem;
-      line-height: 1.3em;
+      line-height: 1.25;
+      letter-spacing: 0.03em;
       text-transform: uppercase;
+      color: var(--text-primary);
+      text-align: center;
+
+      @include respond(small) {
+        font-size: 1.65rem;
+        letter-spacing: 0.02em;
+      }
     }
 
     &__meta {
       display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 1rem;
-      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.45rem;
+      flex-wrap: nowrap;
+      min-width: 0;
+      // Clip at meta so keyword overflow scrolls inside &__keywords, not over the year.
+      overflow: hidden;
+      // Offset card padding so year + tags align ~1.1rem from the card edge; space before title
+      margin: -1.65rem -1.65rem 1rem -1.65rem;
     }
 
     &__year {
       margin: 0;
-      font-size: 1.35rem;
+      font-size: 1.15rem;
       line-height: 1;
       flex: 0 0 auto;
+      // Theme tertiary (sand) — avoids sage read as “default blue” for dates
+      color: var(--color-tertiary);
     }
 
     &__keywords {
       display: flex;
       justify-content: flex-end;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.35rem;
       text-align: right;
-      flex-wrap: wrap; // Allow wrapping on small screens
-      margin-left: auto;
+      flex-wrap: nowrap;
+      flex: 1 1 0%;
+      min-width: 0;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scrollbar-width: thin;
     }
 
     &__label {
@@ -114,7 +133,7 @@
       padding: 0.1rem 0.7rem;
       border-radius: 0.5rem;
       display: inline-block;
-      margin-left: 0.5rem;
+      flex-shrink: 0;
       transition: background-color 0.3s ease-in-out, filter 0.3s ease-in-out;
 
       .light-theme & {
@@ -154,9 +173,9 @@
       inset: 0;
       z-index: 0;
       pointer-events: none;
-      opacity: 0.3;
+      opacity: 0.28;
       mix-blend-mode: soft-light;
-      filter: saturate(0.85) brightness(1.05);
+      filter: saturate(0.8) brightness(1.02);
       transition: opacity 0.3s ease;
 
       canvas {
@@ -164,17 +183,33 @@
         width: 100%;
         height: 100%;
       }
+
+      // Narrow screens: heavier backdrop + light theme glass read as “flat” over the canvas;
+      // touch devices rarely get :hover, so lift base opacity. Promote layer for WebKit compositing.
+      @include respond(small) {
+        opacity: 0.36;
+
+        canvas {
+          transform: translateZ(0);
+        }
+      }
     }
 
     &:hover &__pixel-canvas {
-      opacity: 0.4;
+      opacity: 0.36;
+    }
+
+    @include respond(small) {
+      &:hover &__pixel-canvas {
+        opacity: 0.44;
+      }
     }
 
     &__content {
       position: relative;
       z-index: 1;
       display: grid;
-      gap: 0.75rem;
+      gap: 1rem;
       padding-right: 2rem;
       align-content: start;
       transition: padding-right 0.2s ease-in-out;
@@ -195,6 +230,8 @@
   transition: max-height 0.5s ease-in-out;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  color: var(--text-secondary);
+  text-align: center;
 }
 
 .projects__card__detail.show-text,
@@ -205,7 +242,8 @@
 
 .projects__card__hook {
   margin: 0;
-  color: inherit;
+  color: var(--text-secondary);
+  text-align: center;
 }
 
 .light-theme .projects__card {
@@ -260,19 +298,20 @@
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 
   button.tag {
     font-family: Inter, sans-serif;
-    padding: 6px 12px;
-    margin: 4px;
+    font-size: 0.875rem;
+    padding: 4px 9px;
+    margin: 2px;
     border-radius: 9999px;
     user-select: none;
     cursor: pointer;
     background-color: rgba(255, 255, 255, 0.12);
     backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.3);
-    border-left: 4px solid rgba(255, 255, 255, 0.3);
+    border-left: 3px solid rgba(255, 255, 255, 0.3);
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
     color: var(--text-secondary);
     font-weight: 400;

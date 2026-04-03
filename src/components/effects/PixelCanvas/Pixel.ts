@@ -20,16 +20,17 @@ export class Pixel {
   isShimmer: boolean;
 
   constructor(
-    canvas: HTMLCanvasElement,
     context: CanvasRenderingContext2D,
+    logicalWidth: number,
+    logicalHeight: number,
     x: number,
     y: number,
     color: string,
     speed: number,
     delay: number,
   ) {
-    this.width = canvas.width;
-    this.height = canvas.height;
+    this.width = logicalWidth;
+    this.height = logicalHeight;
     this.ctx = context;
     this.x = x;
     this.y = y;
@@ -61,8 +62,8 @@ export class Pixel {
     this.ctx.globalAlpha = this.alpha;
     this.ctx.fillStyle = this.color;
     this.ctx.fillRect(
-      this.x + centerOffset,
-      this.y + centerOffset,
+      Math.floor(this.x + centerOffset),
+      Math.floor(this.y + centerOffset),
       this.size,
       this.size,
     );

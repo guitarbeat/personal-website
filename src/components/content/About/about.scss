@@ -248,8 +248,15 @@ body.light-theme {
     }
 
     &__spotify {
-      background: rgba(255, 255, 255, 0.7);
-      border-color: rgba(0, 0, 0, 0.1);
+      // Solid white so mix-blend on the SVG can flip light widget text dark (external SVG
+      // is always light-on-transparent; the API’s mode= param doesn’t change text colors live).
+      background: #fff;
+      border-color: rgba(0, 0, 0, 0.12);
+      backdrop-filter: none;
+
+      img {
+        mix-blend-mode: difference;
+      }
     }
 
     &__img {
