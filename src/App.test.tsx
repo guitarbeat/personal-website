@@ -94,7 +94,7 @@ jest.mock("./components/effects/Loading/LoadingSequence", () => {
         }
       }, [isVisible, isReadyToReveal, onExitComplete]);
 
-      return isVisible ? <div role="status">Loading portfolio...</div> : null;
+      return isVisible ? <div data-testid="site-loader" /> : null;
     },
   };
 });
@@ -139,7 +139,7 @@ describe("App reliability states", () => {
 
     render(<App />);
 
-    expect(screen.getByText("Loading portfolio...")).toBeInTheDocument();
+    expect(screen.getByTestId("site-loader")).toBeInTheDocument();
     expect(screen.queryByText("Header section")).not.toBeInTheDocument();
   });
 
@@ -195,14 +195,14 @@ describe("App reliability states", () => {
 
     render(<App />);
 
-    expect(screen.getByText("Loading portfolio...")).toBeInTheDocument();
+    expect(screen.getByTestId("site-loader")).toBeInTheDocument();
     expect(screen.getByText("Header section")).toBeInTheDocument();
 
     act(() => {
       jest.advanceTimersByTime(500);
     });
 
-    expect(screen.queryByText("Loading portfolio...")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("site-loader")).not.toBeInTheDocument();
   });
 
   it("reveals the unavailable state after loading resolves with no content", () => {
@@ -221,7 +221,7 @@ describe("App reliability states", () => {
 
     render(<App />);
 
-    expect(screen.getByText("Loading portfolio...")).toBeInTheDocument();
+    expect(screen.getByTestId("site-loader")).toBeInTheDocument();
 
     act(() => {
       jest.advanceTimersByTime(500);
@@ -230,7 +230,7 @@ describe("App reliability states", () => {
     expect(
       screen.getByText("Site content is temporarily unavailable."),
     ).toBeInTheDocument();
-    expect(screen.queryByText("Loading portfolio...")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("site-loader")).not.toBeInTheDocument();
     expect(screen.queryByText("Header section")).not.toBeInTheDocument();
   });
 });

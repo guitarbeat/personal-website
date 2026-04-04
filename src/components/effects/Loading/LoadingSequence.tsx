@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import styled from "styled-components";
 
 /** Matches historical LoadingSequence timing (see git 1d27ad2d / 5bdf3f39). */
@@ -27,22 +27,6 @@ const MaskBottom = styled(MaskCommon)`
   transform-origin: bottom;
 `;
 
-const LoadingLabel = styled.p`
-  position: fixed;
-  inset: 0;
-  z-index: 20001;
-  margin: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-  font-size: 0.95rem;
-  font-weight: 500;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: rgba(216, 227, 231, 0.88);
-`;
-
 interface LoadingSequenceProps {
   isVisible: boolean;
   isReadyToReveal: boolean;
@@ -54,7 +38,6 @@ const LoadingSequence = ({
   isReadyToReveal,
   onExitComplete,
 }: LoadingSequenceProps) => {
-  const [showLabel, setShowLabel] = useState(true);
   const revealStartedRef = useRef(false);
   const maskTopRef = useRef<HTMLDivElement>(null);
   const maskBottomRef = useRef<HTMLDivElement>(null);
@@ -62,7 +45,6 @@ const LoadingSequence = ({
   useEffect(() => {
     if (!isVisible) {
       revealStartedRef.current = false;
-      setShowLabel(true);
     }
   }, [isVisible]);
 
@@ -98,7 +80,6 @@ const LoadingSequence = ({
         if (maskBottomRef.current) {
           maskBottomRef.current.style.display = "none";
         }
-        setShowLabel(false);
         onExitComplete?.();
       }, REDUCED_COMPLETE_MS);
 
@@ -109,7 +90,6 @@ const LoadingSequence = ({
     const maskBottom = maskBottomRef.current;
 
     const t1 = window.setTimeout(() => {
-      setShowLabel(false);
       if (maskTop) {
         maskTop.style.transform = "scaleY(0)";
       }
@@ -149,10 +129,12 @@ const LoadingSequence = ({
 
   return (
     <>
-      <LoadingLabel role="status" aria-live="polite" data-testid="site-loader">
-        {showLabel ? "Loading portfolio..." : null}
-      </LoadingLabel>
-      <MaskTop ref={maskTopRef} id="MaskTop" aria-hidden="true" />
+      <MaskTop
+        ref={maskTopRef}
+        id="MaskTop"
+        aria-hidden="true"
+        data-testid="site-loader"
+      />
       <MaskBottom ref={maskBottomRef} id="MaskBottom" aria-hidden="true" />
     </>
   );
