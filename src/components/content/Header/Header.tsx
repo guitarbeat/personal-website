@@ -106,17 +106,17 @@ const HEADER_SECTIONS: {
   items: string[];
   separator?: string;
 }[] = [
-  { type: "name", items: ["Aaron", "Lorenzo", "Woods"] },
-  {
-    type: "roles",
-    items: ["Engineer", "Artist", "Scientist"],
-    separator: " | ",
-  },
-  {
-    type: "title",
-    items: ["Biomedical", "Engineering", "Doctoral", "Student"],
-  },
-];
+    { type: "name", items: ["Aaron", "Lorenzo", "Woods"] },
+    {
+      type: "roles",
+      items: ["Engineer", "Artist", "Scientist"],
+      separator: " | ",
+    },
+    {
+      type: "title",
+      items: ["Biomedical", "Engineering", "Doctoral", "Student"],
+    },
+  ];
 
 const SOCIAL_MEDIA = [
   {
@@ -174,16 +174,49 @@ const FALLBACK_PROFILE_SRC =
   PROFILE_IMAGES.find((image) => image.isFallback)?.src ??
   PROFILE_IMAGES[0].src;
 
+const PROFILE_INDEX_STORAGE_KEY = "header-profile-index";
+
+function readStoredProfileIndex(): number {
+  if (typeof sessionStorage === "undefined") {
+    return 0;
+  }
+  try {
+    const raw = sessionStorage.getItem(PROFILE_INDEX_STORAGE_KEY);
+    if (raw === null) {
+      return 0;
+    }
+    const parsed = Number.parseInt(raw, 10);
+    if (
+      !Number.isFinite(parsed) ||
+      parsed < 0 ||
+      parsed >= PROFILE_IMAGES.length
+    ) {
+      return 0;
+    }
+    return parsed;
+  } catch {
+    return 0;
+  }
+}
+
 function Header() {
   const headerRef = useRef<HTMLDivElement>(null);
   const [profileIndex, setProfileIndex] = useState<number>(() =>
-    Math.floor(Math.random() * PROFILE_IMAGES.length),
+    readStoredProfileIndex(),
   );
 
   useScrambleEffect(headerRef);
 
   const handleClick = () => {
-    setProfileIndex((prev) => (prev + 1) % PROFILE_IMAGES.length);
+    setProfileIndex((prev) => {
+      const next = (prev + 1) % PROFILE_IMAGES.length;
+      try {
+        sessionStorage.setItem(PROFILE_INDEX_STORAGE_KEY, String(next));
+      } catch {
+        /* quota / private mode */
+      }
+      return next;
+    });
   };
 
   const handleImageError = (
@@ -204,15 +237,12 @@ function Header() {
               onClick={handleClick}
               aria-label="Change profile image"
             >
-              {PROFILE_IMAGES.map(({ src, alt }, index) => (
-                <img
-                  key={src}
-                  className={cn("avatar", profileIndex === index && "active")}
-                  src={src}
-                  alt={alt}
-                  onError={handleImageError}
-                />
-              ))}
+              <img
+                className={cn("avatar", "active")}
+                src={PROFILE_IMAGES[profileIndex].src}
+                alt={PROFILE_IMAGES[profileIndex].alt}
+                onError={handleImageError}
+              />
             </button>
           </div>
           <div className="header__text">

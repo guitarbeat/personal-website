@@ -6,6 +6,10 @@ jest.mock("./useScrambleEffect", () => jest.fn());
 import Header from "./Header";
 
 describe("Header avatar", () => {
+  beforeEach(() => {
+    sessionStorage.removeItem("header-profile-index");
+  });
+
   it("renders the avatar button without the removed chat bubble hint", () => {
     const { container } = render(<Header />);
 
@@ -21,13 +25,13 @@ describe("Header avatar", () => {
     const avatarButton = screen.getByRole("button", {
       name: /change profile image/i,
     });
-    const avatars = Array.from(
-      container.querySelectorAll<HTMLImageElement>(".avatar"),
-    );
+    const profileImageCount = 4;
     const getActiveAvatar = () =>
       container.querySelector<HTMLImageElement>(".avatar.active");
 
-    expect(avatars.length).toBeGreaterThan(1);
+    expect(
+      container.querySelectorAll<HTMLImageElement>(".avatar"),
+    ).toHaveLength(1);
 
     const initialAvatar = getActiveAvatar();
     expect(initialAvatar).not.toBeNull();
@@ -41,7 +45,7 @@ describe("Header avatar", () => {
     expect(nextAvatar?.getAttribute("src")).not.toBe(initialSrc);
     expect(container.querySelectorAll(".avatar.active")).toHaveLength(1);
 
-    for (let clickCount = 1; clickCount < avatars.length; clickCount += 1) {
+    for (let clickCount = 1; clickCount < profileImageCount; clickCount += 1) {
       fireEvent.click(avatarButton);
     }
 

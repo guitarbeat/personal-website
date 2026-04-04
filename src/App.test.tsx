@@ -123,7 +123,7 @@ describe("App reliability states", () => {
     jest.useRealTimers();
   });
 
-  it("renders the simple loader while initial content is still loading", () => {
+  it("renders the loader over the shell while initial content is still loading", () => {
     mockUseNotion.mockReturnValue({
       db: {
         about: [],
@@ -140,7 +140,14 @@ describe("App reliability states", () => {
     render(<App />);
 
     expect(screen.getByTestId("site-loader")).toBeInTheDocument();
-    expect(screen.queryByText("Header section")).not.toBeInTheDocument();
+    expect(screen.getByText("Header section")).toBeInTheDocument();
+
+    act(() => {
+      jest.advanceTimersByTime(500);
+    });
+
+    expect(screen.queryByTestId("site-loader")).not.toBeInTheDocument();
+    expect(screen.getByText("Header section")).toBeInTheDocument();
   });
 
   it("renders a degraded-status pill while cached content is displayed", () => {
@@ -172,7 +179,7 @@ describe("App reliability states", () => {
     expect(screen.getByText("Header section")).toBeInTheDocument();
   });
 
-  it("dismisses the loader after the minimum intro duration once content is ready", () => {
+  it("dismisses the loader after the minimum intro duration", () => {
     mockUseNotion.mockReturnValue({
       db: {
         about: [{ category: "Bio", description: "Hello" }],

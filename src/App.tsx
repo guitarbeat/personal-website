@@ -439,12 +439,10 @@ const AppContent = () => {
   const hasRenderableContent =
     db.about.length > 0 || db.projects.length > 0 || db.work.length > 0;
   const showUnavailableState = !loading && !hasRenderableContent;
-  const hasInitialViewReady = hasRenderableContent || showUnavailableState;
+  // Moire + page shell mount immediately; do not wait for Notion or tie visibility to the loader.
+  const isBackgroundVisible = true;
   const canRevealInitialLoader =
-    isInitialLoaderVisible &&
-    hasMinimumLoaderDurationElapsed &&
-    hasInitialViewReady;
-  const isBackgroundVisible = !isInitialLoaderVisible || canRevealInitialLoader;
+    isInitialLoaderVisible && hasMinimumLoaderDurationElapsed;
   const handleInitialLoaderExit = useCallback(() => {
     setIsInitialLoaderVisible(false);
   }, []);
@@ -465,7 +463,7 @@ const AppContent = () => {
       {isUnlocked ? <CustomCursor /> : null}
       {showUnavailableState ? (
         <ContentUnavailableState error={error} />
-      ) : hasRenderableContent ? (
+      ) : (
         <BrowserRouter>
           <MatrixRouteSync
             showMatrix={showMatrix}
@@ -486,7 +484,7 @@ const AppContent = () => {
             />
           </Suspense>
         </BrowserRouter>
-      ) : null}
+      )}
     </>
   );
 };
