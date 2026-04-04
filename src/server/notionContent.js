@@ -199,11 +199,62 @@ function compareProjectRecords(a, b) {
   return String(a.title).localeCompare(String(b.title));
 }
 
+function workMonthSortValue(value) {
+  if (typeof value !== "string" || value.trim().length === 0) {
+    return null;
+  }
+
+  if (!isMonthYear(value)) {
+    return null;
+  }
+
+  const [month, year] = value.split("-").map(Number);
+
+  if (!Number.isFinite(month) || !Number.isFinite(year)) {
+    return null;
+  }
+
+  return year * 100 + month;
+}
+
+function compareWorkRecords(a, b) {
+  const isCurrentA = !a.to;
+  const isCurrentB = !b.to;
+
+  if (isCurrentA !== isCurrentB) {
+    return isCurrentA ? -1 : 1;
+  }
+
+  const toA = workMonthSortValue(a.to);
+  const toB = workMonthSortValue(b.to);
+
+  if (typeof toA === "number" && typeof toB === "number" && toA !== toB) {
+    return toB - toA;
+  }
+
+  const fromA = workMonthSortValue(a.from);
+  const fromB = workMonthSortValue(b.from);
+
+  if (
+    typeof fromA === "number" &&
+    typeof fromB === "number" &&
+    fromA !== fromB
+  ) {
+    return fromB - fromA;
+  }
+
+  return String(a.title).localeCompare(String(b.title));
+}
+
 function prepareProjectsForPublicDisplay(records) {
   return records
     .filter((record) => record.published !== false)
     .sort(compareProjectRecords)
     .map(({ published, sortOrder, ...publicRecord }) => publicRecord);
+}
+
+function prepareWorkForPublicDisplay(records) {
+  return [...records].sort(compareWorkRecords);
 }
 
 function convertToMMYYYY(dateString) {
@@ -962,6 +1013,8 @@ export async function queryNotionDatabase({
             }),
           ),
         )
+      : databaseType === "work"
+        ? prepareWorkForPublicDisplay(transformWorkData(rawResults))
       : getDatasetTransformer(databaseType)(rawResults);
 
   return validateDatasetRecords(databaseType, records);

@@ -66,7 +66,7 @@ const createWorkPage = ({
     Company: { rich_text: richText("Acme Corp") },
     Description: { rich_text: richText("Building resilient systems.") },
     From: { date: { start: from } },
-    To: { date: { start: to } },
+    To: { date: to ? { start: to } : null },
     Place: { rich_text: richText("Remote") },
     Slug: { rich_text: richText(slug) },
   },
@@ -273,6 +273,54 @@ describe("notionContent server helpers", () => {
       "beta-project",
       "alpha-project",
       "zeta-project",
+    ]);
+  });
+
+  it("sorts work records with current roles first, then by end date", async () => {
+    const fetchImpl = jest.fn().mockResolvedValue(
+      mockResponse({
+        results: [
+          createWorkPage({
+            titleText: "Older Role",
+            slug: "older-role",
+            from: "2018-01-01",
+            to: "2018-05-01",
+          }),
+          createWorkPage({
+            titleText: "Current Role",
+            slug: "current-role",
+            from: "2021-08-01",
+            to: null,
+          }),
+          createWorkPage({
+            titleText: "Recent Role",
+            slug: "recent-role",
+            from: "2023-05-01",
+            to: "2023-11-01",
+          }),
+          createWorkPage({
+            titleText: "Earlier Current Role",
+            slug: "earlier-current-role",
+            from: "2020-01-01",
+            to: null,
+          }),
+        ],
+        has_more: false,
+        next_cursor: null,
+      }),
+    );
+
+    const records = await queryNotionDatabase({
+      databaseType: "work",
+      fetchImpl,
+      env: { NOTION_TOKEN: "test-token" },
+    });
+
+    expect(records.map((record) => record.slug)).toEqual([
+      "current-role",
+      "earlier-current-role",
+      "recent-role",
+      "older-role",
     ]);
   });
 
