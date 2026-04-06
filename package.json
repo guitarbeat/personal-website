@@ -94,7 +94,7 @@
     "styled-components": "^6.3.12",
     "terser-webpack-plugin": "^5.4.0",
     "tone": "^15.1.22",
-    "vite": "^8.0.3",
+    "vite": "^8.0.4",
     "web-vitals": "^5.2.0"
   },
   "bin": {
