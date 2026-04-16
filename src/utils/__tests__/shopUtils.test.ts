@@ -85,7 +85,6 @@ describe("parsePrintfulProduct", () => {
   });
 });
 
-
 describe("validatePrintfulConfig", () => {
   const OLD_ENV = process.env;
 
@@ -98,29 +97,21 @@ describe("validatePrintfulConfig", () => {
     process.env = OLD_ENV;
   });
 
-  it("should return the config when both required environment variables are set", () => {
-    process.env.REACT_APP_PRINTFUL_API_KEY = "test_api_key";
+  it("should return the config when required environment variable is set", () => {
     process.env.REACT_APP_PRINTFUL_STORE_ID = "test_store_id";
 
     const config = validatePrintfulConfig();
 
     expect(config).toEqual({
-      apiKey: "test_api_key",
       storeId: "test_store_id",
     });
   });
 
-  it("should throw an error when REACT_APP_PRINTFUL_API_KEY is not set", () => {
-    delete process.env.REACT_APP_PRINTFUL_API_KEY;
-    process.env.REACT_APP_PRINTFUL_STORE_ID = "test_store_id";
-
-    expect(() => validatePrintfulConfig()).toThrow("REACT_APP_PRINTFUL_API_KEY is not set");
-  });
-
   it("should throw an error when REACT_APP_PRINTFUL_STORE_ID is not set", () => {
-    process.env.REACT_APP_PRINTFUL_API_KEY = "test_api_key";
     delete process.env.REACT_APP_PRINTFUL_STORE_ID;
 
-    expect(() => validatePrintfulConfig()).toThrow("REACT_APP_PRINTFUL_STORE_ID is not set");
+    expect(() => validatePrintfulConfig()).toThrow(
+      "REACT_APP_PRINTFUL_STORE_ID is not set",
+    );
   });
 });

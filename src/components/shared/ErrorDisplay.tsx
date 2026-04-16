@@ -17,9 +17,6 @@ const ErrorDisplay = ({ error }: ErrorDisplayProps) => {
           </p>
           <ul>
             <li>
-              <code>REACT_APP_PRINTFUL_API_KEY</code> - Your Printful API key
-            </li>
-            <li>
               <code>REACT_APP_PRINTFUL_STORE_ID</code> - Your Printful store ID
             </li>
           </ul>

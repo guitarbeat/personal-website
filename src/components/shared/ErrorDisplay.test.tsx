@@ -29,7 +29,6 @@ describe("ErrorDisplay", () => {
     expect(
       screen.getByText("Environment Variables Required"),
     ).toBeInTheDocument();
-    expect(screen.getByText(/REACT_APP_PRINTFUL_API_KEY/)).toBeInTheDocument();
   });
 
   it("renders proxy configuration help when error contains 'CORS Error'", () => {
