@@ -185,7 +185,6 @@ interface MatrixProps {
 // * Sub-components (Consolidated)
 // * --------------------------------------------------------------------------------
 
-
 interface NuUhUhEasterEggProps {
   onClose: () => void;
   id?: number;
@@ -1224,10 +1223,14 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                 </div>
                 <p className="hack-sequencer__feedback">{hackFeedback}</p>
               </div>
+              {/* biome-ignore lint/a11y/useSemanticElements: Matrix viewport needs to be a div for styling */}
               <div
                 className="hack-input-viewport"
                 onMouseDown={handleViewportEngage}
                 onTouchStart={handleViewportEngage}
+                role="button"
+                tabIndex={0}
+                onKeyDown={handleViewportEngage}
               >
                 <div className="hack-input-stream" aria-hidden="true">
                   {consoleDisplay.split("\n").map((line, i) => {
@@ -1247,6 +1250,7 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                       className += " prompt";
 
                     return (
+                      // biome-ignore lint/suspicious/noArrayIndexKey: Append-only log does not require strict keys
                       <div key={i} className={className}>
                         {line}
                       </div>
