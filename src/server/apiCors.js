@@ -10,39 +10,13 @@ function buildCorsConfig(env = process.env) {
   const envOrigins = env.ALLOWED_ORIGINS;
 
   if (!envOrigins) {
-    return {
-      exact: PRODUCTION_WHITELIST,
-      regexes: [],
-      allowAll: false,
-    };
+    return PRODUCTION_WHITELIST;
   }
 
-  if (envOrigins === "*") {
-    return {
-      exact: [],
-      regexes: [],
-      allowAll: true,
-    };
-  }
-
-  const parts = envOrigins
+  return envOrigins
     .split(",")
     .map((value) => value.trim())
     .filter(Boolean);
-  const exact = [];
-  const regexes = [];
-
-  for (const part of parts) {
-    if (part.includes("*")) {
-      const escaped = part.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-      const regexStr = `^${escaped.replace(/\\\*/g, ".*")}$`;
-      regexes.push(new RegExp(regexStr));
-    } else {
-      exact.push(part);
-    }
-  }
-
-  return { exact, regexes, allowAll: false };
 }
 
 export function isOriginAllowed(origin, env = process.env) {
@@ -54,15 +28,7 @@ export function isOriginAllowed(origin, env = process.env) {
     corsConfigCache = buildCorsConfig(env);
   }
 
-  if (corsConfigCache.allowAll) {
-    return true;
-  }
-
-  if (corsConfigCache.exact.includes(origin)) {
-    return true;
-  }
-
-  return corsConfigCache.regexes.some((regex) => regex.test(origin));
+  return corsConfigCache.includes(origin);
 }
 
 export function applyCors(
