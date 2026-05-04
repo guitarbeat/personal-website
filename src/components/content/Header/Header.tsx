@@ -6,7 +6,7 @@ import cvFile from "../../../assets/documents/cv.pdf";
 // Asset imports
 import profile1 from "../../../assets/images/profile1-nbg.png";
 import profile2 from "../../../assets/images/profile2-nbg.png";
-import profile3 from "../../../assets/images/profile3-nbg.png";
+import profile3 from "../../../assets/images/profile1v2-nbg.png";
 import profile4 from "../../../assets/images/profile4.png";
 
 // Local imports

@@ -246,9 +246,8 @@ personal-website/
 | `assets/images/nu-uh-uh.webp` | Image | WebP image asset | None | ✅ Active |
 | `assets/images/profile1-nbg.png` | Image | Profile image 1 (no background) | None | ✅ Active |
 | `assets/images/profile2-nbg.png` | Image | Profile image 2 (no background) | None | ✅ Active |
-| `assets/images/profile3-nbg.png` | Image | Profile image 3 (no background) | None | ✅ Active |
+| `assets/images/profile1v2-nbg.png` | Image | Alternate profile 1 / third header cycling image | None | ✅ Active |
 | `assets/images/profile4.png` | Image | Profile image 4 | None | ✅ Active |
-| `assets/images/profile5.png` | Image | Profile image 5 | None | ✅ Active |
 | `assets/images/shell.png` | Image | Shell/terminal image | None | ✅ Active |
 
 ## Analysis Tools
