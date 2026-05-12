@@ -106,17 +106,17 @@ const HEADER_SECTIONS: {
   items: string[];
   separator?: string;
 }[] = [
-    { type: "name", items: ["Aaron", "Lorenzo", "Woods"] },
-    {
-      type: "roles",
-      items: ["Engineer", "Artist", "Scientist"],
-      separator: " | ",
-    },
-    {
-      type: "title",
-      items: ["Biomedical", "Engineering", "Doctoral", "Student"],
-    },
-  ];
+  { type: "name", items: ["Aaron", "Lorenzo", "Woods"] },
+  {
+    type: "roles",
+    items: ["Engineer", "Artist", "Scientist"],
+    separator: " | ",
+  },
+  {
+    type: "title",
+    items: ["Biomedical", "Engineering", "Doctoral", "Student"],
+  },
+];
 
 const SOCIAL_MEDIA = [
   {
