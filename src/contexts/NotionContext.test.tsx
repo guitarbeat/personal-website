@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, renderHook, screen, waitFor } from "@testing-library/react";
 
 import { NotionProvider, useNotion } from "./NotionContext";
 
@@ -71,6 +71,42 @@ describe("NotionProvider", () => {
       expect(screen.getByText("degraded")).toBeInTheDocument();
       expect(screen.getByText("2026-03-21T10:00:00.000Z")).toBeInTheDocument();
       expect(screen.getByText("Project One")).toBeInTheDocument();
+    });
+  });
+});
+
+describe("useNotion", () => {
+  it("throws an error when used outside of NotionProvider", () => {
+    // Suppress React error boundary console.error for this expected error
+    const consoleError = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+
+    expect(() => renderHook(() => useNotion())).toThrow(
+      "useNotion must be used within NotionProvider",
+    );
+
+    consoleError.mockRestore();
+  });
+
+  it("returns context when used within NotionProvider", async () => {
+    mockGetAllData.mockResolvedValue({
+      meta: null,
+      data: { about: [], projects: [], work: [] },
+    });
+
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <NotionProvider>{children}</NotionProvider>
+    );
+
+    const { result } = renderHook(() => useNotion(), { wrapper });
+
+    // Initially it should be in loading state with empty data
+    expect(result.current.loading).toBe(true);
+    expect(result.current.db).toEqual({ about: [], projects: [], work: [] });
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
     });
   });
 });
