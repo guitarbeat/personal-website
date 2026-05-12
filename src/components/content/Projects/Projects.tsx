@@ -48,14 +48,32 @@ const createPaletteFromHsl = (color: string | undefined) => {
   return [accent, base, shadow];
 };
 
+const effectCache = new Map<
+  string,
+  { colors: string[]; gap: number; speed: number }
+>();
+
 const createProjectEffect = (tagColor: string | undefined, index: number) => {
+  const cacheKey = `${tagColor || "default"}-${index % 12}`;
+
+  const cachedEffect = effectCache.get(cacheKey);
+  if (cachedEffect) {
+    return cachedEffect;
+  }
+
   const palette = createPaletteFromHsl(tagColor);
 
-  return {
+  const effect = {
     colors: palette,
+
     gap: 8 + (index % 3) * 2,
+
     speed: 18 + (index % 4) * 3,
   };
+
+  effectCache.set(cacheKey, effect);
+
+  return effect;
 };
 
 interface ProjectCardProps {
@@ -138,7 +156,9 @@ function ProjectCard({
         </div>
         <h3>{title}</h3>
         <p className="projects__card__hook">{hook}</p>
-        <p className={cn("projects__card__detail", isClicked ? "show-text" : "")}>
+        <p
+          className={cn("projects__card__detail", isClicked ? "show-text" : "")}
+        >
           {detail}
         </p>
         {image && <img src={image} className="project-image" alt="Project" />}
