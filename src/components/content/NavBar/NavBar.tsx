@@ -15,7 +15,7 @@ import { cn, debounce } from "../../../utils/commonUtils";
 import { useAuth } from "../../effects/Matrix/AuthContext";
 
 // Theme Configuration
-const THEME = {
+export const THEME = {
   LIGHT: "light",
   DARK: "dark",
   STORAGE_KEY: "theme",
@@ -28,7 +28,7 @@ const isBrowser = typeof window !== "undefined";
 const isDocumentAvailable = typeof document !== "undefined";
 const useIsomorphicLayoutEffect = isBrowser ? useLayoutEffect : useEffect;
 
-const getInitialTheme = () => {
+export const getInitialTheme = () => {
   if (!isBrowser) {
     return false;
   }
