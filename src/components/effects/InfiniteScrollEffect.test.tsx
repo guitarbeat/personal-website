@@ -1,4 +1,3 @@
-import React from "react";
 import { render } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import InfiniteScrollEffect from "./InfiniteScrollEffect";
@@ -10,16 +9,21 @@ class ResizeObserverMock {
   disconnect() {}
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: Mock data for test
 global.ResizeObserver = ResizeObserverMock as any;
 
 const originalRandomUUID = global.crypto?.randomUUID;
 
 beforeAll(() => {
   if (!global.crypto) {
+    // biome-ignore lint/suspicious/noExplicitAny: Mock data for test
     (global as any).crypto = {};
   }
   let id = 0;
-  global.crypto.randomUUID = jest.fn(() => `mocked-uuid-${id++}`);
+  global.crypto.randomUUID = jest.fn(
+    () =>
+      `123e4567-e89b-12d3-a456-${(id++).toString().padStart(12, "0")}` as `${string}-${string}-${string}-${string}-${string}`,
+  );
 });
 
 afterAll(() => {
@@ -31,7 +35,7 @@ describe("InfiniteScrollEffect", () => {
     const { container } = render(
       <InfiniteScrollEffect>
         <div data-testid="child">Test Content</div>
-      </InfiniteScrollEffect>
+      </InfiniteScrollEffect>,
     );
     expect(container).toBeInTheDocument();
   });
@@ -40,7 +44,7 @@ describe("InfiniteScrollEffect", () => {
     render(
       <InfiniteScrollEffect>
         <div data-testid="child">Test Content</div>
-      </InfiniteScrollEffect>
+      </InfiniteScrollEffect>,
     );
 
     expect(global.crypto.randomUUID).toHaveBeenCalled();
