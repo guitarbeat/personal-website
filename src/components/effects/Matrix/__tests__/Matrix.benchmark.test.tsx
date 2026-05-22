@@ -1,4 +1,4 @@
-import { render } from "@testing-library/react";
+import { render, act } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { AuthProvider } from "../AuthContext";
 import Matrix from "../Matrix";
@@ -57,7 +57,7 @@ describe("Matrix Performance", () => {
     // Trigger rapid resize events
     const resizeEvent = new Event("resize");
     for (let i = 0; i < 10; i++) {
-      window.dispatchEvent(resizeEvent);
+      act(() => window.dispatchEvent(resizeEvent));
     }
 
     // Immediately after events, it should NOT have been called due to debounce
