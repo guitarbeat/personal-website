@@ -1,3 +1,5 @@
+import pLimit from "p-limit";
+
 const NOTION_API_BASE = "https://api.notion.com/v1";
 const NOTION_VERSION = "2022-06-28";
 
@@ -312,8 +314,12 @@ function transformProjectsData(results, projectContentByPageId = new Map()) {
           props.content?.rich_text ||
           props.Description?.rich_text ||
           [],
-      ) || projectContentByPageId.get(page.id) || "";
-    const rawHook = extractRichText(props.Hook?.rich_text || props.hook?.rich_text || []);
+      ) ||
+      projectContentByPageId.get(page.id) ||
+      "";
+    const rawHook = extractRichText(
+      props.Hook?.rich_text || props.hook?.rich_text || [],
+    );
 
     return {
       title: titleText,
@@ -338,8 +344,7 @@ function transformProjectsData(results, projectContentByPageId = new Map()) {
       keywords: extractMultiSelectNames(
         props.Keyword?.multi_select || props.keyword?.multi_select || [],
       ),
-      published:
-        extractCheckboxValue(props.Published, props.published) ?? true,
+      published: extractCheckboxValue(props.Published, props.published) ?? true,
       sortOrder: extractNumberValue(
         props["Sort Order"],
         props.SortOrder,
@@ -885,33 +890,38 @@ async function fetchProjectContentByPageId({
   fetchImpl = fetch,
   notionToken,
 }) {
+  const limit = pLimit(5);
   const contentEntries = await Promise.all(
-    pages.map(async (page) => {
-      const props = page.properties || {};
-      const inlineContent = extractRichText(
-        props.Detail?.rich_text ||
-          props.detail?.rich_text ||
-          props.content?.rich_text ||
-          props.Description?.rich_text ||
-          [],
-      );
+    pages.map((page) =>
+      limit(async () => {
+        const props = page.properties || {};
+        const inlineContent = extractRichText(
+          props.Detail?.rich_text ||
+            props.detail?.rich_text ||
+            props.content?.rich_text ||
+            props.Description?.rich_text ||
+            [],
+        );
 
-      if (inlineContent) {
-        return [page.id, inlineContent];
-      }
+        if (inlineContent) {
+          return [page.id, inlineContent];
+        }
 
-      const blocks = await fetchNotionBlockChildren({
-        blockId: page.id,
-        fetchImpl,
-        notionToken,
-      });
-      const pageContent = blocks
-        .map(extractBlockPlainText)
-        .filter((blockText) => typeof blockText === "string" && blockText.length)
-        .join("\n\n");
+        const blocks = await fetchNotionBlockChildren({
+          blockId: page.id,
+          fetchImpl,
+          notionToken,
+        });
+        const pageContent = blocks
+          .map(extractBlockPlainText)
+          .filter(
+            (blockText) => typeof blockText === "string" && blockText.length,
+          )
+          .join("\n\n");
 
-      return [page.id, pageContent];
-    }),
+        return [page.id, pageContent];
+      }),
+    ),
   );
 
   return new Map(contentEntries);
@@ -1015,7 +1025,7 @@ export async function queryNotionDatabase({
         )
       : databaseType === "work"
         ? prepareWorkForPublicDisplay(transformWorkData(rawResults))
-      : getDatasetTransformer(databaseType)(rawResults);
+        : getDatasetTransformer(databaseType)(rawResults);
 
   return validateDatasetRecords(databaseType, records);
 }
@@ -1398,10 +1408,10 @@ export function createErrorPayload(error) {
   }
 
   return {
-      error: {
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Internal server error",
-        failureType: "internal_server_error",
-      },
-    };
+    error: {
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Internal server error",
+      failureType: "internal_server_error",
+    },
+  };
 }
