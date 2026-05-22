@@ -1,0 +1,10 @@
+🔒 [Security] Fix XSS vulnerability in React Root initialization
+
+🎯 **What:**
+Removed an insecure `innerHTML` assignment in the `catch` block of the React application initialization sequence (`src/index.tsx`).
+
+⚠️ **Risk:**
+If an attacker could control the contents of the `error` object or find a way to inject data into the fallback error message rendering, the use of `innerHTML` could allow Cross-Site Scripting (XSS). This could lead to arbitrary JavaScript execution in the context of the user's browser, potentially compromising session tokens or sensitive data.
+
+🛡️ **Solution:**
+Replaced `root.innerHTML` with secure DOM manipulation methods (`document.createElement`, `textContent`, and safe `style` assignments). This approach guarantees that the fallback error message is treated strictly as text and DOM nodes, entirely eliminating the XSS vector without altering the intended visual output or fallback functionality.
