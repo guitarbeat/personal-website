@@ -46,8 +46,7 @@ export interface ParsedProduct {
 /**
  * Parses Printful product data to extract key information
  */
-// biome-ignore lint/suspicious/noExplicitAny: External API data structure is complex
-export const parsePrintfulProduct = (product: any): ParsedProduct => {
+export const parsePrintfulProduct = (product: unknown): ParsedProduct => {
   // Input validation
   if (!product || typeof product !== "object") {
     console.warn("parsePrintfulProduct: Invalid product object provided");
@@ -59,12 +58,13 @@ export const parsePrintfulProduct = (product: any): ParsedProduct => {
     };
   }
 
-  const syncProduct = product.sync_product || null;
-  const syncVariants = product.sync_variants || [];
-  const firstVariant = Array.isArray(syncVariants)
-    ? syncVariants[0] || null
-    : null;
-  const price = Number(firstVariant?.retail_price) || 0;
+  const p = product as Record<string, unknown>;
+  const syncProduct = p.sync_product || null;
+  const syncVariants = Array.isArray(p.sync_variants) ? p.sync_variants : [];
+  const firstVariant = syncVariants.length > 0 ? syncVariants[0] : null;
+  const price = firstVariant && typeof firstVariant === 'object' && 'retail_price' in firstVariant
+    ? Number((firstVariant as Record<string, unknown>).retail_price) || 0
+    : 0;
 
   return {
     syncProduct,
