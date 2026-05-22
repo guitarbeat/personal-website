@@ -176,7 +176,7 @@ function Work({ db: propsDb }: WorkProps = {}) {
   const [activeCards, setActiveCards] = useState<Set<string>>(
     () => new Set<string>(),
   );
-  const [hoveredCard, setHoveredCard] = useState<string | null>(null); // Add missing state
+  const [hoveredJob, setHoveredJob] = useState<Job | null>(null); // Add missing state
   const { db: contextDb } = useNotion();
   const db = propsDb || contextDb;
 
@@ -192,8 +192,8 @@ function Work({ db: propsDb }: WorkProps = {}) {
     });
   }, []);
 
-  const handleCardHover = useCallback((slug: string | null) => {
-    setHoveredCard(slug);
+  const handleCardHover = useCallback((job: Job | null) => {
+    setHoveredJob(job);
   }, []);
 
   // Data processing
@@ -263,7 +263,7 @@ function Work({ db: propsDb }: WorkProps = {}) {
             first_year={first_date.format("YYYY")}
             job_bars={job_bars}
             activeCards={activeCards}
-            hoveredJob={jobs.find((job) => job.slug === hoveredCard)}
+            hoveredJob={hoveredJob || undefined}
             jobs={jobs}
           />
           <div className="work__items">
@@ -276,7 +276,7 @@ function Work({ db: propsDb }: WorkProps = {}) {
                   type="button"
                   className={cn("work__item", isActive && "active")}
                   onClick={() => handleCardClick(job.slug)}
-                  onMouseEnter={() => handleCardHover(job.slug)}
+                  onMouseEnter={() => handleCardHover(job)}
                   onMouseLeave={() => handleCardHover(null)}
                   aria-expanded={isActive}
                 >
