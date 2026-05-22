@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 const NOTION_API_BASE = "https://api.notion.com/v1";
 const NOTION_VERSION = "2022-06-28";
 
@@ -1366,6 +1367,23 @@ export async function getHealthSummary({
   };
 }
 
+
+function timingSafeCompare(a, b) {
+  if (typeof a !== 'string' || typeof b !== 'string') {
+    return false;
+  }
+
+  const aBuffer = Buffer.from(a);
+  const bBuffer = Buffer.from(b);
+
+  if (aBuffer.length !== bBuffer.length) {
+    crypto.timingSafeEqual(aBuffer, aBuffer);
+    return false;
+  }
+
+  return crypto.timingSafeEqual(aBuffer, bBuffer);
+}
+
 export function isAuthorizedCronRequest(req, env = process.env) {
   const secret = env.CRON_SECRET;
 
@@ -1376,7 +1394,10 @@ export function isAuthorizedCronRequest(req, env = process.env) {
   const authorization = req.headers.authorization;
   const headerSecret = req.headers["x-cron-secret"];
 
-  return authorization === `Bearer ${secret}` || headerSecret === secret;
+  const isBearerValid = timingSafeCompare(authorization || "", `Bearer ${secret}`);
+  const isHeaderValid = timingSafeCompare(headerSecret || "", secret);
+
+  return isBearerValid || isHeaderValid;
 }
 
 export function buildStructuredLog(event, telemetry) {
