@@ -138,7 +138,9 @@ function ProjectCard({
         </div>
         <h3>{title}</h3>
         <p className="projects__card__hook">{hook}</p>
-        <p className={cn("projects__card__detail", isClicked ? "show-text" : "")}>
+        <p
+          className={cn("projects__card__detail", isClicked ? "show-text" : "")}
+        >
           {detail}
         </p>
         {image && <img src={image} className="project-image" alt="Project" />}
