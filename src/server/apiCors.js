@@ -4,7 +4,7 @@ const PRODUCTION_WHITELIST = [
   "https://pixel-pal-follow.lovable.app",
 ];
 
-let corsConfigCache = null;
+const corsConfigCache = new Map();
 
 function buildCorsConfig(env = process.env) {
   const envOrigins = env.ALLOWED_ORIGINS;
@@ -50,19 +50,22 @@ export function isOriginAllowed(origin, env = process.env) {
     return false;
   }
 
-  if (!corsConfigCache) {
-    corsConfigCache = buildCorsConfig(env);
+  const cacheKey = env.ALLOWED_ORIGINS || '';
+  if (!corsConfigCache.has(cacheKey)) {
+    corsConfigCache.set(cacheKey, buildCorsConfig(env));
   }
 
-  if (corsConfigCache.allowAll) {
+  const config = corsConfigCache.get(cacheKey);
+
+  if (config.allowAll) {
     return true;
   }
 
-  if (corsConfigCache.exact.includes(origin)) {
+  if (config.exact.includes(origin)) {
     return true;
   }
 
-  return corsConfigCache.regexes.some((regex) => regex.test(origin));
+  return config.regexes.some((regex) => regex.test(origin));
 }
 
 export function applyCors(
