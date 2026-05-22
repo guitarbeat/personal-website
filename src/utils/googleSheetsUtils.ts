@@ -1,9 +1,6 @@
 // Utility functions for processing data from Google Sheets.
 
-export interface AboutItem {
-  category: string;
-  description: string;
-}
+import type { AboutItem } from "../types/content";
 
 export interface ProjectItem {
   title: string;
