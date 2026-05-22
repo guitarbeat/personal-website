@@ -244,12 +244,14 @@ function Projects({ db: propsDb }: ProjectsProps = {}) {
     [allKeywords],
   );
 
+  const activeFiltersSet = useMemo(() => new Set(activeFilters), [activeFilters]);
+
   const project_cards = projectsData.map((projectProps, index) => {
     const primaryKeyword = projectProps.keywords[0] || "";
     const primaryTagColor = tagColors[primaryKeyword];
     const isFiltered =
       projectProps.keywords.length > 0 &&
-      !projectProps.keywords.some((keyword) => activeFilters.includes(keyword));
+      !projectProps.keywords.some((keyword) => activeFiltersSet.has(keyword));
     const effect = createProjectEffect(primaryTagColor, index);
 
     return (
@@ -274,10 +276,10 @@ function Projects({ db: propsDb }: ProjectsProps = {}) {
               type="button"
               key={filter}
               onClick={() => toggleFilter(filter)}
-              className={cn("tag", activeFilters.includes(filter) && "active")}
+              className={cn("tag", activeFiltersSet.has(filter) && "active")}
               style={
                 {
-                  "--tag-color": activeFilters.includes(filter)
+                  "--tag-color": activeFiltersSet.has(filter)
                     ? tagColors[filter]
                     : undefined,
                 } as React.CSSProperties
