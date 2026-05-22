@@ -99,6 +99,8 @@ function TimelineBar({
     />
   ));
 
+  const jobsBySlug = new Map(jobs.map((job) => [job.slug, job]));
+
   return (
     <div className="work__timeline">
       <p className="work__timeline__now">Now</p>
@@ -117,7 +119,7 @@ function TimelineBar({
 
       {sub_bars}
       {Array.from(activeCards).map((slug) => {
-        const activeJob = jobs.find((job) => job.slug === slug);
+        const activeJob = jobsBySlug.get(slug);
         return (
           activeJob && (
             <div
