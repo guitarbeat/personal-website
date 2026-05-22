@@ -1,3 +1,5 @@
+import type { WorkItem } from "../types/content";
+
 // Utility functions for processing data from Google Sheets.
 
 export interface AboutItem {
@@ -13,16 +15,6 @@ export interface ProjectItem {
   link: string;
   content: string;
   image: string;
-}
-
-export interface WorkItem {
-  title: string;
-  company: string;
-  place: string;
-  from: string;
-  to: string;
-  description: string;
-  slug: string;
 }
 
 export const processAboutData = (data: Record<string, string>[]): AboutItem[] =>
