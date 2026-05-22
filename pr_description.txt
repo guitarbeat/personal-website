@@ -1,0 +1,11 @@
+🧪 Add tests for apiCors.js
+
+🎯 **What:** The testing gap addressed
+Added a comprehensive test suite for `src/server/apiCors.js` to ensure the CORS validation logic works correctly.
+
+📊 **Coverage:** What scenarios are now tested
+- `isOriginAllowed`: Tested behavior for missing origins, default production whitelist fallback, wildcard (`*`) allow all rule, specific comma-separated domain whitelists, and wildcard subdomain pattern matching.
+- `applyCors`: Tested proper setting of `Access-Control-Allow-Origin` for allowed origins, omitted headers for blocked origins, and proper setting of Methods and Headers defaults and overrides.
+
+✨ **Result:** The improvement in test coverage
+The critical CORS handling layer (`isOriginAllowed` and `applyCors`) is now fully unit-tested, providing a safety net to prevent accidental misconfigurations or SSRF/CORS bypass vulnerabilities during future refactoring.
