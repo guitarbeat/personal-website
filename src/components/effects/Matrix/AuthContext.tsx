@@ -86,8 +86,7 @@ const clearSessionData = (key: string) => {
   }
 };
 
-// biome-ignore lint/suspicious/noExplicitAny: Generic value for storage
-const setSessionData = (key: string, value: any) => {
+const setSessionData = <T,>(key: string, value: T) => {
   if (!hasSessionStorage()) {
     return;
   }
