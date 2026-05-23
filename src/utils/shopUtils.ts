@@ -20,34 +20,70 @@ export const handlePrintfulError = (
   err: unknown,
   context = "API Error",
 ): string => {
-  // biome-ignore lint/suspicious/noExplicitAny: Error handling for unknown external error shapes
-  const error = err as any;
-  let errorMessage = `${context}: ${error.response?.status} - ${error.response?.statusText || error.message}`;
+  let errorMessage = `${context}: Unknown Error`;
 
-  // Handle CORS errors specifically
-  if (error.message === "Network Error" || error.code === "ERR_NETWORK") {
-    errorMessage =
-      "CORS Error: Unable to connect to Printful API. Please ensure the development server is running with the correct proxy configuration.";
+  if (err instanceof Error) {
+    const errorObj = err as unknown as Record<string, unknown>;
+    const response = errorObj.response as Record<string, unknown> | undefined;
+    const code = errorObj.code as string | undefined;
+
+    if (response) {
+      errorMessage = `${context}: ${response.status} - ${response.statusText || err.message}`;
+    } else {
+      errorMessage = `${context}: undefined - ${err.message}`;
+    }
+
+    // Handle CORS errors specifically
+    if (err.message === "Network Error" || code === "ERR_NETWORK") {
+      errorMessage =
+        "CORS Error: Unable to connect to Printful API. Please ensure the development server is running with the correct proxy configuration.";
+    }
+  } else if (typeof err === "object" && err !== null) {
+      const errObj = err as Record<string, unknown>;
+      const response = errObj.response as Record<string, unknown> | undefined;
+      const code = errObj.code as string | undefined;
+      const message = errObj.message as string | undefined;
+
+      if (response) {
+        errorMessage = `${context}: ${response.status} - ${response.statusText || message || 'Unknown Error'}`;
+      } else if (message) {
+        errorMessage = `${context}: undefined - ${message}`;
+      }
+
+      if (message === "Network Error" || code === "ERR_NETWORK") {
+        errorMessage =
+          "CORS Error: Unable to connect to Printful API. Please ensure the development server is running with the correct proxy configuration.";
+      }
+  } else if (typeof err === "string") {
+      errorMessage = `${context}: undefined - ${err}`;
   }
 
   return errorMessage;
 };
 
+export interface PrintfulSyncProduct {
+  id: number;
+  name?: string;
+  [key: string]: unknown;
+}
+
+export interface PrintfulSyncVariant {
+  id: number;
+  retail_price?: string | number;
+  [key: string]: unknown;
+}
+
 export interface ParsedProduct {
-  // biome-ignore lint/suspicious/noExplicitAny: External API data structure is complex
-  syncProduct: any;
-  // biome-ignore lint/suspicious/noExplicitAny: External API data structure is complex
-  syncVariants: any[];
-  // biome-ignore lint/suspicious/noExplicitAny: External API data structure is complex
-  firstVariant: any;
+  syncProduct: PrintfulSyncProduct | null;
+  syncVariants: PrintfulSyncVariant[];
+  firstVariant: PrintfulSyncVariant | null;
   price: number;
 }
 
 /**
  * Parses Printful product data to extract key information
  */
-// biome-ignore lint/suspicious/noExplicitAny: External API data structure is complex
-export const parsePrintfulProduct = (product: any): ParsedProduct => {
+export const parsePrintfulProduct = (product: unknown): ParsedProduct => {
   // Input validation
   if (!product || typeof product !== "object") {
     console.warn("parsePrintfulProduct: Invalid product object provided");
@@ -59,12 +95,16 @@ export const parsePrintfulProduct = (product: any): ParsedProduct => {
     };
   }
 
-  const syncProduct = product.sync_product || null;
-  const syncVariants = product.sync_variants || [];
-  const firstVariant = Array.isArray(syncVariants)
+  const p = product as Record<string, unknown>;
+
+  const syncProduct = (p.sync_product as PrintfulSyncProduct) || null;
+  const syncVariants = (p.sync_variants as PrintfulSyncVariant[]) || [];
+  const firstVariant = Array.isArray(syncVariants) && syncVariants.length > 0
     ? syncVariants[0] || null
     : null;
-  const price = Number(firstVariant?.retail_price) || 0;
+  const price = firstVariant?.retail_price && !Number.isNaN(Number(firstVariant.retail_price))
+    ? Number(firstVariant.retail_price)
+    : 0;
 
   return {
     syncProduct,
