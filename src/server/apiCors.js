@@ -4,7 +4,7 @@ const PRODUCTION_WHITELIST = [
   "https://pixel-pal-follow.lovable.app",
 ];
 
-let corsConfigCache = null;
+const corsConfigCache = new Map();
 
 function buildCorsConfig(env = process.env) {
   const envOrigins = env.ALLOWED_ORIGINS;
@@ -35,7 +35,7 @@ function buildCorsConfig(env = process.env) {
   for (const part of parts) {
     if (part.includes("*")) {
       const escaped = part.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-      const regexStr = `^${escaped.replace(/\\\*/g, ".*")}$`;
+      const regexStr = `^${escaped.replace(/\\\*/g, "[a-zA-Z0-9-]+")}$`;
       regexes.push(new RegExp(regexStr));
     } else {
       exact.push(part);
@@ -50,19 +50,23 @@ export function isOriginAllowed(origin, env = process.env) {
     return false;
   }
 
-  if (!corsConfigCache) {
-    corsConfigCache = buildCorsConfig(env);
+  const envOrigins = env.ALLOWED_ORIGINS || "default";
+
+  if (!corsConfigCache.has(envOrigins)) {
+    corsConfigCache.set(envOrigins, buildCorsConfig(env));
   }
 
-  if (corsConfigCache.allowAll) {
+  const config = corsConfigCache.get(envOrigins);
+
+  if (config.allowAll) {
     return true;
   }
 
-  if (corsConfigCache.exact.includes(origin)) {
+  if (config.exact.includes(origin)) {
     return true;
   }
 
-  return corsConfigCache.regexes.some((regex) => regex.test(origin));
+  return config.regexes.some((regex) => regex.test(origin));
 }
 
 export function applyCors(
