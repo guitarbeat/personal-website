@@ -4,7 +4,6 @@ import { useNotion } from "../../../contexts/NotionContext";
 import type { ProjectItem } from "../../../types/content";
 import { generateTagColors } from "../../../utils/colorUtils";
 import { clamp, cn } from "../../../utils/commonUtils";
-// import { processProjectsData } from "../../../utils/googleSheetsUtils";
 import PixelCanvas from "../../effects/PixelCanvas/PixelCanvas";
 
 const DEFAULT_PROJECT_EFFECT = {
