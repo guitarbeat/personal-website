@@ -113,7 +113,7 @@
     ]
   },
   "devDependencies": {
-    "@babel/eslint-parser": "^7.28.6",
+    "@babel/eslint-parser": "^7.29.7",
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@biomejs/biome": "^2.4.11",
     "@craco/craco": "^7.1.0",
@@ -130,7 +130,7 @@
     "depcheck": "^1.4.7",
     "dotenv": "^17.4.2",
     "eslint": "^10.2.0",
-    "eslint-import-resolver-node": "^0.3.10",
+    "eslint-import-resolver-node": "^0.4.0",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
