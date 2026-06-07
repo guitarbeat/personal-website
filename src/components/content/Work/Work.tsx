@@ -1,7 +1,6 @@
 import moment from "moment";
 // Import required libraries and components
 import React, { useCallback, useEffect, useRef, useState } from "react";
-// import { withGoogleSheets } from "react-db-google-sheets";
 import { useNotion } from "../../../contexts/NotionContext";
 import { cn } from "../../../utils/commonUtils";
 import PixelCanvas from "../../effects/PixelCanvas/PixelCanvas";
@@ -136,7 +135,6 @@ function TimelineBar({
   );
 }
 
-
 const CARD_EFFECTS = [
   {
     colors: ["#f8fafc", "#f1f5f9", "#cbd5e1"],
@@ -166,7 +164,6 @@ const MemoizedTimelineBar = React.memo(TimelineBar);
 
 interface WorkProps {
   db?: {
-
     work: unknown[];
   };
 }
@@ -318,6 +315,5 @@ function Work({ db: propsDb }: WorkProps = {}) {
     </div>
   );
 }
-
 
 export default Work;
