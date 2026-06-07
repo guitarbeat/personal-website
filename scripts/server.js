@@ -24,7 +24,30 @@ const DATABASE_IDS = {
 };
 
 // Enable CORS for local development
-app.use(cors());
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (
+      !origin ||
+      origin.match(/^https?:\/\/(localhost|127\.0\.0\.1)(:[0-9]+)?$/)
+    ) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+};
+app.use(cors(corsOptions));
+
+// Restrict to local loopback IPs
+app.use((req, res, next) => {
+  const localIps = ["127.0.0.1", "::1", "::ffff:127.0.0.1"];
+  if (localIps.includes(req.ip) || !req.ip) {
+    next();
+  } else {
+    res.status(403).json({ error: "Forbidden: Local access only" });
+  }
+});
+
 app.use(express.json());
 
 // Health check endpoint
@@ -46,6 +69,15 @@ app.post("/api/notion/database/:databaseType/query", async (req, res) => {
       return res.status(500).json({ error: "Notion token not configured" });
     }
 
+    // Whitelist allowed payload fields to prevent injection
+    const allowedFields = ["filter", "sorts", "page_size", "start_cursor"];
+    const safeBody = {};
+    for (const key of allowedFields) {
+      if (req.body[key] !== undefined) {
+        safeBody[key] = req.body[key];
+      }
+    }
+
     const response = await fetch(
       `${NOTION_API_BASE}/databases/${databaseId}/query`,
       {
@@ -55,7 +87,10 @@ app.post("/api/notion/database/:databaseType/query", async (req, res) => {
           "Notion-Version": NOTION_VERSION,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(req.body),
+        body:
+          Object.keys(safeBody).length > 0
+            ? JSON.stringify(safeBody)
+            : undefined,
       },
     );
 
