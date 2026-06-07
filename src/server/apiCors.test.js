@@ -28,6 +28,15 @@ describe("apiCors", () => {
     expect(isOriginAllowed("https://evil.example.com.evil.com", env)).toBe(false);
   });
 
+  it("should block invalid wildcard placements to prevent permissive matching", () => {
+    // Should NOT allow partial subdomains like *-domain.com
+    const envPrefix = { ALLOWED_ORIGINS: "https://*-domain.com" };
+    expect(isOriginAllowed("https://attacker-domain.com", envPrefix)).toBe(false);
+
+    const envSuffix = { ALLOWED_ORIGINS: "https://domain-*.com" };
+    expect(isOriginAllowed("https://domain-attacker.com", envSuffix)).toBe(false);
+  });
+
   it("should correctly cache per environment string rather than globally", () => {
     const env1 = { ALLOWED_ORIGINS: "https://env1.com" };
     const env2 = { ALLOWED_ORIGINS: "https://env2.com" };
