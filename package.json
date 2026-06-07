@@ -85,7 +85,6 @@
     "postcss-cli": "^11.0.1",
     "prop-types": "^15.8.1",
     "react": "^19.2.4",
-    "react-db-google-sheets": "^3.0.0",
     "react-dom": "^19.2.4",
     "react-intersection-observer": "^10.0.3",
     "react-router-dom": "^7.14.0",
