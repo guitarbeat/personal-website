@@ -1,0 +1,11 @@
+🧪 Add tests for Printful error handling
+
+🎯 **What:** The `handlePrintfulError` function in `src/utils/shopUtils.ts` lacked test coverage, creating a gap in verifying API error handling logic.
+📊 **Coverage:** Added a comprehensive test suite in `src/utils/__tests__/shopUtils.test.ts` covering:
+  - Fallback cases (null, undefined, non-objects)
+  - String error messages
+  - Standard `Error` instances
+  - Network/CORS errors identified by message or code
+  - Generic error objects with and without `response` properties
+  - Custom context messages
+✨ **Result:** Test coverage for `handlePrintfulError` is now implemented, ensuring error formatting and CORS detection logic remain robust during future refactoring.
