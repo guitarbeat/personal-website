@@ -1,4 +1,6 @@
 import crypto from "node:crypto";
+import pLimit from "p-limit";
+
 const NOTION_API_BASE = "https://api.notion.com/v1";
 const NOTION_VERSION = "2022-06-28";
 
@@ -313,8 +315,12 @@ function transformProjectsData(results, projectContentByPageId = new Map()) {
           props.content?.rich_text ||
           props.Description?.rich_text ||
           [],
-      ) || projectContentByPageId.get(page.id) || "";
-    const rawHook = extractRichText(props.Hook?.rich_text || props.hook?.rich_text || []);
+      ) ||
+      projectContentByPageId.get(page.id) ||
+      "";
+    const rawHook = extractRichText(
+      props.Hook?.rich_text || props.hook?.rich_text || [],
+    );
 
     return {
       title: titleText,
@@ -339,8 +345,7 @@ function transformProjectsData(results, projectContentByPageId = new Map()) {
       keywords: extractMultiSelectNames(
         props.Keyword?.multi_select || props.keyword?.multi_select || [],
       ),
-      published:
-        extractCheckboxValue(props.Published, props.published) ?? true,
+      published: extractCheckboxValue(props.Published, props.published) ?? true,
       sortOrder: extractNumberValue(
         props["Sort Order"],
         props.SortOrder,
@@ -886,34 +891,51 @@ async function fetchProjectContentByPageId({
   fetchImpl = fetch,
   notionToken,
 }) {
-  const contentEntries = await Promise.all(
-    pages.map(async (page) => {
-      const props = page.properties || {};
-      const inlineContent = extractRichText(
-        props.Detail?.rich_text ||
-          props.detail?.rich_text ||
-          props.content?.rich_text ||
-          props.Description?.rich_text ||
-          [],
-      );
+  const contentEntries = [];
+  const pagesToFetch = [];
 
-      if (inlineContent) {
-        return [page.id, inlineContent];
-      }
+  // Pre-process pages to extract inline content immediately
+  for (const page of pages) {
+    const props = page.properties || {};
+    const inlineContent = extractRichText(
+      props.Detail?.rich_text ||
+        props.detail?.rich_text ||
+        props.content?.rich_text ||
+        props.Description?.rich_text ||
+        [],
+    );
 
-      const blocks = await fetchNotionBlockChildren({
-        blockId: page.id,
-        fetchImpl,
-        notionToken,
-      });
-      const pageContent = blocks
-        .map(extractBlockPlainText)
-        .filter((blockText) => typeof blockText === "string" && blockText.length)
-        .join("\n\n");
+    if (inlineContent) {
+      contentEntries.push([page.id, inlineContent]);
+    } else {
+      pagesToFetch.push(page);
+    }
+  }
 
-      return [page.id, pageContent];
-    }),
-  );
+  // Only use concurrency limits for actual network requests
+  if (pagesToFetch.length > 0) {
+    const limit = pLimit(3);
+    const fetchedEntries = await Promise.all(
+      pagesToFetch.map((page) =>
+        limit(async () => {
+          const blocks = await fetchNotionBlockChildren({
+            blockId: page.id,
+            fetchImpl,
+            notionToken,
+          });
+          const pageContent = blocks
+            .map(extractBlockPlainText)
+            .filter(
+              (blockText) => typeof blockText === "string" && blockText.length,
+            )
+            .join("\n\n");
+
+          return [page.id, pageContent];
+        }),
+      ),
+    );
+    contentEntries.push(...fetchedEntries);
+  }
 
   return new Map(contentEntries);
 }
@@ -1016,7 +1038,7 @@ export async function queryNotionDatabase({
         )
       : databaseType === "work"
         ? prepareWorkForPublicDisplay(transformWorkData(rawResults))
-      : getDatasetTransformer(databaseType)(rawResults);
+        : getDatasetTransformer(databaseType)(rawResults);
 
   return validateDatasetRecords(databaseType, records);
 }
@@ -1367,9 +1389,8 @@ export async function getHealthSummary({
   };
 }
 
-
 function timingSafeCompare(a, b) {
-  if (typeof a !== 'string' || typeof b !== 'string') {
+  if (typeof a !== "string" || typeof b !== "string") {
     return false;
   }
 
@@ -1394,7 +1415,10 @@ export function isAuthorizedCronRequest(req, env = process.env) {
   const authorization = req.headers.authorization;
   const headerSecret = req.headers["x-cron-secret"];
 
-  const isBearerValid = timingSafeCompare(authorization || "", `Bearer ${secret}`);
+  const isBearerValid = timingSafeCompare(
+    authorization || "",
+    `Bearer ${secret}`,
+  );
   const isHeaderValid = timingSafeCompare(headerSecret || "", secret);
 
   return isBearerValid || isHeaderValid;
@@ -1419,10 +1443,10 @@ export function createErrorPayload(error) {
   }
 
   return {
-      error: {
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Internal server error",
-        failureType: "internal_server_error",
-      },
-    };
+    error: {
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Internal server error",
+      failureType: "internal_server_error",
+    },
+  };
 }
