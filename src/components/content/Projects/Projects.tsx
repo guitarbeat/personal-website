@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-// import { withGoogleSheets } from "react-db-google-sheets";
 import { useNotion } from "../../../contexts/NotionContext";
 import type { ProjectItem } from "../../../types/content";
 import { generateTagColors } from "../../../utils/colorUtils";

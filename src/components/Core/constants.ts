@@ -3,8 +3,6 @@ export const GOOGLE_SHEETS_CONFIG = {
   // This integration is currently disabled. If re-enabled, use a backend proxy.
   apiKey: undefined,
   discoveryDocs: ["https://sheets.googleapis.com/$discovery/rest?version=v4"],
-  // Security Fix: Doc ID removed from client bundle.
-  spreadsheetId: undefined,
   dataLoading: {
     component: () => null,
   },
