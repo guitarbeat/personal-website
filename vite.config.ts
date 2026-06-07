@@ -166,7 +166,9 @@ export default defineConfig(({ mode }) => {
           process.env.REACT_APP_ENABLE_VERCEL_ANALYTICS ||
           "",
       ),
-      // Security Fix: Google Sheets API keys removed to prevent client-side exposure
+      // Security Fix: Google Sheets API keys and Printful API keys are initialized to empty strings to prevent client-side exposure
+      "process.env.REACT_APP_GOOGLE_SHEETS_API_KEY": JSON.stringify(""),
+      "process.env.REACT_APP_GOOGLE_SHEETS_DOC_ID": JSON.stringify(""),
       "process.env.REACT_APP_PRINTFUL_API_KEY": JSON.stringify(""),
       "process.env.REACT_APP_PRINTFUL_STORE_ID": JSON.stringify(""),
       "process.env.REACT_APP_GIT_COMMIT_HASH": JSON.stringify(""),
