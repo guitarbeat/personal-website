@@ -313,8 +313,12 @@ function transformProjectsData(results, projectContentByPageId = new Map()) {
           props.content?.rich_text ||
           props.Description?.rich_text ||
           [],
-      ) || projectContentByPageId.get(page.id) || "";
-    const rawHook = extractRichText(props.Hook?.rich_text || props.hook?.rich_text || []);
+      ) ||
+      projectContentByPageId.get(page.id) ||
+      "";
+    const rawHook = extractRichText(
+      props.Hook?.rich_text || props.hook?.rich_text || [],
+    );
 
     return {
       title: titleText,
@@ -339,8 +343,7 @@ function transformProjectsData(results, projectContentByPageId = new Map()) {
       keywords: extractMultiSelectNames(
         props.Keyword?.multi_select || props.keyword?.multi_select || [],
       ),
-      published:
-        extractCheckboxValue(props.Published, props.published) ?? true,
+      published: extractCheckboxValue(props.Published, props.published) ?? true,
       sortOrder: extractNumberValue(
         props["Sort Order"],
         props.SortOrder,
@@ -908,7 +911,9 @@ async function fetchProjectContentByPageId({
       });
       const pageContent = blocks
         .map(extractBlockPlainText)
-        .filter((blockText) => typeof blockText === "string" && blockText.length)
+        .filter(
+          (blockText) => typeof blockText === "string" && blockText.length,
+        )
         .join("\n\n");
 
       return [page.id, pageContent];
@@ -1016,7 +1021,7 @@ export async function queryNotionDatabase({
         )
       : databaseType === "work"
         ? prepareWorkForPublicDisplay(transformWorkData(rawResults))
-      : getDatasetTransformer(databaseType)(rawResults);
+        : getDatasetTransformer(databaseType)(rawResults);
 
   return validateDatasetRecords(databaseType, records);
 }
@@ -1367,9 +1372,8 @@ export async function getHealthSummary({
   };
 }
 
-
 function timingSafeCompare(a, b) {
-  if (typeof a !== 'string' || typeof b !== 'string') {
+  if (typeof a !== "string" || typeof b !== "string") {
     return false;
   }
 
@@ -1394,7 +1398,10 @@ export function isAuthorizedCronRequest(req, env = process.env) {
   const authorization = req.headers.authorization;
   const headerSecret = req.headers["x-cron-secret"];
 
-  const isBearerValid = timingSafeCompare(authorization || "", `Bearer ${secret}`);
+  const isBearerValid = timingSafeCompare(
+    authorization || "",
+    `Bearer ${secret}`,
+  );
   const isHeaderValid = timingSafeCompare(headerSecret || "", secret);
 
   return isBearerValid || isHeaderValid;
@@ -1419,10 +1426,10 @@ export function createErrorPayload(error) {
   }
 
   return {
-      error: {
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Internal server error",
-        failureType: "internal_server_error",
-      },
-    };
+    error: {
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Internal server error",
+      failureType: "internal_server_error",
+    },
+  };
 }

@@ -1,9 +1,9 @@
-import { renderHook, act } from '@testing-library/react';
-import { useVFXEffect } from '../useVFXEffect';
+import { renderHook, act } from "@testing-library/react";
+import { useVFXEffect } from "../useVFXEffect";
 
 const originalWarn = console.warn;
 
-describe('useVFXEffect import error', () => {
+describe("useVFXEffect import error", () => {
   beforeEach(() => {
     console.warn = jest.fn();
     jest.clearAllMocks();
@@ -14,25 +14,27 @@ describe('useVFXEffect import error', () => {
     jest.restoreAllMocks();
   });
 
-  it('handles VFX import failure gracefully', async () => {
+  it("handles VFX import failure gracefully", async () => {
     // By not mocking the import, Jest will throw MODULE_NOT_FOUND natively
     renderHook(() => useVFXEffect({}));
 
     await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
     });
 
     expect(console.warn).toHaveBeenCalledWith(
       "Failed to load VFX core:",
-      expect.objectContaining({ message: expect.stringContaining("Cannot find module") })
+      expect.objectContaining({
+        message: expect.stringContaining("Cannot find module"),
+      }),
     );
   });
 
-  it('does not attempt to load VFX if disabled', async () => {
+  it("does not attempt to load VFX if disabled", async () => {
     renderHook(() => useVFXEffect({ enabled: false }));
 
     await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
     });
 
     expect(console.warn).not.toHaveBeenCalled();
