@@ -51,6 +51,8 @@ const SESSION_CONFIG = {
   },
 };
 
+const SESSION_CONFIG_ENTRIES = Object.entries(SESSION_CONFIG);
+
 const INITIAL_UNLOCK_STATE = {
   [DEVICE_KEYS.DEFAULT]: false,
   [DEVICE_KEYS.MOBILE]: false,
@@ -116,7 +118,7 @@ const createUnlockStateFromSession = () => {
   const unlockState = { ...INITIAL_UNLOCK_STATE };
   const maxSessionAge = SECURITY.SESSION.DURATION_MS;
 
-  for (const [device, keys] of Object.entries(SESSION_CONFIG)) {
+  for (const [device, keys] of SESSION_CONFIG_ENTRIES) {
     const isStoredUnlocked = getSessionData(keys.unlockedKey);
     const storedTimestamp = getSessionData(keys.timestampKey);
 
