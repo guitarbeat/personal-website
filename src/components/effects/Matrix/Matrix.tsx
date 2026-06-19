@@ -683,17 +683,22 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
   const successTelemetry = successTelemetryRef.current;
   const showConsoleCursor = !isHackingComplete;
 
-  const handleViewportEngage = useCallback(() => {
-    if (isHackingComplete) {
-      return;
-    }
+  const handleViewportEngage = useCallback(
+    (e?: React.SyntheticEvent) => {
+      e?.preventDefault();
 
-    // Trigger hack action (supports "tap to hack")
-    handleManualHackTrigger();
+      if (isHackingComplete) {
+        return;
+      }
 
-    // Also try to focus for keyboard users, but don't blocking tap flow
-    focusHackInput();
-  }, [focusHackInput, isHackingComplete, handleManualHackTrigger]);
+      // Trigger hack action (supports "tap to hack")
+      handleManualHackTrigger();
+
+      // Also try to focus for keyboard users, but don't blocking tap flow
+      focusHackInput();
+    },
+    [focusHackInput, isHackingComplete, handleManualHackTrigger],
+  );
 
   // * Handle container clicks
   const handleContainerClick = useCallback(
@@ -1174,8 +1179,9 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ")
-                    handleViewportEngage();
+                  if (e.key === "Enter" || e.key === " ") {
+                    handleViewportEngage(e);
+                  }
                 }}
                 onMouseDown={handleViewportEngage}
                 onTouchStart={handleViewportEngage}
