@@ -1,7 +1,9 @@
 // Third-party imports
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { cn, debounce } from "../../../utils/commonUtils";
+import { useMatrixRain } from "./useMatrixRain";
+import { useHackEngine } from "./useHackEngine";
+import { cn } from "../../../utils/commonUtils";
 
 // Context imports
 import { useAuth } from "./AuthContext";
@@ -14,8 +16,6 @@ import "./matrix.scss";
 import deniedAudio from "../../../assets/audio/didn't-say-the-magic-word.mp3";
 import deniedCaptions from "../../../assets/audio/didnt-say-the-magic-word.vtt";
 import deniedImage from "../../../assets/images/nu-uh-uh.webp";
-import { MATRIX_RAIN } from "./constants";
-import { Drop } from "./MatrixDrop";
 
 const PROGRESS_DECAY_INTERVAL = 140;
 const PROGRESS_DECAY_BASE = 0.5; // Increased from 0.18
@@ -26,8 +26,6 @@ const PROGRESS_DECAY_RAMP = [
   { threshold: 900, value: 0.45 }, // Increased from 0.26
 ];
 const MIN_IDLE_BEFORE_DECAY = 300; // Reduced from 480
-const KEY_VARIETY_WINDOW = 12;
-const REPETITION_DECAY_RESET_MS = 650;
 
 const INITIAL_FEEDBACK = "Initialize uplink by mashing the keys.";
 
@@ -120,8 +118,6 @@ const HACKER_TYPER_CORPUS = [
   "[SYSTEM] Breach protocol complete",
   "",
 ].join("\n");
-
-const MAX_DISPLAY_LENGTH = 1400;
 
 const useHackSession = (isVisible: boolean) => {
   const [hackingBuffer, setHackingBuffer] = useState<string>(
@@ -380,72 +376,22 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
     [],
   );
   const hackStreamIndexRef = useRef<number>(0);
-  interface KeyPattern {
-    recentKeys: string[];
-    lastKey: string | null;
-    streak: number;
-  }
-  const keyPatternRef = useRef<KeyPattern>({
-    recentKeys: [],
-    lastKey: null,
-    streak: 0,
-  });
   const successTelemetryRef = useRef<SuccessConsoleParams | null>(null);
 
+  const { handleManualHackTrigger, handleHackKeyDown } = useHackEngine({
+    hackCorpus,
+    hackStreamIndexRef,
+    setHackingBuffer,
+    setHackFeedback,
+    setHackProgress,
+    idleFailureTrackerRef,
+    lastKeyTimeRef,
+    isHackingComplete,
+  });
+
+  useMatrixRain({ canvasRef, isVisible });
+
   // * Configuration constants
-
-  const updateHackDisplay = useCallback(
-    (direction: "forward" | "backward", magnitude: number) => {
-      if (!Number.isFinite(magnitude) || magnitude <= 0) {
-        return;
-      }
-
-      setHackingBuffer((prev) => {
-        if (direction === "backward") {
-          const nextLength = Math.max(0, prev.length - magnitude);
-          const trimmed =
-            nextLength <= DEFAULT_CONSOLE_PROMPT.length
-              ? DEFAULT_CONSOLE_PROMPT
-              : prev.slice(0, nextLength);
-
-          const nextIndex =
-            (hackStreamIndexRef.current - magnitude) % hackCorpus.length;
-          hackStreamIndexRef.current =
-            nextIndex < 0 ? hackCorpus.length + nextIndex : nextIndex;
-
-          return trimmed;
-        }
-
-        let remaining = magnitude;
-        let chunk = "";
-
-        while (remaining > 0) {
-          const start = hackStreamIndexRef.current;
-          const available = Math.min(remaining, hackCorpus.length - start);
-
-          if (available <= 0) {
-            break;
-          }
-
-          chunk += hackCorpus.slice(start, start + available);
-          hackStreamIndexRef.current = (start + available) % hackCorpus.length;
-          remaining -= available;
-        }
-
-        if (chunk.length === 0) {
-          return prev;
-        }
-
-        const combined = `${prev}${chunk}`;
-        if (combined.length <= MAX_DISPLAY_LENGTH) {
-          return combined;
-        }
-
-        return combined.slice(combined.length - MAX_DISPLAY_LENGTH);
-      });
-    },
-    [hackCorpus, setHackingBuffer],
-  );
 
   const handleHackInputChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -454,151 +400,6 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
       }
     },
     [],
-  );
-
-  const processHackInteraction = useCallback(
-    (isBackspace: boolean, key: string = "touch") => {
-      idleFailureTrackerRef.current.lowStreak = 0;
-
-      const now = Date.now();
-      const lastTime = lastKeyTimeRef.current;
-      const delta = lastTime ? now - lastTime : null;
-
-      let baseIncrement = 0.6;
-
-      if (delta !== null) {
-        if (delta < 120) {
-          baseIncrement = 1.8;
-        } else if (delta < 220) {
-          baseIncrement = 1.3;
-        } else if (delta < 360) {
-          baseIncrement = 0.95;
-        } else {
-          baseIncrement = 0.45;
-        }
-      }
-
-      let feedbackMessage = "Signal detected. Keep the keystrokes flowing.";
-      let progressDelta = 0;
-
-      if (isBackspace) {
-        updateHackDisplay(
-          "backward",
-          Math.max(4, Math.round(baseIncrement * 3.5)),
-        );
-        keyPatternRef.current.lastKey = null;
-        keyPatternRef.current.streak = 0;
-        feedbackMessage = "Trace sanitized. Countermeasure resetting.";
-        progressDelta = -Math.max(0.45, baseIncrement * 0.65);
-      } else {
-        // Determine key characteristics
-        const normalizedKey = key === " " ? "space" : key.toLowerCase();
-        const tracker = keyPatternRef.current;
-
-        if (
-          tracker.lastKey === normalizedKey &&
-          (delta === null || delta <= REPETITION_DECAY_RESET_MS)
-        ) {
-          tracker.streak += 1;
-        } else {
-          tracker.streak = 1;
-        }
-
-        tracker.lastKey = normalizedKey;
-        tracker.recentKeys = [
-          ...tracker.recentKeys.slice(-(KEY_VARIETY_WINDOW - 1)),
-          normalizedKey,
-        ];
-
-        const uniqueCount = new Set(tracker.recentKeys).size;
-        let comboMultiplier = 1;
-
-        // * Enhanced combo logic for touch/random
-        if (uniqueCount >= 7) comboMultiplier += 0.25;
-        else if (uniqueCount >= 5) comboMultiplier += 0.15;
-
-        // * Reduce penalties for touch interaction which might be repetitive
-        if (normalizedKey === "touch") {
-          comboMultiplier = 1.2; // Constant boost for touch to compensate for speed
-        } else {
-          if (tracker.streak >= 4) comboMultiplier *= 0.25;
-          if (
-            uniqueCount <= 3 &&
-            tracker.recentKeys.length >= KEY_VARIETY_WINDOW
-          )
-            comboMultiplier *= 0.4;
-        }
-
-        if (delta !== null) {
-          if (delta < 140)
-            feedbackMessage = "Trace evaded! Ultra-fast breach underway.";
-          else if (delta < 260)
-            feedbackMessage = "Firewall destabilizing—stellar rhythm.";
-          else if (delta < 400)
-            feedbackMessage = "Maintaining uplink. Accelerate to finish.";
-          else feedbackMessage = "Connection cooling—slam the keys faster!";
-        }
-
-        const comboAdjustedIncrement = baseIncrement * comboMultiplier;
-        const chunkBase = Math.max(8, Math.round(comboAdjustedIncrement * 4));
-        const chunkVariance = Math.floor(Math.random() * 5);
-        updateHackDisplay("forward", chunkBase + chunkVariance);
-
-        progressDelta = comboAdjustedIncrement;
-      }
-
-      lastKeyTimeRef.current = now;
-      setHackFeedback(feedbackMessage);
-
-      if (progressDelta > 0) {
-        setHackProgress((prev) => {
-          const friction =
-            prev >= 85 ? 0.35 : prev >= 65 ? 0.5 : prev >= 40 ? 0.65 : 0.8;
-          const next = prev + progressDelta * friction;
-          return Math.min(100, next);
-        });
-      } else if (progressDelta < 0) {
-        setHackProgress((prev) => Math.max(0, prev + progressDelta));
-      }
-    },
-    [setHackFeedback, setHackProgress, updateHackDisplay],
-  );
-
-  const handleManualHackTrigger = useCallback(() => {
-    if (isHackingComplete) return;
-
-    // Randomize the "key" slightly to prevent streak penalties from "touch" repetition if desired,
-    // but distinct "touch" key is fine with the multiplier boost.
-    // Let's mix it up slightly for visual flavor if we log it, but logic-wise "touch" is handled.
-    processHackInteraction(false, "touch");
-
-    // Also try to focus input so keyboard MIGHT open if they want, but don't force it?
-    // Actually, if they tap, they probably want to tap.
-    // Let's keep focus loose.
-  }, [isHackingComplete, processHackInteraction]);
-
-  const handleHackKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (isHackingComplete) {
-        return;
-      }
-
-      // * Reset idle failure on any interaction
-      idleFailureTrackerRef.current.lowStreak = 0;
-
-      const isCharacterKey =
-        e.key.length === 1 || e.key === "Enter" || e.key === "Backspace";
-      const isBackspace = e.key === "Backspace";
-
-      if (isBackspace) {
-        e.preventDefault();
-        processHackInteraction(true);
-      } else if (isCharacterKey) {
-        e.preventDefault();
-        processHackInteraction(false, e.key);
-      }
-    },
-    [isHackingComplete, processHackInteraction],
   );
 
   const focusHackInput = useCallback(() => {
@@ -935,149 +736,6 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
       resetIdleFailureTracking();
     }
   }, [isVisible, resetIdleFailureTracking]);
-
-  // * Enhanced Matrix Rain Effect
-  useEffect(() => {
-    if (!isVisible) {
-      return;
-    }
-
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const context = canvas.getContext("2d");
-    if (!context) return;
-
-    const resizeCanvas = () => {
-      if (!canvas || !context) return;
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      // * Vignette handled by CSS overlay for performance
-    };
-
-    const handleResize = debounce(resizeCanvas, 200);
-
-    resizeCanvas();
-    window.addEventListener("resize", handleResize);
-
-    const columns = Math.floor(canvas.width / MATRIX_RAIN.FONT_SIZES.MIN);
-    const drops = Array(columns)
-      .fill(null)
-      .map((_, i) => {
-        const drop = new Drop(i * MATRIX_RAIN.FONT_SIZES.MIN);
-        drop.y = (Math.random() * canvas.height) / MATRIX_RAIN.FONT_SIZES.MIN;
-        return drop;
-      });
-
-    // * Performance Optimization: Pre-allocate buckets to prevent per-frame garbage collection
-    // * We reuse these arrays every frame instead of creating new ones
-    const buckets: Record<number, Drop[]> = {};
-    for (
-      let size = MATRIX_RAIN.FONT_SIZES.MIN;
-      size <= MATRIX_RAIN.FONT_SIZES.MAX;
-      size++
-    ) {
-      buckets[size] = [];
-    }
-
-    let lastTime = 0;
-    const targetFPS = 60;
-    const frameInterval = 1000 / targetFPS;
-
-    const drawFrame = (currentTime: number) => {
-      if (!canvas || !context) return;
-      if (currentTime - lastTime >= frameInterval) {
-        // * Enhanced fade effect with slight green tint
-        context.fillStyle = "rgba(0, 0, 0, 0.04)";
-        context.fillRect(0, 0, canvas.width, canvas.height);
-
-        // * Update all drops first
-        for (const drop of drops) {
-          drop.update(canvas.height);
-        }
-
-        // * Performance Optimization: Batch drawing by font size to minimize state changes
-        // * Reset buckets without reallocation
-        for (const key in buckets) {
-          buckets[key].length = 0;
-        }
-
-        // Group drops by font size
-        for (const drop of drops) {
-          // Safety check in case random logic produces unexpected size
-          if (!buckets[drop.fontSize]) {
-            buckets[drop.fontSize] = [];
-          }
-          buckets[drop.fontSize].push(drop);
-        }
-
-        // Iterate through buckets
-        for (const fontSizeStr in buckets) {
-          const bucket = buckets[fontSizeStr];
-          if (bucket.length === 0) continue;
-          // Set font once per bucket
-          context.font = `${fontSizeStr}px monospace`;
-
-          // * Pass 1: Draw Trails (Pure Green)
-          context.fillStyle = "#00FF00";
-          for (const drop of bucket) {
-            const trailLength = drop.trail.length;
-            for (let i = 0; i < trailLength; i++) {
-              const trailItem = drop.trail[i];
-              const trailOpacity = (i / trailLength) * drop.opacity * 0.3;
-              context.globalAlpha = trailOpacity;
-              context.fillText(
-                trailItem.char,
-                drop.x,
-                trailItem.y * drop.fontSize,
-              );
-            }
-          }
-
-          // * Pass 2: Draw Normal Heads (Spring Green)
-          context.fillStyle = "#00FF64";
-          for (const drop of bucket) {
-            if (!drop.brightness) {
-              context.globalAlpha = drop.opacity;
-              context.fillText(drop.char, drop.x, drop.y * drop.fontSize);
-            }
-          }
-
-          // * Pass 3: Draw Bright Heads (White + Glow)
-          context.fillStyle = "#FFFFFF";
-          context.shadowColor = "rgba(255, 255, 255, 0.9)";
-          context.shadowBlur = 8;
-
-          for (const drop of bucket) {
-            if (drop.brightness) {
-              context.globalAlpha = Math.min(1, drop.opacity * 1.5);
-              context.fillText(drop.char, drop.x, drop.y * drop.fontSize);
-            }
-          }
-
-          // Reset shadow for next bucket/pass
-          context.shadowBlur = 0;
-        }
-
-        // Reset alpha at end of frame
-        context.globalAlpha = 1.0;
-
-        lastTime = currentTime;
-      }
-    };
-
-    let animationFrameId = 0;
-    const animate = (currentTime: number) => {
-      drawFrame(currentTime);
-      animationFrameId = window.requestAnimationFrame(animate);
-    };
-
-    animate(performance.now());
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      window.cancelAnimationFrame(animationFrameId);
-    };
-  }, [isVisible]);
 
   // (Removed unused easter-egg test handler)
 
