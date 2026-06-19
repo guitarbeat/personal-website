@@ -979,6 +979,11 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
       buckets[size] = [];
     }
 
+    // Pre-allocate flat arrays for alpha grouping to minimize state changes and avoid object allocation
+    const NUM_ALPHA_BUCKETS = 20;
+    // We store the drop instance in even indices and the trail index in odd indices
+    const alphaBuckets: Array<Array<Drop | number>> = Array.from({ length: NUM_ALPHA_BUCKETS + 1 }, () => []);
+
     let lastTime = 0;
     const targetFPS = 60;
     const frameInterval = 1000 / targetFPS;
@@ -1019,12 +1024,33 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
 
           // * Pass 1: Draw Trails (Pure Green)
           context.fillStyle = "#00FF00";
+
+          // Clear alpha buckets
+          for (let i = 0; i <= NUM_ALPHA_BUCKETS; i++) {
+            alphaBuckets[i].length = 0;
+          }
+
+          // Group trail items by alpha into flat arrays to avoid GC pressure
           for (const drop of bucket) {
             const trailLength = drop.trail.length;
             for (let i = 0; i < trailLength; i++) {
-              const trailItem = drop.trail[i];
               const trailOpacity = (i / trailLength) * drop.opacity * 0.3;
-              context.globalAlpha = trailOpacity;
+              const bucketIdx = Math.round(trailOpacity * NUM_ALPHA_BUCKETS);
+              alphaBuckets[bucketIdx].push(drop, i);
+            }
+          }
+
+          // Draw grouped trail items
+          for (let i = 0; i <= NUM_ALPHA_BUCKETS; i++) {
+            const alphaBucket = alphaBuckets[i];
+            const len = alphaBucket.length;
+            if (len === 0) continue;
+
+            context.globalAlpha = i / NUM_ALPHA_BUCKETS;
+            for (let j = 0; j < len; j += 2) {
+              const drop = alphaBucket[j] as Drop;
+              const trailIdx = alphaBucket[j + 1] as number;
+              const trailItem = drop.trail[trailIdx];
               context.fillText(
                 trailItem.char,
                 drop.x,
