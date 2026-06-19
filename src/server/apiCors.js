@@ -34,9 +34,21 @@ function buildCorsConfig(env = process.env) {
 
   for (const part of parts) {
     if (part.includes("*")) {
-      const escaped = part.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-      const regexStr = `^${escaped.replace(/\\\*/g, "[a-zA-Z0-9-]+")}$`;
-      regexes.push(new RegExp(regexStr));
+      // Security Fix: Prevent partial wildcard matching like https://*-domain.com
+      // Only allow wildcards as full subdomains, e.g., https://*.example.com
+      try {
+        const _url = new URL(part.replace(/\*/g, 'test'));
+        const originalHostParts = part.split('://')[1].split('/')[0].split('.');
+        const isValidWildcard = originalHostParts.every(p => !p.includes('*') || p === '*');
+
+        if (isValidWildcard) {
+          const escaped = part.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+          const regexStr = `^${escaped.replace(/\\\*/g, "[a-zA-Z0-9-]+")}$`;
+          regexes.push(new RegExp(regexStr));
+        }
+      } catch (_e) {
+        // Invalid URL structure, ignore
+      }
     } else {
       exact.push(part);
     }
