@@ -13,13 +13,30 @@ export default function useScrambleEffect(
       return undefined;
     }
 
-    // * Store event handlers for cleanup
-    const eventHandlers = new Map();
+    const currentRef = ref.current;
+
+    const handleMouseOver = (e: Event) => {
+      const target = e.target as HTMLElement;
+      if (target?.classList?.contains("letter")) {
+        target.style.setProperty("--x", `${randomInt(-10, 10)}px`);
+        target.style.setProperty("--y", `${randomInt(-10, 10)}px`);
+        target.style.setProperty("--r", `${randomInt(-10, 10)}deg`);
+      }
+    };
+
+    const handleMouseOut = (e: Event) => {
+      const target = e.target as HTMLElement;
+      if (target?.classList?.contains("letter")) {
+        target.style.setProperty("--x", "0px");
+        target.style.setProperty("--y", "0px");
+        target.style.setProperty("--r", "0deg");
+      }
+    };
 
     const enhance = () => {
-      if (isAboveBreakpoint(DESKTOP_BREAKPOINT) && ref.current) {
+      if (isAboveBreakpoint(DESKTOP_BREAKPOINT) && currentRef) {
         const headers = Array.from(
-          ref.current.querySelectorAll("h1,h2,h3"),
+          currentRef.querySelectorAll("h1,h2,h3"),
         ) as HTMLElement[];
         for (const header of headers) {
           const letters = (header.textContent || "").split("");
@@ -35,48 +52,19 @@ export default function useScrambleEffect(
             header.appendChild(span);
           }
         }
-
-        const letterElements = Array.from(
-          ref.current.querySelectorAll(".letter"),
-        ) as HTMLElement[];
-        for (const letter of letterElements) {
-          // * Create event handlers
-          const handleMouseOver = (e: Event) => {
-            const target = e.target as HTMLElement;
-            target.style.setProperty("--x", `${randomInt(-10, 10)}px`);
-            target.style.setProperty("--y", `${randomInt(-10, 10)}px`);
-            target.style.setProperty("--r", `${randomInt(-10, 10)}deg`);
-          };
-
-          const handleMouseOut = (e: Event) => {
-            const target = e.target as HTMLElement;
-            target.style.setProperty("--x", "0px");
-            target.style.setProperty("--y", "0px");
-            target.style.setProperty("--r", "0deg");
-          };
-
-          // * Store handlers for cleanup
-          eventHandlers.set(letter, {
-            mouseover: handleMouseOver,
-            mouseout: handleMouseOut,
-          });
-
-          // * Add event listeners
-          letter.addEventListener("mouseover", handleMouseOver);
-          letter.addEventListener("mouseout", handleMouseOut);
-        }
       }
     };
 
     enhance();
 
-    // * Cleanup function to remove all event listeners
+    // * Add event listeners using event delegation
+    currentRef.addEventListener("mouseover", handleMouseOver);
+    currentRef.addEventListener("mouseout", handleMouseOut);
+
+    // * Cleanup function to remove event listeners
     return () => {
-      eventHandlers.forEach((handlers, letter) => {
-        letter.removeEventListener("mouseover", handlers.mouseover);
-        letter.removeEventListener("mouseout", handlers.mouseout);
-      });
-      eventHandlers.clear();
+      currentRef.removeEventListener("mouseover", handleMouseOver);
+      currentRef.removeEventListener("mouseout", handleMouseOut);
     };
   }, [ref]);
 }
