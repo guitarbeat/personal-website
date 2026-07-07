@@ -1021,10 +1021,14 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
           context.fillStyle = "#00FF00";
           for (const drop of bucket) {
             const trailLength = drop.trail.length;
+            if (trailLength === 0) continue;
+
+            // * Performance Optimization: Pre-calculate the opacity multiplier outside the inner loop
+            const opacityMultiplier = (drop.opacity * 0.3) / trailLength;
+
             for (let i = 0; i < trailLength; i++) {
               const trailItem = drop.trail[i];
-              const trailOpacity = (i / trailLength) * drop.opacity * 0.3;
-              context.globalAlpha = trailOpacity;
+              context.globalAlpha = i * opacityMultiplier;
               context.fillText(
                 trailItem.char,
                 drop.x,
