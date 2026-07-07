@@ -7,6 +7,7 @@ import {
   refreshContentSnapshot,
   SNAPSHOT_KEY,
   SNAPSHOT_META_KEY,
+  validateDatasetRecords,
 } from "./notionContent";
 
 const mockResponse = (payload, { ok = true, status = 200 } = {}) => ({
@@ -601,6 +602,25 @@ describe("notionContent server helpers", () => {
         message: "Internal server error",
         failureType: "internal_server_error",
       },
+    });
+  });
+
+  describe("validateDatasetRecords", () => {
+    it("throws an error if records is not an array", () => {
+      expect(() => validateDatasetRecords("about", null)).toThrow('Dataset "about" must be an array.');
+      expect(() => validateDatasetRecords("projects", "not an array")).toThrow('Dataset "projects" must be an array.');
+      expect(() => validateDatasetRecords("work", {})).toThrow('Dataset "work" must be an array.');
+    });
+
+    it("throws an error for an unknown dataset type", () => {
+      expect(() => validateDatasetRecords("unknown_type", [])).toThrow('Unknown dataset "unknown_type".');
+      expect(() => validateDatasetRecords("invalid", [])).toThrow('Unknown dataset "invalid".');
+    });
+
+    it("returns records if validation passes for known dataset types", () => {
+      expect(validateDatasetRecords("about", [])).toEqual([]);
+      expect(validateDatasetRecords("projects", [])).toEqual([]);
+      expect(validateDatasetRecords("work", [])).toEqual([]);
     });
   });
 });
