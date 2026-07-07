@@ -1,4 +1,5 @@
 import {
+  ContentError,
   createErrorPayload,
   getContentResponse,
   getHealthSummary,
@@ -588,6 +589,26 @@ describe("notionContent server helpers", () => {
         { CRON_SECRET: "top-secret" },
       ),
     ).toBe(false);
+  });
+
+
+  it("preserves ContentError details in public payloads", () => {
+    const error = new ContentError("Detailed content error", {
+      code: "CUSTOM_ERROR",
+      status: 400,
+      failureType: "custom_failure",
+      details: { foo: "bar" },
+    });
+
+    const payload = createErrorPayload(error);
+
+    expect(payload).toEqual({
+      error: {
+        code: "CUSTOM_ERROR",
+        message: "Detailed content error",
+        failureType: "custom_failure",
+      },
+    });
   });
 
   it("sanitizes public error payloads", () => {
