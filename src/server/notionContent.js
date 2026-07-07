@@ -1373,15 +1373,10 @@ function timingSafeCompare(a, b) {
     return false;
   }
 
-  const aBuffer = Buffer.from(a);
-  const bBuffer = Buffer.from(b);
+  const aHash = crypto.createHash('sha256').update(a).digest();
+  const bHash = crypto.createHash('sha256').update(b).digest();
 
-  if (aBuffer.length !== bBuffer.length) {
-    crypto.timingSafeEqual(aBuffer, aBuffer);
-    return false;
-  }
-
-  return crypto.timingSafeEqual(aBuffer, bBuffer);
+  return crypto.timingSafeEqual(aHash, bHash);
 }
 
 export function isAuthorizedCronRequest(req, env = process.env) {
