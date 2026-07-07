@@ -548,46 +548,76 @@ describe("notionContent server helpers", () => {
     expect(summary.snapshotAgeSeconds).toBe(93600);
   });
 
-  it("accepts only header-based cron authorization", () => {
-    expect(
-      isAuthorizedCronRequest(
-        {
-          headers: {
-            authorization: "Bearer top-secret",
-          },
-          query: {
-            secret: "top-secret",
-          },
-        },
-        { CRON_SECRET: "top-secret" },
-      ),
-    ).toBe(true);
+  describe("isAuthorizedCronRequest", () => {
+    it("returns false if CRON_SECRET is not configured in env", () => {
+      expect(isAuthorizedCronRequest({ headers: { authorization: "Bearer anything" } }, {})).toBe(false);
+      expect(isAuthorizedCronRequest({ headers: { "x-cron-secret": "anything" } }, {})).toBe(false);
+    });
 
-    expect(
-      isAuthorizedCronRequest(
-        {
-          headers: {
-            "x-cron-secret": "top-secret",
-          },
-          query: {
-            secret: "top-secret",
-          },
-        },
-        { CRON_SECRET: "top-secret" },
-      ),
-    ).toBe(true);
+    it("returns true if authorization header matches Bearer secret", () => {
+      expect(
+        isAuthorizedCronRequest(
+          { headers: { authorization: "Bearer my-secret" } },
+          { CRON_SECRET: "my-secret" }
+        )
+      ).toBe(true);
+    });
 
-    expect(
-      isAuthorizedCronRequest(
-        {
-          headers: {},
-          query: {
-            secret: "top-secret",
-          },
-        },
-        { CRON_SECRET: "top-secret" },
-      ),
-    ).toBe(false);
+    it("returns true if x-cron-secret header matches secret", () => {
+      expect(
+        isAuthorizedCronRequest(
+          { headers: { "x-cron-secret": "my-secret" } },
+          { CRON_SECRET: "my-secret" }
+        )
+      ).toBe(true);
+    });
+
+    it("returns false if headers do not match secret", () => {
+      expect(
+        isAuthorizedCronRequest(
+          { headers: { authorization: "Bearer wrong-secret" } },
+          { CRON_SECRET: "my-secret" }
+        )
+      ).toBe(false);
+
+      expect(
+        isAuthorizedCronRequest(
+          { headers: { "x-cron-secret": "wrong-secret" } },
+          { CRON_SECRET: "my-secret" }
+        )
+      ).toBe(false);
+
+      expect(
+        isAuthorizedCronRequest(
+          { headers: { "x-cron-secret": "my-secret-part", authorization: "Bearer my-secret-part2" } },
+          { CRON_SECRET: "my-secret" }
+        )
+      ).toBe(false);
+    });
+
+    it("returns false if headers are missing", () => {
+      expect(
+        isAuthorizedCronRequest(
+          { headers: {} },
+          { CRON_SECRET: "my-secret" }
+        )
+      ).toBe(false);
+    });
+
+    it("falls back to process.env if env object is not provided", () => {
+      const originalEnv = process.env;
+      process.env = { ...originalEnv, CRON_SECRET: "my-process-secret" };
+      try {
+        expect(
+          isAuthorizedCronRequest({ headers: { "x-cron-secret": "my-process-secret" } })
+        ).toBe(true);
+        expect(
+          isAuthorizedCronRequest({ headers: { "x-cron-secret": "wrong-secret" } })
+        ).toBe(false);
+      } finally {
+        process.env = originalEnv;
+      }
+    });
   });
 
   it("sanitizes public error payloads", () => {
