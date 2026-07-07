@@ -1,10 +1,5 @@
 import { render, waitFor } from "@testing-library/react";
 
-// Mock chroma-js before importing the component
-jest.mock("chroma-js", () => ({
-  random: () => ({ hex: () => "#000000" }),
-}));
-
 // Mock OGL
 // We need to avoid using 'document' in the factory, so we'll use a placeholder
 // and swap it out or mock the appendChild method to accept our placeholder.
