@@ -1,6 +1,6 @@
 import { renderHook } from "@testing-library/react";
 import useScrambleEffect from "./useScrambleEffect";
-import React from "react";
+import type React from "react";
 
 jest.mock("../../../utils/commonUtils", () => ({
   isAboveBreakpoint: jest.fn().mockReturnValue(true),
