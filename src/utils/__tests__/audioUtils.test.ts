@@ -6,7 +6,7 @@ describe("audioUtils", () => {
     jest.restoreAllMocks();
 
     // Mock window AudioContext just in case
-    (window as any).AudioContext = jest.fn().mockImplementation(() => ({
+    (window as unknown as Record<string, unknown>).AudioContext = jest.fn().mockImplementation(() => ({
       state: "running",
       resume: jest.fn().mockResolvedValue(undefined),
       createBuffer: jest.fn(),
@@ -14,7 +14,7 @@ describe("audioUtils", () => {
       createGain: jest.fn(),
     }));
 
-    (window as any).webkitAudioContext = (window as any).AudioContext;
+    (window as unknown as Record<string, unknown>).webkitAudioContext = (window as unknown as Record<string, unknown>).AudioContext;
 
     // Also suppress console.warn which might be called by handleAudioError
     jest.spyOn(console, "warn").mockImplementation(() => {});
