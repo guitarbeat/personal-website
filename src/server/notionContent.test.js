@@ -7,6 +7,7 @@ import {
   refreshContentSnapshot,
   SNAPSHOT_KEY,
   SNAPSHOT_META_KEY,
+  buildStructuredLog,
 } from "./notionContent";
 
 const mockResponse = (payload, { ok = true, status = 200 } = {}) => ({
@@ -601,6 +602,22 @@ describe("notionContent server helpers", () => {
         message: "Internal server error",
         failureType: "internal_server_error",
       },
+    });
+  });
+
+  it("builds a structured log with event and telemetry", () => {
+    const log = buildStructuredLog("TEST_EVENT", { foo: "bar", duration: 42 });
+    expect(JSON.parse(log)).toEqual({
+      event: "TEST_EVENT",
+      foo: "bar",
+      duration: 42,
+    });
+  });
+
+  it("handles missing telemetry gracefully", () => {
+    const log = buildStructuredLog("TEST_EVENT");
+    expect(JSON.parse(log)).toEqual({
+      event: "TEST_EVENT",
     });
   });
 });
