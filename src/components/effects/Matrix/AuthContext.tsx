@@ -249,8 +249,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     [DEVICE_KEYS.DEFAULT]: isUnlocked,
     [DEVICE_KEYS.MOBILE]: isMobileUnlocked,
   } = unlockState;
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: Explicit dependency management
   const toolsAccessible = useMemo(() => {
     if (isMobile) {
       return isMobileUnlocked;
@@ -260,7 +258,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      // biome-ignore lint/correctness/useExhaustiveDependencies: Explicit dependency management
       value={useMemo(
         () => ({
           isUnlocked,
