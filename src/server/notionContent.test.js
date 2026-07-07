@@ -7,6 +7,7 @@ import {
   refreshContentSnapshot,
   SNAPSHOT_KEY,
   SNAPSHOT_META_KEY,
+  validateQueryBody,
 } from "./notionContent";
 
 const mockResponse = (payload, { ok = true, status = 200 } = {}) => ({
@@ -601,6 +602,90 @@ describe("notionContent server helpers", () => {
         message: "Internal server error",
         failureType: "internal_server_error",
       },
+    });
+  });
+
+  describe("validateQueryBody", () => {
+    it("handles falsy and non-object inputs", () => {
+      expect(validateQueryBody(null)).toEqual({ page_size: 100 });
+      expect(validateQueryBody(undefined)).toEqual({ page_size: 100 });
+      expect(validateQueryBody("string")).toEqual({ page_size: 100 });
+      expect(validateQueryBody(123)).toEqual({ page_size: 100 });
+    });
+
+    it("parses and constrains valid page_size", () => {
+      expect(validateQueryBody({ page_size: 50 })).toEqual({ page_size: 50 });
+      expect(validateQueryBody({ page_size: 0 })).toEqual({ page_size: 100 }); // Falsy goes to default
+      expect(validateQueryBody({ page_size: -10 })).toEqual({ page_size: 1 }); // Min 1
+      expect(validateQueryBody({ page_size: 150 })).toEqual({ page_size: 100 }); // Max 100
+      expect(validateQueryBody({ page_size: 25.5 })).toEqual({ page_size: 25 }); // Floored
+    });
+
+    it("rejects invalid page_size types", () => {
+      expect(validateQueryBody({ page_size: "50" })).toEqual({
+        page_size: 100,
+      });
+      expect(validateQueryBody({ page_size: {} })).toEqual({ page_size: 100 });
+    });
+
+    it("validates and retains valid filter structures", () => {
+      const validFilter = {
+        and: [
+          { property: "Status", select: { equals: "Done" } },
+          { property: "Type", select: { equals: "Work" } },
+        ],
+      };
+      expect(validateQueryBody({ filter: validFilter })).toEqual({
+        page_size: 100,
+        filter: validFilter,
+      });
+
+      const singlePropertyFilter = {
+        property: "Status",
+        checkbox: { equals: true },
+      };
+      expect(validateQueryBody({ filter: singlePropertyFilter })).toEqual({
+        page_size: 100,
+        filter: singlePropertyFilter,
+      });
+    });
+
+    it("rejects invalid filter structures", () => {
+      expect(validateQueryBody({ filter: "invalid" })).toEqual({
+        page_size: 100,
+      });
+      expect(validateQueryBody({ filter: { invalidKey: "value" } })).toEqual({
+        page_size: 100,
+      });
+      // depth > 2 is dropped for validation but property could be invalid
+      expect(validateQueryBody({ filter: { property: 123 } })).toEqual({
+        page_size: 100,
+      });
+    });
+
+    it("validates and retains valid sorts array", () => {
+      const validSorts = [
+        { property: "Date", direction: "descending" },
+        { timestamp: "created_time", direction: "ascending" },
+      ];
+      expect(validateQueryBody({ sorts: validSorts })).toEqual({
+        page_size: 100,
+        sorts: validSorts,
+      });
+    });
+
+    it("rejects invalid sorts array", () => {
+      expect(validateQueryBody({ sorts: "invalid" })).toEqual({
+        page_size: 100,
+      });
+      expect(validateQueryBody({ sorts: [{ invalid: "sort" }] })).toEqual({
+        page_size: 100,
+      });
+      expect(
+        validateQueryBody({
+          sorts: [{ property: "Date", direction: "invalid_dir" }],
+        }),
+      ).toEqual({ page_size: 100 });
     });
   });
 });
