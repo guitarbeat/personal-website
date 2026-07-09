@@ -677,8 +677,6 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
     [onSuccess, showSuccessFeedback, isHackingComplete],
   );
 
-  // (Removed unused telemetry helpers)
-
   const consoleDisplay = hackingBuffer || DEFAULT_CONSOLE_PROMPT;
   const successTelemetry = successTelemetryRef.current;
   const showConsoleCursor = !isHackingComplete;
