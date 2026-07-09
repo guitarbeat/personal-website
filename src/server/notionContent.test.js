@@ -603,4 +603,44 @@ describe("notionContent server helpers", () => {
       },
     });
   });
+
+  it("throws ContentError with NOTION_REQUEST_FAILED when fetching block children fails", async () => {
+    const fetchImpl = jest
+      .fn()
+      .mockResolvedValueOnce(
+        mockResponse({
+          results: [
+            {
+              id: "project-error-page",
+              properties: {
+                Name: { title: [{ plain_text: "Project Error" }] },
+                Date: { number: 2024 },
+                Link: { url: "https://example.com/project-error" },
+                Slug: { rich_text: [{ plain_text: "project-error" }] },
+                Published: { checkbox: true },
+              },
+            },
+          ],
+          has_more: false,
+          next_cursor: null,
+        }),
+      )
+      .mockRejectedValueOnce(new Error("Network Error"));
+
+    await expect(
+      queryNotionDatabase({
+        databaseType: "projects",
+        fetchImpl,
+        env: { NOTION_TOKEN: "test-token" },
+      }),
+    ).rejects.toMatchObject({
+      code: "NOTION_REQUEST_FAILED",
+      failureType: "notion_request_failed",
+      message: "Failed to reach Notion block API.",
+      details: {
+        blockId: "project-error-page",
+        message: "Network Error",
+      },
+    });
+  });
 });
