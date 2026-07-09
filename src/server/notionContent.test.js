@@ -420,6 +420,56 @@ describe("notionContent server helpers", () => {
     );
   });
 
+  it("throws an error when kvClient.setJson fails and requireSnapshotPersist is true", async () => {
+    const fetchImpl = jest.fn().mockResolvedValue(
+      mockResponse({
+        results: [],
+        has_more: false,
+        next_cursor: null,
+      }),
+    );
+    const kvClient = {
+      getJson: jest.fn(),
+      setJson: jest.fn().mockRejectedValue(new Error("KV write failed")),
+    };
+
+    await expect(
+      refreshContentSnapshot({
+        fetchImpl,
+        env: { NOTION_TOKEN: "test-token" },
+        kvClient,
+        now: new Date("2026-03-21T12:00:00.000Z"),
+        requireSnapshotPersist: true,
+      }),
+    ).rejects.toThrow("KV write failed");
+  });
+
+  it("swallows the error and returns snapshotStored=false when kvClient.setJson fails and requireSnapshotPersist is false", async () => {
+    const fetchImpl = jest.fn().mockResolvedValue(
+      mockResponse({
+        results: [],
+        has_more: false,
+        next_cursor: null,
+      }),
+    );
+    const kvClient = {
+      getJson: jest.fn(),
+      setJson: jest.fn().mockRejectedValue(new Error("KV write failed")),
+    };
+
+    const result = await refreshContentSnapshot({
+      fetchImpl,
+      env: { NOTION_TOKEN: "test-token" },
+      kvClient,
+      now: new Date("2026-03-21T12:00:00.000Z"),
+      requireSnapshotPersist: false,
+    });
+
+    expect(result.snapshotStored).toBe(false);
+    expect(result.response.meta.snapshotUpdatedAt).toBeNull();
+    expect(result.response.meta.source).toBe("live");
+  });
+
   it("returns the KV snapshot with degraded=true when live refresh fails", async () => {
     const kvClient = {
       getJson: jest.fn().mockResolvedValue(snapshotEnvelope),
