@@ -261,8 +261,13 @@ body {
 // Fix for backdrop-filter performance on iOS
 @supports (-webkit-backdrop-filter: none) {
   .glass-effect {
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
-    will-change: backdrop-filter;
+    transform: translate3d(0, 0, 0);
+    -webkit-transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    will-change: backdrop-filter, transform;
   }
 }
 
