@@ -3,6 +3,7 @@ import {
   getContentResponse,
   getHealthSummary,
   isAuthorizedCronRequest,
+  validateQueryBody,
   queryNotionDatabase,
   refreshContentSnapshot,
   SNAPSHOT_KEY,
@@ -588,6 +589,40 @@ describe("notionContent server helpers", () => {
         { CRON_SECRET: "top-secret" },
       ),
     ).toBe(false);
+  });
+
+
+  it("drops invalid properties gracefully due to parsing errors", () => {
+    // Create a filter with a circular reference that will cause JSON.stringify to throw
+    const circularRef = {};
+    circularRef.self = circularRef;
+
+    const filter = {
+      property: "title",
+      title: circularRef,
+      // Add a valid property so the filter isn't completely dropped if not necessary.
+      // validateFilter requires at least one parsed key for hasType = true.
+      rich_text: { equals: "test" }
+    };
+
+    const validBody = validateQueryBody({ filter });
+    expect(validBody.filter).toEqual({
+      property: "title",
+      rich_text: { equals: "test" }
+    });
+  });
+
+  it("drops timestamp filters gracefully due to parsing errors", () => {
+    const circularRef = {};
+    circularRef.self = circularRef;
+
+    const filter = {
+      timestamp: "created_time",
+      created_time: circularRef
+    };
+
+    const validBody = validateQueryBody({ filter });
+    expect(validBody.filter).toBeUndefined();
   });
 
   it("sanitizes public error payloads", () => {
