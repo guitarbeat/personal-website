@@ -1,9 +1,9 @@
 import audioManager from "../audioUtils";
 
 describe("audioUtils error paths", () => {
-  let originalAudio: any;
-  let originalConsoleWarn: any;
-  let originalConsoleError: any;
+  let originalAudio: unknown;
+  let originalConsoleWarn: unknown;
+  let originalConsoleError: unknown;
 
   beforeEach(() => {
     originalAudio = global.Audio;
@@ -25,7 +25,9 @@ describe("audioUtils error paths", () => {
       console.warn = jest.fn();
       console.error = jest.fn();
 
-      const mockPlay = jest.fn().mockRejectedValue(new Error("Mock play error"));
+      const mockPlay = jest
+        .fn()
+        .mockRejectedValue(new Error("Mock play error"));
 
       // Mock the Audio constructor correctly with addEventListener
       class MockAudio {
@@ -35,36 +37,37 @@ describe("audioUtils error paths", () => {
         loop = false;
         addEventListener = jest.fn();
         removeEventListener = jest.fn();
-        constructor(url: string) {}
       }
-      global.Audio = MockAudio as any;
+      global.Audio = MockAudio as unknown as typeof Audio;
 
       // Restrict URLs to exactly 2 to test the loop
       const originalGetUrls = audioManager.getKnightRiderAudioUrls;
-      audioManager.getKnightRiderAudioUrls = jest.fn().mockReturnValue([
-        "http://example.com/audio1.mp3",
-        "http://example.com/audio2.mp3",
-      ]);
+      audioManager.getKnightRiderAudioUrls = jest
+        .fn()
+        .mockReturnValue([
+          "http://example.com/audio1.mp3",
+          "http://example.com/audio2.mp3",
+        ]);
 
       await expect(audioManager.playKnightRiderThemeFromFile()).rejects.toThrow(
-        "All audio sources failed"
+        "All audio sources failed",
       );
 
       expect(mockPlay).toHaveBeenCalledTimes(2);
 
       expect(console.warn).toHaveBeenCalledWith(
         "Failed to play Knight Rider theme from http://example.com/audio1.mp3:",
-        expect.any(Error)
+        expect.any(Error),
       );
 
       expect(console.warn).toHaveBeenCalledWith(
         "Failed to play Knight Rider theme from http://example.com/audio2.mp3:",
-        expect.any(Error)
+        expect.any(Error),
       );
 
       expect(console.error).toHaveBeenCalledWith(
         "Error playing Knight Rider theme from file:",
-        expect.any(Error)
+        expect.any(Error),
       );
 
       audioManager.getKnightRiderAudioUrls = originalGetUrls;
@@ -82,19 +85,20 @@ describe("audioUtils error paths", () => {
         loop = false;
         addEventListener = jest.fn();
         removeEventListener = jest.fn();
-        constructor(url: string) {}
       }
-      global.Audio = MockAudio as any;
+      global.Audio = MockAudio as unknown as typeof Audio;
 
       const originalGetUrls = audioManager.getKnightRiderAudioUrls;
-      audioManager.getKnightRiderAudioUrls = jest.fn().mockReturnValue([
-        "http://example.com/audio1.mp3",
-        "http://example.com/audio2.mp3",
-      ]);
+      audioManager.getKnightRiderAudioUrls = jest
+        .fn()
+        .mockReturnValue([
+          "http://example.com/audio1.mp3",
+          "http://example.com/audio2.mp3",
+        ]);
 
       // Mock requestAnimationFrame for fadeIn
-      jest.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
-          return 1;
+      jest.spyOn(window, "requestAnimationFrame").mockImplementation((_cb) => {
+        return 1;
       });
 
       const result = await audioManager.playKnightRiderThemeFromFile();
@@ -111,9 +115,10 @@ describe("audioUtils error paths", () => {
       console.warn = jest.fn();
       console.error = jest.fn();
 
-      const mockPlay = jest.fn()
-          .mockRejectedValueOnce(new Error("First source failed"))
-          .mockResolvedValueOnce(undefined);
+      const mockPlay = jest
+        .fn()
+        .mockRejectedValueOnce(new Error("First source failed"))
+        .mockResolvedValueOnce(undefined);
 
       class MockAudio {
         play = mockPlay;
@@ -122,19 +127,20 @@ describe("audioUtils error paths", () => {
         loop = false;
         addEventListener = jest.fn();
         removeEventListener = jest.fn();
-        constructor(url: string) {}
       }
-      global.Audio = MockAudio as any;
+      global.Audio = MockAudio as unknown as typeof Audio;
 
       const originalGetUrls = audioManager.getKnightRiderAudioUrls;
-      audioManager.getKnightRiderAudioUrls = jest.fn().mockReturnValue([
-        "http://example.com/audio1.mp3",
-        "http://example.com/audio2.mp3",
-      ]);
+      audioManager.getKnightRiderAudioUrls = jest
+        .fn()
+        .mockReturnValue([
+          "http://example.com/audio1.mp3",
+          "http://example.com/audio2.mp3",
+        ]);
 
       // Mock requestAnimationFrame for fadeIn
-      jest.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
-          return 1;
+      jest.spyOn(window, "requestAnimationFrame").mockImplementation((_cb) => {
+        return 1;
       });
 
       const result = await audioManager.playKnightRiderThemeFromFile();
@@ -142,7 +148,7 @@ describe("audioUtils error paths", () => {
       expect(mockPlay).toHaveBeenCalledTimes(2);
       expect(console.warn).toHaveBeenCalledWith(
         "Failed to play Knight Rider theme from http://example.com/audio1.mp3:",
-        expect.any(Error)
+        expect.any(Error),
       );
       expect(console.error).not.toHaveBeenCalled();
 
