@@ -1,9 +1,12 @@
 import audioManager from "../audioUtils";
 
 describe("audioUtils error paths", () => {
-  let originalAudio: unknown;
-  let originalConsoleWarn: unknown;
-  let originalConsoleError: unknown;
+  // biome-ignore lint/suspicious/noExplicitAny: Mocking global Audio
+  let originalAudio: any;
+  // biome-ignore lint/suspicious/noExplicitAny: Mocking console.warn
+  let originalConsoleWarn: any;
+  // biome-ignore lint/suspicious/noExplicitAny: Mocking console.error
+  let originalConsoleError: any;
 
   beforeEach(() => {
     originalAudio = global.Audio;
@@ -38,7 +41,8 @@ describe("audioUtils error paths", () => {
         addEventListener = jest.fn();
         removeEventListener = jest.fn();
       }
-      global.Audio = MockAudio as unknown as typeof Audio;
+      // biome-ignore lint/suspicious/noExplicitAny: Mocking global Audio
+      global.Audio = MockAudio as any;
 
       // Restrict URLs to exactly 2 to test the loop
       const originalGetUrls = audioManager.getKnightRiderAudioUrls;
@@ -86,7 +90,8 @@ describe("audioUtils error paths", () => {
         addEventListener = jest.fn();
         removeEventListener = jest.fn();
       }
-      global.Audio = MockAudio as unknown as typeof Audio;
+      // biome-ignore lint/suspicious/noExplicitAny: Mocking global Audio
+      global.Audio = MockAudio as any;
 
       const originalGetUrls = audioManager.getKnightRiderAudioUrls;
       audioManager.getKnightRiderAudioUrls = jest
@@ -128,7 +133,8 @@ describe("audioUtils error paths", () => {
         addEventListener = jest.fn();
         removeEventListener = jest.fn();
       }
-      global.Audio = MockAudio as unknown as typeof Audio;
+      // biome-ignore lint/suspicious/noExplicitAny: Mocking global Audio
+      global.Audio = MockAudio as any;
 
       const originalGetUrls = audioManager.getKnightRiderAudioUrls;
       audioManager.getKnightRiderAudioUrls = jest
