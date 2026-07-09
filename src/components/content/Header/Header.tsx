@@ -5,8 +5,8 @@ import React, { useRef, useState } from "react";
 import cvFile from "../../../assets/documents/cv.pdf";
 // Asset imports
 import profile1 from "../../../assets/images/profile1-nbg.png";
-import profile2 from "../../../assets/images/profile2-nbg.png";
 import profile3 from "../../../assets/images/profile1v2-nbg.png";
+import profile2 from "../../../assets/images/profile2-nbg.png";
 import profile4 from "../../../assets/images/profile4.png";
 
 // Local imports
@@ -106,17 +106,17 @@ const HEADER_SECTIONS: {
   items: string[];
   separator?: string;
 }[] = [
-    { type: "name", items: ["Aaron", "Lorenzo", "Woods"] },
-    {
-      type: "roles",
-      items: ["Engineer", "Artist", "Scientist"],
-      separator: " | ",
-    },
-    {
-      type: "title",
-      items: ["Biomedical", "Engineering", "Doctoral", "Student"],
-    },
-  ];
+  { type: "name", items: ["Aaron", "Lorenzo", "Woods"] },
+  {
+    type: "roles",
+    items: ["Engineer", "Artist", "Scientist"],
+    separator: " | ",
+  },
+  {
+    type: "title",
+    items: ["Biomedical", "Engineering", "Doctoral", "Student"],
+  },
+];
 
 const SOCIAL_MEDIA = [
   {
