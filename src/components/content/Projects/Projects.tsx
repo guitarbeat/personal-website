@@ -103,7 +103,7 @@ function ProjectCard({
     <a
       href={link || undefined}
       target={link ? "_blank" : undefined}
-      rel={link ? "noreferrer" : undefined}
+      rel={link ? "noopener noreferrer" : undefined}
       className={cn(`projects__card ${className}`.trim(), image && "has-image")}
       key={slug}
       onClick={handleClick}
