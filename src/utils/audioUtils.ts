@@ -197,34 +197,58 @@ class AudioManager {
     try {
       // Get the Knight Rider audio URLs
       const knightRiderUrls = this.getKnightRiderAudioUrls();
+      const abortController = new AbortController();
 
-      for (const url of knightRiderUrls) {
-        try {
-          this.createAudioElement(url);
+      const promises = knightRiderUrls.map(async (url) => {
+        // Create an isolated audio element for this fetch attempt
+        const audio = new Audio(url);
+        audio.crossOrigin = "anonymous";
+        audio.loop = true;
+        audio.volume = 0;
+        audio.preload = "auto";
+        await audio.play();
 
-          if (!this.audioElement) {
-            continue;
-          }
-
-          // Start playing
-          await this.audioElement.play();
-          this.isPlaying = true;
-
-          // Fade in effect
-          this.fadeIn();
-
-          return true;
-        } catch (error) {
-          console.warn(`Failed to play Knight Rider theme from ${url}:`, error);
-          // Continue to next source
+        // If another request already succeeded and aborted us, pause and throw
+        if (abortController.signal.aborted) {
+          audio.pause();
+          throw new Error("Aborted by faster source");
         }
+
+        return audio;
+      });
+
+      // Wait for the first successful audio play
+      const winnerAudio = await Promise.any(promises);
+
+      // Abort remaining requests so they pause if they eventually succeed
+      abortController.abort();
+
+      // Stop current audio if any
+      if (this.audioElement) {
+        this.stop();
       }
 
-      // If all sources fail
-      throw new Error("All audio sources failed");
+      // Set the winning audio element
+      this.audioElement = winnerAudio;
+
+      // Add error handling on the winner
+      this.audioElement.addEventListener("error", (e) => {
+        console.warn("Audio loading error:", e);
+        this.handleAudioError();
+      });
+
+      this.isPlaying = true;
+
+      // Fade in effect
+      this.fadeIn();
+
+      return true;
     } catch (error) {
-      console.error("Error playing Knight Rider theme from file:", error);
-      throw error;
+      console.error(
+        "Error playing Knight Rider theme from file: All audio sources failed",
+        error,
+      );
+      throw new Error("All audio sources failed");
     }
   }
 
