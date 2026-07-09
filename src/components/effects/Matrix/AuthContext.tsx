@@ -86,8 +86,7 @@ const clearSessionData = (key: string) => {
   }
 };
 
-// biome-ignore lint/suspicious/noExplicitAny: Generic value for storage
-const setSessionData = (key: string, value: any) => {
+const setSessionData = <T,>(key: string, value: T) => {
   if (!hasSessionStorage()) {
     return;
   }
@@ -96,8 +95,7 @@ const setSessionData = (key: string, value: any) => {
     window.sessionStorage.setItem(key, JSON.stringify(value));
   } catch (error) {
     console.warn(`${ERROR_MESSAGES.STORAGE_ERROR} for ${key}:`, error);
-    // biome-ignore lint/suspicious/noExplicitAny: Generic error handling
-    if ((error as any).name === "QuotaExceededError") {
+    if (error instanceof Error && error.name === "QuotaExceededError") {
       try {
         // biome-ignore lint/suspicious/useIterableCallbackReturn: forEach used for side effect
         Object.values(SESSION_KEYS).forEach((k) => clearSessionData(k));
@@ -250,7 +248,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     [DEVICE_KEYS.MOBILE]: isMobileUnlocked,
   } = unlockState;
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: Explicit dependency management
   const toolsAccessible = useMemo(() => {
     if (isMobile) {
       return isMobileUnlocked;
@@ -260,7 +257,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      // biome-ignore lint/correctness/useExhaustiveDependencies: Explicit dependency management
       value={useMemo(
         () => ({
           isUnlocked,
