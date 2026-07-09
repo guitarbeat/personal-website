@@ -30,7 +30,7 @@ export class ContentError extends Error {
   }
 }
 
-function parseJsonSafely(value) {
+export function parseJsonSafely(value) {
   if (typeof value !== "string") {
     return value ?? null;
   }

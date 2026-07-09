@@ -1,5 +1,6 @@
 import {
   createErrorPayload,
+  parseJsonSafely,
   getContentResponse,
   getHealthSummary,
   isAuthorizedCronRequest,
@@ -107,6 +108,27 @@ const snapshotEnvelope = {
     ],
   },
 };
+
+describe("parseJsonSafely", () => {
+  it("parses valid JSON strings correctly", () => {
+    expect(parseJsonSafely('{"valid":true}')).toEqual({ valid: true });
+    expect(parseJsonSafely('[1, 2, 3]')).toEqual([1, 2, 3]);
+    expect(parseJsonSafely('"string"')).toEqual("string");
+  });
+
+  it("returns the original string when it is invalid JSON (error path)", () => {
+    expect(parseJsonSafely('invalid json')).toEqual('invalid json');
+    expect(parseJsonSafely('{broken: json')).toEqual('{broken: json');
+  });
+
+  it("returns the value as is if it is not a string", () => {
+    expect(parseJsonSafely(null)).toBeNull();
+    expect(parseJsonSafely(undefined)).toBeNull(); // it has ?? null in the original code
+    expect(parseJsonSafely(123)).toEqual(123);
+    const obj = { key: "value" };
+    expect(parseJsonSafely(obj)).toEqual(obj);
+  });
+});
 
 describe("notionContent server helpers", () => {
   it("paginates through multi-page Notion responses and returns all records", async () => {
