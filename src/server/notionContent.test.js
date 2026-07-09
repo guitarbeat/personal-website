@@ -1,5 +1,6 @@
 import {
   createErrorPayload,
+  validateQueryBody,
   getContentResponse,
   getHealthSummary,
   isAuthorizedCronRequest,
@@ -602,5 +603,19 @@ describe("notionContent server helpers", () => {
         failureType: "internal_server_error",
       },
     });
+  });
+
+  it("handles serialization errors for timestamp filters gracefully", () => {
+    const circular = {};
+    circular.self = circular;
+
+    const body = validateQueryBody({
+      filter: {
+        timestamp: "created_time",
+        created_time: circular,
+      },
+    });
+
+    expect(body).toEqual({ page_size: 100 });
   });
 });
