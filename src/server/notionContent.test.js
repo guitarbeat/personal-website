@@ -603,4 +603,72 @@ describe("notionContent server helpers", () => {
       },
     });
   });
+
+  it("returns null for response data when json parsing fails", async () => {
+    const fetchImpl = jest.fn().mockResolvedValue({
+      ok: false,
+      status: 500,
+      json: async () => {
+        throw new Error("Invalid JSON");
+      },
+    });
+
+    await expect(
+      queryNotionDatabase({
+        databaseType: "projects",
+        fetchImpl,
+        env: { NOTION_TOKEN: "test-token" },
+      }),
+    ).rejects.toMatchObject({
+      code: "NOTION_API_ERROR",
+      status: 500,
+      details: {
+        databaseType: "projects",
+        response: null,
+      },
+    });
+  });
+
+  it("returns null for response data when json parsing fails in fetchNotionBlockChildren", async () => {
+    // 1st call: database query
+    // 2nd call: block children query where ok is false and json() throws
+    const fetchImpl = jest
+      .fn()
+      .mockResolvedValueOnce(
+        mockResponse({
+          results: [
+            createProjectPage({
+              titleText: "Project No Detail",
+              slug: "project-no-detail",
+              hook: "",
+              detail: "", // triggers fetchNotionBlockChildren
+            }),
+          ],
+          has_more: false,
+          next_cursor: null,
+        }),
+      )
+      .mockResolvedValueOnce({
+        ok: false,
+        status: 500,
+        json: async () => {
+          throw new Error("Invalid block JSON");
+        },
+      });
+
+    await expect(
+      queryNotionDatabase({
+        databaseType: "projects",
+        fetchImpl,
+        env: { NOTION_TOKEN: "test-token" },
+      }),
+    ).rejects.toMatchObject({
+      code: "NOTION_API_ERROR",
+      status: 500,
+      details: {
+        blockId: "project-no-detail-page",
+        response: null,
+      },
+    });
+  });
 });

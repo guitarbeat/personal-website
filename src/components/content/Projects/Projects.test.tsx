@@ -137,7 +137,9 @@ describe("Projects", () => {
 
     render(<Projects db={{ projects: MOCK_PROJECTS }} />);
 
-    const projectCard = await screen.findByRole("link", { name: /Project One/i });
+    const projectCard = await screen.findByRole("link", {
+      name: /Project One/i,
+    });
 
     expect(within(projectCard).getByText("React hook")).toBeInTheDocument();
 

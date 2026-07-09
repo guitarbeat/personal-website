@@ -136,7 +136,6 @@ function TimelineBar({
   );
 }
 
-
 const CARD_EFFECTS = [
   {
     colors: ["#f8fafc", "#f1f5f9", "#cbd5e1"],
@@ -166,7 +165,6 @@ const MemoizedTimelineBar = React.memo(TimelineBar);
 
 interface WorkProps {
   db?: {
-
     work: unknown[];
   };
 }
@@ -318,6 +316,5 @@ function Work({ db: propsDb }: WorkProps = {}) {
     </div>
   );
 }
-
 
 export default Work;
