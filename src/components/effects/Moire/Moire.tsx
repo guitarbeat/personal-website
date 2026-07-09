@@ -220,7 +220,6 @@ function _Magic(containerEl: Element | null) {
       document.addEventListener("scroll", scrollHandler, { passive: true });
     }
 
-    // Cleanup function (removes exactly what was added)
     return () => {
       if (isTouch) {
         document.body.removeEventListener("touchstart", onMove);
@@ -281,13 +280,11 @@ function _Magic(containerEl: Element | null) {
 
   init();
 
-  // return cleanup
   return () => {
     try {
       window.removeEventListener("resize", resize);
       document.removeEventListener("scroll", scrollHandler);
       document.body.removeEventListener("mousemove", onMove);
-      // call stored listeners cleanup if present (fallback to removing mouse listeners)
       if (renderer && typeof renderer._listenersCleanup === "function") {
         try {
           renderer._listenersCleanup();
@@ -543,7 +540,6 @@ function MagicComponent({
         document.body.addEventListener("mouseleave", handleMouseLeave, false);
       }
 
-      // Assign the cleanup function to the variable scoped to useEffect
       internalCleanup = () => {
         if (animationFrameId) cancelAnimationFrame(animationFrameId);
 
@@ -572,7 +568,6 @@ function MagicComponent({
       };
     }, 0);
 
-    // Main Cleanup
     return () => {
       clearTimeout(timeoutId);
       if (internalCleanup) internalCleanup();
