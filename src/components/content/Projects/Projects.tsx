@@ -180,13 +180,14 @@ function Projects({ db: propsDb }: ProjectsProps = {}) {
   useEffect(() => {
     const generatedTagColors = generateTagColors(allKeywords);
     setTagColors(generatedTagColors);
+    const allKeywordsSet = new Set(allKeywords);
     setActiveFilters((prevFilters) => {
       if (prevFilters.length === 0) {
         return allKeywords;
       }
 
       const filtered = prevFilters.filter((filter) =>
-        allKeywords.includes(filter),
+        allKeywordsSet.has(filter),
       );
 
       if (filtered.length === 0) {
@@ -202,13 +203,14 @@ function Projects({ db: propsDb }: ProjectsProps = {}) {
     const handleThemeChange = () => {
       const regeneratedTagColors = generateTagColors(allKeywords);
       setTagColors(regeneratedTagColors);
+      const allKeywordsSet = new Set(allKeywords);
       setActiveFilters((prevFilters) => {
         if (prevFilters.length === 0) {
           return allKeywords;
         }
 
         const filtered = prevFilters.filter((filter) =>
-          allKeywords.includes(filter),
+          allKeywordsSet.has(filter),
         );
 
         if (filtered.length === 0) {
