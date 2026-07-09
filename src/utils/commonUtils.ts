@@ -209,6 +209,12 @@ const DEFAULT_ALPHABET =
   "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
 function getRandomCharFromAlphabet(alphabet: string): string {
+  if (typeof crypto !== "undefined" && crypto.getRandomValues) {
+    const array = new Uint32Array(1);
+    crypto.getRandomValues(array);
+    return alphabet.charAt(array[0] % alphabet.length);
+  }
+  // Fallback for environments without crypto (like older node or some jest jsdom configurations)
   return alphabet.charAt(Math.floor(Math.random() * alphabet.length));
 }
 
