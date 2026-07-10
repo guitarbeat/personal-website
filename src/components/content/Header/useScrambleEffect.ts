@@ -24,6 +24,7 @@ export default function useScrambleEffect(
         for (const header of headers) {
           const letters = (header.textContent || "").split("");
           header.textContent = "";
+          const fragment = document.createDocumentFragment();
           for (const letter of letters) {
             const span = document.createElement("span");
             span.className = "letter";
@@ -32,8 +33,9 @@ export default function useScrambleEffect(
             } else {
               span.textContent = letter;
             }
-            header.appendChild(span);
+            fragment.appendChild(span);
           }
+          header.appendChild(fragment);
         }
 
         const letterElements = Array.from(
