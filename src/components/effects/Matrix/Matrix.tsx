@@ -688,7 +688,7 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
       return;
     }
 
-    // Trigger hack action (supports "tap to hack")
+    // Execute manual interaction (supports tap gestures)
     handleManualHackTrigger();
 
     // Also try to focus for keyboard users, but don't blocking tap flow
