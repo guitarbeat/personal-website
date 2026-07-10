@@ -270,8 +270,8 @@
   z-index: 0;
   pointer-events: none;
   mix-blend-mode: soft-light;
-  opacity: 0.35;
-  filter: saturate(0.85) brightness(1.05);
+  opacity: 0.28;
+  filter: saturate(0.8) brightness(1.02);
   transition: opacity 0.3s ease;
 }
 .work__item__pixel-canvas canvas {
@@ -280,7 +280,7 @@
   height: 100%;
 }
 .work__item:hover .work__item__pixel-canvas {
-  opacity: 0.45;
+  opacity: 0.36;
 }
 .work__item__content {
   position: relative;
