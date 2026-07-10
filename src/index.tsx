@@ -30,6 +30,7 @@ try {
   );
 } catch (error) {
   console.error("Failed to initialize React application:", error);
-  root.innerHTML =
-    '<div style="color: red; padding: 20px;">Failed to load application. Please refresh the page.</div>';
+  root.textContent = "Failed to load application. Please refresh the page.";
+  root.style.color = "red";
+  root.style.padding = "20px";
 }
