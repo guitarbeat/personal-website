@@ -978,6 +978,8 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
     ) {
       buckets[size] = [];
     }
+    const bucketValues = Object.values(buckets);
+    const bucketEntries = Object.entries(buckets);
 
     let lastTime = 0;
     const targetFPS = 60;
@@ -996,9 +998,9 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
         }
 
         // * Performance Optimization: Batch drawing by font size to minimize state changes
-        // * Reset buckets without reallocation
-        for (const key in buckets) {
-          buckets[key].length = 0;
+        // * Reset buckets without reallocation using pre-computed values array to avoid expensive for...in iteration
+        for (const bucket of bucketValues) {
+          bucket.length = 0;
         }
 
         // Group drops by font size
@@ -1010,9 +1012,8 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
           buckets[drop.fontSize].push(drop);
         }
 
-        // Iterate through buckets
-        for (const fontSizeStr in buckets) {
-          const bucket = buckets[fontSizeStr];
+        // Iterate through buckets using pre-computed entries to avoid for...in
+        for (const [fontSizeStr, bucket] of bucketEntries) {
           if (bucket.length === 0) continue;
           // Set font once per bucket
           context.font = `${fontSizeStr}px monospace`;

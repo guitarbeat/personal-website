@@ -1,4 +1,4 @@
-import { render } from "@testing-library/react";
+import { render, act } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { AuthProvider } from "../AuthContext";
 import Matrix from "../Matrix";
@@ -68,5 +68,58 @@ describe("Matrix Performance", () => {
 
     // Now it should have been called EXACTLY once
     expect(widthSetterSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('measures drawFrame performance', () => {
+    // Setup canvas mock specifically for drawFrame measurement
+    const fillTextMock = jest.fn();
+    const fillRectMock = jest.fn();
+
+    // We want to count how many object allocations or loop iterations happen
+    const mockContext = {
+      fillRect: fillRectMock,
+      fillText: fillTextMock,
+      font: '',
+      fillStyle: '',
+      globalAlpha: 1,
+      shadowColor: '',
+      shadowBlur: 0
+    };
+
+    HTMLCanvasElement.prototype.getContext = jest.fn(() => mockContext) as unknown as jest.Mock;
+
+    Object.defineProperty(window, 'matchMedia', {
+      writable: true,
+      value: jest.fn().mockImplementation(query => ({
+        matches: false,
+        media: query,
+        onchange: null,
+        addListener: jest.fn(),
+        removeListener: jest.fn(),
+        addEventListener: jest.fn(),
+        removeEventListener: jest.fn(),
+        dispatchEvent: jest.fn(),
+      })),
+    });
+
+    // Create a large canvas to generate many drops
+    Object.defineProperty(window, 'innerWidth', { writable: true, configurable: true, value: 1920 });
+    Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: 1080 });
+
+    const { unmount } = render(
+      <AuthProvider><Matrix isVisible={true} onSuccess={jest.fn()} /></AuthProvider>
+    );
+
+    // Fast-forward to trigger some frames
+    const _startTime = performance.now();
+    act(() => {
+      jest.advanceTimersByTime(1000); // 1 second of animation (~60 frames)
+    });
+    const _endTime = performance.now();
+
+    // console.log(`Animated 60 frames in ${endTime - startTime}ms simulation time.`);
+    // console.log(`fillText calls: ${fillTextMock.mock.calls.length}`);
+
+    unmount();
   });
 });
