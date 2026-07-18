@@ -100,6 +100,73 @@ describe('useVFXEffect', () => {
     );
   });
 
+  it('handles classList removal error gracefully', async () => {
+    const element1 = document.createElement('div');
+    const element2 = document.createElement('div');
+
+    // Make classList.remove throw
+    Object.defineProperty(element1, 'classList', {
+      value: {
+        add: jest.fn(),
+        remove: jest.fn(() => {
+          throw new Error("Simulated classList remove error");
+        })
+      }
+    });
+
+    const { rerender } = renderHook(
+      (props) => useVFXEffect(props),
+      { initialProps: { activeElement: element1 as HTMLElement | null } }
+    );
+
+    await act(async () => {
+      await new Promise(resolve => setTimeout(resolve, 10));
+    });
+
+    rerender({ activeElement: element1 });
+
+    await act(async () => {
+      await new Promise(resolve => setTimeout(resolve, 10));
+    });
+
+    rerender({ activeElement: element2 });
+
+    expect(console.warn).toHaveBeenCalledWith(
+      "VFX removal error:",
+      expect.any(Error)
+    );
+  });
+
+  it('handles active classList addition error gracefully', async () => {
+    const activeElement = document.createElement('div');
+
+    // Make classList.add throw
+    Object.defineProperty(activeElement, 'classList', {
+      value: {
+        add: jest.fn(() => {
+          throw new Error("Simulated classList add error");
+        }),
+        remove: jest.fn()
+      }
+    });
+
+    const { rerender } = renderHook(
+      (props) => useVFXEffect(props),
+      { initialProps: { activeElement: null as HTMLElement | null } }
+    );
+
+    await act(async () => {
+      await new Promise(resolve => setTimeout(resolve, 10));
+    });
+
+    rerender({ activeElement });
+
+    expect(console.warn).toHaveBeenCalledWith(
+      "VFX application error:",
+      expect.any(Error)
+    );
+  });
+
   it('cleans up effects silently on unmount', async () => {
     mockRemove.mockImplementation(() => {
       throw new Error("Simulated cleanup error");
