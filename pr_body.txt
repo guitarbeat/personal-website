@@ -1,0 +1,8 @@
+🎯 **What:** The vulnerability fixed
+Added `noopener noreferrer` to the `rel` attribute for links that open in a new tab (`target="_blank"`) in `Projects.tsx`.
+
+⚠️ **Risk:** The potential impact if left unfixed
+Missing `noopener noreferrer` on `target="_blank"` links can expose the site to reverse tabnabbing attacks, where the newly opened tab can manipulate the original window's location or access its `window.opener` object on older browsers.
+
+🛡️ **Solution:** How the fix addresses the vulnerability
+By explicitly adding `noopener noreferrer` to the `rel` attribute when `target="_blank"` is used, we ensure that the newly opened tab runs in a separate process and cannot access the `window.opener` object, preventing reverse tabnabbing attacks and adhering to modern web security best practices.
