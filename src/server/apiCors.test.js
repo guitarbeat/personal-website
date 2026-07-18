@@ -40,4 +40,10 @@ describe("apiCors", () => {
     expect(isOriginAllowed("https://env2.com", env2)).toBe(true);
     expect(isOriginAllowed("https://env1.com", env2)).toBe(false);
   });
+
+  it("should ignore origins without valid protocols", () => {
+    const env = { ALLOWED_ORIGINS: "example.com,*.example.com" };
+    expect(isOriginAllowed("https://example.com", env)).toBe(false);
+    expect(isOriginAllowed("https://test.example.com", env)).toBe(false);
+  });
 });

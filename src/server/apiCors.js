@@ -33,6 +33,11 @@ function buildCorsConfig(env = process.env) {
   const regexes = [];
 
   for (const part of parts) {
+    if (!part.startsWith("http://") && !part.startsWith("https://")) {
+      console.warn(`[CORS] Invalid origin ignored: ${part}. Must start with http:// or https://`);
+      continue;
+    }
+
     if (part.includes("*")) {
       const escaped = part.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
       const regexStr = `^${escaped.replace(/\\\*/g, "[a-zA-Z0-9-]+")}$`;
