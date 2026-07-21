@@ -1,0 +1,19 @@
+Title: 🧹 Refactor Moire component to extract helper functions and remove legacy code
+
+Description:
+🎯 **What:**
+- Extracted WebGL initialization and rendering logic out of the oversized `useEffect` inside `MagicComponent` into smaller, module-level helper functions (`resize`, `initPointsMesh`, `initScene`, `setupEventListeners`).
+- Removed the file-wide `// @ts-nocheck` directive and introduced a `MoireState` interface for better type safety.
+- Deleted the completely unused legacy `_Magic` function and the obsolete `chroma-js` import.
+
+💡 **Why:**
+The `MagicComponent`'s `useEffect` was overwhelmingly large and complex, making the file difficult to read and maintain. By extracting the logic into dedicated helper functions, the component's lifecycle is much clearer. Removing the legacy `_Magic` function and unused dependencies eliminates technical debt. Dropping the global `@ts-nocheck` ensures that the rest of the file benefits from TypeScript's safety, using targeted ignore comments only where strictly necessary for complex third-party library (`ogl`) types.
+
+✅ **Verification:**
+- Validated that the app compiles and type checks with `pnpm exec tsc --noEmit`.
+- Ran the linter via `pnpm run lint` and verified no new issues were introduced.
+- Executed `pnpm test src/components/effects/Moire/Moire.test.tsx` to confirm the component's unit tests still pass successfully.
+- Conducted an AI code review which confirmed the refactoring is functionally equivalent and robust.
+
+✨ **Result:**
+A significantly cleaner, fully-typed `Moire.tsx` file that is easier to comprehend, strictly adheres to React hooks best practices, and is free of dead code and unnecessary bypasses.
