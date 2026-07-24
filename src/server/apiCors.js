@@ -29,18 +29,24 @@ function buildCorsConfig(env = process.env) {
     .split(",")
     .map((value) => value.trim())
     .filter(Boolean);
+
   const exact = [];
-  const regexes = [];
+  const regexStrs = [];
+  const ESCAPE_REGEX = /[.*+?^${}()|[\]\\]/g;
+  const WILDCARD_REGEX = /\\\*/g;
 
   for (const part of parts) {
     if (part.includes("*")) {
-      const escaped = part.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-      const regexStr = `^${escaped.replace(/\\\*/g, "[a-zA-Z0-9-]+")}$`;
-      regexes.push(new RegExp(regexStr));
+      const escaped = part.replace(ESCAPE_REGEX, "\\$&");
+      const regexStr = escaped.replace(WILDCARD_REGEX, "[a-zA-Z0-9-]+");
+      regexStrs.push(regexStr);
     } else {
       exact.push(part);
     }
   }
+
+  const regexes =
+    regexStrs.length > 0 ? [new RegExp(`^(${regexStrs.join("|")})$`)] : [];
 
   return { exact, regexes, allowAll: false };
 }

@@ -3,11 +3,11 @@ import {
   getContentResponse,
   getHealthSummary,
   isAuthorizedCronRequest,
-  validateQueryBody,
   queryNotionDatabase,
   refreshContentSnapshot,
   SNAPSHOT_KEY,
   SNAPSHOT_META_KEY,
+  validateQueryBody,
 } from "./notionContent";
 
 const mockResponse = (payload, { ok = true, status = 200 } = {}) => ({
@@ -641,7 +641,6 @@ describe("notionContent server helpers", () => {
     ).toBe(false);
   });
 
-
   it("drops invalid properties gracefully due to parsing errors", () => {
     // Create a filter with a circular reference that will cause JSON.stringify to throw
     const circularRef = {};
@@ -652,13 +651,13 @@ describe("notionContent server helpers", () => {
       title: circularRef,
       // Add a valid property so the filter isn't completely dropped if not necessary.
       // validateFilter requires at least one parsed key for hasType = true.
-      rich_text: { equals: "test" }
+      rich_text: { equals: "test" },
     };
 
     const validBody = validateQueryBody({ filter });
     expect(validBody.filter).toEqual({
       property: "title",
-      rich_text: { equals: "test" }
+      rich_text: { equals: "test" },
     });
   });
 
@@ -668,7 +667,7 @@ describe("notionContent server helpers", () => {
 
     const filter = {
       timestamp: "created_time",
-      created_time: circularRef
+      created_time: circularRef,
     };
 
     const validBody = validateQueryBody({ filter });

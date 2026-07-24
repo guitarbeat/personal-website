@@ -1,5 +1,8 @@
 import { applyCors } from "../src/server/apiCors.js";
-import { createErrorPayload, getHealthSummary } from "../src/server/notionContent.js";
+import {
+  createErrorPayload,
+  getHealthSummary,
+} from "../src/server/notionContent.js";
 
 export default async function handler(req, res) {
   applyCors(req, res, {

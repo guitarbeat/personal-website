@@ -137,7 +137,9 @@ function ProjectCard({
         </div>
         <h3>{title}</h3>
         <p className="projects__card__hook">{hook}</p>
-        <p className={cn("projects__card__detail", isClicked ? "show-text" : "")}>
+        <p
+          className={cn("projects__card__detail", isClicked ? "show-text" : "")}
+        >
           {detail}
         </p>
         {image && <img src={image} className="project-image" alt="Project" />}
@@ -243,7 +245,10 @@ function Projects({ db: propsDb }: ProjectsProps = {}) {
     [allKeywords],
   );
 
-  const activeFiltersSet = useMemo(() => new Set(activeFilters), [activeFilters]);
+  const activeFiltersSet = useMemo(
+    () => new Set(activeFilters),
+    [activeFilters],
+  );
 
   const project_cards = projectsData.map((projectProps, index) => {
     const primaryKeyword = projectProps.keywords[0] || "";
