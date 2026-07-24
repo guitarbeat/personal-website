@@ -13,19 +13,21 @@ const SPOTIFY_IMAGE_URL =
 
 export function ColorChangeOnHover({ text = "" }) {
   const content = useMemo(() => {
-    const words = text.split(/\s+/).filter(Boolean);
     const wordOccurrences = new Map();
 
-    return words.map((word) => {
-      const occurrence = (wordOccurrences.get(word) ?? 0) + 1;
-      wordOccurrences.set(word, occurrence);
+    return text.split(/\s+/).reduce<React.ReactElement[]>((acc, word) => {
+      if (word) {
+        const occurrence = (wordOccurrences.get(word) ?? 0) + 1;
+        wordOccurrences.set(word, occurrence);
 
-      return (
-        <span key={`${word}-${occurrence}`} className="hover-color-change">
-          {word}{" "}
-        </span>
-      );
-    });
+        acc.push(
+          <span key={`${word}-${occurrence}`} className="hover-color-change">
+            {word}{" "}
+          </span>,
+        );
+      }
+      return acc;
+    }, []);
   }, [text]);
 
   return <>{content}</>;
