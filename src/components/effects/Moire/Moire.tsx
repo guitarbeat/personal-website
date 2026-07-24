@@ -14,7 +14,7 @@ function MagicComponent({
   isVisible = true,
   opacity = 0.2,
 }: MagicComponentProps) {
-  const containerRef = useRef(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const visibilityStyle = {
     opacity: isVisible ? opacity : 0,
   } satisfies CSSProperties;
@@ -27,7 +27,8 @@ function MagicComponent({
     // Small delay to ensure DOM is fully ready (fixes React 18 concurrent rendering timing)
     const timeoutId = setTimeout(() => {
       const { Renderer, Camera, Geometry, Program, Mesh, Color, Vec2 } = ogl;
-      const state = {};
+      // biome-ignore lint/suspicious/noExplicitAny: state requires dynamic assignment
+      const state: Record<string, any> = {};
       const containerEl = containerRef.current;
       // If the component has already unmounted, containerEl will be null
       if (!containerEl) return;
@@ -207,7 +208,8 @@ function MagicComponent({
       window.addEventListener("resize", debouncedResize, false);
       document.addEventListener("scroll", handleScroll, { passive: true });
 
-      const onMove = (e) => {
+      // biome-ignore lint/suspicious/noExplicitAny: DOM event can be MouseEvent or TouchEvent with varying properties
+      const onMove = (e: any) => {
         state.mouseOver = true;
         const touchX = e.changedTouches?.[0]?.pageX;
         const touchY = e.changedTouches?.[0]?.pageY;
@@ -250,7 +252,7 @@ function MagicComponent({
         if (animationFrameId) cancelAnimationFrame(animationFrameId);
 
         window.removeEventListener("resize", debouncedResize, false);
-        document.removeEventListener("scroll", handleScroll, { passive: true });
+        document.removeEventListener("scroll", handleScroll as EventListener);
         if ("ontouchstart" in window) {
           document.body.removeEventListener("touchstart", onMove, false);
           document.body.removeEventListener("touchmove", onMove, false);

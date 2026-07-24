@@ -137,7 +137,7 @@ describe("MagicComponent (Moire)", () => {
     expect(docRemoveEventListenerSpy).toHaveBeenCalledWith(
       "scroll",
       expect.any(Function),
-      { passive: true },
+
     );
   });
 });
