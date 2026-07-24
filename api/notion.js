@@ -24,7 +24,8 @@ export default async function handler(req, res) {
   return res.status(410).json({
     error: {
       code: "ENDPOINT_RETIRED",
-      message: "The /api/notion endpoint has been retired. Use /api/content instead.",
+      message:
+        "The /api/notion endpoint has been retired. Use /api/content instead.",
       failureType: "endpoint_retired",
     },
   });

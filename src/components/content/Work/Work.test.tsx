@@ -107,9 +107,9 @@ describe("Work timeline", () => {
       />,
     );
 
-    const headings = Array.from(container.querySelectorAll(".work__item h2")).map(
-      (heading) => heading.textContent,
-    );
+    const headings = Array.from(
+      container.querySelectorAll(".work__item h2"),
+    ).map((heading) => heading.textContent);
 
     expect(headings).toEqual(["Current Role", "Older Role"]);
   });

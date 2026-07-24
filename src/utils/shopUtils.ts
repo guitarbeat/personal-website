@@ -39,23 +39,23 @@ export const handlePrintfulError = (
         "CORS Error: Unable to connect to Printful API. Please ensure the development server is running with the correct proxy configuration.";
     }
   } else if (typeof err === "object" && err !== null) {
-      const errObj = err as Record<string, unknown>;
-      const response = errObj.response as Record<string, unknown> | undefined;
-      const code = errObj.code as string | undefined;
-      const message = errObj.message as string | undefined;
+    const errObj = err as Record<string, unknown>;
+    const response = errObj.response as Record<string, unknown> | undefined;
+    const code = errObj.code as string | undefined;
+    const message = errObj.message as string | undefined;
 
-      if (response) {
-        errorMessage = `${context}: ${response.status} - ${response.statusText || message || 'Unknown Error'}`;
-      } else if (message) {
-        errorMessage = `${context}: undefined - ${message}`;
-      }
+    if (response) {
+      errorMessage = `${context}: ${response.status} - ${response.statusText || message || "Unknown Error"}`;
+    } else if (message) {
+      errorMessage = `${context}: undefined - ${message}`;
+    }
 
-      if (message === "Network Error" || code === "ERR_NETWORK") {
-        errorMessage =
-          "CORS Error: Unable to connect to Printful API. Please ensure the development server is running with the correct proxy configuration.";
-      }
+    if (message === "Network Error" || code === "ERR_NETWORK") {
+      errorMessage =
+        "CORS Error: Unable to connect to Printful API. Please ensure the development server is running with the correct proxy configuration.";
+    }
   } else if (typeof err === "string") {
-      errorMessage = `${context}: undefined - ${err}`;
+    errorMessage = `${context}: undefined - ${err}`;
   }
 
   return errorMessage;
@@ -99,12 +99,15 @@ export const parsePrintfulProduct = (product: unknown): ParsedProduct => {
 
   const syncProduct = (p.sync_product as PrintfulSyncProduct) || null;
   const syncVariants = (p.sync_variants as PrintfulSyncVariant[]) || [];
-  const firstVariant = Array.isArray(syncVariants) && syncVariants.length > 0
-    ? syncVariants[0] || null
-    : null;
-  const price = firstVariant?.retail_price && !Number.isNaN(Number(firstVariant.retail_price))
-    ? Number(firstVariant.retail_price)
-    : 0;
+  const firstVariant =
+    Array.isArray(syncVariants) && syncVariants.length > 0
+      ? syncVariants[0] || null
+      : null;
+  const price =
+    firstVariant?.retail_price &&
+    !Number.isNaN(Number(firstVariant.retail_price))
+      ? Number(firstVariant.retail_price)
+      : 0;
 
   return {
     syncProduct,
