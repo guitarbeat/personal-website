@@ -1,5 +1,8 @@
 import { applyCors } from "../src/server/apiCors.js";
-import { createErrorPayload, getHealthSummary } from "../src/server/notionContent.js";
+import {
+  createErrorPayload,
+  getHealthSummary,
+} from "../src/server/notionContent.js";
 
 export default async function handler(req, res) {
   applyCors(req, res, {
@@ -30,7 +33,11 @@ export default async function handler(req, res) {
     return res.status(statusCode).json(summary);
   } catch (error) {
     res.setHeader("Cache-Control", "no-store");
-    console.error(error);
+    console.error(
+      error instanceof Error
+        ? `Error: ${error.message}\nStack: ${error.stack}`
+        : String(error),
+    );
     return res.status(error?.status || 500).json(createErrorPayload(error));
   }
 }
