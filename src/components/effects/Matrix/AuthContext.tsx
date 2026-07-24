@@ -86,8 +86,7 @@ const clearSessionData = (key: string) => {
   }
 };
 
-// biome-ignore lint/suspicious/noExplicitAny: Generic value for storage
-const setSessionData = (key: string, value: any) => {
+const setSessionData = (key: string, value: unknown) => {
   if (!hasSessionStorage()) {
     return;
   }
@@ -96,8 +95,7 @@ const setSessionData = (key: string, value: any) => {
     window.sessionStorage.setItem(key, JSON.stringify(value));
   } catch (error) {
     console.warn(`${ERROR_MESSAGES.STORAGE_ERROR} for ${key}:`, error);
-    // biome-ignore lint/suspicious/noExplicitAny: Generic error handling
-    if ((error as any).name === "QuotaExceededError") {
+    if (error instanceof Error && error.name === "QuotaExceededError") {
       try {
         // biome-ignore lint/suspicious/useIterableCallbackReturn: forEach used for side effect
         Object.values(SESSION_KEYS).forEach((k) => clearSessionData(k));
