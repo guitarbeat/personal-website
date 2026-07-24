@@ -8,6 +8,7 @@ import {
   refreshContentSnapshot,
   SNAPSHOT_KEY,
   SNAPSHOT_META_KEY,
+  parseJsonSafely,
 } from "./notionContent";
 
 const mockResponse = (payload, { ok = true, status = 200 } = {}) => ({
@@ -726,6 +727,27 @@ describe("notionContent server helpers", () => {
         blockId: "project-error-page",
         message: "Network Error",
       },
+    });
+  });
+
+  describe("parseJsonSafely", () => {
+    it("returns the original string when given malformed JSON", () => {
+      const malformedJson = "{ invalid: json }";
+      const result = parseJsonSafely(malformedJson);
+      expect(result).toBe(malformedJson);
+    });
+
+    it("returns null or the original value when given non-string types", () => {
+      expect(parseJsonSafely(null)).toBeNull();
+      expect(parseJsonSafely(123)).toBe(123);
+      expect(parseJsonSafely(undefined)).toBeNull();
+
+      const obj = { key: "value" };
+      expect(parseJsonSafely(obj)).toBe(obj);
+    });
+
+    it("parses valid JSON correctly", () => {
+      expect(parseJsonSafely('{"valid": "json"}')).toEqual({ valid: "json" });
     });
   });
 });
