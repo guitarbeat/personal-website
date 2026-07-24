@@ -746,7 +746,9 @@ function validateFilter(filter, depth = 0) {
         try {
           nextFilter[key] = JSON.parse(JSON.stringify(filter[key]));
           hasType = true;
-        } catch (_error) {}
+        } catch (error) {
+          console.error("Failed to parse filter property:", error);
+        }
       }
     }
 
