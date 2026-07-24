@@ -137,7 +137,9 @@ function ProjectCard({
         </div>
         <h3>{title}</h3>
         <p className="projects__card__hook">{hook}</p>
-        <p className={cn("projects__card__detail", isClicked ? "show-text" : "")}>
+        <p
+          className={cn("projects__card__detail", isClicked ? "show-text" : "")}
+        >
           {detail}
         </p>
         {image && <img src={image} className="project-image" alt="Project" />}
@@ -180,13 +182,14 @@ function Projects({ db: propsDb }: ProjectsProps = {}) {
   useEffect(() => {
     const generatedTagColors = generateTagColors(allKeywords);
     setTagColors(generatedTagColors);
+    const allKeywordsSet = new Set(allKeywords);
     setActiveFilters((prevFilters) => {
       if (prevFilters.length === 0) {
         return allKeywords;
       }
 
       const filtered = prevFilters.filter((filter) =>
-        allKeywords.includes(filter),
+        allKeywordsSet.has(filter),
       );
 
       if (filtered.length === 0) {
@@ -202,13 +205,14 @@ function Projects({ db: propsDb }: ProjectsProps = {}) {
     const handleThemeChange = () => {
       const regeneratedTagColors = generateTagColors(allKeywords);
       setTagColors(regeneratedTagColors);
+      const allKeywordsSet = new Set(allKeywords);
       setActiveFilters((prevFilters) => {
         if (prevFilters.length === 0) {
           return allKeywords;
         }
 
         const filtered = prevFilters.filter((filter) =>
-          allKeywords.includes(filter),
+          allKeywordsSet.has(filter),
         );
 
         if (filtered.length === 0) {
@@ -243,7 +247,10 @@ function Projects({ db: propsDb }: ProjectsProps = {}) {
     [allKeywords],
   );
 
-  const activeFiltersSet = useMemo(() => new Set(activeFilters), [activeFilters]);
+  const activeFiltersSet = useMemo(
+    () => new Set(activeFilters),
+    [activeFilters],
+  );
 
   const project_cards = projectsData.map((projectProps, index) => {
     const primaryKeyword = projectProps.keywords[0] || "";
