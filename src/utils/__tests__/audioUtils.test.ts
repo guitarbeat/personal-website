@@ -1,10 +1,4 @@
-import audioManager, {
-  cleanupAudio,
-  isAudioPlaying,
-  playKnightRiderTheme,
-  setAudioVolume,
-  stopKnightRiderTheme,
-} from "../audioUtils";
+import audioManager from "../audioUtils";
 
 describe("AudioManager", () => {
   let MockAudioContext: jest.Mock;
@@ -105,7 +99,7 @@ describe("AudioManager", () => {
       const consoleErrorSpy = jest
         .spyOn(console, "error")
         .mockImplementation(() => {});
-      const consoleWarnSpy = jest
+      const _consoleWarnSpy = jest
         .spyOn(console, "warn")
         .mockImplementation(() => {}); // Suppress handleAudioError warning
       const handleAudioErrorSpy = jest.spyOn(audioManager, "handleAudioError");
@@ -147,7 +141,7 @@ describe("AudioManager", () => {
       const consoleErrorSpy = jest
         .spyOn(console, "error")
         .mockImplementation(() => {});
-      const consoleWarnSpy = jest
+      const _consoleWarnSpy = jest
         .spyOn(console, "warn")
         .mockImplementation(() => {}); // Suppress handleAudioError warning
       const handleAudioErrorSpy = jest.spyOn(audioManager, "handleAudioError");
