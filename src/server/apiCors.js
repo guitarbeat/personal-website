@@ -34,8 +34,8 @@ function buildCorsConfig(env = process.env) {
 
   for (const part of parts) {
     if (part.includes("*")) {
-      const escaped = part.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-      const regexStr = `^${escaped.replace(/\\\*/g, "[a-zA-Z0-9-]+")}$`;
+      const escaped = part.replace(/[.*+?^$\{}()|[\]\\]/g, "\\$&");
+      const regexStr = `^${escaped.replace(/\\\*/g, "[a-zA-Z0-9-]{1,63}")}$`;
       regexes.push(new RegExp(regexStr));
     } else {
       exact.push(part);
