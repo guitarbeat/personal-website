@@ -1,10 +1,12 @@
 #!/usr/bin/env node
-const { execSync } = require("child_process");
-const fs = require("fs");
+const { execSync } = require("node:child_process");
+const fs = require("node:fs");
 
 const REPO = "guitarbeat/personal-website";
 const analysis = JSON.parse(
-  fs.readFileSync("/tmp/branch-analysis.json", "utf8").replace(/^warning:.*\n/, ""),
+  fs
+    .readFileSync("/tmp/branch-analysis.json", "utf8")
+    .replace(/^warning:.*\n/, ""),
 );
 
 function shTry(cmd) {
@@ -28,4 +30,9 @@ for (const item of analysis.toDelete) {
   process.stderr.write(`${ok ? "✓" : "✗"} ${item.branch}\n`);
 }
 
-console.log(JSON.stringify({ deleted: deleted.length, failed: failed.length, deleted, failed }));
+console.log(
+  JSON.stringify({
+    deleted,
+    failed,
+  }),
+);

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const { execSync } = require("child_process");
+const { execSync } = require("node:child_process");
 
 const KEEP = new Set(["main", "gh-pages"]);
 
@@ -17,7 +17,11 @@ const results = [];
 
 for (const branch of branches) {
   if (KEEP.has(branch)) {
-    results.push({ branch, action: "keep", reason: "protected/default branch" });
+    results.push({
+      branch,
+      action: "keep",
+      reason: "protected/default branch",
+    });
     continue;
   }
 
@@ -40,12 +44,14 @@ for (const branch of branches) {
       sh(`git rev-list --count origin/${branch}..origin/main`) || 0,
     );
     if (ahead > 0) {
-      diffStat = sh(
-        `git diff --shortstat origin/main...origin/${branch}`,
-      );
+      diffStat = sh(`git diff --shortstat origin/main...origin/${branch}`);
     }
   } catch (e) {
-    results.push({ branch, action: "keep", reason: `analysis failed: ${e.message}` });
+    results.push({
+      branch,
+      action: "keep",
+      reason: `analysis failed: ${e.message}`,
+    });
     continue;
   }
 
@@ -55,20 +61,30 @@ for (const branch of branches) {
   const addCount = insertions ? Number(insertions[1]) : 0;
 
   if (merged || ahead === 0) {
-    results.push({ branch, action: "delete", reason: merged ? "merged into main" : "no unique commits" });
+    results.push({
+      branch,
+      action: "delete",
+      reason: merged ? "merged into main" : "no unique commits",
+    });
     continue;
   }
 
   // Heuristic: interesting if meaningful unique work not superseded
   const isDraft = branch.startsWith("draft/");
   const isBotChurn =
-    /^(jules-|codeantai-|fix-|add-|perf\/|test|testing-|dependabot)/.test(branch) ||
+    /^(jules-|codeantai-|fix-|add-|perf\/|test|testing-|dependabot)/.test(
+      branch,
+    ) ||
     branch.includes("google-sheets") ||
     branch.includes("cors") ||
     branch.includes("magic");
 
   if (isDraft) {
-    results.push({ branch, action: "delete", reason: `stale draft branch (${ahead} ahead, ${behind} behind)` });
+    results.push({
+      branch,
+      action: "delete",
+      reason: `stale draft branch (${ahead} ahead, ${behind} behind)`,
+    });
     continue;
   }
 
@@ -100,4 +116,10 @@ for (const branch of branches) {
 const toDelete = results.filter((r) => r.action === "delete");
 const toKeep = results.filter((r) => r.action === "keep");
 
-console.log(JSON.stringify({ delete: toDelete.length, keep: toKeep.length, toDelete, toKeep }, null, 2));
+console.log(
+  JSON.stringify(
+    { delete: toDelete.length, keep: toKeep.length, toDelete, toKeep },
+    null,
+    2,
+  ),
+);
