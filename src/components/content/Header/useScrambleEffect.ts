@@ -28,11 +28,7 @@ export default function useScrambleEffect(
           for (const letter of letters) {
             const span = document.createElement("span");
             span.className = "letter";
-            if (letter === " ") {
-              span.innerHTML = "&nbsp;";
-            } else {
-              span.textContent = letter;
-            }
+            span.textContent = letter === " " ? " " : letter;
             fragment.appendChild(span);
           }
           header.appendChild(fragment);
