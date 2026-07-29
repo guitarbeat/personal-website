@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom";
-import { render, screen, waitFor, renderHook } from "@testing-library/react";
+import { render, renderHook, screen, waitFor } from "@testing-library/react";
 
 import { NotionProvider, useNotion } from "./NotionContext";
 
@@ -78,7 +78,9 @@ describe("NotionProvider", () => {
   });
 
   it("handles errors when fetching data fails", async () => {
-    const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+    const consoleSpy = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
     const errorMessage = "Network Error";
     mockGetAllData.mockRejectedValue(new Error(errorMessage));
 
@@ -98,9 +100,11 @@ describe("NotionProvider", () => {
   });
 
   it("throws an error if useNotion is used outside NotionProvider", () => {
-    const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+    const consoleSpy = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
     expect(() => renderHook(() => useNotion())).toThrow(
-      "useNotion must be used within NotionProvider"
+      "useNotion must be used within NotionProvider",
     );
     consoleSpy.mockRestore();
   });

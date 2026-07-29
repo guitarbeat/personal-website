@@ -2,14 +2,24 @@ import { isOriginAllowed } from "./apiCors.js";
 
 describe("apiCors", () => {
   it("should block empty origins", () => {
-    expect(isOriginAllowed("", { ALLOWED_ORIGINS: "https://example.com" })).toBe(false);
-    expect(isOriginAllowed(null, { ALLOWED_ORIGINS: "https://example.com" })).toBe(false);
-    expect(isOriginAllowed(undefined, { ALLOWED_ORIGINS: "https://example.com" })).toBe(false);
+    expect(
+      isOriginAllowed("", { ALLOWED_ORIGINS: "https://example.com" }),
+    ).toBe(false);
+    expect(
+      isOriginAllowed(null, { ALLOWED_ORIGINS: "https://example.com" }),
+    ).toBe(false);
+    expect(
+      isOriginAllowed(undefined, { ALLOWED_ORIGINS: "https://example.com" }),
+    ).toBe(false);
   });
 
   it("should evaluate global allow wildcard correctly", () => {
-    expect(isOriginAllowed("https://anything.com", { ALLOWED_ORIGINS: "*" })).toBe(true);
-    expect(isOriginAllowed("http://localhost:3000", { ALLOWED_ORIGINS: "*" })).toBe(true);
+    expect(
+      isOriginAllowed("https://anything.com", { ALLOWED_ORIGINS: "*" }),
+    ).toBe(true);
+    expect(
+      isOriginAllowed("http://localhost:3000", { ALLOWED_ORIGINS: "*" }),
+    ).toBe(true);
   });
 
   it("should match exact origins", () => {
@@ -25,7 +35,9 @@ describe("apiCors", () => {
     expect(isOriginAllowed("https://test.example.com", env)).toBe(true);
     // Should NOT match evil domain extensions or paths
     expect(isOriginAllowed("https://example.com.evil.com", env)).toBe(false);
-    expect(isOriginAllowed("https://evil.example.com.evil.com", env)).toBe(false);
+    expect(isOriginAllowed("https://evil.example.com.evil.com", env)).toBe(
+      false,
+    );
   });
 
   it("should correctly cache per environment string rather than globally", () => {
