@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, renderHook } from "@testing-library/react";
 
 import { NotionProvider, useNotion } from "./NotionContext";
 
@@ -24,6 +24,8 @@ const Consumer = () => {
       <p>{notion.isDegraded ? "degraded" : "live"}</p>
       <p>{notion.lastUpdated || "no-last-updated"}</p>
       <p>{notion.db.projects[0]?.title || "no-projects"}</p>
+      <p>{notion.error || "no-error"}</p>
+      <p>{notion.loading ? "loading" : "not-loading"}</p>
     </div>
   );
 };
@@ -71,6 +73,35 @@ describe("NotionProvider", () => {
       expect(screen.getByText("degraded")).toBeInTheDocument();
       expect(screen.getByText("2026-03-21T10:00:00.000Z")).toBeInTheDocument();
       expect(screen.getByText("Project One")).toBeInTheDocument();
+      expect(screen.getByText("not-loading")).toBeInTheDocument();
     });
+  });
+
+  it("handles errors when fetching data fails", async () => {
+    const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+    const errorMessage = "Network Error";
+    mockGetAllData.mockRejectedValue(new Error(errorMessage));
+
+    render(
+      <NotionProvider>
+        <Consumer />
+      </NotionProvider>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("not-loading")).toBeInTheDocument();
+      expect(screen.getByText(errorMessage)).toBeInTheDocument();
+      expect(screen.getByText("no-projects")).toBeInTheDocument();
+    });
+
+    consoleSpy.mockRestore();
+  });
+
+  it("throws an error if useNotion is used outside NotionProvider", () => {
+    const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+    expect(() => renderHook(() => useNotion())).toThrow(
+      "useNotion must be used within NotionProvider"
+    );
+    consoleSpy.mockRestore();
   });
 });
