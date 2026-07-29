@@ -18,6 +18,11 @@ interface VFXEffectConfig {
   overflow?: number;
 }
 
+interface VFXInstance {
+  add(element: HTMLElement, config?: VFXEffectConfig): void;
+  remove(element: HTMLElement): void;
+}
+
 interface VFXOptions {
   enabled?: boolean;
   activeElement?: HTMLElement | null;
@@ -29,8 +34,7 @@ export const useVFXEffect = ({
   activeElement = null,
   effectConfig = { shader: "rgbShift", overflow: 100 },
 }: VFXOptions) => {
-  // biome-ignore lint/suspicious/noExplicitAny: VFX library type definition is loose
-  const vfxRef = useRef<any>(null);
+  const vfxRef = useRef<VFXInstance | null>(null);
   const previousActiveRef = useRef<HTMLElement | null>(null);
 
   // * Initialize VFX instance
