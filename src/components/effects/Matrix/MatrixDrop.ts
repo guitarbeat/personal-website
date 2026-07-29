@@ -1,5 +1,19 @@
 import { MATRIX_RAIN } from "./constants";
 
+const randomArray = new Uint32Array(1);
+
+const secureRandom = (): number => {
+  if (
+    typeof window !== "undefined" &&
+    window.crypto &&
+    window.crypto.getRandomValues
+  ) {
+    window.crypto.getRandomValues(randomArray);
+    return randomArray[0] / 4294967296;
+  }
+  return Math.random();
+};
+
 export class Drop {
   x: number;
   y: number;
@@ -18,24 +32,24 @@ export class Drop {
     this.y = -100;
     this.char =
       MATRIX_RAIN.ALPHABET[
-        Math.floor(Math.random() * MATRIX_RAIN.ALPHABET.length)
+        Math.floor(secureRandom() * MATRIX_RAIN.ALPHABET.length)
       ];
-    this.changeInterval = Math.random() * 50 + 15;
+    this.changeInterval = secureRandom() * 50 + 15;
     this.frame = 0;
-    this.brightness = Math.random() > 0.95;
-    this.trailLength = Math.floor(Math.random() * 3) + 2;
+    this.brightness = secureRandom() > 0.95;
+    this.trailLength = Math.floor(secureRandom() * 3) + 2;
     this.trail = [];
     this.initializeCharacterProperties();
   }
 
   initializeCharacterProperties() {
-    this.speed = Math.random() * 2 + 0.8;
+    this.speed = secureRandom() * 2 + 0.8;
     this.fontSize = Math.floor(
-      Math.random() *
+      secureRandom() *
         (MATRIX_RAIN.FONT_SIZES.MAX - MATRIX_RAIN.FONT_SIZES.MIN) +
         MATRIX_RAIN.FONT_SIZES.MIN,
     );
-    this.opacity = Math.random() * 0.6 + 0.3;
+    this.opacity = secureRandom() * 0.6 + 0.3;
   }
 
   update(canvasHeight: number) {
@@ -51,10 +65,10 @@ export class Drop {
     if (this.frame >= this.changeInterval) {
       this.char =
         MATRIX_RAIN.ALPHABET[
-          Math.floor(Math.random() * MATRIX_RAIN.ALPHABET.length)
+          Math.floor(secureRandom() * MATRIX_RAIN.ALPHABET.length)
         ];
       this.frame = 0;
-      this.brightness = Math.random() > 0.97;
+      this.brightness = secureRandom() > 0.97;
     }
 
     if (canvasHeight && this.y * this.fontSize > canvasHeight) {
