@@ -208,8 +208,18 @@ export function createTimeout(callback: () => void, time: number) {
 const DEFAULT_ALPHABET =
   "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
+function getSecureRandomIndex(max: number): number {
+  if (max <= 0) return 0;
+  if (typeof crypto !== "undefined" && crypto.getRandomValues) {
+    const array = new Uint32Array(1);
+    crypto.getRandomValues(array);
+    return array[0] % max;
+  }
+  return Math.floor(Math.random() * max);
+}
+
 function getRandomCharFromAlphabet(alphabet: string): string {
-  return alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+  return alphabet.charAt(getSecureRandomIndex(alphabet.length));
 }
 
 /**

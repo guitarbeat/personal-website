@@ -23,7 +23,11 @@ function shTry(cmd) {
 }
 
 const winners = JSON.parse(fs.readFileSync(path.join(ROOT, "docs/pr-cleanup-winners.json"), "utf8"));
-const inventory = JSON.parse(fs.readFileSync(path.join(ROOT, "docs/pr-cleanup-inventory.json"), "utf8"));
+const inventory = JSON.parse(
+  sh(
+    'gh pr list --state open --limit 200 --json number,title,headRefName,mergeable,additions,deletions,changedFiles | node scripts/pr-cleanup-inventory.js',
+  ),
+);
 
 const mergeSet = new Set(winners.merge.map((m) => m.number));
 const clusterWinner = {};

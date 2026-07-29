@@ -7,4 +7,5 @@ node_modules
 .vercel
 .env*.local
 .env.vercel*
+docs/pr-cleanup-inventory.json
 .playwright-cli/
