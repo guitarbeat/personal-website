@@ -3,11 +3,11 @@ import {
   getContentResponse,
   getHealthSummary,
   isAuthorizedCronRequest,
-  validateQueryBody,
   queryNotionDatabase,
   refreshContentSnapshot,
   SNAPSHOT_KEY,
   SNAPSHOT_META_KEY,
+  validateQueryBody,
 } from "./notionContent";
 
 const mockResponse = (payload, { ok = true, status = 200 } = {}) => ({
@@ -641,7 +641,6 @@ describe("notionContent server helpers", () => {
     ).toBe(false);
   });
 
-
   it("drops invalid properties gracefully due to parsing errors", () => {
     // Create a filter with a circular reference that will cause JSON.stringify to throw
     const circularRef = {};
@@ -652,13 +651,13 @@ describe("notionContent server helpers", () => {
       title: circularRef,
       // Add a valid property so the filter isn't completely dropped if not necessary.
       // validateFilter requires at least one parsed key for hasType = true.
-      rich_text: { equals: "test" }
+      rich_text: { equals: "test" },
     };
 
     const validBody = validateQueryBody({ filter });
     expect(validBody.filter).toEqual({
       property: "title",
-      rich_text: { equals: "test" }
+      rich_text: { equals: "test" },
     });
   });
 
@@ -668,7 +667,7 @@ describe("notionContent server helpers", () => {
 
     const filter = {
       timestamp: "created_time",
-      created_time: circularRef
+      created_time: circularRef,
     };
 
     const validBody = validateQueryBody({ filter });
@@ -711,6 +710,46 @@ describe("notionContent server helpers", () => {
         }),
       )
       .mockRejectedValueOnce(new Error("Network Error"));
+
+    await expect(
+      queryNotionDatabase({
+        databaseType: "projects",
+        fetchImpl,
+        env: { NOTION_TOKEN: "test-token" },
+      }),
+    ).rejects.toMatchObject({
+      code: "NOTION_REQUEST_FAILED",
+      failureType: "notion_request_failed",
+      message: "Failed to reach Notion block API.",
+      details: {
+        blockId: "project-error-page",
+        message: "Network Error",
+      },
+    });
+  });
+
+  it("throws ContentError with NOTION_REQUEST_FAILED when fetchImpl throws an error inside fetchNotionBlockChildren", async () => {
+    const fetchImpl = jest
+      .fn()
+      .mockResolvedValueOnce(
+        mockResponse({
+          results: [
+            {
+              id: "project-error-page",
+              properties: {
+                Name: { title: [{ plain_text: "Project Error" }] },
+                Date: { number: 2024 },
+                Link: { url: "https://example.com/project-error" },
+                Slug: { rich_text: [{ plain_text: "project-error" }] },
+                Published: { checkbox: true },
+              },
+            },
+          ],
+          has_more: false,
+          next_cursor: null,
+        }),
+      )
+      .mockImplementationOnce(() => Promise.reject(new Error("Network Error")));
 
     await expect(
       queryNotionDatabase({
