@@ -210,8 +210,8 @@ function Header() {
                 className={cn("avatar", "active")}
                 src={PROFILE_IMAGES[profileIndex].src}
                 alt={PROFILE_IMAGES[profileIndex].alt}
-                width={PROFILE_IMAGE_WIDTH}
-                height={PROFILE_IMAGE_HEIGHT}
+                width={PROFILE_IMAGES[profileIndex].width}
+                height={PROFILE_IMAGES[profileIndex].height}
                 fetchPriority="high"
                 onError={handleImageError}
               />

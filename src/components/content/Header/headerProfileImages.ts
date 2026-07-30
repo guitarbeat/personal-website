@@ -1,22 +1,46 @@
-import profile1 from "../../../assets/images/profile1-nbg.png";
-import profile3 from "../../../assets/images/profile1v2-nbg.png";
-import profile2 from "../../../assets/images/profile2-nbg.png";
-import profile4 from "../../../assets/images/profile4.png";
+import profileAvatarDefault from "../../../assets/images/profile-avatar-default.png";
+import profileAvatarOutdoor from "../../../assets/images/profile-avatar-outdoor.png";
+import profileAvatarStudio from "../../../assets/images/profile-avatar-studio.png";
+import profileAvatarFallback from "../../../assets/images/profile-avatar-fallback.png";
 
+/** Largest avatar intrinsic width (used for layout hints on non-profile icons). */
 export const PROFILE_IMAGE_WIDTH = 1024;
 export const PROFILE_IMAGE_HEIGHT = 1024;
 
 export interface ProfileImage {
   src: string;
   alt: string;
+  width: number;
+  height: number;
   isFallback?: boolean;
 }
 
 export const PROFILE_IMAGES: ProfileImage[] = [
-  { src: profile1, alt: "Profile one" },
-  { src: profile2, alt: "Profile two" },
-  { src: profile3, alt: "Profile three" },
-  { src: profile4, alt: "Profile four", isFallback: true },
+  {
+    src: profileAvatarDefault,
+    alt: "Aaron Lorenzo Woods — default profile photo",
+    width: 1024,
+    height: 1024,
+  },
+  {
+    src: profileAvatarOutdoor,
+    alt: "Aaron Lorenzo Woods — outdoor profile photo",
+    width: 800,
+    height: 800,
+  },
+  {
+    src: profileAvatarStudio,
+    alt: "Aaron Lorenzo Woods — studio profile photo",
+    width: 500,
+    height: 500,
+  },
+  {
+    src: profileAvatarFallback,
+    alt: "Aaron Lorenzo Woods — profile photo",
+    width: 400,
+    height: 400,
+    isFallback: true,
+  },
 ];
 
 export const FALLBACK_PROFILE_SRC =

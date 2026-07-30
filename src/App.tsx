@@ -1,6 +1,7 @@
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import {
+  lazy,
   memo,
   Suspense,
   useCallback,
@@ -24,11 +25,14 @@ import FrameEffect from "@/components/effects/Loading/FrameEffect";
 import LoadingSequence from "@/components/effects/Loading/LoadingSequence";
 import { NAV_ITEMS } from "./components/Core/constants";
 import { BlurSection } from "./components/effects/Blur/index";
-import CustomCursor from "./components/effects/CustomCursor/CustomCursor";
 import InfiniteScrollEffect from "./components/effects/InfiniteScrollEffect";
 import { AuthProvider, useAuth } from "./components/effects/Matrix/AuthContext";
-import Matrix from "./components/effects/Matrix/Matrix";
 import ScrollToTopButton from "./components/effects/Matrix/ScrollToTopButton";
+
+const CustomCursor = lazy(
+  () => import("./components/effects/CustomCursor/CustomCursor"),
+);
+const Matrix = lazy(() => import("./components/effects/Matrix/Matrix"));
 import MagicComponent from "./components/effects/Moire/Moire";
 import { About, Header, NavBar, Projects, Work } from "./components/index";
 
@@ -116,7 +120,9 @@ const Layout = memo(
         />
       )}
       <MagicComponent isVisible={isBackgroundVisible} opacity={0.2} />
-      <FrameEffect>{children}</FrameEffect>
+      <main id="main-content">
+        <FrameEffect>{children}</FrameEffect>
+      </main>
       <ScrollToTopButton />
       <UnlockedBadge />
     </div>
@@ -145,13 +151,21 @@ const MatrixModal = ({
   showMatrix,
   onSuccess,
   onMatrixReady,
-}: MatrixModalProps) => (
-  <Matrix
-    isVisible={showMatrix}
-    onSuccess={onSuccess}
-    onMatrixReady={onMatrixReady}
-  />
-);
+}: MatrixModalProps) => {
+  if (!showMatrix) {
+    return null;
+  }
+
+  return (
+    <Suspense fallback={null}>
+      <Matrix
+        isVisible={showMatrix}
+        onSuccess={onSuccess}
+        onMatrixReady={onMatrixReady}
+      />
+    </Suspense>
+  );
+};
 
 const MATRIX_DISABLED_VALUES = new Set(["0", "false", "off", "no"]);
 const MATRIX_ENABLED_VALUES = new Set(["1", "true", "on", "yes"]);
@@ -392,7 +406,11 @@ const AppContent = () => {
         onSuccess={handleMatrixSuccess}
         onMatrixReady={handleMatrixReady}
       />
-      {isUnlocked ? <CustomCursor /> : null}
+      {isUnlocked ? (
+        <Suspense fallback={null}>
+          <CustomCursor />
+        </Suspense>
+      ) : null}
       {showUnavailableState ? (
         <ContentUnavailableState error={error} />
       ) : (
