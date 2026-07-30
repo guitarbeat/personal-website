@@ -46,9 +46,9 @@
   }
 
   &__spotify {
-    flex: 1 1 30%;
-    width: 100%;
-    max-width: clamp(18rem, 32vw, 24rem);
+    flex: 0 0 auto;
+    width: min(100%, 300px);
+    max-width: 300px;
     align-self: flex-start;
     margin: 0;
     display: block;
@@ -76,6 +76,7 @@
       width: 100%;
       height: auto;
       aspect-ratio: 300 / 100;
+      object-fit: contain;
     }
   }
 
@@ -296,7 +297,8 @@ body.light-theme {
     }
 
     &__spotify {
-      width: 100%;
+      width: min(100%, 300px);
+      max-width: 300px;
       margin: 1rem auto;
     }
 
