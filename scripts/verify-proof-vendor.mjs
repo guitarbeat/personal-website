@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { lstat, readFile, readdir } from "node:fs/promises";
+import { lstat, readdir, readFile } from "node:fs/promises";
 import { dirname, isAbsolute, relative, resolve, sep } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 

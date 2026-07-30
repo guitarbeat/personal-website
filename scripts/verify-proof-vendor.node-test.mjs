@@ -1,17 +1,17 @@
 import assert from "node:assert/strict";
 import {
   copyFile,
-  mkdtemp,
   mkdir,
-  readFile,
+  mkdtemp,
   readdir,
+  readFile,
   rm,
   writeFile,
 } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
 import test, { afterEach } from "node:test";
+import { fileURLToPath } from "node:url";
 import { verifyProofVendor } from "./verify-proof-vendor.mjs";
 
 const fixtureRoots = [];
@@ -44,9 +44,9 @@ async function fixtureFromRepoVendor() {
 
 afterEach(async () => {
   await Promise.all(
-    fixtureRoots.splice(0).map((root) =>
-      rm(root, { force: true, recursive: true }),
-    ),
+    fixtureRoots
+      .splice(0)
+      .map((root) => rm(root, { force: true, recursive: true })),
   );
 });
 
