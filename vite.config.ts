@@ -165,16 +165,6 @@ export default defineConfig(({ mode }) => {
       "process.env.REACT_APP_API_BASE": JSON.stringify(
         env.REACT_APP_API_BASE || process.env.REACT_APP_API_BASE || "",
       ),
-      "process.env.REACT_APP_ENABLE_VERCEL_ANALYTICS": JSON.stringify(
-        env.REACT_APP_ENABLE_VERCEL_ANALYTICS ||
-          process.env.REACT_APP_ENABLE_VERCEL_ANALYTICS ||
-          "",
-      ),
-      "process.env.REACT_APP_ENABLE_VERCEL_SPEED_INSIGHTS": JSON.stringify(
-        env.REACT_APP_ENABLE_VERCEL_SPEED_INSIGHTS ||
-          process.env.REACT_APP_ENABLE_VERCEL_SPEED_INSIGHTS ||
-          "",
-      ),
       // Security Fix: Printful API keys removed to prevent client-side exposure
       "process.env.REACT_APP_PRINTFUL_API_KEY": JSON.stringify(""),
       "process.env.REACT_APP_PRINTFUL_STORE_ID": JSON.stringify(""),
