@@ -2,36 +2,21 @@
 /**
  * PR cleanup: merge winners, close remaining open PRs, delete branches.
  */
-const { execSync } = require("node:child_process");
 const fs = require("node:fs");
 const path = require("node:path");
 
-const ROOT = path.join(__dirname, "..");
+const { ROOT, sh, shTry } = require("../lib/exec.js");
+
 const REPO = "guitarbeat/personal-website";
 const LOG = path.join(ROOT, "docs/pr-cleanup-log.md");
-
-function sh(cmd) {
-  return execSync(cmd, {
-    cwd: ROOT,
-    encoding: "utf8",
-    stdio: ["pipe", "pipe", "pipe"],
-  }).trim();
-}
-
-function shTry(cmd) {
-  try {
-    return { ok: true, out: sh(cmd) };
-  } catch (e) {
-    return { ok: false, err: e.stderr?.toString() || e.message };
-  }
-}
+const INVENTORY_SCRIPT = path.join(__dirname, "pr-cleanup-inventory.js");
 
 const winners = JSON.parse(
   fs.readFileSync(path.join(ROOT, "docs/pr-cleanup-winners.json"), "utf8"),
 );
 const inventory = JSON.parse(
   sh(
-    "gh pr list --state open --limit 200 --json number,title,headRefName,mergeable,additions,deletions,changedFiles | node scripts/pr-cleanup-inventory.js",
+    `gh pr list --state open --limit 200 --json number,title,headRefName,mergeable,additions,deletions,changedFiles | node ${INVENTORY_SCRIPT}`,
   ),
 );
 

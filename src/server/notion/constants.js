@@ -1,5 +1,7 @@
-export const NOTION_API_BASE = "https://api.notion.com/v1";
-export const NOTION_VERSION = "2022-06-28";
+import notionConfig from "../../../config/notion.json";
+
+export const NOTION_API_BASE = notionConfig.apiBase;
+export const NOTION_VERSION = notionConfig.version;
 
 export const CACHE_CONTROL_HEADER =
   "public, s-maxage=300, stale-while-revalidate=3600";
@@ -9,11 +11,7 @@ export const SCHEMA_VERSION = 3;
 export const SNAPSHOT_KEY = "content:snapshot:v3";
 export const SNAPSHOT_META_KEY = "content:snapshot:meta:v3";
 
-export const DATABASE_IDS = {
-  projects: "29dda682bcf6806eaa2efe20631dab6c",
-  work: "b589d1ef5ef64b35abcc88558bf5574f",
-  about: "aab0a96e279d48b6833f6727e6301266",
-};
+export const DATABASE_IDS = notionConfig.databases;
 
 export class ContentError extends Error {
   constructor(

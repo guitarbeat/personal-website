@@ -2,55 +2,56 @@
 
 Reference documentation for troubleshooting and future improvements.
 
+> **Data source:** Content is loaded from **Notion** via `src/server/notion/` and `NotionContext`. Google Sheets integration was removed in 2026.
+
 ## Known Issues & Fixes
 
 ### TypeScript Event Listener Error
 
 - **Error**: `TS2769: No overload matches this call` for `addEventListener` with `handleScroll`
-- **Root Cause**: Throttle function returned function without proper event parameter typing
+- **Root cause**: Throttle function returned a callback without proper event parameter typing
 - **Fix**: Added event parameter to throttled handlers
-- **File**: `src/components/effects/Moire/Moire.js`
+- **File**: `src/components/effects/Moire/Moire.tsx`
 
 ### Node.js Version Conflicts
 
 - **Error**: Deprecated Node.js 18.x warning in deployments
-- **Root Cause**: Duplicate `engines` specifications with conflicting versions
+- **Root cause**: Duplicate `engines` specifications with conflicting versions
 - **Fix**: Removed duplicate, kept single engines block with Node 22.x
 - **File**: `package.json`
 
 ## Refactoring Opportunities
 
-### 1. Centralize Google Sheets Data Normalization
+### 1. Unify Navigation Bar Dragging
 
-Components (`About`, `Projects`, `Work`) each implement similar data mapping logic.
+`NavBar` has separate touch and mouse event handlers doing similar work.
 
-- **Suggestion**: Create `normalizeSheetRows(sheetName, mapper)` utility or `useSheetData` hook
-- **Benefits**: Eliminate duplicate mapping boilerplate, consistent defaults
-- **Files**: `src/components/content/*/*.js`
+- **Suggestion**: Use pointer events or a shared drag-handler utility
+- **Benefits**: Fewer callbacks, less duplication
+- **File**: `src/components/content/NavBar/NavBar.tsx`
 
-### 2. Unify Navigation Bar Dragging
-
-`NavBar` has separate touch and mouse event handlers doing identical work.
-
-- **Suggestion**: Use pointer events or `createDragHandlers(ref, options)` utility
-- **Benefits**: Reduce function count, prevent recreated callbacks on each render
-- **Files**: `src/components/content/NavBar/NavBar.js`
-
-### 3. Extract Expandable Card Pattern
+### 2. Extract Expandable Card Pattern
 
 Both Projects and Work sections implement similar expandable card logic.
 
-- **Suggestion**: Create shared `useExpandableCards` hook or `ExpandableCard` component
-- **Benefits**: Encapsulate toggling logic, animation classes, accessibility
-- **Files**: `src/components/content/Projects/Projects.js`, `src/components/content/Work/Work.js`
+- **Suggestion**: Shared `useExpandableCards` hook or `ExpandableCard` component
+- **Benefits**: Encapsulate toggling, animation classes, accessibility
+- **Files**: `src/components/content/Projects/Projects.tsx`, `src/components/content/Work/Work.tsx`
 
-### 4. Externalize Filter Button Styling
+### 3. Externalize Filter Button Styling
 
 Project filters rebuild inline style objects on every render.
 
-- **Suggestion**: Use SCSS modifiers (e.g., `.tag--active`) or `getTagStyles()` helper
-- **Benefits**: Cleaner JSX, prevent inline style churn, easier to maintain
-- **Files**: `src/components/content/Projects/Projects.js`
+- **Suggestion**: SCSS modifiers (e.g. `.tag--active`) or a `getTagStyles()` helper
+- **Benefits**: Cleaner JSX, easier maintenance
+- **File**: `src/components/content/Projects/Projects.tsx`
+
+### 4. Slim `App.tsx`
+
+Routing, auth gate, and layout still live in one ~450-line component.
+
+- **Suggestion**: Extract route config and layout shell
+- **File**: `src/App.tsx`
 
 ## Notes
 

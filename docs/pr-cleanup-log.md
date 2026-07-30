@@ -155,37 +155,33 @@ Started: 2026-07-29T22:51:04.394Z
 
 ## Merged PRs (22)
 
-| PR | Title |
-|---|---|
-| #675 | Remove API key and Doc ID from client bundle |
-| #692 | Fix ReDoS vulnerability in CORS wildcard matching |
-| #672 | Replace innerHTML with textContent (XSS) |
-| #682 | Secure PRNG in MatrixDrop |
-| #591 | timingSafeCompare fix |
-| #681 | Prevent sensitive data in API error logging |
-| #673 | Remove _Magic dead code in Moire |
-| #685 | Remove any types in AuthContext |
-| #680 | Fix empty catch in notionContent |
-| #669 | iOS backdrop-filter perf fix |
-| #678 | Set-based filter lookup in Projects |
-| #695 | CI permissions, caching, check-only Biome |
-| #691 | useScrollUtils tests |
-| #694 | fetchImpl error handling test |
-| #679 | useMobileDetection tests |
-| #670 | NotionContext error path tests |
-| #676 | VFXEffect any type fix |
-| #693 | Rephrase Matrix comment for scanner |
-| #588 | @vitejs/plugin-react 6.0.2 |
-| #586 | lint-staged 17.0.7 |
-| #580 | sass-loader 17.0.0 |
-| #447 | Imgbot image optimization |
+- #675 — Remove API key and Doc ID from client bundle
+- #692 — Fix ReDoS vulnerability in CORS wildcard matching
+- #672 — Replace innerHTML with textContent (XSS)
+- #682 — Secure PRNG in MatrixDrop
+- #591 — timingSafeCompare fix
+- #681 — Prevent sensitive data in API error logging
+- #673 — Remove _Magic dead code in Moire
+- #685 — Remove any types in AuthContext
+- #680 — Fix empty catch in notionContent
+- #669 — iOS backdrop-filter perf fix
+- #678 — Set-based filter lookup in Projects
+- #695 — CI permissions, caching, check-only Biome
+- #691 — useScrollUtils tests
+- #694 — fetchImpl error handling test
+- #679 — useMobileDetection tests
+- #670 — NotionContext error path tests
+- #676 — VFXEffect any type fix
+- #693 — Rephrase Matrix comment for scanner
+- #588 — @vitejs/plugin-react 6.0.2
+- #586 — lint-staged 17.0.7
+- #580 — sass-loader 17.0.0
+- #447 — Imgbot image optimization
 
 ## Deferred / not merged
 
-| PR | Reason |
-|---|---|
-| #687 | Merge conflicts after prior merges (useScrollThreshold tests) |
-| #683 | Merge conflicts after prior merges (parseJsonSafely tests) |
+- #687 — Merge conflicts after prior merges (useScrollThreshold tests)
+- #683 — Merge conflicts after prior merges (parseJsonSafely tests)
 
 ## Summary
 

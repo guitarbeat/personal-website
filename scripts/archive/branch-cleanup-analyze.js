@@ -1,11 +1,7 @@
 #!/usr/bin/env node
-const { execSync } = require("node:child_process");
+const { sh } = require("../lib/exec.js");
 
 const KEEP = new Set(["main", "gh-pages"]);
-
-function sh(cmd) {
-  return execSync(cmd, { encoding: "utf8" }).trim();
-}
 
 const branches = sh(
   'gh api "repos/guitarbeat/personal-website/branches?per_page=100" --paginate -q "[.[].name][]"',

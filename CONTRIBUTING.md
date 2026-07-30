@@ -1,52 +1,71 @@
 # Contributing
 
-Thank you for your interest in contributing! Here's how to get started.
+Thank you for your interest in contributing. This repo uses **pnpm** and a **dual build path** (CRACO for local dev + GitHub Pages, Vite for CI/Lighthouse).
 
 ## Development Setup
 
-1. Fork and clone the repository
-2. Install dependencies:
+1. Fork and clone the repository.
+2. Run the setup script (installs dependencies with pnpm):
+
    ```bash
-   npm install
+   ./scripts/setup.sh
    ```
-3. Start the dev server:
+
+3. Copy `.env.example` to `.env` when testing Notion, auth, Printful, or analytics paths.
+4. Start development (CRACO on `:3000`, Vite API on `:8080`):
+
    ```bash
-   npm run dev
+   pnpm start
    ```
-4. Create a feature branch from `main`
+
+   Or run Vite API only if you manage CRACO separately:
+
+   ```bash
+   pnpm run dev:api
+   ```
+
+5. Create a feature branch from `main`.
+
+See [AGENTS.md](AGENTS.md) for the full command reference, CI workflows, and environment notes.
 
 ## Tech Stack
 
-- **React + TypeScript** with **Vite**
-- **Biome** for linting & formatting
-- **Stylelint** for SCSS
-- **Husky + lint-staged** for pre-commit hooks
+- **React + TypeScript** with **CRACO** (`react-scripts`) and a supplemental **Vite** build
+- **Sass** for styling
+- **Biome** for linting and formatting
+- **Jest** for tests
+- **Husky** pre-commit hook (image compression)
 
 ## Code Quality
 
-This project enforces code quality standards automatically:
-
-- **Biome** handles linting and formatting for TypeScript/React code
-- **Stylelint** handles SCSS linting
-- **Husky + lint-staged** run checks on staged files before each commit
-- All PRs must pass CI checks before merging
-
 Run checks locally before pushing:
+
 ```bash
-npx biome check .
+pnpm run lint
+pnpm test
+pnpm exec tsc --noEmit
+pnpm run build:dev
 ```
+
+For Markdown-only changes:
+
+```bash
+pnpm run lint:md
+```
+
+All PRs must pass CI before merging.
 
 ## Pull Request Process
 
 1. Create a feature branch: `git checkout -b feat/your-feature`
-2. Make your changes and commit with clear messages
+2. Make changes with clear commit messages
 3. Push and open a PR against `main`
 4. Ensure CI passes
 5. Request review
 
 ## Commit Messages
 
-Use clear, descriptive commit messages:
+Use clear, descriptive messages:
 
 - `feat: add new feature`
 - `fix: resolve bug`

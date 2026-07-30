@@ -3,6 +3,7 @@
 
 const express = require("express");
 const cors = require("cors");
+const notionConfig = require("../config/notion.json");
 
 // Ensure fetch is available (Node 18+)
 if (typeof fetch === "undefined") {
@@ -11,16 +12,14 @@ if (typeof fetch === "undefined") {
 const app = express();
 const PORT = 3001;
 
-// Notion API configuration
-const NOTION_API_BASE = "https://api.notion.com/v1";
-const NOTION_VERSION = "2022-06-28";
+const NOTION_API_BASE = notionConfig.apiBase;
+const NOTION_VERSION = notionConfig.version;
 const NOTION_TOKEN = process.env.NOTION_TOKEN;
 
-// Database IDs
 const DATABASE_IDS = {
-  PROJECTS: "29dda682bcf6806eaa2efe20631dab6c",
-  WORK: "b589d1ef5ef64b35abcc88558bf5574f",
-  ABOUT: "aab0a96e279d48b6833f6727e6301266",
+  PROJECTS: notionConfig.databases.projects,
+  WORK: notionConfig.databases.work,
+  ABOUT: notionConfig.databases.about,
 };
 
 // Enable CORS for local development
