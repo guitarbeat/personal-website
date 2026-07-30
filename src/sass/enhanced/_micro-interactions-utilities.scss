@@ -1,6 +1,6 @@
 @use "sass:map";
-@use "../enhanced/_tokens" as tokens;
-@use "../enhanced/_typography" as typography;
+@use "./tokens" as tokens;
+@use "./typography" as typography;
 @use "./micro-interactions-transitions" as *;
 @use "./micro-interactions-hover-focus" as *;
 @use "./micro-interactions-loading" as *;

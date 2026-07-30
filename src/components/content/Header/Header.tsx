@@ -351,6 +351,7 @@ function Header() {
 
     return (
       <img
+        key={image.src}
         className={cn("avatar__photo", className)}
         src={image.src}
         alt={image.alt}
@@ -372,8 +373,7 @@ function Header() {
       return cn(
         "avatar",
         "avatar--transitioning",
-        "avatar--scale-from-hover",
-        phaseAnimating && "avatar--scale-rest",
+        phaseAnimating ? "avatar--scale-rest" : "avatar--scale-from-hover",
       );
     }
 
@@ -385,8 +385,7 @@ function Header() {
       return cn(
         "avatar",
         "avatar--transitioning",
-        "avatar--scale-rest",
-        phaseAnimating && "avatar--scale-hover",
+        phaseAnimating ? "avatar--scale-hover" : "avatar--scale-rest",
       );
     }
 
@@ -423,19 +422,18 @@ function Header() {
       (phase === "slideIn" || phase === "expand") &&
       incomingIndex !== null
     ) {
-      return renderAvatarImage(
-        incomingIndex,
-        cn(
-          "avatar__photo--incoming",
-          phase === "slideIn" &&
-            phaseAnimating &&
-            "avatar__photo--incoming-active",
-        ),
-        {
-          onTransitionEnd:
-            phase === "slideIn" ? handlePhotoTransitionEnd : undefined,
-        },
-      );
+      const photoClassName =
+        phase === "expand"
+          ? "avatar__photo--active"
+          : cn(
+              "avatar__photo--incoming",
+              phaseAnimating && "avatar__photo--incoming-active",
+            );
+
+      return renderAvatarImage(incomingIndex, photoClassName, {
+        onTransitionEnd:
+          phase === "slideIn" ? handlePhotoTransitionEnd : undefined,
+      });
     }
 
     return null;

@@ -611,11 +611,6 @@ $enhanced-breakpoints: (
 // ENHANCED UTILITY FUNCTIONS
 ////////////////////////////////////
 
-// Get enhanced type scale value
-@function enhanced-type($size) {
-  @return map.get($enhanced-type-scale, $size);
-}
-
 // Get enhanced spacing value
 @function enhanced-spacing($size) {
   @return map.get($enhanced-spacing-scale, $size);
