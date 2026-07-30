@@ -59,10 +59,9 @@
 
 ### Local services and verification
 
-- `node scripts/server.js`
-  Starts the local Notion proxy on `http://localhost:3001`.
-- `python3 scripts/verify.py`
-  Uses Playwright to capture a screenshot of the app at `http://localhost:3000` into `verification.png`.
+- **Notion content locally:** use `pnpm start` or `pnpm run dev:api` — Vite on `http://localhost:8080` serves `/api/content` via [vite.config.ts](vite.config.ts) middleware (same handlers as [api/](api/)).
+- **`node scripts/server.js`** — legacy Express proxy on `:3001` from the pre–`/api/content` era; not used by the current app path. Prefer Vite `:8080`.
+- **`python3 scripts/verify.py`** — Playwright screenshot at `http://localhost:8080` into `verification.png` (update port if you still use CRACO-only dev on `:3000`).
 
 ### Deployment
 

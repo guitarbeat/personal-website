@@ -43,7 +43,7 @@ describe("Header avatar", () => {
     expect(avatar).toHaveAttribute("fetchpriority", "high");
   });
 
-  it("shows one avatar at a time during phased transition", () => {
+  it("shows one avatar at a time during phased transition", async () => {
     const { container } = render(<Header />);
     const avatarButton = screen.getByRole("button", {
       name: /change profile image/i,
@@ -71,9 +71,11 @@ describe("Header avatar", () => {
       );
     });
 
-    expect(container.querySelectorAll(".avatar__photo")).toHaveLength(1);
-    expect(container.querySelector(".avatar__photo--incoming")).toBeInTheDocument();
-    expect(container.querySelector(".avatar__photo--outgoing")).toBeNull();
+    await waitFor(() => {
+      expect(container.querySelectorAll(".avatar__photo")).toHaveLength(1);
+      expect(container.querySelector(".avatar__photo--incoming")).toBeInTheDocument();
+      expect(container.querySelector(".avatar__photo--outgoing")).toBeNull();
+    });
   });
 
   it("cycles through profile images and wraps back to the starting avatar", async () => {

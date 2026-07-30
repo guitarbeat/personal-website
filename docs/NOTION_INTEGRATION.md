@@ -61,6 +61,17 @@ graph TD
 2. KV stores the latest successful content snapshot for degraded-mode fallback.
 3. React fetches `/api/content` and renders the transformed response.
 
+### API routes
+
+| Route | Purpose |
+| ----- | ------- |
+| `GET /api/content` | Primary content endpoint (live Notion + KV snapshot fallback) |
+| `GET /api/health` | Snapshot / refresh health summary |
+| `GET` or `POST /api/content-refresh` | Authorized cron refresh |
+| `GET` or `POST /api/notion` | **Retired (410)** — returns `ENDPOINT_RETIRED`; use `/api/content` ([api/notion.js](../api/notion.js)) |
+
+Local dev: Vite middleware on port `8080` mounts the same handlers as Vercel serverless routes under [api/](../api/).
+
 ### Database Schemas
 
 #### About Database

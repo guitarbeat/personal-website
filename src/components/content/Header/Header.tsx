@@ -172,10 +172,14 @@ export const AVATAR_TRANSITION_FALLBACK_MS = 1400;
 
 type AvatarPhase = "idle" | "shrink" | "slideOut" | "slideIn" | "expand";
 
-function isTransformTransition(
+function isAvatarScaleTransition(
   event: React.TransitionEvent<HTMLElement>,
 ): boolean {
-  return !event.propertyName || event.propertyName === "transform";
+  return (
+    !event.propertyName ||
+    event.propertyName === "transform" ||
+    event.propertyName === "--init-scale"
+  );
 }
 
 function prefersReducedMotion(): boolean {
@@ -287,7 +291,7 @@ function Header() {
   const handleAvatarTransitionEnd = (
     e: React.TransitionEvent<HTMLSpanElement>,
   ) => {
-    if (e.target !== e.currentTarget || !isTransformTransition(e)) {
+    if (e.target !== e.currentTarget || !isAvatarScaleTransition(e)) {
       return;
     }
 
@@ -307,7 +311,7 @@ function Header() {
   const handlePhotoTransitionEnd = (
     e: React.TransitionEvent<HTMLImageElement>,
   ) => {
-    if (!isTransformTransition(e)) {
+    if (!isAvatarScaleTransition(e)) {
       return;
     }
 

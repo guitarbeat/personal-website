@@ -398,6 +398,12 @@ $header-tokens: (
   }
 }
 
+@property --init-scale {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
 .avatar {
   --image-size: 100%;
   --init-scale: 1;
@@ -430,16 +436,15 @@ $header-tokens: (
     ) 50%,
     radial-gradient(circle closest-side, #000 100%, transparent) var(--mask-gradient);
   transform: scale(var(--init-scale));
-  // Animate transform and outline-offset together; mask tracks via --init-scale.
-  transition: transform 0.5s var(--theme-transition-timing, cubic-bezier(0.4, 0, 0.2, 1)),
-    outline-offset 0.5s var(--theme-transition-timing, cubic-bezier(0.4, 0, 0.2, 1));
+  // Drive ring, cutout, and zoom from one interpolated variable.
+  transition: --init-scale 0.5s var(--theme-transition-timing, cubic-bezier(0.4, 0, 0.2, 1));
 
   &:not(.avatar--transitioning):hover {
     --init-scale: 1.25;
   }
 
   &--transitioning {
-    transition-duration: 0.35s, 0.35s;
+    transition: --init-scale 0.35s var(--theme-transition-timing, cubic-bezier(0.4, 0, 0.2, 1));
   }
 
   @media (prefers-reduced-motion: reduce) {
