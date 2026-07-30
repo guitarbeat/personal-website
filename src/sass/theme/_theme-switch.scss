@@ -154,7 +154,7 @@ $theme-colors: (
 
   .switch-handle {
     position: absolute;
-    top: var(--switch-padding);
+    top: 50%;
     left: var(--switch-padding);
     width: var(--switch-handle-size);
     height: var(--switch-handle-size);
@@ -166,7 +166,9 @@ $theme-colors: (
       map.get($theme-colors, 'dark', 'handle', 'end') 150%
     );
     background-size: 100% 200%;
-    transform: translateX(var(--handle-translate));
+    // TranslateX for on/off; translateY keeps the thumb vertically centered
+    // even when navbar touch-target rules change the track height.
+    transform: translate(var(--handle-translate), -50%);
     transform-origin: center;
     transition:
       transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
@@ -210,7 +212,7 @@ $theme-colors: (
       0 0 0 1px rgb(0 0 0 / 15%);
 
     .switch-handle {
-      transform: translateX(var(--handle-translate)) scale(1.1);
+      transform: translate(var(--handle-translate), -50%) scale(1.1);
       box-shadow:
         0 6px 16px rgb(0 0 0 / 30%),
         inset 0 2px 4px rgb(255 255 255 / 40%),
@@ -231,7 +233,7 @@ $theme-colors: (
       inset 0 1px 2px rgb(255 255 255 / 10%);
 
     .switch-handle {
-      transform: translateX(var(--handle-translate)) scale(1.05);
+      transform: translate(var(--handle-translate), -50%) scale(1.05);
 
       &::before {
         opacity: 0.5;
@@ -246,7 +248,7 @@ $theme-colors: (
       inset 0 2px 4px rgb(255 255 255 / 10%);
 
     .switch-handle {
-      transform: translateX(var(--handle-translate)) scale(0.95);
+      transform: translate(var(--handle-translate), -50%) scale(0.95);
       box-shadow:
         0 2px 6px rgb(0 0 0 / 40%),
         inset 0 1px 2px rgb(0 0 0 / 30%);
@@ -287,7 +289,7 @@ $theme-colors: (
     &:hover,
     &:focus-visible {
       .switch-handle {
-        transform: translateX(var(--handle-translate));
+        transform: translate(var(--handle-translate), -50%);
       }
     }
   }
