@@ -144,12 +144,13 @@ describe("Projects", () => {
     expect(within(projectCard).getByText("React hook")).toBeInTheDocument();
 
     const detail = within(projectCard).getByText("React detail");
-    expect(detail).not.toHaveClass("show-text");
+    const detailWrapper = detail.closest(".projects__card__detail-wrapper");
+    expect(detailWrapper).not.toHaveClass("show-text");
 
     await user.click(projectCard);
 
     await waitFor(() => {
-      expect(detail).toHaveClass("show-text");
+      expect(detailWrapper).toHaveClass("show-text");
     });
   });
 

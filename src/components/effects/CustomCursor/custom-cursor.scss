@@ -2,21 +2,25 @@
 @use "../../../sass/tokens/tokens" as *;
 
 .custom-cursor {
+  --custom-cursor-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+
   position: fixed;
   top: 0;
   left: 0;
   z-index: 9999;
   pointer-events: none;
   mix-blend-mode: difference;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  will-change: transform;
-
-  // Hide on mobile (replaces hidden md:flex)
   display: none;
-  @media (min-width: 768px) {
+  transform: translate(-100px, -100px) translate(-50%, -50%);
+
+  @media (hover: hover) and (pointer: fine) {
     display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    display: none;
   }
 
   &__body {
@@ -27,10 +31,18 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    
-    // Explicit width/height for motion to animate transform
     width: 80px;
     height: 80px;
+    transform: scale(1);
+    transition: transform 160ms var(--custom-cursor-ease-out);
+
+    &--hover {
+      transform: scale(1.5);
+
+      &:active {
+        transform: scale(1.46);
+      }
+    }
   }
 
   &__label {
@@ -39,8 +51,14 @@
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    font-size: 0.875rem; // text-sm
+    font-size: 0.875rem;
     overflow: hidden;
     white-space: nowrap;
+    opacity: 0;
+    transition: opacity 200ms ease-out;
+
+    &--visible {
+      opacity: 1;
+    }
   }
 }

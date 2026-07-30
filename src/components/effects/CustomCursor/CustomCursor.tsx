@@ -3,12 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { motion, useMotionValue, useSpring } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
+import { cn } from "@/utils/commonUtils";
+import { prefersReducedMotion } from "@/utils/motion";
 import "./custom-cursor.scss";
-
-const springConfig = { damping: 20, stiffness: 350, mass: 0.1 };
 
 type CustomCursorProps = {
   /**
@@ -18,34 +17,75 @@ type CustomCursorProps = {
   label?: string;
 };
 
+function isCustomCursorSupported(): boolean {
+  if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+    return false;
+  }
+
+  if (prefersReducedMotion()) {
+    return false;
+  }
+
+  return (
+    window.matchMedia("(pointer: fine)").matches &&
+    window.matchMedia("(hover: hover)").matches
+  );
+}
+
 const CustomCursor = ({ label: defaultLabel = "View" }: CustomCursorProps) => {
+  const cursorRef = useRef<HTMLDivElement>(null);
+  const [enabled, setEnabled] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const [cursorText, setCursorText] = useState(defaultLabel);
 
-  // Initialize off-screen to prevent flash
-  const mouseX = useMotionValue(-100);
-  const mouseY = useMotionValue(-100);
-
-  // Smooth spring animation
-  const x = useSpring(mouseX, springConfig);
-  const y = useSpring(mouseY, springConfig);
-
   useEffect(() => {
-    // 1. Position tracking (high frequency, minimal logic)
-    // * Performance optimization: decoupled from state updates to prevent expensive DOM traversal on every frame
-    const updateMousePosition = (e: MouseEvent) => {
-      mouseX.set(e.clientX);
-      mouseY.set(e.clientY);
+    const syncEnabled = () => {
+      setEnabled(isCustomCursorSupported());
     };
 
-    // 2. Hover state detection (event-driven, no polling on mousemove)
-    const handleMouseOver = (e: MouseEvent) => {
-      const target = e.target;
+    syncEnabled();
+
+    if (typeof window.matchMedia !== "function") {
+      return undefined;
+    }
+
+    const reducedMotionQuery = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    );
+    const pointerQuery = window.matchMedia("(pointer: fine)");
+    const hoverQuery = window.matchMedia("(hover: hover)");
+
+    reducedMotionQuery.addEventListener("change", syncEnabled);
+    pointerQuery.addEventListener("change", syncEnabled);
+    hoverQuery.addEventListener("change", syncEnabled);
+
+    return () => {
+      reducedMotionQuery.removeEventListener("change", syncEnabled);
+      pointerQuery.removeEventListener("change", syncEnabled);
+      hoverQuery.removeEventListener("change", syncEnabled);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!enabled) {
+      return undefined;
+    }
+
+    const cursor = cursorRef.current;
+    if (!cursor) {
+      return undefined;
+    }
+
+    const updateMousePosition = (event: MouseEvent) => {
+      cursor.style.transform = `translate(${event.clientX}px, ${event.clientY}px) translate(-50%, -50%)`;
+    };
+
+    const handleMouseOver = (event: MouseEvent) => {
+      const target = event.target;
       if (!(target instanceof Element)) {
         return;
       }
 
-      // Check for custom cursor text first
       const customTextElement = target.closest("[data-cursor-text]");
       if (customTextElement) {
         const text = customTextElement.getAttribute("data-cursor-text");
@@ -56,7 +96,6 @@ const CustomCursor = ({ label: defaultLabel = "View" }: CustomCursorProps) => {
         }
       }
 
-      // Check for clickable elements
       const clickable =
         target.closest("button") ??
         target.closest("a") ??
@@ -74,51 +113,39 @@ const CustomCursor = ({ label: defaultLabel = "View" }: CustomCursorProps) => {
       setIsHovering(false);
     };
 
-    window.addEventListener("mousemove", updateMousePosition, {
-      passive: true,
-    });
-    window.addEventListener("mouseover", handleMouseOver, {
-      passive: true,
-    });
-    document.addEventListener("mouseleave", handleMouseLeave, {
-      passive: true,
-    });
+    window.addEventListener("mousemove", updateMousePosition, { passive: true });
+    window.addEventListener("mouseover", handleMouseOver, { passive: true });
+    document.addEventListener("mouseleave", handleMouseLeave, { passive: true });
 
     return () => {
       window.removeEventListener("mousemove", updateMousePosition);
       window.removeEventListener("mouseover", handleMouseOver);
       document.removeEventListener("mouseleave", handleMouseLeave);
     };
-  }, [mouseX, mouseY, defaultLabel]);
+  }, [defaultLabel, enabled]);
+
+  if (!enabled) {
+    return null;
+  }
 
   return (
-    <motion.div
-      className="custom-cursor"
-      style={{ x, y, translateX: "-50%", translateY: "-50%" }}
-    >
-      {/* This div is the actual cursor "body" and will handle the scaling and text centering */}
-      <motion.div
-        className="custom-cursor__body"
-        // Style width/height removed here as handled in CSS, but animating scale is fine to keep here or move to CSS if basic
-        // Actually, frame-motion constraints are easier in JS for 'scale'
-        animate={{
-          scale: isHovering ? 1.5 : 1,
-        }}
-        transition={{ type: "spring", stiffness: 300, damping: 25 }}
+    <div ref={cursorRef} className="custom-cursor">
+      <div
+        className={cn(
+          "custom-cursor__body",
+          isHovering && "custom-cursor__body--hover",
+        )}
       >
-        {/* Text directly inside the scalable cursor body, centered by flex parent */}
-        <motion.span
-          className="custom-cursor__label"
-          initial={{ opacity: 0 }}
-          animate={{
-            opacity: isHovering ? 1 : 0,
-          }}
-          transition={{ duration: 0.2 }}
+        <span
+          className={cn(
+            "custom-cursor__label",
+            isHovering && "custom-cursor__label--visible",
+          )}
         >
           {cursorText}
-        </motion.span>
-      </motion.div>
-    </motion.div>
+        </span>
+      </div>
+    </div>
   );
 };
 

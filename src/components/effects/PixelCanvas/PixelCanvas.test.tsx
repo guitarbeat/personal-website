@@ -10,6 +10,16 @@ class ResizeObserver {
 
 global.ResizeObserver = ResizeObserver;
 
+// Mock IntersectionObserver
+class IntersectionObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+
+global.IntersectionObserver =
+  IntersectionObserver as unknown as typeof globalThis.IntersectionObserver;
+
 // Mock HTMLCanvasElement.getContext
 HTMLCanvasElement.prototype.getContext = jest.fn(() => {
   return {

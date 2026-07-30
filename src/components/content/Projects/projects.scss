@@ -9,6 +9,9 @@
   --theme-transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
   --theme-transition-duration: 0.3s;
   --theme-transition-duration-long: 0.5s;
+  --projects-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --projects-transition-fast: 200ms var(--projects-ease-out);
+  --projects-transition-hover-out: 200ms var(--projects-ease-out) 0.15s;
 }
 
 .projects {
@@ -33,21 +36,25 @@
     backdrop-filter: blur(3px);
     box-shadow: rgb(0 0 0 / 8%) 0 0 5px;
     border-radius: 4px;
-    // Delayed hover-out to prevent flicker when mouse leaves
+    // Delayed hover-out to prevent flicker when mouse leaves (blur snaps — not transitioned)
     transition:
-      background-color 0.3s ease-in-out 0.15s,
-      box-shadow 0.3s ease-in-out 0.15s,
-      border-radius 0.3s ease-in-out 0.15s,
-      backdrop-filter 0.3s ease-in-out 0.15s,
-      transform 0.3s ease-in-out 0.15s,
-      opacity 0.3s ease-in-out 0.15s;
+      flex var(--projects-transition-hover-out),
+      max-width var(--projects-transition-hover-out),
+      min-width var(--projects-transition-hover-out),
+      padding var(--projects-transition-hover-out),
+      margin var(--projects-transition-hover-out),
+      background-color var(--projects-transition-hover-out),
+      box-shadow var(--projects-transition-hover-out),
+      border-radius var(--projects-transition-hover-out),
+      transform var(--projects-transition-hover-out),
+      opacity var(--projects-transition-hover-out),
+      visibility 0s linear 0.35s;
     height: auto;
     overflow: hidden;
     opacity: 1;
     transform: scale(1);
+    visibility: visible;
     isolation: isolate;
-    // Prevent hover trap by maintaining pointer events during transitions
-    will-change: transform, box-shadow;
 
     @include glass-effect(15px, 0.3);
 
@@ -57,14 +64,16 @@
     }
 
     &.filtered-out {
-      width: 0;
-      height: 0;
+      flex: 0 0 0;
+      min-width: 0;
+      max-width: 0;
       padding: 0;
       margin: 0;
       opacity: 0;
-      transform: scale(0);
+      transform: scale(0.95);
+      visibility: hidden;
       border-width: 0;
-      pointer-events: none; // Prevent interference with hover states
+      pointer-events: none;
     }
 
     &--skeleton {
@@ -169,6 +178,11 @@
       }
     }
 
+    &:hover,
+    &:focus-within {
+      will-change: transform, box-shadow;
+    }
+
     &:hover {
       box-shadow: rgb(0 0 0 / 23%) -6px 6px;
       cursor: pointer;
@@ -176,10 +190,17 @@
       border-radius: 8px;
       // Instant hover-in (no delay) - overrides base transition delay
       transition:
-        background-color 0.2s ease-in-out 0s,
-        box-shadow 0.2s ease-in-out 0s,
-        border-radius 0.2s ease-in-out 0s,
-        backdrop-filter 0.2s ease-in-out 0s;
+        flex var(--projects-transition-fast),
+        max-width var(--projects-transition-fast),
+        min-width var(--projects-transition-fast),
+        padding var(--projects-transition-fast),
+        margin var(--projects-transition-fast),
+        background-color var(--projects-transition-fast),
+        box-shadow var(--projects-transition-fast),
+        border-radius var(--projects-transition-fast),
+        transform var(--projects-transition-fast),
+        opacity var(--projects-transition-fast),
+        visibility 0s;
     }
 
     &__pixel-canvas {
@@ -226,32 +247,52 @@
       gap: 1rem;
       padding-right: 2rem;
       align-content: start;
-      transition: padding-right 0.2s ease-in-out;
+      transition: padding-right var(--projects-transition-fast);
       min-width: 0; // Allow grid items to shrink and text to wrap properly
     }
 
     // Only expand padding on hover for cards with images (to make room for image)
     // Cards without images keep normal padding so text isn't pushed unnecessarily
-    &.has-image:hover &__content {
+    @media (hover: hover) {
+      &.has-image:hover &__content {
+        padding-right: clamp(2rem, 8vw, 8rem);
+      }
+    }
+
+    &.is-expanded.has-image &__content {
       padding-right: clamp(2rem, 8vw, 8rem);
     }
   }
 }
 
-.projects__card__detail {
-  max-height: 0;
+.projects__card__detail-wrapper {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 350ms var(--projects-ease-out);
+}
+
+.projects__card__detail-wrapper.show-text,
+.projects__card.is-expanded .projects__card__detail-wrapper {
+  grid-template-rows: 1fr;
+}
+
+@media (hover: hover) {
+  .projects__card:hover .projects__card__detail-wrapper {
+    grid-template-rows: 1fr;
+  }
+}
+
+.projects__card__detail-inner {
   overflow: hidden;
-  transition: max-height 0.5s ease-in-out;
+  min-height: 0;
+}
+
+.projects__card__detail {
   word-wrap: break-word;
   overflow-wrap: break-word;
   color: var(--text-secondary);
   text-align: center;
-}
-
-.projects__card__detail.show-text,
-.projects__card:hover .projects__card__detail {
-  max-height: 1000px; // Use large fixed value instead of 'none' for smooth transition
-  overflow: visible; // Allow text to flow naturally when expanded
+  margin: 0;
 }
 
 .projects__card__hook {
@@ -307,14 +348,24 @@ body:not(.light-theme) {
   opacity: 0;
   object-fit: contain;
   transition:
-    opacity 0.2s ease-in-out,
-    transform 0.3s ease-in-out,
-    box-shadow 0.3s ease-in-out;
+    opacity var(--projects-transition-fast),
+    transform 220ms var(--projects-ease-out),
+    box-shadow var(--projects-transition-fast);
   z-index: 2;
   pointer-events: none;
 }
 
-.projects__card:hover .project-image {
+@media (hover: hover) {
+  .projects__card:hover .project-image {
+    opacity: 1;
+    transform: translateY(-50%) scale(1.05);
+    box-shadow:
+      0 10px 20px rgb(0 0 0 / 15%),
+      0 6px 6px rgb(0 0 0 / 10%);
+  }
+}
+
+.projects__card.is-expanded .project-image {
   opacity: 1;
   transform: translateY(-50%) scale(1.05);
   box-shadow:
@@ -372,11 +423,16 @@ body:not(.light-theme) {
     color: var(--text-secondary);
     box-shadow: rgb(0 0 0 / 8%) 0 0 5px;
     transition:
-      background-color 0.2s ease,
-      border-color 0.2s ease,
-      color 0.2s ease,
-      box-shadow 0.2s ease,
-      opacity 0.2s ease;
+      transform var(--projects-transition-fast),
+      background-color var(--projects-transition-fast),
+      border-color var(--projects-transition-fast),
+      color var(--projects-transition-fast),
+      box-shadow var(--projects-transition-fast),
+      opacity var(--projects-transition-fast);
+
+    &:active {
+      transform: scale(0.97);
+    }
 
     .light-theme & {
       border-color: rgb(0 0 0 / 12%);
@@ -429,5 +485,33 @@ body:not(.light-theme) {
   .filter-buttons {
     justify-content: flex-start;
     flex: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .projects__card {
+    transition: opacity 0.2s ease, visibility 0s linear 0.2s;
+
+    &.filtered-out {
+      transform: none;
+      transition: opacity 0.2s ease, visibility 0s linear 0.2s;
+    }
+
+    &:hover {
+      transition: opacity 0.2s ease, visibility 0s;
+    }
+  }
+
+  .projects__card__detail-wrapper {
+    transition: none;
+  }
+
+  .projects__card__detail-wrapper.show-text,
+  .projects__card.is-expanded .projects__card__detail-wrapper {
+    grid-template-rows: 1fr;
+  }
+
+  .project-image {
+    transition: opacity 0.2s ease;
   }
 }

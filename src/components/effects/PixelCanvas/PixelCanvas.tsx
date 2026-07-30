@@ -91,6 +91,8 @@ const PixelCanvas = ({
     let logicalWidth = 0;
     let logicalHeight = 0;
     let animationFrameId: number | undefined;
+    let initialized = false;
+    let intersectionObserver: IntersectionObserver | undefined;
     const getNow = () =>
       typeof performance !== "undefined" && performance.now
         ? performance.now()
@@ -157,6 +159,20 @@ const PixelCanvas = ({
       createPixels();
     };
 
+    const ensureInit = () => {
+      if (initialized) {
+        return;
+      }
+
+      initialized = true;
+      init();
+
+      if (intersectionObserver) {
+        intersectionObserver.disconnect();
+        intersectionObserver = undefined;
+      }
+    };
+
     const animate = (fnName: "appear" | "disappear") => {
       animationFrameId = requestAnimationFrame(() => animate(fnName));
 
@@ -184,8 +200,17 @@ const PixelCanvas = ({
       animate(name);
     };
 
-    const handleMouseEnter = () => handleAnimation("appear");
-    const handleMouseLeave = () => handleAnimation("disappear");
+    const handleMouseEnter = () => {
+      ensureInit();
+      handleAnimation("appear");
+    };
+    const handleMouseLeave = () => {
+      if (!initialized) {
+        return;
+      }
+
+      handleAnimation("disappear");
+    };
 
     const handleFocusIn = (event: FocusEvent) => {
       if (
@@ -196,6 +221,7 @@ const PixelCanvas = ({
         return;
       }
 
+      ensureInit();
       handleAnimation("appear");
     };
 
@@ -208,16 +234,36 @@ const PixelCanvas = ({
         return;
       }
 
+      if (!initialized) {
+        return;
+      }
+
       handleAnimation("disappear");
     };
 
-    init();
+    if (typeof IntersectionObserver === "function") {
+      intersectionObserver = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((entry) => entry.isIntersecting)) {
+            ensureInit();
+          }
+        },
+        { rootMargin: "100px" },
+      );
+
+      intersectionObserver.observe(wrapper);
+    } else {
+      ensureInit();
+    }
+
     let resizeObserver: ResizeObserver | undefined;
 
     if (typeof ResizeObserver === "function") {
       // Performance: Debounce resize handler to prevent layout thrashing during window resize
       const debouncedInit = debounce(() => {
-        init();
+        if (initialized) {
+          init();
+        }
       }, 200);
 
       resizeObserver = new ResizeObserver(() => {
@@ -238,6 +284,9 @@ const PixelCanvas = ({
     return () => {
       clearAnimation();
       context.setTransform(1, 0, 0, 1, 0, 0);
+      if (intersectionObserver) {
+        intersectionObserver.disconnect();
+      }
       if (resizeObserver) {
         resizeObserver.disconnect();
       }

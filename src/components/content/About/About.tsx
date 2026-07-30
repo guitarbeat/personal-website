@@ -154,14 +154,16 @@ function About() {
         )}
         onClick={() => handleSectionClick(category)}
       >
-        <div className="text-background">
-          <h2>{category}</h2>
-          <p>
-            <ColorChangeOnHover text={description} />
-          </p>
-          <div className="expand-indicator" aria-hidden="true">
-            {expandedSection === category ? "−" : "+"}
+        <h2>{category}</h2>
+        <div className="about-me__text-body">
+          <div className="about-me__text-body-inner">
+            <p>
+              <ColorChangeOnHover text={description} />
+            </p>
           </div>
+        </div>
+        <div className="expand-indicator" aria-hidden="true">
+          {expandedSection === category ? "−" : "+"}
         </div>
       </button>
     ));

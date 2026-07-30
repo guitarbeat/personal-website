@@ -59,7 +59,11 @@ function ProjectCard({
       href={link || undefined}
       target={link ? "_blank" : undefined}
       rel={link ? "noreferrer" : undefined}
-      className={cn(`projects__card ${className}`.trim(), image && "has-image")}
+      className={cn(
+        `projects__card ${className}`.trim(),
+        image && "has-image",
+        isClicked && "is-expanded",
+      )}
       key={slug}
       onClick={handleClick}
     >
@@ -92,11 +96,16 @@ function ProjectCard({
         </div>
         <h3>{title}</h3>
         <p className="projects__card__hook">{hook}</p>
-        <p
-          className={cn("projects__card__detail", isClicked ? "show-text" : "")}
+        <div
+          className={cn(
+            "projects__card__detail-wrapper",
+            isClicked && "show-text",
+          )}
         >
-          {detail}
-        </p>
+          <div className="projects__card__detail-inner">
+            <p className="projects__card__detail">{detail}</p>
+          </div>
+        </div>
         {image && (
           <img
             src={image}
