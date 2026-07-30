@@ -448,7 +448,12 @@
 @mixin enhanced-premium-card($variant: 'default', $style: 'enhanced') {
   position: relative;
   border-radius: var(--radius-lg);
-  transition: all var(--transition-normal);
+  transition:
+    transform var(--transition-duration-normal) var(--ease-out-strong),
+    opacity var(--transition-duration-normal) var(--ease-out-strong),
+    box-shadow var(--transition-duration-normal) var(--ease-out-strong),
+    background-color var(--transition-duration-normal) var(--ease-out-strong),
+    border-color var(--transition-duration-normal) var(--ease-out-strong);
   
   @if $variant == 'default' {
     background: white;

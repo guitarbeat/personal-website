@@ -47,7 +47,7 @@
   
   @if $style == 'enhanced' {
     border-radius: map.get(tokens.$enhanced-border-radius, 'md');
-    transition: all map.get(interactions.$enhanced-durations, 'fast') map.get(interactions.$enhanced-easing, 'smooth');
+    @include interactions.enhanced-interactive-transition;
     
     &:active {
       transform: scale(0.95);
@@ -55,7 +55,7 @@
   } @else if $style == 'prominent' {
     border-radius: map.get(tokens.$enhanced-border-radius, 'lg');
     box-shadow: map.get(tokens.$enhanced-shadows, 'sm');
-    transition: all map.get(interactions.$enhanced-durations, 'fast') map.get(interactions.$enhanced-easing, 'smooth');
+    @include interactions.enhanced-interactive-transition;
     
     &:active {
       transform: scale(0.9);

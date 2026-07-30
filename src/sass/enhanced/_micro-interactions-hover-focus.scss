@@ -12,7 +12,7 @@
  * @param {String} $intensity - Hover intensity (subtle, moderate, pronounced)
  */
 @mixin enhanced-hover($type: 'lift', $intensity: 'moderate') {
-  transition: all map.get($enhanced-durations, 'fast') map.get($enhanced-easing, 'smooth');
+  @include enhanced-interactive-transition;
   
   @if $type == 'lift' {
     @if $intensity == 'subtle' {
@@ -78,7 +78,7 @@
   // Active state for immediate feedback
   &:active {
     transform: scale(0.98);
-    transition: all map.get($enhanced-durations, 'instant') map.get($enhanced-easing, 'sharp');
+    transition: transform map.get($enhanced-durations, 'instant') map.get($enhanced-easing, 'out-strong');
   }
   
   // Focus state for accessibility

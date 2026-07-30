@@ -102,6 +102,8 @@
     --timing-#{$type}: #{$timing};
   }
 
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+
   @each $name, $value in tokens.$layout {
     --layout-#{$name}: #{$value};
   }
@@ -402,6 +404,12 @@
     --transition-duration-normal: 0s;
     --transition-duration-slow: 0s;
     --transition-duration-very-slow: 0s;
+    --about-expand-duration: 0s;
+    --about-transition-duration: 0s;
+    --theme-transition-duration: 0s;
+    --theme-transition-duration-long: 0s;
+    --matrix-shell-enter: 0s;
+    --matrix-shell-exit: 0s;
   }
 }
 

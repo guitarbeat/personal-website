@@ -171,7 +171,7 @@
     z-index: map.get(tokens.$enhanced-z-index, 'tooltip');
     opacity: 0;
     visibility: hidden;
-    transition: all map.get($enhanced-durations, 'fast') map.get($enhanced-easing, 'smooth');
+    @include enhanced-overlay-transition;
     pointer-events: none;
     white-space: nowrap;
     font-size: typography.enhanced-type('xs');

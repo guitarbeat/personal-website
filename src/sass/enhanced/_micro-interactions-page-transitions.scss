@@ -12,7 +12,7 @@
  * @param {String} $direction - Transition direction (left, right, up, down)
  */
 @mixin enhanced-page-transition($type: 'fade', $direction: 'left') {
-  transition: all map.get($enhanced-durations, 'page') map.get($enhanced-easing, 'smooth');
+  @include enhanced-overlay-transition('page', 'smooth');
   
   @if $type == 'fade' {
     opacity: 0;

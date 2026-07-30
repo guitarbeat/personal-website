@@ -27,7 +27,7 @@
     border-radius: map.get(tokens.$enhanced-border-radius, 'md');
     color: var(--text-secondary);
     cursor: pointer;
-    transition: all map.get(interactions.$enhanced-durations, 'fast') map.get(interactions.$enhanced-easing, 'smooth');
+    @include interactions.enhanced-interactive-transition;
     
     @if $style == 'enhanced' {
       box-shadow: map.get(tokens.$enhanced-shadows, 'sm');
@@ -91,7 +91,7 @@
       border: 1px solid var(--border-light);
       border-radius: map.get(tokens.$enhanced-border-radius, 'sm');
       cursor: pointer;
-      transition: all map.get(interactions.$enhanced-durations, 'fast') map.get(interactions.$enhanced-easing, 'smooth');
+      @include interactions.enhanced-interactive-transition;
       
       &:hover {
         background-color: var(--background-tertiary);

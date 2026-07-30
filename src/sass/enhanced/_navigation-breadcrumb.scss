@@ -136,7 +136,7 @@
     border-radius: map.get(tokens.$enhanced-border-radius, 'sm');
     color: var(--text-secondary);
     text-decoration: none;
-    transition: all map.get(interactions.$enhanced-durations, 'fast') map.get(interactions.$enhanced-easing, 'smooth');
+    @include interactions.enhanced-interactive-transition;
     
     &:hover {
       background-color: var(--background-tertiary);

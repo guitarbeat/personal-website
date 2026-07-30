@@ -22,7 +22,7 @@
   font-weight: typography.enhanced-font-weight('semibold');
   letter-spacing: 0.025em;
   cursor: pointer;
-  transition: all map.get(interactions.$enhanced-durations, 'fast') map.get(interactions.$enhanced-easing, 'smooth');
+  @include interactions.enhanced-interactive-transition;
   user-select: none;
   
   // Size variations
