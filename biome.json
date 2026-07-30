@@ -19,7 +19,7 @@
       "!build",
       "!node_modules",
       "!.tmp-vercel-pack",
-      "!src/vendor/**"
+      "!src/vendor"
     ]
   },
   "formatter": {
