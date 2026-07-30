@@ -6,22 +6,12 @@ const PROOF_INSET = 72;
 const PROOF_DESKTOP_SIZE = 208;
 const PROOF_MOBILE_SIZE = 160;
 
-export type SiteProofProps = {
-  isUnlocked: boolean;
-  isInitialLoaderVisible: boolean;
-  showMatrix: boolean;
-};
-
-export function SiteProof({
-  isUnlocked,
-  isInitialLoaderVisible,
-  showMatrix,
-}: SiteProofProps) {
+/**
+ * Site-owned Proof wrapper. Mount only after `canMountSiteProof` is true so
+ * locked visitors never download the atlas.
+ */
+export function SiteProof() {
   const { isMobile } = useMobileDetection();
-
-  if (!isUnlocked || isInitialLoaderVisible || showMatrix) {
-    return null;
-  }
 
   return (
     <ProofCompanion

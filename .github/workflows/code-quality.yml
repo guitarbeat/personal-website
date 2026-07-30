@@ -39,6 +39,9 @@ jobs:
       - name: Verify Proof vendor manifest
         run: pnpm run verify:proof
 
+      - name: Test Proof vendor verifier
+        run: pnpm run test:proof-vendor
+
       - name: Verify HTML entry sync
         run: pnpm run sync:html:check
 

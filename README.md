@@ -11,6 +11,7 @@ The website is built with React, Sass, and modern JavaScript. Its layout emphasi
 - About section with a concise biography and supplemental media embeds
 - Projects grid that spotlights selected work with dynamic tag styling
 - Work timeline outlining professional experience and key achievements
+- Proof companion on unlocked routes (lazy-loaded atlas; see [docs/PROOF.md](docs/PROOF.md))
 - Back to top button and sticky navigation for smooth browsing
 
 ## How to Use
@@ -29,6 +30,7 @@ Detailed technical documentation, design specifications, and migration plans are
 - [Architecture](docs/ARCHITECTURE.md) – Dev/build flows, app layers, Notion and Sass maps.
 - [Notion Integration](docs/NOTION_INTEGRATION.md) – Comprehensive guide for the Google Sheets to Notion migration.
 - [Matrix Component](docs/MATRIX_COMPONENT.md) – Easter-egg authentication effect and usage notes.
+- [Proof Companion](docs/PROOF.md) – Unlock gating, sizing, vendor sync, and manifest verification.
 - [Code Audit Report](docs/CODE_AUDIT_REPORT.md) – Security and quality analysis of the codebase.
 - [Development Notes](docs/DEVELOPMENT_NOTES.md) – Technical notes and refactoring opportunities.
 - [Archive](docs/archive/) – Historical implementation debates and analyses.
@@ -50,7 +52,8 @@ Detailed technical documentation, design specifications, and migration plans are
 | `/docs`                    | Technical documentation and archives | `NOTION_INTEGRATION.md`, `DEVELOPMENT_NOTES.md`        |
 | `/src`                     | TypeScript/React application source  | `App.tsx`, `index.tsx`                                 |
 | `/src/components/content`  | Page sections                        | `About/`, `Header/`, `NavBar/`, `Projects/`, `Work/`   |
-| `/src/components/effects`  | Visual effects                       | `Matrix/`, `Moire/`, `Blur/`, `Loading/`               |
+| `/src/components/effects`  | Visual effects                       | `Matrix/`, `Proof/`, `Moire/`, `Blur/`, `Loading/`     |
+| `/src/vendor/proof`        | Vendored Proof React source + atlas  | `.proof-vendor.json`, `ProofCompanion.tsx`             |
 | `/src/server/notion`       | Notion content API modules           | `api.js`, `snapshot.js`, `validate.js`                 |
 | `/src/hooks`               | Custom React hooks                   | `useMobileDetection.ts`, `useScrollUtils.ts`           |
 | `/src/utils`               | Shared utilities                     | `commonUtils.ts`, `audioUtils.ts`, `colorUtils.ts`     |
@@ -75,3 +78,5 @@ See [AGENTS.md](AGENTS.md) for the full command reference.
 ## Component Documentation
 
 See [docs/MATRIX_COMPONENT.md](docs/MATRIX_COMPONENT.md) for the Matrix easter-egg effect (`src/components/effects/Matrix/`).
+
+See [docs/PROOF.md](docs/PROOF.md) for the Proof companion (`src/components/effects/Proof/`, `src/vendor/proof/`).
