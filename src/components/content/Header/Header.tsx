@@ -3,14 +3,17 @@ import PropTypes from "prop-types";
 import React, { useRef, useState } from "react";
 
 import cvFile from "../../../assets/documents/cv.pdf";
-// Asset imports
-import profile1 from "../../../assets/images/profile1-nbg.png";
-import profile3 from "../../../assets/images/profile1v2-nbg.png";
-import profile2 from "../../../assets/images/profile2-nbg.png";
-import profile4 from "../../../assets/images/profile4.png";
 
 // Local imports
 import { cn } from "../../../utils/commonUtils";
+import {
+  FALLBACK_PROFILE_SRC,
+  PROFILE_IMAGE_HEIGHT,
+  PROFILE_IMAGE_WIDTH,
+  PROFILE_IMAGES,
+  PROFILE_INDEX_STORAGE_KEY,
+  readStoredProfileIndex,
+} from "./headerProfileImages";
 import useScrambleEffect from "./useScrambleEffect";
 
 interface SocialMediaProps {
@@ -165,45 +168,6 @@ const SOCIAL_MEDIA = [
   },
 ];
 
-const PROFILE_IMAGE_WIDTH = 1024;
-const PROFILE_IMAGE_HEIGHT = 1024;
-
-const PROFILE_IMAGES = [
-  { src: profile1, alt: "Profile one" },
-  { src: profile2, alt: "Profile two" },
-  { src: profile3, alt: "Profile three" },
-  { src: profile4, alt: "Profile four", isFallback: true },
-];
-
-const FALLBACK_PROFILE_SRC =
-  PROFILE_IMAGES.find((image) => image.isFallback)?.src ??
-  PROFILE_IMAGES[0].src;
-
-const PROFILE_INDEX_STORAGE_KEY = "header-profile-index";
-
-function readStoredProfileIndex(): number {
-  if (typeof sessionStorage === "undefined") {
-    return 0;
-  }
-  try {
-    const raw = sessionStorage.getItem(PROFILE_INDEX_STORAGE_KEY);
-    if (raw === null) {
-      return 0;
-    }
-    const parsed = Number.parseInt(raw, 10);
-    if (
-      !Number.isFinite(parsed) ||
-      parsed < 0 ||
-      parsed >= PROFILE_IMAGES.length
-    ) {
-      return 0;
-    }
-    return parsed;
-  } catch {
-    return 0;
-  }
-}
-
 function Header() {
   const headerRef = useRef<HTMLDivElement>(null);
   const [profileIndex, setProfileIndex] = useState<number>(() =>
@@ -248,6 +212,7 @@ function Header() {
                 alt={PROFILE_IMAGES[profileIndex].alt}
                 width={PROFILE_IMAGE_WIDTH}
                 height={PROFILE_IMAGE_HEIGHT}
+                fetchPriority="high"
                 onError={handleImageError}
               />
             </button>

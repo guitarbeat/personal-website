@@ -18,6 +18,9 @@ describe("Header avatar", () => {
     ).toBeInTheDocument();
     expect(container.querySelector(".chat-bubble")).toBeNull();
     expect(container.querySelectorAll(".avatar.active")).toHaveLength(1);
+
+    const avatar = container.querySelector<HTMLImageElement>(".avatar.active");
+    expect(avatar).toHaveAttribute("fetchpriority", "high");
   });
 
   it("cycles through profile images and wraps back to the starting avatar", () => {
