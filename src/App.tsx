@@ -67,6 +67,14 @@ const AnalyticsWrapper = memo(() => {
 });
 AnalyticsWrapper.displayName = "AnalyticsWrapper";
 
+const SpeedInsightsWrapper = memo(() => {
+  if (process.env.REACT_APP_ENABLE_VERCEL_SPEED_INSIGHTS !== "true") {
+    return null;
+  }
+  return <SpeedInsights />;
+});
+SpeedInsightsWrapper.displayName = "SpeedInsightsWrapper";
+
 // * Unlocked badge component
 const UnlockedBadge = memo(() => {
   const { isUnlocked } = useAuth();
@@ -495,7 +503,7 @@ const App = () => (
     <AuthProvider>
       <AppContent />
       <AnalyticsWrapper />
-      <SpeedInsights />
+      <SpeedInsightsWrapper />
     </AuthProvider>
   </NotionProvider>
 );

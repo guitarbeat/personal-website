@@ -38,7 +38,7 @@ Detailed technical documentation, design specifications, and migration plans are
 - The same command also converts JPEG/PNG files to `.avif` using `imagemin-avif` (requires Node.js 18 or later).
 - A pre-commit hook runs this command automatically.
 - Consider using Git LFS for large image files.
-- Optional [Vercel Analytics](https://vercel.com/docs/analytics/quickstart) support is gated behind the `REACT_APP_ENABLE_VERCEL_ANALYTICS` environment variable. Set it to `true` when your deployment has Web Analytics enabled.
+- Optional [Vercel Analytics](https://vercel.com/docs/analytics/quickstart) and [Speed Insights](https://vercel.com/docs/speed-insights/quickstart) are gated behind environment variables. Set `REACT_APP_ENABLE_VERCEL_ANALYTICS=true` and/or `REACT_APP_ENABLE_VERCEL_SPEED_INSIGHTS=true` when those features are enabled in your Vercel project.
 
 ## Project Structure
 
