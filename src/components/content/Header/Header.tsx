@@ -168,7 +168,15 @@ const SOCIAL_MEDIA = [
   },
 ];
 
-const AVATAR_TRANSITION_FALLBACK_MS = 500;
+export const AVATAR_TRANSITION_FALLBACK_MS = 1400;
+
+type AvatarPhase = "idle" | "shrink" | "slideOut" | "slideIn" | "expand";
+
+function isTransformTransition(
+  event: React.TransitionEvent<HTMLElement>,
+): boolean {
+  return !event.propertyName || event.propertyName === "transform";
+}
 
 function prefersReducedMotion(): boolean {
   if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
@@ -180,16 +188,26 @@ function prefersReducedMotion(): boolean {
 
 function Header() {
   const headerRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const transitionFallbackRef = useRef<ReturnType<typeof setTimeout> | null>(
     null,
   );
+  const phaseRef = useRef<AvatarPhase>("idle");
+  const shouldExpandRef = useRef(false);
+  const incomingIndexRef = useRef<number | null>(null);
+
   const [profileIndex, setProfileIndex] = useState<number>(() =>
     readStoredProfileIndex(),
   );
-  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [phase, setPhase] = useState<AvatarPhase>("idle");
   const [outgoingIndex, setOutgoingIndex] = useState<number | null>(null);
   const [incomingIndex, setIncomingIndex] = useState<number | null>(null);
-  const [slideActive, setSlideActive] = useState(false);
+  const [shouldExpand, setShouldExpand] = useState(false);
+  const [phaseAnimating, setPhaseAnimating] = useState(false);
+
+  phaseRef.current = phase;
+  shouldExpandRef.current = shouldExpand;
+  incomingIndexRef.current = incomingIndex;
 
   useScrambleEffect(headerRef);
 
@@ -207,44 +225,40 @@ function Header() {
       transitionFallbackRef.current = null;
     }
 
-    if (incomingIndex === null) {
+    const nextIndex = incomingIndexRef.current;
+    if (nextIndex === null) {
       return;
     }
 
-    setProfileIndex(incomingIndex);
-    persistProfileIndex(incomingIndex);
-    setIsTransitioning(false);
+    setProfileIndex(nextIndex);
+    persistProfileIndex(nextIndex);
+    setPhase("idle");
     setOutgoingIndex(null);
     setIncomingIndex(null);
-    setSlideActive(false);
-  }, [incomingIndex, persistProfileIndex]);
+    setShouldExpand(false);
+    setPhaseAnimating(false);
+  }, [persistProfileIndex]);
 
   useEffect(() => {
-    if (!isTransitioning) {
+    if (phase === "idle") {
       return;
     }
+
+    setPhaseAnimating(false);
 
     const frameId = requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        setSlideActive(true);
+        setPhaseAnimating(true);
       });
     });
 
-    transitionFallbackRef.current = setTimeout(() => {
-      completeTransition();
-    }, AVATAR_TRANSITION_FALLBACK_MS);
-
     return () => {
       cancelAnimationFrame(frameId);
-      if (transitionFallbackRef.current) {
-        clearTimeout(transitionFallbackRef.current);
-        transitionFallbackRef.current = null;
-      }
     };
-  }, [completeTransition, isTransitioning]);
+  }, [phase]);
 
   const handleClick = () => {
-    if (isTransitioning) {
+    if (phase !== "idle") {
       return;
     }
 
@@ -256,19 +270,65 @@ function Header() {
       return;
     }
 
+    const wasHovered = buttonRef.current?.matches(":hover") ?? false;
+
+    incomingIndexRef.current = nextIndex;
     setOutgoingIndex(profileIndex);
     setIncomingIndex(nextIndex);
-    setSlideActive(false);
-    setIsTransitioning(true);
+    setShouldExpand(wasHovered);
+    setPhaseAnimating(false);
+    setPhase(wasHovered ? "shrink" : "slideOut");
+
+    transitionFallbackRef.current = setTimeout(() => {
+      completeTransition();
+    }, AVATAR_TRANSITION_FALLBACK_MS);
   };
 
-  const handleOutgoingTransitionEnd = (
-    e: React.TransitionEvent<HTMLImageElement>,
+  const handleAvatarTransitionEnd = (
+    e: React.TransitionEvent<HTMLSpanElement>,
   ) => {
-    if (e.propertyName !== "transform") {
+    if (e.target !== e.currentTarget || !isTransformTransition(e)) {
       return;
     }
-    completeTransition();
+
+    const currentPhase = phaseRef.current;
+
+    if (currentPhase === "shrink") {
+      setPhaseAnimating(false);
+      setPhase("slideOut");
+      return;
+    }
+
+    if (currentPhase === "expand") {
+      completeTransition();
+    }
+  };
+
+  const handlePhotoTransitionEnd = (
+    e: React.TransitionEvent<HTMLImageElement>,
+  ) => {
+    if (!isTransformTransition(e)) {
+      return;
+    }
+
+    const currentPhase = phaseRef.current;
+
+    if (currentPhase === "slideOut") {
+      setPhaseAnimating(false);
+      setPhase("slideIn");
+      return;
+    }
+
+    if (currentPhase === "slideIn") {
+      setPhaseAnimating(false);
+
+      if (shouldExpandRef.current) {
+        setPhase("expand");
+        return;
+      }
+
+      completeTransition();
+    }
   };
 
   const handleImageError = (
@@ -303,35 +363,85 @@ function Header() {
     );
   };
 
-  const renderAvatarContent = () => {
-    if (
-      isTransitioning &&
-      outgoingIndex !== null &&
-      incomingIndex !== null
-    ) {
-      return (
-        <>
-          {renderAvatarImage(
-            outgoingIndex,
-            slideActive
-              ? "avatar__photo--outgoing avatar__photo--outgoing-exiting"
-              : "avatar__photo--outgoing",
-            { onTransitionEnd: handleOutgoingTransitionEnd },
-          )}
-          {renderAvatarImage(
-            incomingIndex,
-            slideActive
-              ? "avatar__photo--incoming avatar__photo--incoming-active"
-              : "avatar__photo--incoming",
-          )}
-        </>
+  const getAvatarClassName = () => {
+    if (phase === "idle") {
+      return "avatar";
+    }
+
+    if (phase === "shrink") {
+      return cn(
+        "avatar",
+        "avatar--transitioning",
+        "avatar--scale-from-hover",
+        phaseAnimating && "avatar--scale-rest",
       );
     }
 
-    return renderAvatarImage(profileIndex, "avatar__photo--active", {
-      fetchPriority: "high",
-    });
+    if (phase === "slideOut" || phase === "slideIn") {
+      return cn("avatar", "avatar--transitioning", "avatar--scale-rest");
+    }
+
+    if (phase === "expand") {
+      return cn(
+        "avatar",
+        "avatar--transitioning",
+        "avatar--scale-rest",
+        phaseAnimating && "avatar--scale-hover",
+      );
+    }
+
+    return "avatar";
   };
+
+  const renderAvatarContent = () => {
+    if (phase === "idle") {
+      return renderAvatarImage(profileIndex, "avatar__photo--active", {
+        fetchPriority: "high",
+      });
+    }
+
+    if (
+      (phase === "shrink" || phase === "slideOut") &&
+      outgoingIndex !== null
+    ) {
+      return renderAvatarImage(
+        outgoingIndex,
+        cn(
+          "avatar__photo--outgoing",
+          phase === "slideOut" &&
+            phaseAnimating &&
+            "avatar__photo--outgoing-exiting",
+        ),
+        {
+          onTransitionEnd:
+            phase === "slideOut" ? handlePhotoTransitionEnd : undefined,
+        },
+      );
+    }
+
+    if (
+      (phase === "slideIn" || phase === "expand") &&
+      incomingIndex !== null
+    ) {
+      return renderAvatarImage(
+        incomingIndex,
+        cn(
+          "avatar__photo--incoming",
+          phase === "slideIn" &&
+            phaseAnimating &&
+            "avatar__photo--incoming-active",
+        ),
+        {
+          onTransitionEnd:
+            phase === "slideIn" ? handlePhotoTransitionEnd : undefined,
+        },
+      );
+    }
+
+    return null;
+  };
+
+  const isTransitioning = phase !== "idle";
 
   return (
     <div className="container" id="header" ref={headerRef}>
@@ -339,12 +449,16 @@ function Header() {
         <div className="header">
           <div className="header__image-container">
             <button
+              ref={buttonRef}
               type="button"
               onClick={handleClick}
               aria-label="Change profile image"
               aria-busy={isTransitioning}
             >
-              <span className="avatar">
+              <span
+                className={getAvatarClassName()}
+                onTransitionEnd={handleAvatarTransitionEnd}
+              >
                 <span className="avatar__viewport">{renderAvatarContent()}</span>
               </span>
             </button>

@@ -15,4 +15,4 @@ The stylesheet stack uses two complementary Sass token layers:
 
 - Neither file alone is the full “single source of truth”; each owns a distinct layer.
 - New shared values should land in core tokens when they affect global theme or `:root` variables, and in enhanced tokens when they are scoped to enhanced partials only.
-- Shared enhanced partial imports live in `_enhanced-imports-base.scss`, `_enhanced-imports-interactions.scss`, and `_enhanced-imports-tokens.scss` (for `_typography.scss` and other token-only partials).
+- Enhanced partials share a repeated `@use` header (`sass:map`, `./tokens`, `./typography`, optional `./micro-interactions`). A shared `@forward` barrel was not adopted: duplicate `enhanced-type` functions and mixin scope rules under `@forward` break compilation.
