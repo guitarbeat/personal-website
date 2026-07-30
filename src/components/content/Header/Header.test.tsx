@@ -10,7 +10,8 @@ import {
 
 jest.mock("./useScrambleEffect", () => jest.fn());
 
-import Header, { AVATAR_TRANSITION_FALLBACK_MS } from "./Header";
+import { AVATAR_TRANSITION_FALLBACK_MS } from "./avatarTransition.constants";
+import Header from "./Header";
 
 describe("Header avatar", () => {
   beforeEach(() => {

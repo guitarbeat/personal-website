@@ -94,6 +94,7 @@ $header-tokens: (
     position: relative;
     width: map.get(map.get($header-tokens, 'avatar'), 'size');
     height: map.get(map.get($header-tokens, 'avatar'), 'size');
+    --avatar-phase-duration: 0.35s;
 
     button {
       background: none;
@@ -127,7 +128,7 @@ $header-tokens: (
         object-fit: cover;
         pointer-events: none;
         will-change: transform;
-        transition: transform 0.35s var(--theme-transition-timing, cubic-bezier(0.4, 0, 0.2, 1));
+        transition: transform var(--avatar-phase-duration) var(--theme-transition-timing, cubic-bezier(0.4, 0, 0.2, 1));
 
         &.avatar__photo--active {
           transform: translateY(0);
@@ -444,7 +445,7 @@ $header-tokens: (
   }
 
   &--transitioning {
-    transition: --init-scale 0.35s var(--theme-transition-timing, cubic-bezier(0.4, 0, 0.2, 1));
+    transition: --init-scale var(--avatar-phase-duration) var(--theme-transition-timing, cubic-bezier(0.4, 0, 0.2, 1));
   }
 
   @media (prefers-reduced-motion: reduce) {
