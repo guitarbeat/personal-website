@@ -104,42 +104,49 @@ $header-tokens: (
       height: 100%;
       position: relative;
       display: block;
-      overflow: hidden;
-      border-radius: 50%;
 
-      img {
+      .avatar {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+
+      .avatar__viewport {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        border-radius: 50%;
+      }
+
+      .avatar__photo {
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
         object-fit: cover;
-        border-radius: 50%;
         pointer-events: none;
         will-change: transform;
         transition: transform 0.45s var(--theme-transition-timing, cubic-bezier(0.4, 0, 0.2, 1));
 
-        @extend .avatar;
-
-        &.avatar--active {
+        &.avatar__photo--active {
           transform: translateY(0);
-          pointer-events: auto;
         }
 
-        &.avatar--outgoing {
+        &.avatar__photo--outgoing {
           transform: translateY(0);
           z-index: 1;
 
-          &.avatar--outgoing-exiting {
+          &.avatar__photo--outgoing-exiting {
             transform: translateY(100%);
           }
         }
 
-        &.avatar--incoming {
+        &.avatar__photo--incoming {
           transform: translateY(-100%);
           z-index: 2;
 
-          &.avatar--incoming-active {
+          &.avatar__photo--incoming-active {
             transform: translateY(0);
           }
         }
@@ -147,7 +154,7 @@ $header-tokens: (
     }
 
     @media (prefers-reduced-motion: reduce) {
-      button img {
+      button .avatar__photo {
         transition: none;
       }
     }
@@ -398,7 +405,9 @@ $header-tokens: (
   --border-thickness: #{map.get(map.get($header-tokens, "avatar"), "border-thickness")};
   --border-color: var(--profile-pic-bg-color);
 
+  position: relative;
   width: var(--image-size);
+  height: var(--image-size);
 
   --mask-gradient: 50% / calc(100% / var(--init-scale)) 100% no-repeat content-box;
   --outline-offset-calculated: calc(

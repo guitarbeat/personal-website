@@ -31,9 +31,11 @@ describe("Header avatar", () => {
       screen.getByRole("button", { name: /change profile image/i }),
     ).toBeInTheDocument();
     expect(container.querySelector(".chat-bubble")).toBeNull();
-    expect(container.querySelectorAll(".avatar--active")).toHaveLength(1);
+    expect(container.querySelectorAll(".avatar__photo--active")).toHaveLength(1);
 
-    const avatar = container.querySelector<HTMLImageElement>(".avatar--active");
+    const avatar = container.querySelector<HTMLImageElement>(
+      ".avatar__photo--active",
+    );
     expect(avatar).toHaveAttribute("fetchpriority", "high");
   });
 
@@ -45,9 +47,10 @@ describe("Header avatar", () => {
 
     fireEvent.click(avatarButton);
 
-    expect(container.querySelectorAll(".avatar")).toHaveLength(2);
-    expect(container.querySelector(".avatar--outgoing")).toBeInTheDocument();
-    expect(container.querySelector(".avatar--incoming")).toBeInTheDocument();
+    expect(container.querySelectorAll(".avatar__photo")).toHaveLength(2);
+    expect(container.querySelector(".avatar__photo--outgoing")).toBeInTheDocument();
+    expect(container.querySelector(".avatar__photo--incoming")).toBeInTheDocument();
+    expect(container.querySelectorAll(".avatar")).toHaveLength(1);
   });
 
   it("cycles through profile images and wraps back to the starting avatar", async () => {
@@ -57,11 +60,11 @@ describe("Header avatar", () => {
     });
     const profileImageCount = 4;
     const getActiveAvatar = () =>
-      container.querySelector<HTMLImageElement>(".avatar--active");
+      container.querySelector<HTMLImageElement>(".avatar__photo--active");
 
-    expect(container.querySelectorAll<HTMLImageElement>(".avatar")).toHaveLength(
-      1,
-    );
+    expect(
+      container.querySelectorAll<HTMLImageElement>(".avatar__photo"),
+    ).toHaveLength(1);
 
     const initialAvatar = getActiveAvatar();
     expect(initialAvatar).not.toBeNull();
@@ -77,7 +80,7 @@ describe("Header avatar", () => {
     await waitFor(() => {
       expect(getActiveAvatar()?.getAttribute("src")).not.toBe(initialSrc);
     });
-    expect(container.querySelectorAll(".avatar--active")).toHaveLength(1);
+    expect(container.querySelectorAll(".avatar__photo--active")).toHaveLength(1);
 
     for (let clickCount = 1; clickCount < profileImageCount; clickCount += 1) {
       fireEvent.click(avatarButton);
@@ -88,6 +91,6 @@ describe("Header avatar", () => {
     }
 
     expect(getActiveAvatar()?.getAttribute("src")).toBe(initialSrc);
-    expect(container.querySelectorAll(".avatar--active")).toHaveLength(1);
+    expect(container.querySelectorAll(".avatar__photo--active")).toHaveLength(1);
   });
 });

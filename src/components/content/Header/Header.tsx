@@ -291,7 +291,7 @@ function Header() {
 
     return (
       <img
-        className={cn("avatar", className)}
+        className={cn("avatar__photo", className)}
         src={image.src}
         alt={image.alt}
         width={image.width}
@@ -301,6 +301,36 @@ function Header() {
         onTransitionEnd={options.onTransitionEnd}
       />
     );
+  };
+
+  const renderAvatarContent = () => {
+    if (
+      isTransitioning &&
+      outgoingIndex !== null &&
+      incomingIndex !== null
+    ) {
+      return (
+        <>
+          {renderAvatarImage(
+            outgoingIndex,
+            slideActive
+              ? "avatar__photo--outgoing avatar__photo--outgoing-exiting"
+              : "avatar__photo--outgoing",
+            { onTransitionEnd: handleOutgoingTransitionEnd },
+          )}
+          {renderAvatarImage(
+            incomingIndex,
+            slideActive
+              ? "avatar__photo--incoming avatar__photo--incoming-active"
+              : "avatar__photo--incoming",
+          )}
+        </>
+      );
+    }
+
+    return renderAvatarImage(profileIndex, "avatar__photo--active", {
+      fetchPriority: "high",
+    });
   };
 
   return (
@@ -314,29 +344,9 @@ function Header() {
               aria-label="Change profile image"
               aria-busy={isTransitioning}
             >
-              {isTransitioning &&
-              outgoingIndex !== null &&
-              incomingIndex !== null ? (
-                <>
-                  {renderAvatarImage(
-                    outgoingIndex,
-                    slideActive
-                      ? "avatar--outgoing avatar--outgoing-exiting"
-                      : "avatar--outgoing",
-                    { onTransitionEnd: handleOutgoingTransitionEnd },
-                  )}
-                  {renderAvatarImage(
-                    incomingIndex,
-                    slideActive
-                      ? "avatar--incoming avatar--incoming-active"
-                      : "avatar--incoming",
-                  )}
-                </>
-              ) : (
-                renderAvatarImage(profileIndex, "avatar--active", {
-                  fetchPriority: "high",
-                })
-              )}
+              <span className="avatar">
+                <span className="avatar__viewport">{renderAvatarContent()}</span>
+              </span>
             </button>
           </div>
           <div className="header__text">
