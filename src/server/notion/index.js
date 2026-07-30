@@ -7,14 +7,13 @@ export {
   CACHE_CONTROL_HEADER,
   ContentError,
   DATABASE_IDS,
-  getSnapshotAgeSeconds,
   HEALTH_DEGRADED_AFTER_SECONDS,
   HEALTH_FAILED_AFTER_SECONDS,
   SCHEMA_VERSION,
   SNAPSHOT_KEY,
   SNAPSHOT_META_KEY,
 } from "./constants.js";
-export { parseJsonSafely } from "./helpers.js";
+export { getSnapshotAgeSeconds, parseJsonSafely } from "./helpers.js";
 
 export {
   createKvClient,

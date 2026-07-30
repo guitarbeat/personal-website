@@ -59,10 +59,7 @@ fs.writeFileSync(
 );
 fs.writeFileSync(
   path.join(outDir, "helpers.js"),
-  header(
-    'import { ContentError } from "./constants.js";',
-    helpers.trim(),
-  ),
+  header('import { ContentError } from "./constants.js";', helpers.trim()),
 );
 fs.writeFileSync(
   path.join(outDir, "transform.js"),
@@ -85,10 +82,7 @@ import {
 );
 fs.writeFileSync(
   path.join(outDir, "validate.js"),
-  header(
-    'import { ContentError } from "./constants.js";',
-    validate.trim(),
-  ),
+  header('import { ContentError } from "./constants.js";', validate.trim()),
 );
 fs.writeFileSync(
   path.join(outDir, "api.js"),
@@ -149,8 +143,14 @@ fs.writeFileSync(constantsPath, constantsBody);
 
 // Export parseJsonSafely and toIsoString from helpers
 let helpersBody = fs.readFileSync(path.join(outDir, "helpers.js"), "utf8");
-helpersBody = helpersBody.replace("function parseJsonSafely", "export function parseJsonSafely");
-helpersBody = helpersBody.replace("function toIsoString", "export function toIsoString");
+helpersBody = helpersBody.replace(
+  "function parseJsonSafely",
+  "export function parseJsonSafely",
+);
+helpersBody = helpersBody.replace(
+  "function toIsoString",
+  "export function toIsoString",
+);
 helpersBody = helpersBody.replace(
   "function extractRichText",
   "export function extractRichText",
