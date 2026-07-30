@@ -57,9 +57,9 @@ type ApiResponse = NodeJS.WritableStream & {
 } & ApiResponseHelpers;
 
 const API_ROUTE_LOADERS: Record<string, () => Promise<ApiModule>> = {
-  "/api/content": () => import("./api/content.js"),
-  "/api/content-refresh": () => import("./api/content-refresh.js"),
-  "/api/health": () => import("./api/health.js"),
+  "/api/content": () => import("./api/content.mjs"),
+  "/api/content-refresh": () => import("./api/content-refresh.mjs"),
+  "/api/health": () => import("./api/health.mjs"),
 };
 
 const decorateApiResponse = (response: ApiResponse) => {
