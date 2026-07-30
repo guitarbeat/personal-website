@@ -2,7 +2,7 @@
 import * as ogl from "ogl";
 import type { CSSProperties } from "react";
 import { useEffect, useRef } from "react";
-import { debounce, throttle } from "../../../utils/commonUtils";
+import { debounce, throttle } from "@/utils/commonUtils";
 import RippleEffect from "./RippleEffect";
 import "./Moire.css";
 

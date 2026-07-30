@@ -1,17 +1,22 @@
 import { render } from "@testing-library/react";
-import moment from "moment";
 
 import Work from "./Work";
 
-jest.mock("../../effects/PixelCanvas/PixelCanvas", () => {
+function currentWorkMonth(): string {
+  const now = new Date();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  return `${month}-${now.getFullYear()}`;
+}
+
+jest.mock("@/components/effects/PixelCanvas/PixelCanvas", () => {
   return function MockPixelCanvas() {
     return <div data-testid="pixel-canvas" />;
   };
 });
 
-const mockCurrentMonth = moment().format("MM-YYYY");
+const mockCurrentMonth = currentWorkMonth();
 
-jest.mock("../../../contexts/NotionContext", () => ({
+jest.mock("@/contexts/NotionContext", () => ({
   useNotion: () => ({
     db: {
       work: [

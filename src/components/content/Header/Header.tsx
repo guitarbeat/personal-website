@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import cvFile from "../../../assets/documents/cv.pdf";
 
 // Local imports
-import { cn } from "../../../utils/commonUtils";
+import { cn } from "@/utils/commonUtils";
 import {
   FALLBACK_PROFILE_SRC,
   PROFILE_IMAGE_HEIGHT,

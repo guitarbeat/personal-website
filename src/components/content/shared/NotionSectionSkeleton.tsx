@@ -1,4 +1,4 @@
-import { cn } from "../../../utils/commonUtils";
+import { cn } from "@/utils/commonUtils";
 import {
   ABOUT_SKELETON_KEYS,
   PROJECT_FILTER_SKELETON_KEYS,

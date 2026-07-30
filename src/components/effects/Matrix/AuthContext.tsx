@@ -10,7 +10,7 @@ import {
 } from "react";
 
 // Hook imports
-import { useMobileDetection } from "../../../hooks/useMobileDetection";
+import { useMobileDetection } from "@/hooks/useMobileDetection";
 
 // Constants
 import { ANIMATION_TIMING, ERROR_MESSAGES, SECURITY } from "./constants";

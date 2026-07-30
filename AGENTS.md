@@ -3,8 +3,9 @@
 ## Project Snapshot
 
 - Personal website built with React, TypeScript, Sass, and Vite.
-- Local interactive development uses **CRACO** (`react-scripts`) on port `3000` plus a **Vite dev server** on port `8080` for `/api/*` routes.
-- Production builds, CI, Lighthouse, and GitHub Pages deploy all use **Vite**; output goes to `dist/` (gitignored, built in CI and before deploy).
+- Local development and production builds both use **Vite** on port `8080` (`pnpm start`). Vite middleware serves local `/api/*` routes from [api/](api/).
+- CI, Lighthouse, and GitHub Pages deploy use Vite; output goes to `dist/` (gitignored, built in CI and before deploy).
+- Tests run via `react-scripts` Jest (`pnpm test`) with the `@/` path alias.
 
 ## Environment
 
@@ -18,10 +19,8 @@
 
 ### Core app
 
-- `pnpm start` / `pnpm run dev`
-  Starts Vite on port `8080` (local `/api/*` routes from `api/`) and CRACO on port `3000`, with `src/setupProxy.js` forwarding `/api` to Vite. Run these for interactive dev with live Notion content.
-- `pnpm run dev:api`
-  Vite only on `8080` (use if you run CRACO manually and need the API).
+- `pnpm start` / `pnpm run dev` / `pnpm run dev:api`
+  Vite dev server on port `8080` (UI + local `/api/*` from [vite.config.ts](vite.config.ts)).
 - `pnpm run build`
   Vite production build (`vite build`). Output goes to `dist/`. Runs automatically via `predeploy` before GitHub Pages publish.
 - `pnpm run build:dev`
@@ -51,17 +50,17 @@
 - `pnpm run compress-images`
   Compresses JPG and PNG assets in place under `src/assets/images`. The pre-commit hook runs this automatically.
 - `pnpm run sync:html`
-  Regenerates `index.html` (Vite) and `public/index.html` (CRACO) from `scripts/html-head-snippet.html`. Edit the snippet, not the HTML files directly.
+  Regenerates root `index.html` from `scripts/html-head-snippet.html`. Edit the snippet, not the HTML file directly.
 - `pnpm run sync:html:check`
-  Fails if either HTML entry file drifted from the snippet (runs in Code Quality CI).
+  Fails if `index.html` drifted from the snippet (runs in Code Quality CI).
 - `node scripts/fix-ts-imports.js`
   One-off migration utility for removing extension suffixes from TS/TSX imports.
 
 ### Local services and verification
 
-- **Notion content locally:** use `pnpm start` or `pnpm run dev:api` — Vite on `http://localhost:8080` serves `/api/content` via [vite.config.ts](vite.config.ts) middleware (same handlers as [api/](api/)).
-- **`node scripts/server.js`** — legacy Express proxy on `:3001` from the pre–`/api/content` era; not used by the current app path. Prefer Vite `:8080`.
-- **`python3 scripts/verify.py`** — Playwright screenshot at `http://localhost:8080` into `verification.png` (update port if you still use CRACO-only dev on `:3000`).
+- **Notion content locally:** `pnpm start` on `http://localhost:8080` — `/api/content` uses the same handlers as Vercel ([api/](api/) via Vite middleware).
+- **`node scripts/server.js`** — legacy Express proxy on `:3001` from the pre–`/api/content` era; not used by the current app path.
+- **`python3 scripts/verify.py`** — Playwright screenshot at `http://localhost:8080` into `verification.png`.
 
 ### Deployment
 
@@ -75,7 +74,7 @@
 ### Local workflow
 
 1. Run `./scripts/setup.sh`.
-2. Start the app with `pnpm start`.
+2. Start the app with `pnpm start` and open `http://localhost:8080`.
 3. For source changes, prefer validating with `pnpm run lint`, `pnpm test`, and `pnpm run build:dev`.
 4. For docs-only changes, run `pnpm run lint:md`.
 
@@ -104,6 +103,7 @@
 ## Agent Guidance
 
 - Prefer `pnpm` for local work and dependency installs; CI already uses `pnpm`.
-- Keep CRACO dev settings and Vite build config aligned when touching tooling, config, or environment variables (`REACT_APP_*` names are retained for CRA compatibility).
+- Keep Vite config, env vars, and docs aligned when touching tooling (`REACT_APP_*` names are retained for compatibility).
+- See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for module boundaries and request flows.
 - If you change Markdown docs, run `pnpm run lint:md`.
 - If you change app code, run the narrowest relevant checks and note any checks you did not run.

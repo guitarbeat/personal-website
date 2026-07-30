@@ -739,26 +739,6 @@ $component-tokens: (
 );
 
 ////////////////////////////////////
-// EXPORT MAPS FOR JAVASCRIPT
-////////////////////////////////////
-
-:export {
-  // Export breakpoints for JavaScript
-  breakpointMobile: map.get($breakpoints, 'mobile');
-  breakpointPhone: map.get($breakpoints, 'phone');
-  breakpointTablet: map.get($breakpoints, 'tablet');
-  breakpointDesktop: map.get($breakpoints, 'desktop');
-  breakpointLarge: map.get($breakpoints, 'large');
-  breakpointXlarge: map.get($breakpoints, 'xlarge');
-  
-  // Export theme colors for JavaScript
-  themeSageBase: map.get(map.get($theme-colors, 'sage'), 'base');
-  themeCoralBase: map.get(map.get($theme-colors, 'coral'), 'base');
-  themeSandBase: map.get(map.get($theme-colors, 'sand'), 'base');
-  themeIndigoBase: map.get(map.get($theme-colors, 'indigo'), 'base');
-}
-
-////////////////////////////////////
 // FUNCTIONS
 ////////////////////////////////////
 

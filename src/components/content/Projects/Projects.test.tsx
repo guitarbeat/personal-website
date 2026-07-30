@@ -1,7 +1,7 @@
 import "@testing-library/jest-dom";
 import { act, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { generateTagColors } from "../../../utils/colorUtils";
+import { generateTagColors } from "@/utils/colorUtils";
 import Projects from "./Projects";
 
 jest.mock("../../effects/PixelCanvas/PixelCanvas", () => {

@@ -48,7 +48,7 @@ const fetchContent = async (): Promise<ContentResponse> => {
     !("meta" in payload)
   ) {
     throw new Error(
-      "Content API returned an invalid response. If you use the CRACO dev server, run `pnpm dev` so Vite serves `/api` on port 8080 (proxy), or run `pnpm dev:api` in another terminal.",
+      "Content API returned an invalid response. Start the Vite dev server with `pnpm start` and open http://localhost:8080 so `/api/content` is available.",
     );
   }
 

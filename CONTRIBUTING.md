@@ -1,6 +1,6 @@
 # Contributing
 
-Thank you for your interest in contributing. This repo uses **pnpm**, **Vite** for production builds and deploy, and **CRACO** only for the local dev server on port `3000`.
+Thank you for your interest in contributing. This repo uses **pnpm** and **Vite** for local development, builds, and deploy.
 
 ## Development Setup
 
@@ -12,28 +12,22 @@ Thank you for your interest in contributing. This repo uses **pnpm**, **Vite** f
    ```
 
 3. Copy `.env.example` to `.env` when testing Notion, auth, Printful, or analytics paths.
-4. Start development (CRACO on `:3000`, Vite API on `:8080`):
+4. Start development on `http://localhost:8080`:
 
    ```bash
    pnpm start
    ```
 
-   Or run Vite API only if you manage CRACO separately:
-
-   ```bash
-   pnpm run dev:api
-   ```
-
 5. Create a feature branch from `main`.
 
-See [AGENTS.md](AGENTS.md) for the full command reference, CI workflows, and environment notes.
+See [AGENTS.md](AGENTS.md) for the full command reference, CI workflows, and environment notes. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for system layout.
 
 ## Tech Stack
 
-- **React + TypeScript** with **Vite** (build/deploy) and **CRACO** (`react-scripts`, local dev only)
+- **React + TypeScript** with **Vite** (dev, build, deploy)
 - **Sass** for styling
 - **Biome** for linting and formatting
-- **Jest** for tests
+- **Jest** (via `react-scripts`) for tests
 - **Husky** pre-commit hook (image compression)
 
 ## Code Quality

@@ -1,4 +1,4 @@
-import { cn } from "../../../utils/commonUtils";
+import { cn } from "@/utils/commonUtils";
 
 type SkeletonVariant = "text" | "image" | "card" | "button";
 

@@ -26,6 +26,7 @@ Upcoming improvements include expanding the showcased projects, refining the wor
 Detailed technical documentation, design specifications, and migration plans are available in the [docs/](docs/) folder:
 
 - [Changelog](CHANGELOG.md) – Release history (current: v0.1.1).
+- [Architecture](docs/ARCHITECTURE.md) – Dev/build flows, app layers, Notion and Sass maps.
 - [Notion Integration](docs/NOTION_INTEGRATION.md) – Comprehensive guide for the Google Sheets to Notion migration.
 - [Matrix Component](docs/MATRIX_COMPONENT.md) – Easter-egg authentication effect and usage notes.
 - [Code Audit Report](docs/CODE_AUDIT_REPORT.md) – Security and quality analysis of the codebase.
@@ -63,7 +64,7 @@ Detailed technical documentation, design specifications, and migration plans are
 | ------- | ---------------------------------------------- | ----------------------------------- |
 | `dist/` | Vite (`pnpm run build` / `pnpm run build:dev`) | CI, Lighthouse, GitHub Pages deploy |
 
-Both build scripts emit to `dist/`. `build:dev` uses Vite development mode flags (CI/Lighthouse); `build` is the production profile used by `pnpm run deploy`. CRACO is dev-server only (`pnpm start`).
+Both build scripts emit to `dist/`. `build:dev` uses Vite development mode flags (CI/Lighthouse); `build` is the production profile used by `pnpm run deploy`. Local dev uses `pnpm start` on port `8080`.
 
 See [AGENTS.md](AGENTS.md) for the full command reference.
 

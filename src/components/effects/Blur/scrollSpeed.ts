@@ -4,7 +4,7 @@ import {
   type Point,
   subtractPoints,
   throttle,
-} from "../../../utils/commonUtils";
+} from "@/utils/commonUtils";
 
 function getElementScrollPosition(element: HTMLElement): Point {
   return {

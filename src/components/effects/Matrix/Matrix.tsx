@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { cn } from "../../../utils/commonUtils";
+import { cn } from "@/utils/commonUtils";
 import { useAuth } from "./AuthContext";
 import { HackTerminalPanel } from "./HackTerminalPanel";
 import "./matrix.scss";

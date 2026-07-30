@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef } from "react";
-import { debounce } from "../../../utils/commonUtils";
+import { debounce } from "@/utils/commonUtils";
 import { Pixel } from "./Pixel";
 
 const MAX_DEVICE_PIXEL_RATIO = 2;

@@ -29,10 +29,9 @@
     }
   },
   "scripts": {
+    "start": "vite --port 8080 --strictPort",
+    "dev": "vite --port 8080 --strictPort",
     "dev:api": "vite --port 8080 --strictPort",
-    "dev:craco": "wait-on tcp:8080 && craco start --config config/craco.config.js",
-    "start": "run-p dev:api dev:craco",
-    "dev": "run-p dev:api dev:craco",
     "build": "vite build",
     "test": "react-scripts test --watchAll=false --passWithNoTests",
     "eject": "react-scripts eject",
@@ -73,15 +72,12 @@
     "clean-css": "^5.3.3",
     "compression-webpack-plugin": "^11.1.0",
     "cors": "^2.8.6",
-    "customize-cra": "^1.0.0",
     "deadfile": "^2.1.1",
     "eslint-config-react-app": "^7.0.1",
     "express": "^5.2.1",
     "framer-motion": "^12.38.0",
     "gsap": "^3.14.2",
     "lovable-tagger": "^1.1.13",
-    "moment": "^2.30.1",
-    "npm-run-all": "^4.1.5",
     "ogl": "^1.0.11",
     "open": "^10.2.0",
     "postcss-cli": "^11.0.1",
@@ -116,7 +112,6 @@
     "@babel/eslint-parser": "^7.29.7",
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@biomejs/biome": "^2.5.0",
-    "@craco/craco": "^7.1.0",
     "@svgr/webpack": "^8.1.0",
     "@testing-library/dom": "^10.4.1",
     "@types/chroma-js": "^3.1.2",
@@ -158,8 +153,7 @@
     "svgo": "^4.0.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3",
-    "vercel": "^50.44.0",
-    "wait-on": "^9.0.5"
+    "vercel": "^50.44.0"
   },
   "sassConfig": {
     "api": "modern",

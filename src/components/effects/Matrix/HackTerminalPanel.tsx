@@ -1,4 +1,4 @@
-import { cn } from "../../../utils/commonUtils";
+import { cn } from "@/utils/commonUtils";
 import type { SuccessConsoleParams } from "./matrixSessionCopy";
 
 interface HackTerminalPanelProps {

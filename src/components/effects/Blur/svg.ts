@@ -6,7 +6,7 @@
 // 	</defs>
 // </svg>
 
-import { generateId, type Point } from "../../../utils/commonUtils";
+import { generateId, type Point } from "@/utils/commonUtils";
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 

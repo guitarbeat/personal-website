@@ -4,6 +4,10 @@ import react from "@vitejs/plugin-react";
 import dotenv from "dotenv";
 import { componentTagger } from "lovable-tagger";
 import { defineConfig, loadEnv } from "vite";
+import {
+  getBuildDate,
+  getGitCommitHash,
+} from "./scripts/build-metadata.js";
 
 const packageVersion = JSON.parse(
   readFileSync(path.join(__dirname, "package.json"), "utf8"),
@@ -168,10 +172,10 @@ export default defineConfig(({ mode }) => {
       // Security Fix: Printful API keys removed to prevent client-side exposure
       "process.env.REACT_APP_PRINTFUL_API_KEY": JSON.stringify(""),
       "process.env.REACT_APP_PRINTFUL_STORE_ID": JSON.stringify(""),
-      "process.env.REACT_APP_GIT_COMMIT_HASH": JSON.stringify(""),
-      "process.env.REACT_APP_BUILD_DATE": JSON.stringify(
-        new Date().toISOString(),
+      "process.env.REACT_APP_GIT_COMMIT_HASH": JSON.stringify(
+        getGitCommitHash(),
       ),
+      "process.env.REACT_APP_BUILD_DATE": JSON.stringify(getBuildDate()),
       "process.env.REACT_APP_VERSION": JSON.stringify(packageVersion),
     },
     css: {

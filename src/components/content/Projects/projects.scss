@@ -1,16 +1,5 @@
 @use "../../../sass/components/_mixins" as *;
 
-:export {
-  phoneWidth: 31.25em;
-  tabletSmWidth: 37.5em;
-  tabletWidth: 50em;
-  desktopSmWidth: 62.5em;
-  desktopWidth: 75em;
-  desktopLgWidth: 87.5em;
-  smallWidth: 36em;
-  mediumWidth: 48em;
-}
-
 :root {
   --z-index-base: 1;
   --z-index-vignette: 2;

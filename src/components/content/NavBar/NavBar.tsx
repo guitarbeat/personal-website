@@ -9,8 +9,8 @@ import {
 } from "react";
 import { Link } from "react-router-dom";
 // Custom hooks
-import { useVFXEffect } from "../../../hooks/useVFXEffect";
-import { cn, debounce } from "../../../utils/commonUtils";
+import { useVFXEffect } from "@/hooks/useVFXEffect";
+import { cn, debounce } from "@/utils/commonUtils";
 // Context imports
 import { useAuth } from "../../effects/Matrix/AuthContext";
 

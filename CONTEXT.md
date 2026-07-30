@@ -1,6 +1,10 @@
 # Domain Glossary
 
-Canonical terms for this project. Implementation details live in code and `AGENTS.md`.
+Canonical terms for this project. Implementation details live in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) and [AGENTS.md](AGENTS.md).
+
+## Architecture map
+
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for dev/build flows, app module boundaries, Notion request path, and Sass layering.
 
 ## Design token bridge
 

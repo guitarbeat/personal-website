@@ -1,6 +1,6 @@
 import type { RefObject } from "react";
 import { useEffect } from "react";
-import { debounce } from "../../../utils/commonUtils";
+import { debounce } from "@/utils/commonUtils";
 import { MATRIX_RAIN } from "./constants";
 import { Drop } from "./MatrixDrop";
 

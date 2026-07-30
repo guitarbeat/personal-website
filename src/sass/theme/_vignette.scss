@@ -355,11 +355,6 @@ $z-index-vignette: tokens.z('vignette');
   }
 }
 
-// Export for use in other files
-:export {
-  vignetteZIndex: $z-index-vignette;
-}
-
 @include mixins.breakpoint('small') {
   .vignette {
     &__top {

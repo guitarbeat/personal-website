@@ -18,7 +18,9 @@ export interface WorkItem {
   title: string;
   company: string;
   description: string;
+  /** Notion `MM-YYYY` start month. */
   from: string;
+  /** Notion `MM-YYYY` end month, or null when current. */
   to: string | null;
   place: string;
   slug: string;

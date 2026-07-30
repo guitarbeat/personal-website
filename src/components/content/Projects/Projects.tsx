@@ -1,14 +1,14 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useNotionSectionData } from "../../../hooks/useNotionSectionData";
-import type { NotionData } from "../../../types/content";
-import { generateTagColors } from "../../../utils/colorUtils";
-import { cn } from "../../../utils/commonUtils";
+import { useNotionSectionData } from "@/hooks/useNotionSectionData";
+import type { NotionData } from "@/types/content";
+import { generateTagColors } from "@/utils/colorUtils";
+import { cn } from "@/utils/commonUtils";
 import {
   createProjectEffect,
   DEFAULT_PROJECT_EFFECT,
   type MoireEffectPreset,
-} from "../../../utils/moireEffectPresets";
-import { reconcileProjectFilters } from "../../../utils/reconcileProjectFilters";
+} from "@/utils/moireEffectPresets";
+import { reconcileProjectFilters } from "@/utils/reconcileProjectFilters";
 import PixelCanvas from "../../effects/PixelCanvas/PixelCanvas";
 import { NotionSectionSkeleton } from "../shared/NotionSectionSkeleton";
 

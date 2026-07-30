@@ -48,11 +48,20 @@ Notion provides a robust API that can serve as a headless CMS/database, offering
 ### System Architecture
 
 ```mermaid
-graph TD
-    A[React App] -->|HTTP GET /api/content| B[Vercel Serverless API]
-    B -->|Live refresh with snapshot fallback| C[Notion API + KV]
-    C -->|Structured content response| B
-    B -->|data + meta| A
+sequenceDiagram
+  participant App as React App
+  participant API as api/content.js
+  participant Server as src/server/notion/*
+  participant Notion as Notion API
+  participant KV as Vercel KV
+
+  App->>API: GET /api/content
+  API->>Server: getContentResponse(env)
+  Server->>Notion: live query (when configured)
+  Server->>KV: read/write snapshot
+  Server-->>API: data + meta
+  API-->>App: ContentResponse JSON
+  Note over App: NotionContext hydrates section components
 ```
 
 ### Data Flow

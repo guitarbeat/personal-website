@@ -6,34 +6,8 @@
     "no-descending-specificity": null,
     "scss/dollar-variable-no-unused": true,
     "scss/no-duplicate-dollar-variables": true,
-    "selector-pseudo-class-no-unknown": [
-      true,
-      {
-        "ignorePseudoClasses": ["export", "global"]
-      }
-    ],
-    "property-no-unknown": [
-      true,
-      {
-        "ignoreProperties": [
-          "breakpointMobile",
-          "breakpointPhone",
-          "breakpointTablet",
-          "breakpointDesktop",
-          "breakpointLarge",
-          "breakpointXlarge",
-          "breakpointSmallest",
-          "breakpointSmall",
-          "breakpointMedium",
-          "breakpointLargest",
-          "themeSageBase",
-          "themeCoralBase",
-          "themeSandBase",
-          "themeIndigoBase",
-          "vignetteZIndex"
-        ]
-      }
-    ],
+    "selector-pseudo-class-no-unknown": true,
+    "property-no-unknown": true,
     "property-no-vendor-prefix": null,
     "value-no-vendor-prefix": null,
     "selector-no-vendor-prefix": null,
