@@ -4,7 +4,7 @@ import {
   refreshContentSnapshot,
   SNAPSHOT_KEY,
   SNAPSHOT_META_KEY,
-} from "../../notionContent";
+} from "../index.js";
 import {
   createAboutPage,
   createProjectPage,

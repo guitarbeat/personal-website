@@ -27,6 +27,7 @@ Detailed technical documentation, design specifications, and migration plans are
 
 - [Changelog](CHANGELOG.md) – Release history (current: v0.1.1).
 - [Notion Integration](docs/NOTION_INTEGRATION.md) – Comprehensive guide for the Google Sheets to Notion migration.
+- [Matrix Component](docs/MATRIX_COMPONENT.md) – Easter-egg authentication effect and usage notes.
 - [Code Audit Report](docs/CODE_AUDIT_REPORT.md) – Security and quality analysis of the codebase.
 - [Development Notes](docs/DEVELOPMENT_NOTES.md) – Technical notes and refactoring opportunities.
 - [Archive](docs/archive/) – Historical implementation debates and analyses.
@@ -58,10 +59,11 @@ Detailed technical documentation, design specifications, and migration plans are
 
 ### Build outputs
 
-| Path       | Tool                          | Used for                |
-| ---------- | ----------------------------- | ----------------------- |
-| `build/`   | CRACO (`pnpm run build`)      | GitHub Pages deploy     |
-| `dist/`    | Vite (`pnpm run build:dev`)   | CI and Lighthouse       |
+| Path    | Tool                                           | Used for                            |
+| ------- | ---------------------------------------------- | ----------------------------------- |
+| `dist/` | Vite (`pnpm run build` / `pnpm run build:dev`) | CI, Lighthouse, GitHub Pages deploy |
+
+Both build scripts emit to `dist/`. `build:dev` uses Vite development mode flags (CI/Lighthouse); `build` is the production profile used by `pnpm run deploy`. CRACO is dev-server only (`pnpm start`).
 
 See [AGENTS.md](AGENTS.md) for the full command reference.
 
@@ -69,145 +71,6 @@ See [AGENTS.md](AGENTS.md) for the full command reference.
 
 - **Motion blur**: Toggle via `.motion-blur-on` and `.motion-blur-off` utility classes in [`src/sass/base/_utilities.scss`](src/sass/base/_utilities.scss).
 
----
-
 ## Component Documentation
 
-### Matrix Component
-
-A sophisticated Matrix-style authentication system with enhanced visual effects and security features. This component has been refactored to eliminate inconsistencies and improve maintainability.
-
-#### Recent Improvements
-
-##### 🔧 **Code Quality Enhancements**
-
-- **Consolidated Color System**: Single source of truth for all color definitions
-- **Standardized Animations**: Consistent timing using CSS custom properties
-- **Organized CSS**: Removed duplicate rules and improved structure
-- **Consistent Z-Index Scale**: Proper layering system (1000s for overlays, 2000s for modals)
-- **Extracted Constants**: All magic numbers moved to centralized constants file
-- **Standardized Error Handling**: Consistent error patterns across all functions
-- **Improved Cleanup**: Proper cleanup of all event listeners and animations
-- **Aligned Performance Detection**: Consistent breakpoints between CSS and JavaScript
-
-#### Matrix Features
-
-##### 🎨 Visual Enhancements
-
-- **Enhanced Matrix Rain Effect**: Improved character trails, better gradients, and smoother animations
-- **Performance Optimized**: Frame rate limiting and efficient rendering
-- **Accessibility**: ARIA labels, keyboard navigation, and high contrast support
-- **Responsive Design**: Optimized for mobile and desktop devices
-
-##### 🔐 Security Features
-
-- **Session Management**: Secure session persistence with automatic expiration
-- **Interactive Unlock Flow**: Authentication gated behind sustained input momentum
-- **Progress Decay**: Idle sessions automatically roll back hack progress
-
-##### ⌨️ User Experience
-
-- **Keyboard Shortcuts**:
-  - `ESC`: Exit Matrix
-  - `ENTER`: Exit once the channel stabilizes
-- **Visual Feedback**: Enhanced success animations
-- **Logout Functionality**: Secure logout with session cleanup
-
-##### 🎯 Easter Egg Activation
-
-- **Theme Click Sequence**: Click the theme toggle 5 times within 2 seconds to activate
-- **Session Persistence**: Stays unlocked for 24 hours
-
-#### Configuration
-
-##### Environment Variables
-
-No authentication password environment variable is required for the Matrix console.
-
-##### Constants File
-
-All configuration is centralized in `constants.ts`:
-
-```typescript
-import { MATRIX_COLORS, ANIMATION_TIMING, PERFORMANCE } from "./constants";
-```
-
-##### Rate Limiting Settings
-
-- **Max Attempts**: 5 attempts per window
-- **Window Duration**: 15 minutes
-- **Lockout Duration**: 30 minutes
-
-##### Session Settings
-
-- **Session Duration**: 24 hours
-- **Storage**: Session storage (cleared on browser close)
-
-#### Usage
-
-##### Basic Implementation
-
-```jsx
-import Matrix from './components/effects/Matrix/Matrix';
-import { AuthProvider } from './components/effects/Matrix/AuthContext';
-
-function App() {
-  const [showMatrix, setShowMatrix] = useState(false);
-  
-  return (
-    <AuthProvider>
-      <Matrix 
-        isVisible={showMatrix} 
-        onSuccess={() => setShowMatrix(false)} 
-      />
-    </AuthProvider>
-  );
-}
-```
-
-##### Authentication Hook
-
-```jsx
-import { useAuth } from './components/effects/Matrix/AuthContext';
-
-function MyComponent() {
-  const { isUnlocked, logout } = useAuth();
-
-  return (
-    <div>
-      {isUnlocked ? (
-        <button onClick={logout}>Logout</button>
-      ) : (
-        <p>Authenticate through the Matrix console.</p>
-      )}
-    </div>
-  );
-}
-```
-
-#### Accessibility
-
-- **Screen Reader Support**: Proper ARIA labels and roles
-- **Keyboard Navigation**: Full keyboard accessibility
-- **High Contrast Mode**: Enhanced visibility for accessibility
-- **Reduced Motion**: Respects user motion preferences
-
-#### Performance
-
-- **Optimized Rendering**: 60 FPS target with frame limiting
-- **Memory Management**: Proper cleanup of event listeners and animations
-- **Efficient Updates**: Minimal re-renders with useCallback optimization
-
-#### Security Considerations
-
-- **No Password Logging**: Passwords are never logged or stored in plain text
-- **Session Security**: Secure session storage with automatic expiration
-- **Rate Limiting**: Protection against brute force attacks
-- **Input Sanitization**: Proper input validation and trimming
-
-#### Browser Support
-
-- **Modern Browsers**: Chrome, Firefox, Safari, Edge
-- **Canvas Support**: Required for Matrix rain effect
-- **Session Storage**: Required for session management
-- **ES6+ Features**: Required for React hooks and modern JavaScript
+See [docs/MATRIX_COMPONENT.md](docs/MATRIX_COMPONENT.md) for the Matrix easter-egg effect (`src/components/effects/Matrix/`).

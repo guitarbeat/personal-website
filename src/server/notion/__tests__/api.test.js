@@ -1,4 +1,4 @@
-import { queryNotionDatabase } from "../../notionContent";
+import { queryNotionDatabase } from "../index.js";
 import {
   createProjectPage,
   createWorkPage,

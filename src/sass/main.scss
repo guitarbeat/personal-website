@@ -4,7 +4,7 @@
 @use "sass:map";
 @use "sass:color";
 @use "sass:math";
-@use "./tokens/_tokens" as tokens;  // Single source of truth
+@use "./tokens/_tokens" as tokens;  // Core design tokens (see docs/adr/0002-core-vs-enhanced-sass-tokens.md)
 @use "./tokens/_functions" as f;      // Pure functions
 @use "./tokens/_css-variables";
 

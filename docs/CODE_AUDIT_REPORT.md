@@ -15,7 +15,7 @@ For current setup and workflows, see [AGENTS.md](../AGENTS.md) and [DEVELOPMENT_
 |------------------|----------------------|
 | Google Sheets in `constants.js` | Removed; Notion is the data source |
 | `App.js` / `index.js` | Renamed to `App.tsx` / `index.tsx` |
-| Monolithic `notionContent.js` | Split into `src/server/notion/` modules |
+| Monolithic `notionContent.js` | Split into `src/server/notion/` modules; barrel is `src/server/notion/index.js` |
 | Monolithic `Matrix.tsx` | Split into hooks + `HackTerminalPanel` |
 | npm-only docs | Updated to pnpm + dual CRACO/Vite in CONTRIBUTING |
 

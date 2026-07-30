@@ -2,10 +2,9 @@
 
 ## Project Snapshot
 
-- Personal website built with React, CRACO, Sass, and a supplemental Vite build path.
-- Local interactive development still runs through CRACO and `react-scripts`.
-- CI, Lighthouse, and local `pnpm run build:dev` use the Vite build path; output goes to `dist/` (gitignored, built in CI).
-- Production deploys to GitHub Pages use the CRACO build output in `build/`.
+- Personal website built with React, TypeScript, Sass, and Vite.
+- Local interactive development uses **CRACO** (`react-scripts`) on port `3000` plus a **Vite dev server** on port `8080` for `/api/*` routes.
+- Production builds, CI, Lighthouse, and GitHub Pages deploy all use **Vite**; output goes to `dist/` (gitignored, built in CI and before deploy).
 
 ## Environment
 
@@ -24,9 +23,9 @@
 - `pnpm run dev:api`
   Vite only on `8080` (use if you run CRACO manually and need the API).
 - `pnpm run build`
-  Creates the production CRACO build in `build/`.
+  Vite production build (`vite build`). Output goes to `dist/`. Runs automatically via `predeploy` before GitHub Pages publish.
 - `pnpm run build:dev`
-  Runs the Vite build used by CI and Lighthouse. Output goes to `dist/`.
+  Vite build in development mode (`vite build --mode development`). Same output directory as `build`; used by CI and Lighthouse to match CI env flags. Prefer `pnpm run build` for deploy parity.
 - `pnpm test`
   Runs the Jest test suite once with `--watchAll=false`.
 
@@ -68,9 +67,9 @@
 ### Deployment
 
 - `pnpm run deploy`
-  Publishes the CRACO `build/` directory to GitHub Pages.
+  Builds with Vite (`predeploy`) and publishes the `dist/` directory to GitHub Pages.
 - `pnpm run predeploy`
-  Runs automatically before `pnpm run deploy` and builds the app.
+  Runs automatically before `pnpm run deploy` and runs `pnpm run build`.
 
 ## Workflow Map
 
@@ -99,14 +98,13 @@
 
 ## Build Output Notes
 
-- `build/` is the CRACO production bundle used by `pnpm run deploy`.
-- `dist/` is the Vite bundle produced by `pnpm run build:dev` and built in CI-related workflows (not committed).
+- `dist/` is the Vite bundle produced by `pnpm run build`, `pnpm run build:dev`, and CI-related workflows (not committed). GitHub Pages deploy reads from `dist/`.
 - `public/build/css/` is Sass verification output from `pnpm run sass:check` (not committed).
 - Do not rewrite generated output directories unless the task requires updated build artifacts.
 
 ## Agent Guidance
 
 - Prefer `pnpm` for local work and dependency installs; CI already uses `pnpm`.
-- Keep the CRACO path and Vite path aligned when touching tooling, config, or environment variables.
+- Keep CRACO dev settings and Vite build config aligned when touching tooling, config, or environment variables (`REACT_APP_*` names are retained for CRA compatibility).
 - If you change Markdown docs, run `pnpm run lint:md`.
 - If you change app code, run the narrowest relevant checks and note any checks you did not run.

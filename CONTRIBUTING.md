@@ -1,6 +1,6 @@
 # Contributing
 
-Thank you for your interest in contributing. This repo uses **pnpm** and a **dual build path** (CRACO for local dev + GitHub Pages, Vite for CI/Lighthouse).
+Thank you for your interest in contributing. This repo uses **pnpm**, **Vite** for production builds and deploy, and **CRACO** only for the local dev server on port `3000`.
 
 ## Development Setup
 
@@ -30,7 +30,7 @@ See [AGENTS.md](AGENTS.md) for the full command reference, CI workflows, and env
 
 ## Tech Stack
 
-- **React + TypeScript** with **CRACO** (`react-scripts`) and a supplemental **Vite** build
+- **React + TypeScript** with **Vite** (build/deploy) and **CRACO** (`react-scripts`, local dev only)
 - **Sass** for styling
 - **Biome** for linting and formatting
 - **Jest** for tests
