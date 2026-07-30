@@ -1,0 +1,62 @@
+/* Shared Matrix keyframes — single source to avoid drift across partials */
+
+@keyframes matrixFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes matrixFadeOut {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes scanlineMove {
+  0% {
+    transform: translateY(0);
+  }
+
+  100% {
+    transform: translateY(4px);
+  }
+}
+
+@keyframes cursorBlink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes powerLedPulseOnce {
+  from {
+    opacity: 0.65;
+    box-shadow:
+      0 0 6px #00ff00,
+      0 0 12px rgba(0, 255, 0, 0.35),
+      inset 0 0 2px rgba(255, 255, 255, 0.35);
+  }
+
+  to {
+    opacity: 1;
+    box-shadow:
+      0 0 10px #00ff00,
+      0 0 20px rgba(0, 255, 0, 0.5),
+      inset 0 0 4px rgba(255, 255, 255, 0.5);
+  }
+}

@@ -12,7 +12,7 @@
   font-size: 1rem;
   letter-spacing: 2.5px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: var(--matrix-transition-interactive);
   border-radius: 999px;
   text-transform: uppercase;
   text-shadow:
@@ -30,35 +30,12 @@
   }
 
   &:active {
-    transform: translateY(0);
+    transform: scale(0.97);
   }
 
   &:focus {
     outline: 2px solid var(--matrix-white);
     outline-offset: 3px;
-  }
-}
-
-/* Fade In/Out Animation for Feedback Containers */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes fadeOut {
-  from {
-    opacity: 1;
-  }
-
-  to {
-    opacity: 0;
   }
 }
 
@@ -168,8 +145,54 @@
 @media (prefers-reduced-motion: reduce) {
   .matrix-container,
   .hack-input-panel,
-  .matrix-rate-limit {
-    animation: none;
+  .matrix-rate-limit,
+  .matrix-console-shell,
+  .matrix-console-shell::before,
+  .hack-terminal-frame::after,
+  .matrix-canvas,
+  .matrix-canvas::before,
+  .passcode-widget,
+  .hack-sequencer,
+  .hack-sequencer::before,
+  .hack-sequencer::after,
+  .hack-progress-bar,
+  .hack-progress-bar::before,
+  .hack-progress-bar::after,
+  .hack-input-panel *,
+  .feedback-container.glitch-effect,
+  .nuuhuh-overlay__content.glitch-effect,
+  .matrix-container.glitch-effect,
+  .success-reveal,
+  .success-reveal::before,
+  .success-divider,
+  .hack-success-panel,
+  .hack-success-panel::before,
+  .hack-success-glow,
+  .hack-success-meta,
+  .hack-success-cta {
+    animation: none !important;
+  }
+
+  .matrix-container {
+    transition: opacity 0.2s ease, visibility 0.2s ease !important;
+
+    &.visible,
+    &:not(.visible) {
+      transform: scale(1) !important;
+    }
+
+    &::backdrop {
+      transition: opacity 0.2s ease !important;
+    }
+  }
+
+  .matrix-console-shell {
+    transition: opacity 0.2s ease !important;
+
+    .visible &,
+    .matrix-container:not(.visible) & {
+      transform: none !important;
+    }
   }
 
   .matrix-canvas {
@@ -186,20 +209,18 @@
       );
     }
   }
-  
-  .feedback-container.glitch-effect {
-    animation: none;
-  }
-  
+
+  .feedback-container:not(.glitch-effect),
   .success-message {
-    animation: fadeIn 0.5s ease-out forwards;
+    animation: matrixFadeIn 0.5s ease-out forwards !important;
   }
-}
 
-
-
-
-@keyframes cursorBlink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+  .matrix-close-btn,
+  .nuuhuh-overlay__close-btn,
+  .passcode-widget .access-denied-btn {
+    transition:
+      background 0.2s ease,
+      color 0.2s ease,
+      box-shadow 0.2s ease !important;
+  }
 }

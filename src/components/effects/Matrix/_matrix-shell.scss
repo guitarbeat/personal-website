@@ -14,38 +14,44 @@
   align-items: center;
   justify-content: center;
   background: var(--matrix-bg);
-  transition: opacity 0.4s ease-in-out, visibility 0.4s ease-in-out, transform 0.4s ease-in-out;
+  transition:
+    opacity var(--matrix-shell-enter),
+    visibility var(--matrix-shell-enter),
+    transform var(--matrix-shell-enter);
   overflow: hidden;
   z-index: 100;
   backdrop-filter: blur(3px);
-  
-  /* Ensure dialog element behaves like a full screen overlay */
+
   &::backdrop {
     background: var(--matrix-bg);
     backdrop-filter: blur(3px);
-    transition: opacity 0.4s ease-in-out, backdrop-filter 0.4s ease-in-out;
+    transition: opacity var(--matrix-shell-enter);
   }
 
   &.visible {
     opacity: 1;
     visibility: visible;
     transform: scale(1);
-    
+
     &::backdrop {
-        opacity: 1;
-        backdrop-filter: blur(3px);
+      opacity: 1;
     }
   }
 
   &:not(.visible) {
     opacity: 0;
     visibility: hidden;
-    transform: scale(0.98); /* Less drastic scale for smoother feel */
+    transform: scale(0.98);
     pointer-events: none;
+    transition:
+      opacity var(--matrix-shell-exit),
+      visibility var(--matrix-shell-exit),
+      transform var(--matrix-shell-exit);
 
     &::backdrop {
-        opacity: 0;
-        backdrop-filter: blur(0px);
+      opacity: 0;
+      backdrop-filter: blur(0);
+      transition: opacity var(--matrix-shell-exit);
     }
   }
 }
@@ -95,25 +101,8 @@
       0 0 10px #00ff00,
       0 0 20px rgba(0, 255, 0, 0.5),
       inset 0 0 4px rgba(255, 255, 255, 0.5);
-    animation: powerLedPulse 2s ease-in-out infinite;
+    animation: powerLedPulseOnce 600ms var(--matrix-ease-out) forwards;
     z-index: 2;
-  }
-}
-
-@keyframes powerLedPulse {
-  0%, 100% {
-    opacity: 1;
-    box-shadow:
-      0 0 10px #00ff00,
-      0 0 20px rgba(0, 255, 0, 0.5),
-      inset 0 0 4px rgba(255, 255, 255, 0.5);
-  }
-  50% {
-    opacity: 0.7;
-    box-shadow:
-      0 0 6px #00ff00,
-      0 0 12px rgba(0, 255, 0, 0.3),
-      inset 0 0 2px rgba(255, 255, 255, 0.3);
   }
 }
 
@@ -457,15 +446,6 @@
     z-index: 1;
     transition: background 0.25s ease;
   }
-  }
 }
 
-@keyframes scanlineMove {
-  0% {
-    transform: translateY(0);
-  }
-  100% {
-    transform: translateY(4px);
-  }
-}
-
+/* Matrix Canvas (Rain Effect) - continued keyframes below */

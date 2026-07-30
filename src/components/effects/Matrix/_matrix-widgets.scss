@@ -33,7 +33,7 @@
   box-shadow:
     0 0 20px rgba(0, 255, 0, 0.25),
     0 0 40px rgba(0, 80, 0, 0.3);
-  animation: fadeIn 0.35s ease-out;
+  animation: matrixFadeIn 0.35s ease-out;
   text-align: center;
   
   /* * Remove default dialog white background */
@@ -44,7 +44,7 @@
 
 .nuuhuh-overlay__content.glitch-effect {
   animation:
-    fadeIn 0.35s ease-out,
+    matrixFadeIn 0.35s ease-out,
     enhancedGlitch 0.45s infinite;
 }
 
@@ -88,7 +88,7 @@
   letter-spacing: 0.18em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: all var(--matrix-transition);
+  transition: var(--matrix-transition-interactive);
   text-shadow: 0 0 6px rgba(0, 255, 0, 0.5);
 }
 
@@ -177,7 +177,7 @@
   letter-spacing: 0.12em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: var(--matrix-transition-interactive);
   position: relative;
   z-index: 2;
   text-shadow: 0 0 6px rgba(0, 255, 0, 0.4);
@@ -376,7 +376,7 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: all var(--matrix-transition);
+  transition: var(--matrix-transition-interactive);
 }
 
 .passcode-widget .access-denied-btn:hover,

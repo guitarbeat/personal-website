@@ -200,15 +200,6 @@
   }
 }
 
-@keyframes scanlineMove {
-  0% {
-    transform: translateY(0);
-  }
-  100% {
-    transform: translateY(4px);
-  }
-}
-
 @keyframes successGlitch {
   0% {
     transform: translate(-50%, -50%) translateX(0);
