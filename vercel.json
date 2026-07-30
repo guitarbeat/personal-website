@@ -32,17 +32,6 @@
       ],
       "destination": "https://woods.engineer/:path*",
       "permanent": true
-    },
-    {
-      "source": "/:path*",
-      "has": [
-        {
-          "type": "host",
-          "value": "www.woods.engineer"
-        }
-      ],
-      "destination": "https://woods.engineer/:path*",
-      "permanent": true
     }
   ],
   "headers": [
