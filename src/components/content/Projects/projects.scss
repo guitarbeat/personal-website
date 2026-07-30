@@ -271,6 +271,19 @@
   text-align: center;
 }
 
+// Default site theme is dark (body lacks .light-theme); card glass reads dark so
+// :root --text-* tokens are too dim — use the same greys as body copy.
+body:not(.light-theme) {
+  .projects__card h3 {
+    color: var(--color-grey-light-1);
+  }
+
+  .projects__card__hook,
+  .projects__card__detail {
+    color: var(--color-grey-light-3);
+  }
+}
+
 .light-theme .projects__card {
   background-color: rgb(255 255 255 / 65%);
   backdrop-filter: blur(8px);
