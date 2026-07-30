@@ -1,5 +1,5 @@
 @use "sass:map";
-@use "./tokens" as tokens;
+@use "../enhanced/_tokens" as tokens;
 
 @mixin enhanced-skeleton($type: 'text', $animation: 'pulse') {
   position: relative;

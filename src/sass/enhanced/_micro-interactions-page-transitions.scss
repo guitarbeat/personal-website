@@ -1,5 +1,6 @@
 @use "sass:map";
-@use "./enhanced-imports-base";
+@use "../enhanced/_tokens" as tokens;
+@use "../enhanced/_typography" as typography;
 @use "./micro-interactions-transitions" as *;
 
 // ENHANCED PAGE TRANSITIONS

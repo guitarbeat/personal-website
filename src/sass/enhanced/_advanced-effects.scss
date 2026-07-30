@@ -4,7 +4,8 @@
 ////////////////////////////////////
 
 @use "sass:map";
-@use "./enhanced-imports-interactions";
+@use "../enhanced/_tokens" as tokens;
+@use "../enhanced/_micro-interactions" as interactions;
 
 ////////////////////////////////////
 // ENHANCED SHADOW SYSTEM
