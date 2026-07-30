@@ -336,6 +336,12 @@ $header-tokens: (
         color: inherit;
         // * Improved visibility with balanced sizing
         font-size: 1.6em;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 1em;
+        height: 1em;
+        line-height: 1;
         transition: color 0.5s, transform 0.3s;
 
         &:hover {

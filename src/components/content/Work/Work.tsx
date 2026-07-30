@@ -11,6 +11,7 @@ import React, {
 import { useNotion } from "../../../contexts/NotionContext";
 import { cn } from "../../../utils/commonUtils";
 import PixelCanvas from "../../effects/PixelCanvas/PixelCanvas";
+import { WORK_SKELETON_KEYS } from "../shared/contentSkeletonConstants";
 
 interface Job {
   slug: string;
@@ -215,6 +216,34 @@ interface WorkProps {
   };
 }
 
+function WorkSkeleton() {
+  return (
+    <>
+      <div
+        className="work__timeline work__timeline--skeleton"
+        aria-hidden="true"
+      >
+        <div className="work__skeleton-bar enhanced-skeleton" />
+      </div>
+      <div className="work__items">
+        {WORK_SKELETON_KEYS.map((skeletonKey) => (
+          <div
+            key={skeletonKey}
+            className="work__item work__item--skeleton"
+            aria-hidden="true"
+          >
+            <div className="work__item__content">
+              <div className="work__skeleton-title enhanced-skeleton enhanced-skeleton--text" />
+              <div className="work__skeleton-company enhanced-skeleton enhanced-skeleton--text" />
+              <div className="work__skeleton-date enhanced-skeleton enhanced-skeleton--text" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+}
+
 // Function for Work component
 function Work({ db: propsDb }: WorkProps = {}) {
   // State management
@@ -222,8 +251,9 @@ function Work({ db: propsDb }: WorkProps = {}) {
     () => new Set<string>(),
   );
   const [hoveredCard, setHoveredCard] = useState<string | null>(null); // Add missing state
-  const { db: contextDb } = useNotion();
+  const { db: contextDb, loading: notionLoading } = useNotion();
   const db = propsDb || contextDb;
+  const isLoading = notionLoading && !propsDb;
 
   const handleCardClick = useCallback((slug: string) => {
     setActiveCards((prev) => {
@@ -273,60 +303,70 @@ function Work({ db: propsDb }: WorkProps = {}) {
     <div className="container" id="work" ref={sectionRef}>
       <div className="container__content">
         <h1>My career so far</h1>
-        <div className={cn("work", isVisible && "visible")}>
-          <MemoizedTimelineBar
-            first_year={first_date.format("YYYY")}
-            job_bars={job_bars}
-            activeCards={activeCards}
-            hoveredJob={jobs.find((job) => job.slug === hoveredCard)}
-            jobs={jobs}
-          />
-          <div className="work__items">
-            {jobs.map((job, index) => {
-              const isActive = activeCards.has(job.slug);
-              const effect = CARD_EFFECTS[index % CARD_EFFECTS.length];
-              return (
-                <button
-                  key={job.slug}
-                  type="button"
-                  className={cn("work__item", isActive && "active")}
-                  onClick={() => handleCardClick(job.slug)}
-                  onMouseEnter={() => handleCardHover(job.slug)}
-                  onMouseLeave={() => handleCardHover(null)}
-                  aria-expanded={isActive}
-                >
-                  <PixelCanvas
-                    className="work__item__pixel-canvas"
-                    colors={effect.colors}
-                    gap={effect.gap}
-                    speed={effect.speed}
-                    noFocus={effect.noFocus}
-                  />
-                  <div className="work__item__content">
-                    <p
-                      className={`work__item__place ${
-                        isActive ? "show-text" : ""
-                      }`}
+        <div
+          className={cn("work", isVisible && "visible")}
+          aria-busy={isLoading}
+          aria-live="polite"
+        >
+          {isLoading ? (
+            <WorkSkeleton />
+          ) : (
+            <>
+              <MemoizedTimelineBar
+                first_year={first_date.format("YYYY")}
+                job_bars={job_bars}
+                activeCards={activeCards}
+                hoveredJob={jobs.find((job) => job.slug === hoveredCard)}
+                jobs={jobs}
+              />
+              <div className="work__items">
+                {jobs.map((job, index) => {
+                  const isActive = activeCards.has(job.slug);
+                  const effect = CARD_EFFECTS[index % CARD_EFFECTS.length];
+                  return (
+                    <button
+                      key={job.slug}
+                      type="button"
+                      className={cn("work__item", isActive && "active")}
+                      onClick={() => handleCardClick(job.slug)}
+                      onMouseEnter={() => handleCardHover(job.slug)}
+                      onMouseLeave={() => handleCardHover(null)}
+                      aria-expanded={isActive}
                     >
-                      <i className="fa fa-map-marker-alt" /> {job.place}
-                    </p>
-                    <h2>{job.title}</h2>
-                    <h3 className="company-name">{job.company}</h3>
-                    <p
-                      className={`work__item__date ${
-                        isActive ? "show-text" : ""
-                      }`}
-                    >
-                      {job.date}
-                    </p>
-                    <p className={cn("", isActive ? "show-text" : "")}>
-                      {job.description}
-                    </p>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
+                      <PixelCanvas
+                        className="work__item__pixel-canvas"
+                        colors={effect.colors}
+                        gap={effect.gap}
+                        speed={effect.speed}
+                        noFocus={effect.noFocus}
+                      />
+                      <div className="work__item__content">
+                        <p
+                          className={`work__item__place ${
+                            isActive ? "show-text" : ""
+                          }`}
+                        >
+                          <i className="fa fa-map-marker-alt" /> {job.place}
+                        </p>
+                        <h2>{job.title}</h2>
+                        <h3 className="company-name">{job.company}</h3>
+                        <p
+                          className={`work__item__date ${
+                            isActive ? "show-text" : ""
+                          }`}
+                        >
+                          {job.date}
+                        </p>
+                        <p className={cn("", isActive ? "show-text" : "")}>
+                          {job.description}
+                        </p>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

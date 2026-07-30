@@ -75,7 +75,20 @@
       display: block;
       width: 100%;
       height: auto;
+      aspect-ratio: 300 / 100;
     }
+  }
+
+  &__text--skeleton {
+    max-height: 4em;
+    pointer-events: none;
+    cursor: default;
+  }
+
+  &__skeleton-title {
+    height: 2rem;
+    width: min(60%, 16rem);
+    margin: 1.5rem 1rem;
   }
 
   &__text {

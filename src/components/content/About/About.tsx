@@ -4,6 +4,14 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import shell from "../../../assets/images/shell.png";
 import { useNotion } from "../../../contexts/NotionContext";
 import { cn } from "../../../utils/commonUtils";
+import {
+  ABOUT_SKELETON_KEYS,
+  SPOTIFY_WIDGET_HEIGHT,
+  SPOTIFY_WIDGET_WIDTH,
+} from "../shared/contentSkeletonConstants";
+
+const SHELL_IMAGE_WIDTH = 1957;
+const SHELL_IMAGE_HEIGHT = 2400;
 
 const SPOTIFY_PROFILE_URL =
   "https://spotify-github-profile.kittinanx.com/api/view.svg?uid=31skxfoaghlkljkdiluds3g3decy&redirect=true";
@@ -31,9 +39,27 @@ export function ColorChangeOnHover({ text = "" }) {
   return <>{content}</>;
 }
 
+function AboutSkeleton() {
+  return (
+    <>
+      {ABOUT_SKELETON_KEYS.map((skeletonKey) => (
+        <div
+          key={skeletonKey}
+          className="about-me__text about-me__text--skeleton"
+          aria-hidden="true"
+        >
+          <div className="text-background">
+            <div className="about-me__skeleton-title enhanced-skeleton enhanced-skeleton--text" />
+          </div>
+        </div>
+      ))}
+    </>
+  );
+}
+
 function About() {
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
-  const { db } = useNotion();
+  const { db, loading } = useNotion();
 
   const aboutTexts = db.about || [];
 
@@ -163,9 +189,17 @@ function About() {
       <div className="container__content">
         <div className="about-me">
           <h1>About Me</h1>
-          <div className="about-me__content">
+          <div
+            className="about-me__content"
+            aria-busy={loading}
+            aria-live="polite"
+          >
             <div className="about-me__text-container">
-              {renderAboutTexts(aboutTexts)}
+              {loading ? (
+                <AboutSkeleton />
+              ) : (
+                renderAboutTexts(aboutTexts)
+              )}
             </div>
             <a
               className="about-me__spotify"
@@ -173,11 +207,24 @@ function About() {
               onClick={handleSpotifyClick}
               aria-label="View Spotify profile"
             >
-              <img src={SPOTIFY_IMAGE_URL} alt="Spotify GitHub profile" />
+              <img
+                src={SPOTIFY_IMAGE_URL}
+                alt="Spotify GitHub profile"
+                width={SPOTIFY_WIDGET_WIDTH}
+                height={SPOTIFY_WIDGET_HEIGHT}
+                loading="lazy"
+                decoding="async"
+              />
             </a>
           </div>
           <div className="about-me__img">
-            <img src={shell} alt="shell background" />
+            <img
+              src={shell}
+              alt=""
+              width={SHELL_IMAGE_WIDTH}
+              height={SHELL_IMAGE_HEIGHT}
+              aria-hidden="true"
+            />
           </div>
         </div>
       </div>

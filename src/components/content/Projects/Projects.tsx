@@ -5,6 +5,10 @@ import type { ProjectItem } from "../../../types/content";
 import { generateTagColors } from "../../../utils/colorUtils";
 import { clamp, cn } from "../../../utils/commonUtils";
 import PixelCanvas from "../../effects/PixelCanvas/PixelCanvas";
+import {
+  PROJECT_FILTER_SKELETON_KEYS,
+  PROJECTS_SKELETON_KEYS,
+} from "../shared/contentSkeletonConstants";
 
 const DEFAULT_PROJECT_EFFECT = {
   colors: ["#f8fafc", "#cbd5f5", "#94a3b8"],
@@ -142,7 +146,15 @@ function ProjectCard({
         >
           {detail}
         </p>
-        {image && <img src={image} className="project-image" alt="Project" />}
+        {image && (
+          <img
+            src={image}
+            className="project-image"
+            alt="Project"
+            width={16}
+            height={9}
+          />
+        )}
       </div>
     </a>
   );
@@ -153,12 +165,34 @@ interface ProjectsProps {
   };
 }
 
+function ProjectsSkeleton() {
+  return (
+    <>
+      {PROJECTS_SKELETON_KEYS.map((skeletonKey) => (
+        <div
+          key={skeletonKey}
+          className="projects__card projects__card--skeleton"
+          aria-hidden="true"
+        >
+          <div className="projects__card__content">
+            <div className="projects__skeleton-meta enhanced-skeleton enhanced-skeleton--text" />
+            <div className="projects__skeleton-title enhanced-skeleton enhanced-skeleton--text" />
+            <div className="projects__skeleton-hook enhanced-skeleton enhanced-skeleton--text" />
+            <div className="projects__skeleton-detail enhanced-skeleton enhanced-skeleton--text" />
+          </div>
+        </div>
+      ))}
+    </>
+  );
+}
+
 function Projects({ db: propsDb }: ProjectsProps = {}) {
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [tagColors, setTagColors] = useState<Record<string, string>>({});
-  const { db: contextDb } = useNotion();
+  const { db: contextDb, loading: notionLoading } = useNotion();
 
   const db = propsDb || contextDb;
+  const isLoading = notionLoading && !propsDb;
 
   const projectsData = useMemo(
     () => (Array.isArray(db?.projects) ? db.projects : []),
@@ -276,27 +310,37 @@ function Projects({ db: propsDb }: ProjectsProps = {}) {
     <div className="container" id="projects">
       <div className="container__content">
         <h1>Some of my Projects</h1>
-        <div className="filter-buttons">
-          {allKeywords.map((filter) => (
-            <button
-              type="button"
-              key={filter}
-              onClick={() => toggleFilter(filter)}
-              className={cn("tag", activeFiltersSet.has(filter) && "active")}
-              style={
-                {
-                  "--tag-color": activeFiltersSet.has(filter)
-                    ? tagColors[filter]
-                    : undefined,
-                } as React.CSSProperties
-              }
-            >
-              {filter}
-            </button>
-          ))}
+        <div className="filter-buttons" aria-busy={isLoading}>
+          {isLoading
+            ? PROJECT_FILTER_SKELETON_KEYS.map((skeletonKey) => (
+                <div
+                  key={skeletonKey}
+                  className="tag tag--skeleton enhanced-skeleton enhanced-skeleton--button"
+                  aria-hidden="true"
+                />
+              ))
+            : allKeywords.map((filter) => (
+                <button
+                  type="button"
+                  key={filter}
+                  onClick={() => toggleFilter(filter)}
+                  className={cn("tag", activeFiltersSet.has(filter) && "active")}
+                  style={
+                    {
+                      "--tag-color": activeFiltersSet.has(filter)
+                        ? tagColors[filter]
+                        : undefined,
+                    } as React.CSSProperties
+                  }
+                >
+                  {filter}
+                </button>
+              ))}
         </div>
         <div className="projects">
-          <div className="projects__cards_container">{project_cards}</div>
+          <div className="projects__cards_container">
+            {isLoading ? <ProjectsSkeleton /> : project_cards}
+          </div>
         </div>
       </div>
     </div>

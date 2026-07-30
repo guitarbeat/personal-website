@@ -43,6 +43,8 @@ function SocialMedia({
             alt=""
             className="custom-icon"
             title={keyword}
+            width={PROFILE_IMAGE_WIDTH}
+            height={PROFILE_IMAGE_HEIGHT}
           />
         ) : (
           <span
@@ -163,6 +165,9 @@ const SOCIAL_MEDIA = [
   },
 ];
 
+const PROFILE_IMAGE_WIDTH = 1024;
+const PROFILE_IMAGE_HEIGHT = 1024;
+
 const PROFILE_IMAGES = [
   { src: profile1, alt: "Profile one" },
   { src: profile2, alt: "Profile two" },
@@ -241,6 +246,8 @@ function Header() {
                 className={cn("avatar", "active")}
                 src={PROFILE_IMAGES[profileIndex].src}
                 alt={PROFILE_IMAGES[profileIndex].alt}
+                width={PROFILE_IMAGE_WIDTH}
+                height={PROFILE_IMAGE_HEIGHT}
                 onError={handleImageError}
               />
             </button>
