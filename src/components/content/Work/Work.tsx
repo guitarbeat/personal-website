@@ -1,17 +1,14 @@
 import moment from "moment";
-// Import required libraries and components
 import React, {
   useCallback,
-  useEffect,
   useMemo,
-  useRef,
   useState,
 } from "react";
-// import { withGoogleSheets } from "react-db-google-sheets";
-import { useNotion } from "../../../contexts/NotionContext";
+import { useNotionSectionData } from "../../../hooks/useNotionSectionData";
 import { cn } from "../../../utils/commonUtils";
 import PixelCanvas from "../../effects/PixelCanvas/PixelCanvas";
 import { WORK_SKELETON_KEYS } from "../shared/contentSkeletonConstants";
+import { SkeletonBlock } from "../shared/SkeletonBlock";
 
 interface Job {
   slug: string;
@@ -223,7 +220,7 @@ function WorkSkeleton() {
         className="work__timeline work__timeline--skeleton"
         aria-hidden="true"
       >
-        <div className="work__skeleton-bar enhanced-skeleton" />
+        <SkeletonBlock className="work__skeleton-bar" variant="card" />
       </div>
       <div className="work__items">
         {WORK_SKELETON_KEYS.map((skeletonKey) => (
@@ -233,9 +230,9 @@ function WorkSkeleton() {
             aria-hidden="true"
           >
             <div className="work__item__content">
-              <div className="work__skeleton-title enhanced-skeleton enhanced-skeleton--text" />
-              <div className="work__skeleton-company enhanced-skeleton enhanced-skeleton--text" />
-              <div className="work__skeleton-date enhanced-skeleton enhanced-skeleton--text" />
+              <SkeletonBlock className="work__skeleton-title" />
+              <SkeletonBlock className="work__skeleton-company" />
+              <SkeletonBlock className="work__skeleton-date" />
             </div>
           </div>
         ))}
@@ -251,9 +248,7 @@ function Work({ db: propsDb }: WorkProps = {}) {
     () => new Set<string>(),
   );
   const [hoveredCard, setHoveredCard] = useState<string | null>(null); // Add missing state
-  const { db: contextDb, loading: notionLoading } = useNotion();
-  const db = propsDb || contextDb;
-  const isLoading = notionLoading && !propsDb;
+  const { db, isLoading } = useNotionSectionData(propsDb);
 
   const handleCardClick = useCallback((slug: string) => {
     setActiveCards((prev) => {
@@ -277,37 +272,11 @@ function Work({ db: propsDb }: WorkProps = {}) {
     [db?.work],
   );
 
-  // Add intersection observer for lazy loading
-  const [isVisible, setIsVisible] = useState(false);
-  const sectionRef = useRef(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.1 },
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
-
   return (
-    <div className="container" id="work" ref={sectionRef}>
+    <div className="container" id="work">
       <div className="container__content">
         <h1>My career so far</h1>
-        <div
-          className={cn("work", isVisible && "visible")}
-          aria-busy={isLoading}
-          aria-live="polite"
-        >
+        <div className="work" aria-busy={isLoading} aria-live="polite">
           {isLoading ? (
             <WorkSkeleton />
           ) : (

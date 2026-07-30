@@ -51,6 +51,8 @@
 
 - `pnpm run compress-images`
   Compresses JPG and PNG assets in place under `src/assets/images`. The pre-commit hook runs this automatically.
+- `pnpm run sync:html`
+  Regenerates `index.html` (Vite) and `public/index.html` (CRACO) from `scripts/html-head-snippet.html`. Edit the snippet, not the HTML files directly.
 - `node scripts/fix-ts-imports.js`
   One-off migration utility for removing extension suffixes from TS/TSX imports.
 

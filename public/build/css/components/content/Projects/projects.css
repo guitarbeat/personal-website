@@ -224,6 +224,26 @@
   border-width: 0;
   pointer-events: none;
 }
+.projects__card--skeleton {
+  pointer-events: none;
+  min-height: 18rem;
+}
+.projects__card--skeleton .projects__skeleton-meta {
+  width: 30%;
+  margin-bottom: 1.5rem;
+}
+.projects__card--skeleton .projects__skeleton-title {
+  width: 70%;
+  height: 1.5rem;
+  margin-bottom: 1rem;
+}
+.projects__card--skeleton .projects__skeleton-hook {
+  width: 90%;
+  margin-bottom: 0.75rem;
+}
+.projects__card--skeleton .projects__skeleton-detail {
+  width: 100%;
+}
 .projects__card h3 {
   font-size: 2rem;
   line-height: 1.25;
@@ -392,6 +412,7 @@
   max-height: 80%;
   width: auto;
   height: auto;
+  aspect-ratio: 16/9;
   opacity: 0;
   object-fit: contain;
   transition: opacity 0.2s ease-in-out, transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
@@ -410,6 +431,11 @@
   justify-content: center;
   flex-wrap: wrap;
   margin-bottom: 1rem;
+}
+.filter-buttons .tag--skeleton {
+  width: 5.5rem;
+  margin: 2px;
+  pointer-events: none;
 }
 .filter-buttons button.tag {
   font-family: Inter, sans-serif;

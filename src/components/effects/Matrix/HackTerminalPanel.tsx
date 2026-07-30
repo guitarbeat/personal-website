@@ -1,8 +1,5 @@
 import { cn } from "../../../utils/commonUtils";
-import {
-  DEFAULT_CONSOLE_PROMPT,
-  type SuccessConsoleParams,
-} from "./matrixSessionCopy";
+import { type SuccessConsoleParams } from "./matrixSessionCopy";
 
 interface HackTerminalPanelProps {
   consoleDisplay: string;

@@ -71,17 +71,21 @@ export function useHackProgressDecay({
 
           if (next <= 0) {
             lastKeyTimeRef.current = null;
-            idleFailureTrackerRef.current!.lowStreak = 0;
+            if (idleFailureTrackerRef.current) {
+              idleFailureTrackerRef.current.lowStreak = 0;
+            }
             shouldTriggerFailure = true;
           } else if (next < 8) {
-            idleFailureTrackerRef.current!.lowStreak += 1;
+            if (idleFailureTrackerRef.current) {
+              idleFailureTrackerRef.current.lowStreak += 1;
 
-            if (idleFailureTrackerRef.current!.lowStreak >= 3) {
-              shouldTriggerFailure = true;
-              idleFailureTrackerRef.current!.lowStreak = 0;
+              if (idleFailureTrackerRef.current.lowStreak >= 3) {
+                shouldTriggerFailure = true;
+                idleFailureTrackerRef.current.lowStreak = 0;
+              }
             }
-          } else {
-            idleFailureTrackerRef.current!.lowStreak = 0;
+          } else if (idleFailureTrackerRef.current) {
+            idleFailureTrackerRef.current.lowStreak = 0;
           }
 
           return next;

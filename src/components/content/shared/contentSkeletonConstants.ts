@@ -1,9 +1,3 @@
-/** Placeholder counts tuned to typical Notion content layout (CLS reservation). */
-export const ABOUT_SKELETON_COUNT = 3;
-export const PROJECTS_SKELETON_COUNT = 4;
-export const WORK_SKELETON_COUNT = 3;
-export const PROJECT_FILTER_SKELETON_COUNT = 4;
-
 export const ABOUT_SKELETON_KEYS = [
   "about-skeleton-intro",
   "about-skeleton-background",

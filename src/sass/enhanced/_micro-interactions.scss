@@ -175,45 +175,6 @@ $enhanced-durations: (
 ////////////////////////////////////
 
 /**
- * Enhanced skeleton loading animation
- * @param {String} $type - Skeleton type (text, image, card, button)
- * @param {String} $animation - Animation style (pulse, shimmer, wave)
- */
-@mixin enhanced-skeleton($type: 'text', $animation: 'pulse') {
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(90deg, var(--color-gray-200) 25%, var(--color-gray-100) 50%, var(--color-gray-200) 75%);
-  background-size: 200% 100%;
-  
-  @if $type == 'text' {
-    height: 1em;
-    border-radius: map.get(tokens.$enhanced-border-radius, 'sm');
-  } @else if $type == 'image' {
-    aspect-ratio: 16/9;
-    border-radius: map.get(tokens.$enhanced-border-radius, 'md');
-  } @else if $type == 'card' {
-    height: 200px;
-    border-radius: map.get(tokens.$enhanced-border-radius, 'md');
-  } @else if $type == 'button' {
-    height: 40px;
-    border-radius: map.get(tokens.$enhanced-border-radius, 'sm');
-  }
-  
-  @if $animation == 'pulse' {
-    animation: enhanced-skeleton-pulse 1.5s ease-in-out infinite;
-  } @else if $animation == 'shimmer' {
-    animation: enhanced-skeleton-shimmer 2s linear infinite;
-  } @else if $animation == 'wave' {
-    animation: enhanced-skeleton-wave 1.5s ease-in-out infinite;
-  }
-  
-  // Dark theme support
-  .dark-theme & {
-    background: linear-gradient(90deg, var(--color-gray-700) 25%, var(--color-gray-600) 50%, var(--color-gray-700) 75%);
-  }
-}
-
-/**
  * Enhanced loading spinner with perfect timing
  * @param {String} $size - Spinner size (sm, md, lg, xl)
  * @param {String} $style - Spinner style (circular, dots, bars, pulse)
@@ -641,34 +602,6 @@ $enhanced-durations: (
 // ENHANCED ANIMATION KEYFRAMES
 ////////////////////////////////////
 
-// Skeleton animations
-@keyframes enhanced-skeleton-pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-
-@keyframes enhanced-skeleton-shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
-}
-
-@keyframes enhanced-skeleton-wave {
-  0%, 100% {
-    transform: translateX(-100%);
-  }
-  50% {
-    transform: translateX(100%);
-  }
-}
-
 // Spinner animations
 @keyframes enhanced-spinner-spin {
   0% {
@@ -1057,39 +990,6 @@ $enhanced-durations: (
   
   &-border {
     @include enhanced-keyboard-focus('border');
-  }
-}
-
-/**
- * Enhanced skeleton utility classes
- */
-.enhanced-skeleton {
-  &-text {
-    @include enhanced-skeleton('text');
-  }
-  
-  &-image {
-    @include enhanced-skeleton('image');
-  }
-  
-  &-card {
-    @include enhanced-skeleton('card');
-  }
-  
-  &-button {
-    @include enhanced-skeleton('button');
-  }
-  
-  &-pulse {
-    @include enhanced-skeleton('text', 'pulse');
-  }
-  
-  &-shimmer {
-    @include enhanced-skeleton('text', 'shimmer');
-  }
-  
-  &-wave {
-    @include enhanced-skeleton('text', 'wave');
   }
 }
 

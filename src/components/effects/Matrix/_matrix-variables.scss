@@ -1,0 +1,15 @@
+/* Root Variables */
+:root {
+  --matrix-bg: rgb(0 0 0 / 40%);
+  --matrix-green: rgba(0, 255, 0, 0.8);
+  --matrix-dark-green: rgba(0, 170, 0, 0.8);
+  --matrix-bright-green: rgba(0, 255, 100, 0.95);
+  --matrix-white: rgba(255, 255, 255, 0.9);
+  --matrix-glow: rgb(0 255 0 / 10%);
+  --matrix-transition: 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+  --matrix-red: rgba(255, 0, 0, 0.8);
+  --matrix-yellow: rgba(255, 255, 0, 0.8);
+  --matrix-cyan: rgba(0, 255, 255, 0.8);
+  --matrix-scanline-opacity: 0.12;
+  --matrix-crt-glow: rgba(0, 255, 0, 0.15);
+}

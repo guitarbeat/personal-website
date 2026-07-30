@@ -796,6 +796,10 @@ body * {
   .glass-effect {
     backdrop-filter: blur(10px);
     will-change: backdrop-filter;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
   }
 }
 button,
@@ -808,6 +812,7 @@ a {
 .scroll-container {
   overflow-y: scroll;
   overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 html::-webkit-scrollbar,

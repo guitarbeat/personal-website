@@ -897,6 +897,10 @@ body * {
   .glass-effect {
     backdrop-filter: blur(10px);
     will-change: backdrop-filter;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
   }
 }
 button,
@@ -909,6 +913,7 @@ a {
 .scroll-container {
   overflow-y: scroll;
   overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 html::-webkit-scrollbar,
@@ -2801,11 +2806,6 @@ body {
  * @param {String} $focus-style - Focus style to apply
  */
 /**
- * Enhanced skeleton loading animation
- * @param {String} $type - Skeleton type (text, image, card, button)
- * @param {String} $animation - Animation style (pulse, shimmer, wave)
- */
-/**
  * Enhanced loading spinner with perfect timing
  * @param {String} $size - Spinner size (sm, md, lg, xl)
  * @param {String} $style - Spinner style (circular, dots, bars, pulse)
@@ -2838,30 +2838,6 @@ body {
  * @param {String} $position - Tooltip position (top, bottom, left, right)
  * @param {String} $style - Tooltip style (dark, light, accent, custom)
  */
-@keyframes enhanced-skeleton-pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-@keyframes enhanced-skeleton-shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
-}
-@keyframes enhanced-skeleton-wave {
-  0%, 100% {
-    transform: translateX(-100%);
-  }
-  50% {
-    transform: translateX(100%);
-  }
-}
 @keyframes enhanced-spinner-spin {
   0% {
     transform: rotate(0deg);
@@ -3382,94 +3358,6 @@ body {
 }
 .enhanced-keyboard-focus-border:focus:not(:focus-visible) {
   outline: none;
-}
-
-/**
- * Enhanced skeleton utility classes
- */
-.enhanced-skeleton-text {
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(90deg, var(--color-gray-200) 25%, var(--color-gray-100) 50%, var(--color-gray-200) 75%);
-  background-size: 200% 100%;
-  height: 1em;
-  border-radius: 0.25rem;
-  animation: enhanced-skeleton-pulse 1.5s ease-in-out infinite;
-}
-.dark-theme .enhanced-skeleton-text {
-  background: linear-gradient(90deg, var(--color-gray-700) 25%, var(--color-gray-600) 50%, var(--color-gray-700) 75%);
-}
-.enhanced-skeleton-image {
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(90deg, var(--color-gray-200) 25%, var(--color-gray-100) 50%, var(--color-gray-200) 75%);
-  background-size: 200% 100%;
-  aspect-ratio: 16/9;
-  border-radius: 0.5rem;
-  animation: enhanced-skeleton-pulse 1.5s ease-in-out infinite;
-}
-.dark-theme .enhanced-skeleton-image {
-  background: linear-gradient(90deg, var(--color-gray-700) 25%, var(--color-gray-600) 50%, var(--color-gray-700) 75%);
-}
-.enhanced-skeleton-card {
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(90deg, var(--color-gray-200) 25%, var(--color-gray-100) 50%, var(--color-gray-200) 75%);
-  background-size: 200% 100%;
-  height: 200px;
-  border-radius: 0.5rem;
-  animation: enhanced-skeleton-pulse 1.5s ease-in-out infinite;
-}
-.dark-theme .enhanced-skeleton-card {
-  background: linear-gradient(90deg, var(--color-gray-700) 25%, var(--color-gray-600) 50%, var(--color-gray-700) 75%);
-}
-.enhanced-skeleton-button {
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(90deg, var(--color-gray-200) 25%, var(--color-gray-100) 50%, var(--color-gray-200) 75%);
-  background-size: 200% 100%;
-  height: 40px;
-  border-radius: 0.25rem;
-  animation: enhanced-skeleton-pulse 1.5s ease-in-out infinite;
-}
-.dark-theme .enhanced-skeleton-button {
-  background: linear-gradient(90deg, var(--color-gray-700) 25%, var(--color-gray-600) 50%, var(--color-gray-700) 75%);
-}
-.enhanced-skeleton-pulse {
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(90deg, var(--color-gray-200) 25%, var(--color-gray-100) 50%, var(--color-gray-200) 75%);
-  background-size: 200% 100%;
-  height: 1em;
-  border-radius: 0.25rem;
-  animation: enhanced-skeleton-pulse 1.5s ease-in-out infinite;
-}
-.dark-theme .enhanced-skeleton-pulse {
-  background: linear-gradient(90deg, var(--color-gray-700) 25%, var(--color-gray-600) 50%, var(--color-gray-700) 75%);
-}
-.enhanced-skeleton-shimmer {
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(90deg, var(--color-gray-200) 25%, var(--color-gray-100) 50%, var(--color-gray-200) 75%);
-  background-size: 200% 100%;
-  height: 1em;
-  border-radius: 0.25rem;
-  animation: enhanced-skeleton-shimmer 2s linear infinite;
-}
-.dark-theme .enhanced-skeleton-shimmer {
-  background: linear-gradient(90deg, var(--color-gray-700) 25%, var(--color-gray-600) 50%, var(--color-gray-700) 75%);
-}
-.enhanced-skeleton-wave {
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(90deg, var(--color-gray-200) 25%, var(--color-gray-100) 50%, var(--color-gray-200) 75%);
-  background-size: 200% 100%;
-  height: 1em;
-  border-radius: 0.25rem;
-  animation: enhanced-skeleton-wave 1.5s ease-in-out infinite;
-}
-.dark-theme .enhanced-skeleton-wave {
-  background: linear-gradient(90deg, var(--color-gray-700) 25%, var(--color-gray-600) 50%, var(--color-gray-700) 75%);
 }
 
 /**
@@ -10316,6 +10204,120 @@ body {
     display: block;
   }
 }
+@keyframes enhanced-skeleton-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+@keyframes enhanced-skeleton-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+@keyframes enhanced-skeleton-wave {
+  0%, 100% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(100%);
+  }
+}
+.enhanced-skeleton--text {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(90deg, var(--color-gray-200) 25%, var(--color-gray-100) 50%, var(--color-gray-200) 75%);
+  background-size: 200% 100%;
+  height: 1em;
+  border-radius: 0.25rem;
+  animation: enhanced-skeleton-pulse 1.5s ease-in-out infinite;
+}
+.dark-theme .enhanced-skeleton--text {
+  background: linear-gradient(90deg, var(--color-gray-700) 25%, var(--color-gray-600) 50%, var(--color-gray-700) 75%);
+}
+.enhanced-skeleton--image {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(90deg, var(--color-gray-200) 25%, var(--color-gray-100) 50%, var(--color-gray-200) 75%);
+  background-size: 200% 100%;
+  aspect-ratio: 16/9;
+  border-radius: 0.5rem;
+  animation: enhanced-skeleton-pulse 1.5s ease-in-out infinite;
+}
+.dark-theme .enhanced-skeleton--image {
+  background: linear-gradient(90deg, var(--color-gray-700) 25%, var(--color-gray-600) 50%, var(--color-gray-700) 75%);
+}
+.enhanced-skeleton--card {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(90deg, var(--color-gray-200) 25%, var(--color-gray-100) 50%, var(--color-gray-200) 75%);
+  background-size: 200% 100%;
+  height: 200px;
+  border-radius: 0.5rem;
+  animation: enhanced-skeleton-pulse 1.5s ease-in-out infinite;
+}
+.dark-theme .enhanced-skeleton--card {
+  background: linear-gradient(90deg, var(--color-gray-700) 25%, var(--color-gray-600) 50%, var(--color-gray-700) 75%);
+}
+.enhanced-skeleton--button {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(90deg, var(--color-gray-200) 25%, var(--color-gray-100) 50%, var(--color-gray-200) 75%);
+  background-size: 200% 100%;
+  height: 40px;
+  border-radius: 0.25rem;
+  animation: enhanced-skeleton-pulse 1.5s ease-in-out infinite;
+}
+.dark-theme .enhanced-skeleton--button {
+  background: linear-gradient(90deg, var(--color-gray-700) 25%, var(--color-gray-600) 50%, var(--color-gray-700) 75%);
+}
+.enhanced-skeleton--pulse {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(90deg, var(--color-gray-200) 25%, var(--color-gray-100) 50%, var(--color-gray-200) 75%);
+  background-size: 200% 100%;
+  height: 1em;
+  border-radius: 0.25rem;
+  animation: enhanced-skeleton-pulse 1.5s ease-in-out infinite;
+}
+.dark-theme .enhanced-skeleton--pulse {
+  background: linear-gradient(90deg, var(--color-gray-700) 25%, var(--color-gray-600) 50%, var(--color-gray-700) 75%);
+}
+.enhanced-skeleton--shimmer {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(90deg, var(--color-gray-200) 25%, var(--color-gray-100) 50%, var(--color-gray-200) 75%);
+  background-size: 200% 100%;
+  height: 1em;
+  border-radius: 0.25rem;
+  animation: enhanced-skeleton-shimmer 2s linear infinite;
+}
+.dark-theme .enhanced-skeleton--shimmer {
+  background: linear-gradient(90deg, var(--color-gray-700) 25%, var(--color-gray-600) 50%, var(--color-gray-700) 75%);
+}
+.enhanced-skeleton--wave {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(90deg, var(--color-gray-200) 25%, var(--color-gray-100) 50%, var(--color-gray-200) 75%);
+  background-size: 200% 100%;
+  height: 1em;
+  border-radius: 0.25rem;
+  animation: enhanced-skeleton-wave 1.5s ease-in-out infinite;
+}
+.dark-theme .enhanced-skeleton--wave {
+  background: linear-gradient(90deg, var(--color-gray-700) 25%, var(--color-gray-600) 50%, var(--color-gray-700) 75%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .enhanced-skeleton {
+    animation: none !important;
+  }
+}
 /**
  * Enhanced breadcrumb navigation with perfect hierarchy
  * @param {String} $style - Breadcrumb style (default, minimal, enhanced, custom)
@@ -16558,6 +16560,17 @@ body {
   display: block;
   width: 100%;
   height: auto;
+  aspect-ratio: 300/100;
+}
+.about-me__text--skeleton {
+  max-height: 4em;
+  pointer-events: none;
+  cursor: default;
+}
+.about-me__skeleton-title {
+  height: 2rem;
+  width: min(60%, 16rem);
+  margin: 1.5rem 1rem;
 }
 .about-me__text {
   width: 100%;
@@ -16974,6 +16987,12 @@ body.light-theme .hover-color-change:hover {
 .social__icon a span {
   color: inherit;
   font-size: 1.6em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1em;
+  height: 1em;
+  line-height: 1;
   transition: color 0.5s, transform 0.3s;
 }
 .social__icon a i:hover,
@@ -17342,6 +17361,26 @@ h3:hover .letter {
   border-width: 0;
   pointer-events: none;
 }
+.projects__card--skeleton {
+  pointer-events: none;
+  min-height: 18rem;
+}
+.projects__card--skeleton .projects__skeleton-meta {
+  width: 30%;
+  margin-bottom: 1.5rem;
+}
+.projects__card--skeleton .projects__skeleton-title {
+  width: 70%;
+  height: 1.5rem;
+  margin-bottom: 1rem;
+}
+.projects__card--skeleton .projects__skeleton-hook {
+  width: 90%;
+  margin-bottom: 0.75rem;
+}
+.projects__card--skeleton .projects__skeleton-detail {
+  width: 100%;
+}
 .projects__card h3 {
   font-size: 2rem;
   line-height: 1.25;
@@ -17510,6 +17549,7 @@ h3:hover .letter {
   max-height: 80%;
   width: auto;
   height: auto;
+  aspect-ratio: 16/9;
   opacity: 0;
   object-fit: contain;
   transition: opacity 0.2s ease-in-out, transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
@@ -17528,6 +17568,11 @@ h3:hover .letter {
   justify-content: center;
   flex-wrap: wrap;
   margin-bottom: 1rem;
+}
+.filter-buttons .tag--skeleton {
+  width: 5.5rem;
+  margin: 2px;
+  pointer-events: none;
 }
 .filter-buttons button.tag {
   font-family: Inter, sans-serif;
@@ -17742,6 +17787,38 @@ h3:hover .letter {
   text-align: right;
   justify-self: end;
   align-self: start;
+}
+.work__item__place i {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  line-height: 1;
+  vertical-align: -0.125em;
+}
+.work__item--skeleton {
+  pointer-events: none;
+  min-height: 12rem;
+}
+.work__item--skeleton .work__skeleton-title {
+  width: 55%;
+  height: 1.75rem;
+  margin-bottom: 0.75rem;
+}
+.work__item--skeleton .work__skeleton-company {
+  width: 40%;
+  margin-bottom: 0.5rem;
+}
+.work__item--skeleton .work__skeleton-date {
+  width: 35%;
+}
+.work__timeline--skeleton {
+  pointer-events: none;
+}
+.work__timeline--skeleton .work__skeleton-bar {
+  width: 100%;
+  height: 100%;
+  min-height: 24rem;
+  border-radius: 2px;
 }
 .work__timeline {
   width: 0.6rem;

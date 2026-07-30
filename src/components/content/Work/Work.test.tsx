@@ -37,20 +37,6 @@ jest.mock("../../../contexts/NotionContext", () => ({
 }));
 
 describe("Work timeline", () => {
-  beforeAll(() => {
-    class IntersectionObserverMock {
-      observe() {}
-      disconnect() {}
-      unobserve() {}
-    }
-
-    Object.defineProperty(window, "IntersectionObserver", {
-      writable: true,
-      configurable: true,
-      value: IntersectionObserverMock,
-    });
-  });
-
   it("renders a current-month job with a finite timeline", () => {
     const { container } = render(
       <Work

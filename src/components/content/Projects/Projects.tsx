@@ -1,14 +1,15 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-// import { withGoogleSheets } from "react-db-google-sheets";
-import { useNotion } from "../../../contexts/NotionContext";
+import { useNotionSectionData } from "../../../hooks/useNotionSectionData";
 import type { ProjectItem } from "../../../types/content";
 import { generateTagColors } from "../../../utils/colorUtils";
 import { clamp, cn } from "../../../utils/commonUtils";
+import { reconcileProjectFilters } from "../../../utils/reconcileProjectFilters";
 import PixelCanvas from "../../effects/PixelCanvas/PixelCanvas";
 import {
   PROJECT_FILTER_SKELETON_KEYS,
   PROJECTS_SKELETON_KEYS,
 } from "../shared/contentSkeletonConstants";
+import { SkeletonBlock } from "../shared/SkeletonBlock";
 
 const DEFAULT_PROJECT_EFFECT = {
   colors: ["#f8fafc", "#cbd5f5", "#94a3b8"],
@@ -175,10 +176,10 @@ function ProjectsSkeleton() {
           aria-hidden="true"
         >
           <div className="projects__card__content">
-            <div className="projects__skeleton-meta enhanced-skeleton enhanced-skeleton--text" />
-            <div className="projects__skeleton-title enhanced-skeleton enhanced-skeleton--text" />
-            <div className="projects__skeleton-hook enhanced-skeleton enhanced-skeleton--text" />
-            <div className="projects__skeleton-detail enhanced-skeleton enhanced-skeleton--text" />
+            <SkeletonBlock className="projects__skeleton-meta" />
+            <SkeletonBlock className="projects__skeleton-title" />
+            <SkeletonBlock className="projects__skeleton-hook" />
+            <SkeletonBlock className="projects__skeleton-detail" />
           </div>
         </div>
       ))}
@@ -189,10 +190,7 @@ function ProjectsSkeleton() {
 function Projects({ db: propsDb }: ProjectsProps = {}) {
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [tagColors, setTagColors] = useState<Record<string, string>>({});
-  const { db: contextDb, loading: notionLoading } = useNotion();
-
-  const db = propsDb || contextDb;
-  const isLoading = notionLoading && !propsDb;
+  const { db, isLoading } = useNotionSectionData(propsDb);
 
   const projectsData = useMemo(
     () => (Array.isArray(db?.projects) ? db.projects : []),
@@ -213,57 +211,24 @@ function Projects({ db: propsDb }: ProjectsProps = {}) {
     [projectsData],
   );
 
-  useEffect(() => {
-    const generatedTagColors = generateTagColors(allKeywords);
-    setTagColors(generatedTagColors);
-    const allKeywordsSet = new Set(allKeywords);
-    setActiveFilters((prevFilters) => {
-      if (prevFilters.length === 0) {
-        return allKeywords;
-      }
-
-      const filtered = prevFilters.filter((filter) =>
-        allKeywordsSet.has(filter),
-      );
-
-      if (filtered.length === 0) {
-        return allKeywords;
-      }
-
-      return filtered;
-    });
+  const syncProjectFilters = useCallback(() => {
+    setTagColors(generateTagColors(allKeywords));
+    setActiveFilters((prevFilters) =>
+      reconcileProjectFilters(prevFilters, allKeywords),
+    );
   }, [allKeywords]);
 
-  // Add theme change listener
   useEffect(() => {
-    const handleThemeChange = () => {
-      const regeneratedTagColors = generateTagColors(allKeywords);
-      setTagColors(regeneratedTagColors);
-      const allKeywordsSet = new Set(allKeywords);
-      setActiveFilters((prevFilters) => {
-        if (prevFilters.length === 0) {
-          return allKeywords;
-        }
+    syncProjectFilters();
+  }, [syncProjectFilters]);
 
-        const filtered = prevFilters.filter((filter) =>
-          allKeywordsSet.has(filter),
-        );
-
-        if (filtered.length === 0) {
-          return allKeywords;
-        }
-
-        return filtered;
-      });
-    };
-
-    // Listen for theme changes
-    document.body.addEventListener("theme-changed", handleThemeChange);
+  useEffect(() => {
+    document.body.addEventListener("theme-changed", syncProjectFilters);
 
     return () => {
-      document.body.removeEventListener("theme-changed", handleThemeChange);
+      document.body.removeEventListener("theme-changed", syncProjectFilters);
     };
-  }, [allKeywords]);
+  }, [syncProjectFilters]);
 
   const toggleFilter = useCallback(
     (filter: string) => {
@@ -313,10 +278,10 @@ function Projects({ db: propsDb }: ProjectsProps = {}) {
         <div className="filter-buttons" aria-busy={isLoading}>
           {isLoading
             ? PROJECT_FILTER_SKELETON_KEYS.map((skeletonKey) => (
-                <div
+                <SkeletonBlock
                   key={skeletonKey}
-                  className="tag tag--skeleton enhanced-skeleton enhanced-skeleton--button"
-                  aria-hidden="true"
+                  variant="button"
+                  className="tag tag--skeleton"
                 />
               ))
             : allKeywords.map((filter) => (

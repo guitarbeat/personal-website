@@ -2,13 +2,14 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import shell from "../../../assets/images/shell.png";
-import { useNotion } from "../../../contexts/NotionContext";
+import { useNotionSectionData } from "../../../hooks/useNotionSectionData";
 import { cn } from "../../../utils/commonUtils";
 import {
   ABOUT_SKELETON_KEYS,
   SPOTIFY_WIDGET_HEIGHT,
   SPOTIFY_WIDGET_WIDTH,
 } from "../shared/contentSkeletonConstants";
+import { SkeletonBlock } from "../shared/SkeletonBlock";
 
 const SHELL_IMAGE_WIDTH = 1957;
 const SHELL_IMAGE_HEIGHT = 2400;
@@ -49,7 +50,7 @@ function AboutSkeleton() {
           aria-hidden="true"
         >
           <div className="text-background">
-            <div className="about-me__skeleton-title enhanced-skeleton enhanced-skeleton--text" />
+            <SkeletonBlock className="about-me__skeleton-title" />
           </div>
         </div>
       ))}
@@ -59,7 +60,7 @@ function AboutSkeleton() {
 
 function About() {
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
-  const { db, loading } = useNotion();
+  const { db, isLoading } = useNotionSectionData();
 
   const aboutTexts = db.about || [];
 
@@ -191,11 +192,11 @@ function About() {
           <h1>About Me</h1>
           <div
             className="about-me__content"
-            aria-busy={loading}
+            aria-busy={isLoading}
             aria-live="polite"
           >
             <div className="about-me__text-container">
-              {loading ? (
+              {isLoading ? (
                 <AboutSkeleton />
               ) : (
                 renderAboutTexts(aboutTexts)

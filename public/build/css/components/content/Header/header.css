@@ -395,6 +395,12 @@
 .social__icon a span {
   color: inherit;
   font-size: 1.6em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1em;
+  height: 1em;
+  line-height: 1;
   transition: color 0.5s, transform 0.3s;
 }
 .social__icon a i:hover,
