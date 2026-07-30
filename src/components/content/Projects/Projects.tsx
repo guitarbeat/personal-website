@@ -2,61 +2,15 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNotionSectionData } from "../../../hooks/useNotionSectionData";
 import type { NotionData } from "../../../types/content";
 import { generateTagColors } from "../../../utils/colorUtils";
-import { clamp, cn } from "../../../utils/commonUtils";
+import { cn } from "../../../utils/commonUtils";
+import {
+  createProjectEffect,
+  DEFAULT_PROJECT_EFFECT,
+  type MoireEffectPreset,
+} from "../../../utils/moireEffectPresets";
 import { reconcileProjectFilters } from "../../../utils/reconcileProjectFilters";
 import PixelCanvas from "../../effects/PixelCanvas/PixelCanvas";
 import { NotionSectionSkeleton } from "../shared/NotionSectionSkeleton";
-
-const DEFAULT_PROJECT_EFFECT = {
-  colors: ["#f8fafc", "#cbd5f5", "#94a3b8"],
-  gap: 9,
-  speed: 24,
-};
-
-const parseHsl = (color: string | undefined) => {
-  if (typeof color !== "string") {
-    return null;
-  }
-
-  const match = color
-    .replace(/\s+/g, "")
-    .match(/^hsl\(([-\d.]+),([-\d.]+)%,([-\d.]+)%\)$/i);
-
-  if (!match) {
-    return null;
-  }
-
-  return {
-    h: Number.parseFloat(match[1]),
-    s: Number.parseFloat(match[2]),
-    l: Number.parseFloat(match[3]),
-  };
-};
-
-const createPaletteFromHsl = (color: string | undefined) => {
-  const parsed = parseHsl(color);
-
-  if (!parsed) {
-    return DEFAULT_PROJECT_EFFECT.colors;
-  }
-
-  const { h, s, l } = parsed;
-  const accent = `hsl(${h}, ${clamp(s + 12, 0, 100)}%, ${clamp(l + 18, 0, 96)}%)`;
-  const base = `hsl(${h}, ${clamp(s + 6, 0, 100)}%, ${clamp(l + 6, 0, 96)}%)`;
-  const shadow = `hsl(${h}, ${clamp(s + 4, 0, 100)}%, ${clamp(l - 10, 4, 92)}%)`;
-
-  return [accent, base, shadow];
-};
-
-const createProjectEffect = (tagColor: string | undefined, index: number) => {
-  const palette = createPaletteFromHsl(tagColor);
-
-  return {
-    colors: palette,
-    gap: 8 + (index % 3) * 2,
-    speed: 18 + (index % 4) * 3,
-  };
-};
 
 interface ProjectCardProps {
   title: string;
@@ -70,7 +24,7 @@ interface ProjectCardProps {
   tagColors?: Record<string, string>;
   primaryTagColor?: string;
   className?: string;
-  effect?: { colors: string[]; gap: number; speed: number };
+  effect?: MoireEffectPreset;
 }
 
 function ProjectCard({

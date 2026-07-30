@@ -1,0 +1,241 @@
+@use "sass:map";
+@use "../enhanced/_tokens" as tokens;
+@use "../enhanced/_typography" as typography;
+@use "../enhanced/_micro-interactions" as interactions;
+
+// ENHANCED CONTEXTUAL HELP
+////////////////////////////////////
+
+/**
+ * Enhanced contextual help with onboarding hints
+ * @param {String} $style - Help style (tooltip, popover, inline, modal)
+ * @param {String} $position - Help position (top, bottom, left, right)
+ */
+@mixin enhanced-contextual-help($style: 'tooltip', $position: 'top') {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: map.get(tokens.$enhanced-spacing-scale, '1');
+  
+  // Help trigger
+  .enhanced-help-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    background-color: var(--color-primary-100);
+    color: var(--color-primary-600);
+    border: 1px solid var(--color-primary-200);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all map.get(interactions.$enhanced-durations, 'fast') map.get(interactions.$enhanced-easing, 'smooth');
+    
+    &:hover {
+      background-color: var(--color-primary-200);
+      border-color: var(--color-primary-300);
+      transform: scale(1.1);
+    }
+    
+    &:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px var(--focus-ring);
+    }
+    
+    .icon {
+      width: 12px;
+      height: 12px;
+    }
+  }
+  
+  // Help content
+  .enhanced-help-content {
+    @if $style == 'tooltip' {
+      @include interactions.enhanced-tooltip($position, 'light');
+    } @else if $style == 'popover' {
+      position: absolute;
+      z-index: map.get(tokens.$enhanced-z-index, 'tooltip');
+      width: 300px;
+      background-color: var(--background-primary);
+      border: 1px solid var(--border-light);
+      border-radius: map.get(tokens.$enhanced-border-radius, 'md');
+      box-shadow: map.get(tokens.$enhanced-shadows, 'lg');
+      padding: map.get(tokens.$enhanced-spacing-scale, '4');
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all map.get(interactions.$enhanced-durations, 'fast') map.get(interactions.$enhanced-easing, 'smooth');
+      
+      @if $position == 'top' {
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-10px);
+        margin-bottom: map.get(tokens.$enhanced-spacing-scale, '2');
+      } @else if $position == 'bottom' {
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%) translateY(10px);
+        margin-top: map.get(tokens.$enhanced-spacing-scale, '2');
+      } @else if $position == 'left' {
+        right: 100%;
+        top: 50%;
+        transform: translateX(-10px) translateY(-50%);
+        margin-right: map.get(tokens.$enhanced-spacing-scale, '2');
+      } @else if $position == 'right' {
+        left: 100%;
+        top: 50%;
+        transform: translateX(10px) translateY(-50%);
+        margin-left: map.get(tokens.$enhanced-spacing-scale, '2');
+      }
+      
+      &.visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(-50%) translateY(0);
+      }
+      
+      // Arrow
+      &::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 0;
+        border: 6px solid transparent;
+        
+        @if $position == 'top' {
+          top: 100%;
+          left: 50%;
+          transform: translateX(-50%);
+          border-top-color: var(--border-light);
+          border-bottom: none;
+        } @else if $position == 'bottom' {
+          bottom: 100%;
+          left: 50%;
+          transform: translateX(-50%);
+          border-bottom-color: var(--border-light);
+          border-top: none;
+        } @else if $position == 'left' {
+          left: 100%;
+          top: 50%;
+          transform: translateY(-50%);
+          border-left-color: var(--border-light);
+          border-right: none;
+        } @else if $position == 'right' {
+          right: 100%;
+          top: 50%;
+          transform: translateY(-50%);
+          border-right-color: var(--border-light);
+          border-left: none;
+        }
+      }
+      
+      // Arrow inner
+      &::before {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 0;
+        border: 5px solid transparent;
+        
+        @if $position == 'top' {
+          top: 100%;
+          left: 50%;
+          transform: translateX(-50%);
+          border-top-color: var(--background-primary);
+          border-bottom: none;
+        } @else if $position == 'bottom' {
+          bottom: 100%;
+          left: 50%;
+          transform: translateX(-50%);
+          border-bottom-color: var(--background-primary);
+          border-top: none;
+        } @else if $position == 'left' {
+          left: 100%;
+          top: 50%;
+          transform: translateY(-50%);
+          border-left-color: var(--background-primary);
+          border-right: none;
+        } @else if $position == 'right' {
+          right: 100%;
+          top: 50%;
+          transform: translateY(-50%);
+          border-right-color: var(--background-primary);
+          border-left: none;
+        }
+      }
+    }
+    
+    // Help title
+    .enhanced-help-title {
+      font-size: typography.enhanced-type('sm');
+      font-weight: typography.enhanced-font-weight('semibold');
+      color: var(--text-primary);
+      margin-bottom: map.get(tokens.$enhanced-spacing-scale, '2');
+    }
+    
+    // Help description
+    .enhanced-help-description {
+      font-size: typography.enhanced-type('xs');
+      color: var(--text-secondary);
+      line-height: typography.enhanced-line-height('normal');
+      margin-bottom: map.get(tokens.$enhanced-spacing-scale, '3');
+    }
+    
+    // Help actions
+    .enhanced-help-actions {
+      display: flex;
+      gap: map.get(tokens.$enhanced-spacing-scale, '2');
+      
+      .enhanced-help-action {
+        flex: 1;
+        padding: map.get(tokens.$enhanced-spacing-scale, '2') map.get(tokens.$enhanced-spacing-scale, '3');
+        font-size: typography.enhanced-type('xs');
+        font-weight: typography.enhanced-font-weight('medium');
+        border: 1px solid var(--border-light);
+        border-radius: map.get(tokens.$enhanced-border-radius, 'sm');
+        background-color: var(--background-secondary);
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: all map.get(interactions.$enhanced-durations, 'fast') map.get(interactions.$enhanced-easing, 'smooth');
+        
+        &:hover {
+          background-color: var(--background-tertiary);
+          border-color: var(--border-medium);
+          color: var(--text-primary);
+        }
+        
+        &:focus-visible {
+          outline: none;
+          box-shadow: 0 0 0 3px var(--focus-ring);
+        }
+        
+        &.primary {
+          background-color: var(--color-primary-500);
+          border-color: var(--color-primary-500);
+          color: var(--color-gray-50);
+          
+          &:hover {
+            background-color: var(--color-primary-600);
+            border-color: var(--color-primary-600);
+          }
+        }
+      }
+    }
+  }
+  
+  // Show help content on trigger hover/focus
+  &:hover .enhanced-help-content,
+  &:focus-within .enhanced-help-content {
+    @if $style == 'tooltip' {
+      // Tooltip behavior is handled by the mixin
+    } @else if $style == 'popover' {
+      &.visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+  }
+}
+
+////////////////////////////////////

@@ -49,7 +49,7 @@ async function compressImages() {
           });
 
           await fs.writeFile(file, out);
-          // Optional AVIF generation (commented out for now as user just asked to compress)
+          // AVIF generation is intentionally disabled; compress in place only.
           /*
           const avifOut = await imagemin.buffer(data, {
             plugins: [imageminAvif({ quality: 50 })],

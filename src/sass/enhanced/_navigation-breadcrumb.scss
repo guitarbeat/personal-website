@@ -1,0 +1,172 @@
+@use "sass:map";
+@use "../enhanced/_tokens" as tokens;
+@use "../enhanced/_typography" as typography;
+@use "../enhanced/_micro-interactions" as interactions;
+
+////////////////////////////////////
+// ENHANCED BREADCRUMB NAVIGATION
+////////////////////////////////////
+
+/**
+ * Enhanced breadcrumb navigation with perfect hierarchy
+ * @param {String} $style - Breadcrumb style (default, minimal, enhanced, custom)
+ * @param {String} $separator - Separator style (slash, chevron, arrow, custom)
+ */
+@mixin enhanced-breadcrumb($style: 'default', $separator: 'chevron') {
+  display: flex;
+  align-items: center;
+  gap: map.get(tokens.$enhanced-spacing-scale, '2');
+  padding: map.get(tokens.$enhanced-spacing-scale, '3') 0;
+  
+  @if $style == 'default' {
+    font-size: typography.enhanced-type('sm');
+    color: var(--text-secondary);
+  } @else if $style == 'minimal' {
+    font-size: typography.enhanced-type('xs');
+    color: var(--text-muted);
+  } @else if $style == 'enhanced' {
+    font-size: typography.enhanced-type('base');
+    color: var(--text-secondary);
+    padding: map.get(tokens.$enhanced-spacing-scale, '4') 0;
+  }
+  
+  // Breadcrumb items
+  .enhanced-breadcrumb-item {
+    display: flex;
+    align-items: center;
+    gap: map.get(tokens.$enhanced-spacing-scale, '2');
+    
+    // Current page styling
+    &.current {
+      color: var(--text-primary);
+      font-weight: typography.enhanced-font-weight('semibold');
+      
+      @if $style == 'enhanced' {
+        position: relative;
+        
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: -4px;
+          left: 0;
+          right: 0;
+          height: 2px;
+          background-color: var(--color-primary-500);
+          border-radius: 1px;
+        }
+      }
+    }
+    
+    // Link styling
+    a {
+      color: inherit;
+      text-decoration: none;
+      transition: color map.get(interactions.$enhanced-durations, 'fast') map.get(interactions.$enhanced-easing, 'smooth');
+      
+      &:hover {
+        color: var(--color-primary-600);
+      }
+      
+      &:focus-visible {
+        outline: none;
+        text-decoration: underline;
+        text-decoration-color: var(--color-primary-500);
+        text-decoration-thickness: 2px;
+      }
+    }
+    
+    // Separator styling
+    &:not(:last-child)::after {
+      content: '';
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      opacity: 0.5;
+      
+      @if $separator == 'slash' {
+        content: '/';
+        font-size: 1.2em;
+        color: var(--text-muted);
+      } @else if $separator == 'chevron' {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='currentColor'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M9 5l7 7-7 7'/%3E%3C/svg%3E");
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+      } @else if $separator == 'arrow' {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='currentColor'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M13 7l5 5m0 0l-5 5m5-5H6'/%3E%3C/svg%3E");
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+      }
+    }
+  }
+  
+  // Responsive behavior
+  @media (max-width: 768px) {
+    flex-wrap: wrap;
+    gap: map.get(tokens.$enhanced-spacing-scale, '1');
+    
+    .enhanced-breadcrumb-item {
+      font-size: typography.enhanced-type('xs');
+      
+      &:not(:last-child)::after {
+        width: 12px;
+        height: 12px;
+      }
+    }
+  }
+}
+
+/**
+ * Enhanced breadcrumb with back navigation
+ * @param {String} $style - Breadcrumb style
+ * @param {String} $separator - Separator style
+ */
+@mixin enhanced-breadcrumb-with-back($style: 'default', $separator: 'chevron') {
+  @include enhanced-breadcrumb($style, $separator);
+  
+  // Back button
+  .enhanced-breadcrumb-back {
+    display: flex;
+    align-items: center;
+    gap: map.get(tokens.$enhanced-spacing-scale, '2');
+    padding: map.get(tokens.$enhanced-spacing-scale, '2') map.get(tokens.$enhanced-spacing-scale, '3');
+    background-color: var(--background-secondary);
+    border: 1px solid var(--border-light);
+    border-radius: map.get(tokens.$enhanced-border-radius, 'sm');
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: all map.get(interactions.$enhanced-durations, 'fast') map.get(interactions.$enhanced-easing, 'smooth');
+    
+    &:hover {
+      background-color: var(--background-tertiary);
+      border-color: var(--border-medium);
+      color: var(--text-primary);
+    }
+    
+    &:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px var(--focus-ring);
+    }
+    
+    .icon {
+      width: 16px;
+      height: 16px;
+    }
+  }
+  
+  // Responsive behavior
+  @media (max-width: 768px) {
+    .enhanced-breadcrumb-back {
+      padding: map.get(tokens.$enhanced-spacing-scale, '1') map.get(tokens.$enhanced-spacing-scale, '2');
+      font-size: typography.enhanced-type('xs');
+      
+      .icon {
+        width: 14px;
+        height: 14px;
+      }
+    }
+  }
+}
+
+////////////////////////////////////

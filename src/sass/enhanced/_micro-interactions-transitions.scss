@@ -1,0 +1,28 @@
+@use "sass:map";
+@use "../enhanced/_tokens" as tokens;
+@use "../enhanced/_typography" as typography;
+
+////////////////////////////////////
+// ENHANCED TRANSITION SYSTEM
+////////////////////////////////////
+
+// Perfect timing functions for smooth interactions
+$enhanced-easing: (
+  'smooth': cubic-bezier(0.4, 0, 0.2, 1),      // Material Design standard
+  'bounce': cubic-bezier(0.175, 0.885, 0.32, 1.275), // Playful bounce
+  'elastic': cubic-bezier(0.68, -0.55, 0.265, 1.55), // Elastic spring
+  'sharp': cubic-bezier(0.4, 0, 0.2, 1),       // Sharp and precise
+  'gentle': cubic-bezier(0.25, 0.46, 0.45, 0.94),    // Gentle and smooth
+  'energetic': cubic-bezier(0.68, 0, 0.265, 1)        // Energetic and fast
+);
+
+// Perfect duration scales for different interaction types
+$enhanced-durations: (
+  'instant': 0.05s,    // Immediate feedback
+  'fast': 0.15s,       // Quick state changes
+  'normal': 0.25s,     // Standard transitions
+  'slow': 0.4s,        // Complex animations
+  'deliberate': 0.6s,  // Intentional movements
+  'page': 0.8s         // Page transitions
+);
+

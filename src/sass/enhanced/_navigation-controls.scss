@@ -1,0 +1,140 @@
+@use "sass:map";
+@use "../enhanced/_tokens" as tokens;
+@use "../enhanced/_typography" as typography;
+@use "../enhanced/_micro-interactions" as interactions;
+
+// ENHANCED NAVIGATION PATTERNS
+////////////////////////////////////
+
+/**
+ * Enhanced back/forward navigation with perfect UX
+ * @param {String} $style - Navigation style (minimal, enhanced, prominent)
+ */
+@mixin enhanced-navigation-controls($style: 'enhanced') {
+  display: flex;
+  align-items: center;
+  gap: map.get(tokens.$enhanced-spacing-scale, '2');
+  
+  // Navigation button
+  .enhanced-nav-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px; // Touch target minimum
+    height: 44px; // Touch target minimum
+    background-color: var(--background-secondary);
+    border: 1px solid var(--border-light);
+    border-radius: map.get(tokens.$enhanced-border-radius, 'md');
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all map.get(interactions.$enhanced-durations, 'fast') map.get(interactions.$enhanced-easing, 'smooth');
+    
+    @if $style == 'enhanced' {
+      box-shadow: map.get(tokens.$enhanced-shadows, 'sm');
+    } @else if $style == 'prominent' {
+      background-color: var(--color-primary-500);
+      border-color: var(--color-primary-500);
+      color: var(--color-gray-50);
+      box-shadow: map.get(tokens.$enhanced-shadows, 'md');
+    }
+    
+    &:hover {
+      @if $style == 'minimal' {
+        background-color: var(--background-tertiary);
+        border-color: var(--border-medium);
+      } @else if $style == 'enhanced' {
+        background-color: var(--background-tertiary);
+        border-color: var(--border-medium);
+        transform: translateY(-2px);
+        box-shadow: map.get(tokens.$enhanced-shadows, 'md');
+      } @else if $style == 'prominent' {
+        background-color: var(--color-primary-600);
+        border-color: var(--color-primary-600);
+        transform: translateY(-2px);
+        box-shadow: map.get(tokens.$enhanced-shadows, 'lg');
+      }
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+    
+    &:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px var(--focus-ring);
+    }
+    
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+    
+    .icon {
+      width: 20px;
+      height: 20px;
+    }
+  }
+  
+  // Navigation history
+  .enhanced-nav-history {
+    display: flex;
+    flex-direction: column;
+    gap: map.get(tokens.$enhanced-spacing-scale, '1');
+    
+    .enhanced-nav-history-item {
+      display: flex;
+      align-items: center;
+      gap: map.get(tokens.$enhanced-spacing-scale, '2');
+      padding: map.get(tokens.$enhanced-spacing-scale, '2') map.get(tokens.$enhanced-spacing-scale, '3');
+      background-color: var(--background-secondary);
+      border: 1px solid var(--border-light);
+      border-radius: map.get(tokens.$enhanced-border-radius, 'sm');
+      cursor: pointer;
+      transition: all map.get(interactions.$enhanced-durations, 'fast') map.get(interactions.$enhanced-easing, 'smooth');
+      
+      &:hover {
+        background-color: var(--background-tertiary);
+        border-color: var(--border-medium);
+      }
+      
+      .icon {
+        width: 16px;
+        height: 16px;
+        color: var(--text-muted);
+      }
+      
+      .text {
+        font-size: typography.enhanced-type('xs');
+        color: var(--text-primary);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 200px;
+      }
+    }
+  }
+  
+  // Responsive behavior
+  @media (max-width: 768px) {
+    .enhanced-nav-button {
+      width: 48px; // Larger touch target on mobile
+      height: 48px; // Larger touch target on mobile
+      
+      .icon {
+        width: 24px;
+        height: 24px;
+      }
+    }
+    
+    .enhanced-nav-history {
+      .enhanced-nav-history-item {
+        .text {
+          max-width: 150px;
+        }
+      }
+    }
+  }
+}
+
+////////////////////////////////////

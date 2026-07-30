@@ -34,8 +34,7 @@ Detailed technical documentation, design specifications, and migration plans are
 ## Development Notes
 
 - Run `./scripts/setup.sh` after cloning to install dependencies.
-- Run `pnpm run compress-images` to write optimized copies to `src/assets/images/optimized`.
-- The same command also converts JPEG/PNG files to `.avif` using `imagemin-avif` (requires Node.js 18 or later).
+- Run `pnpm run compress-images` to compress JPEG/PNG files in place under `src/assets/images/`.
 - A pre-commit hook runs this command automatically.
 - Consider using Git LFS for large image files.
 - [Vercel Analytics](https://vercel.com/docs/analytics/quickstart) and [Speed Insights](https://vercel.com/docs/speed-insights/quickstart) are included in the app bundle and activate automatically on Vercel deployments (enable each in the project dashboard).
@@ -68,7 +67,7 @@ See [AGENTS.md](AGENTS.md) for the full command reference.
 
 ## Analysis Tools
 
-- **Motion Blur Analysis**: Run `./check-motion-blur.sh [commit-sha]` to analyze if a commit added motion blur functionality. See [check-motion-blur.README.md](check-motion-blur.README.md) for detailed usage.
+- **Motion blur**: Toggle via `.motion-blur-on` and `.motion-blur-off` utility classes in [`src/sass/base/_utilities.scss`](src/sass/base/_utilities.scss).
 
 ---
 

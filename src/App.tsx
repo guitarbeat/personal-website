@@ -18,6 +18,7 @@ import {
 } from "react-router-dom";
 
 import { NotionProvider, useNotion } from "./contexts/NotionContext";
+import { useScrollMode } from "./hooks/useScrollMode";
 import "./sass/main.scss";
 import FrameEffect from "@/components/effects/Loading/FrameEffect";
 import LoadingSequence from "@/components/effects/Loading/LoadingSequence";
@@ -328,13 +329,10 @@ const AppContent = () => {
     return shouldShowMatrixFromSearch(window.location.search);
   });
   const { isUnlocked } = useAuth();
-  const [isScrollMode, setIsScrollMode] = useState(false);
-  const [isInScroll, setIsInScroll] = useState(false);
+  const { isScrollMode, isInScroll, activateScrollMode } = useScrollMode();
   const [isInitialLoaderVisible, setIsInitialLoaderVisible] = useState(true);
   const [hasMinimumLoaderDurationElapsed, setHasMinimumLoaderDurationElapsed] =
     useState(false);
-  const scrollAnimationRef = useRef<number | null>(null);
-  const scrollSpeedRef = useRef<number>(400);
 
   // --- Effects ---
 
@@ -348,70 +346,12 @@ const AppContent = () => {
     };
   }, []);
 
-  // Utility function to cleanup scroll animation
-  const cleanupScrollAnimation = useCallback(() => {
-    if (scrollAnimationRef.current) {
-      cancelAnimationFrame(scrollAnimationRef.current);
-      scrollAnimationRef.current = null;
-    }
-    scrollSpeedRef.current = 400;
-  }, []);
-
-  // Scroll mode: fast, accelerating scroll
-  useEffect(() => {
-    if (!isScrollMode) {
-      cleanupScrollAnimation();
-      return;
-    }
-    const scrollStep = () => {
-      window.scrollBy({
-        top: scrollSpeedRef.current,
-        left: 0,
-        behavior: "auto",
-      });
-      scrollSpeedRef.current = Math.min(scrollSpeedRef.current + 40, 2000);
-      scrollAnimationRef.current = requestAnimationFrame(scrollStep);
-    };
-    scrollSpeedRef.current = 400;
-    scrollAnimationRef.current = requestAnimationFrame(scrollStep);
-    return cleanupScrollAnimation;
-  }, [isScrollMode, cleanupScrollAnimation]);
-
-  // Scroll transition and scroll page: handle key press to enter/exit
-  useEffect(() => {
-    if (!isScrollMode && !isInScroll) {
-      return;
-    }
-    const handleKeyDown = (event: KeyboardEvent) => {
-      const { key } = event;
-      const isToggleKey = key === "Enter" || key === " " || key === "Spacebar";
-
-      if (!isToggleKey) {
-        return;
-      }
-
-      if (key !== "Enter") {
-        event.preventDefault();
-      }
-
-      if (isScrollMode) {
-        setIsScrollMode(false);
-        setIsInScroll(true);
-      } else if (isInScroll) {
-        setIsInScroll(false);
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isScrollMode, isInScroll]);
-
   // --- Handlers ---
   const handleMatrixActivate = useCallback(() => setShowMatrix(true), []);
   const handleMatrixSuccess = useCallback(() => setShowMatrix(false), []);
   const handleRouteMatrixChange = useCallback((shouldShow: boolean) => {
     setShowMatrix((prev) => (prev === shouldShow ? prev : shouldShow));
   }, []);
-  const _handleScrollActivate = useCallback(() => setIsScrollMode(true), []);
 
   // Matrix ready callback - will be set by Matrix component
   const matrixReadyCallbackRef = useRef<(() => void) | null>(null);
@@ -465,7 +405,7 @@ const AppContent = () => {
             <MainRoutes
               navItems={NAV_ITEMS}
               onMatrixActivate={handleMatrixActivate}
-              onScrollActivate={_handleScrollActivate}
+              onScrollActivate={activateScrollMode}
               isScrollMode={isScrollMode}
               isUnlocked={isUnlocked}
               isInScroll={isInScroll}

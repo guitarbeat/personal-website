@@ -1,0 +1,253 @@
+@use "sass:map";
+@use "../enhanced/_tokens" as tokens;
+@use "../enhanced/_typography" as typography;
+@use "../enhanced/_micro-interactions" as interactions;
+
+// ENHANCED SMART SEARCH
+////////////////////////////////////
+
+/**
+ * Enhanced search input with autocomplete and recent searches
+ * @param {String} $size - Search size (sm, md, lg)
+ * @param {String} $style - Search style (default, enhanced, minimal)
+ */
+@mixin enhanced-search($size: 'md', $style: 'default') {
+  position: relative;
+  width: 100%;
+  
+  // Search input container
+  .enhanced-search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    
+    @if $size == 'sm' {
+      height: 36px;
+    } @else if $size == 'md' {
+      height: 44px;
+    } @else if $size == 'lg' {
+      height: 52px;
+    }
+  }
+  
+  // Search input
+  .enhanced-search-input {
+    width: 100%;
+    height: 100%;
+    padding: map.get(tokens.$enhanced-spacing-scale, '2') map.get(tokens.$enhanced-spacing-scale, '4');
+    padding-left: calc(#{map.get(tokens.$enhanced-spacing-scale, '4')} + 20px); // Space for search icon
+    font-size: typography.enhanced-type('sm');
+    border: 1px solid var(--border-light);
+    border-radius: map.get(tokens.$enhanced-border-radius, 'md');
+    background-color: var(--background-primary);
+    color: var(--text-primary);
+    transition: all map.get(interactions.$enhanced-durations, 'fast') map.get(interactions.$enhanced-easing, 'smooth');
+    
+    @if $style == 'enhanced' {
+      box-shadow: map.get(tokens.$enhanced-shadows, 'sm');
+      
+      &:focus {
+        box-shadow: map.get(tokens.$enhanced-shadows, 'md');
+      }
+    }
+    
+    &::placeholder {
+      color: var(--text-muted);
+    }
+    
+    &:focus {
+      outline: none;
+      border-color: var(--color-primary-500);
+      box-shadow: 0 0 0 3px var(--color-primary-200);
+    }
+    
+    &:hover {
+      border-color: var(--border-medium);
+    }
+  }
+  
+  // Search icon
+  .enhanced-search-icon {
+    position: absolute;
+    left: map.get(tokens.$enhanced-spacing-scale, '3');
+    width: 20px;
+    height: 20px;
+    color: var(--text-muted);
+    pointer-events: none;
+    z-index: 1;
+  }
+  
+  // Clear button
+  .enhanced-search-clear {
+    position: absolute;
+    right: map.get(tokens.$enhanced-spacing-scale, '3');
+    width: 20px;
+    height: 20px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    opacity: 0;
+    transition: all map.get(interactions.$enhanced-durations, 'fast') map.get(interactions.$enhanced-easing, 'smooth');
+    
+    &:hover {
+      color: var(--text-primary);
+    }
+    
+    &:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px var(--focus-ring);
+      border-radius: map.get(tokens.$enhanced-border-radius, 'sm');
+    }
+    
+    &.visible {
+      opacity: 1;
+    }
+  }
+  
+  // Search suggestions dropdown
+  .enhanced-search-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: map.get(tokens.$enhanced-spacing-scale, '1');
+    background-color: var(--background-primary);
+    border: 1px solid var(--border-light);
+    border-radius: map.get(tokens.$enhanced-border-radius, 'md');
+    box-shadow: map.get(tokens.$enhanced-shadows, 'lg');
+    z-index: map.get(tokens.$enhanced-z-index, 'dropdown');
+    max-height: 300px;
+    overflow-y: auto;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all map.get(interactions.$enhanced-durations, 'fast') map.get(interactions.$enhanced-easing, 'smooth');
+    
+    &.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    
+    // Recent searches section
+    .enhanced-search-recent {
+      padding: map.get(tokens.$enhanced-spacing-scale, '3');
+      border-bottom: 1px solid var(--border-light);
+      
+      .enhanced-search-recent-title {
+        font-size: typography.enhanced-type('xs');
+        font-weight: typography.enhanced-font-weight('medium');
+        color: var(--text-muted);
+        margin-bottom: map.get(tokens.$enhanced-spacing-scale, '2');
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      
+      .enhanced-search-recent-item {
+        display: flex;
+        align-items: center;
+        gap: map.get(tokens.$enhanced-spacing-scale, '2');
+        padding: map.get(tokens.$enhanced-spacing-scale, '2');
+        border-radius: map.get(tokens.$enhanced-border-radius, 'sm');
+        cursor: pointer;
+        transition: background-color map.get(interactions.$enhanced-durations, 'fast') map.get(interactions.$enhanced-easing, 'smooth');
+        
+        &:hover {
+          background-color: var(--background-secondary);
+        }
+        
+        .icon {
+          width: 16px;
+          height: 16px;
+          color: var(--text-muted);
+        }
+        
+        .text {
+          flex: 1;
+          font-size: typography.enhanced-type('sm');
+          color: var(--text-primary);
+        }
+        
+        .remove {
+          width: 16px;
+          height: 16px;
+          color: var(--text-muted);
+          cursor: pointer;
+          opacity: 0;
+          transition: opacity map.get(interactions.$enhanced-durations, 'fast') map.get(interactions.$enhanced-easing, 'smooth');
+          
+          &:hover {
+            color: var(--color-error-500);
+          }
+        }
+        
+        &:hover .remove {
+          opacity: 1;
+        }
+      }
+    }
+    
+    // Autocomplete suggestions section
+    .enhanced-search-autocomplete {
+      .enhanced-search-suggestion-item {
+        display: flex;
+        align-items: center;
+        gap: map.get(tokens.$enhanced-spacing-scale, '2');
+        padding: map.get(tokens.$enhanced-spacing-scale, '3');
+        cursor: pointer;
+        transition: background-color map.get(interactions.$enhanced-durations, 'fast') map.get(interactions.$enhanced-easing, 'smooth');
+        
+        &:hover {
+          background-color: var(--background-secondary);
+        }
+        
+        &.highlighted {
+          background-color: var(--color-primary-50);
+        }
+        
+        .icon {
+          width: 20px;
+          height: 20px;
+          color: var(--text-muted);
+        }
+        
+        .content {
+          flex: 1;
+          
+          .title {
+            font-size: typography.enhanced-type('sm');
+            font-weight: typography.enhanced-font-weight('medium');
+            color: var(--text-primary);
+            margin-bottom: map.get(tokens.$enhanced-spacing-scale, '1');
+          }
+          
+          .description {
+            font-size: typography.enhanced-type('xs');
+            color: var(--text-secondary);
+            line-height: typography.enhanced-line-height('normal');
+          }
+        }
+        
+        .shortcut {
+          font-size: typography.enhanced-type('xs');
+          color: var(--text-muted);
+          padding: map.get(tokens.$enhanced-spacing-scale, '1') map.get(tokens.$enhanced-spacing-scale, '2');
+          background-color: var(--background-secondary);
+          border-radius: map.get(tokens.$enhanced-border-radius, 'sm');
+          font-family: monospace;
+        }
+      }
+    }
+  }
+  
+  // Search results count
+  .enhanced-search-results-count {
+    margin-top: map.get(tokens.$enhanced-spacing-scale, '2');
+    font-size: typography.enhanced-type('xs');
+    color: var(--text-muted);
+    text-align: center;
+  }
+}
+
+////////////////////////////////////

@@ -1,0 +1,410 @@
+@use "sass:map";
+@use "../enhanced/_tokens" as tokens;
+@use "../enhanced/_typography" as typography;
+@use "./micro-interactions-transitions" as *;
+@use "./micro-interactions-hover-focus" as *;
+@use "./micro-interactions-loading" as *;
+@use "./micro-interactions-page-transitions" as *;
+@use "./micro-interactions-feedback" as *;
+
+// ENHANCED UTILITY CLASSES
+////////////////////////////////////
+
+/**
+ * Enhanced hover utility classes
+ */
+.enhanced-hover {
+  &-lift {
+    @include enhanced-hover('lift');
+  }
+  
+  &-scale {
+    @include enhanced-hover('scale');
+  }
+  
+  &-glow {
+    @include enhanced-hover('glow');
+  }
+  
+  &-slide {
+    @include enhanced-hover('slide');
+  }
+  
+  &-rotate {
+    @include enhanced-hover('rotate');
+  }
+  
+  &-subtle {
+    @include enhanced-hover('lift', 'subtle');
+  }
+  
+  &-moderate {
+    @include enhanced-hover('lift', 'moderate');
+  }
+  
+  &-pronounced {
+    @include enhanced-hover('lift', 'pronounced');
+  }
+}
+
+/**
+ * Enhanced interactive utility classes
+ */
+.enhanced-interactive {
+  @include enhanced-interactive;
+  
+  &-lift {
+    @include enhanced-interactive('lift');
+  }
+  
+  &-scale {
+    @include enhanced-interactive('scale');
+  }
+  
+  &-glow {
+    @include enhanced-interactive('glow');
+  }
+  
+  &-slide {
+    @include enhanced-interactive('slide');
+  }
+  
+  &-rotate {
+    @include enhanced-interactive('rotate');
+  }
+}
+
+/**
+ * Enhanced focus utility classes
+ */
+.enhanced-focus {
+  &-ring {
+    @include enhanced-focus('ring');
+  }
+  
+  &-underline {
+    @include enhanced-focus('underline');
+  }
+  
+  &-glow {
+    @include enhanced-focus('glow');
+  }
+  
+  &-border {
+    @include enhanced-focus('border');
+  }
+  
+  &-primary {
+    @include enhanced-focus('ring', 'primary');
+  }
+  
+  &-secondary {
+    @include enhanced-focus('ring', 'secondary');
+  }
+  
+  &-accent {
+    @include enhanced-focus('ring', 'accent');
+  }
+}
+
+/**
+ * Enhanced keyboard focus utility classes
+ */
+.enhanced-keyboard-focus {
+  @include enhanced-keyboard-focus;
+  
+  &-ring {
+    @include enhanced-keyboard-focus('ring');
+  }
+  
+  &-underline {
+    @include enhanced-keyboard-focus('underline');
+  }
+  
+  &-glow {
+    @include enhanced-keyboard-focus('glow');
+  }
+  
+  &-border {
+    @include enhanced-keyboard-focus('border');
+  }
+}
+
+/**
+ * Enhanced spinner utility classes
+ */
+.enhanced-spinner {
+  @include enhanced-spinner;
+  
+  &-sm {
+    @include enhanced-spinner('sm');
+  }
+  
+  &-md {
+    @include enhanced-spinner('md');
+  }
+  
+  &-lg {
+    @include enhanced-spinner('lg');
+  }
+  
+  &-xl {
+    @include enhanced-spinner('xl');
+  }
+  
+  &-circular {
+    @include enhanced-spinner('md', 'circular');
+  }
+  
+  &-dots {
+    @include enhanced-spinner('md', 'dots');
+  }
+  
+  &-bars {
+    @include enhanced-spinner('md', 'bars');
+  }
+  
+  &-pulse {
+    @include enhanced-spinner('md', 'pulse');
+  }
+  
+  &-primary {
+    @include enhanced-spinner('md', 'circular', 'primary');
+  }
+  
+  &-secondary {
+    @include enhanced-spinner('md', 'circular', 'secondary');
+  }
+  
+  &-accent {
+    @include enhanced-spinner('md', 'circular', 'accent');
+  }
+}
+
+/**
+ * Enhanced page transition utility classes
+ */
+.enhanced-page-transition {
+  &-fade {
+    @include enhanced-page-transition('fade');
+  }
+  
+  &-slide-left {
+    @include enhanced-page-transition('slide', 'left');
+  }
+  
+  &-slide-right {
+    @include enhanced-page-transition('slide', 'right');
+  }
+  
+  &-slide-up {
+    @include enhanced-page-transition('slide', 'up');
+  }
+  
+  &-slide-down {
+    @include enhanced-page-transition('slide', 'down');
+  }
+  
+  &-scale {
+    @include enhanced-page-transition('scale');
+  }
+  
+  &-flip {
+    @include enhanced-page-transition('flip');
+  }
+}
+
+/**
+ * Enhanced button press utility classes
+ */
+.enhanced-button-press {
+  &-scale {
+    @include enhanced-button-press('scale');
+  }
+  
+  &-ripple {
+    @include enhanced-button-press('ripple');
+  }
+  
+  &-glow {
+    @include enhanced-button-press('glow');
+  }
+  
+  &-bounce {
+    @include enhanced-button-press('bounce');
+  }
+}
+
+/**
+ * Enhanced form feedback utility classes
+ */
+.enhanced-form-feedback {
+  &-success {
+    @include enhanced-form-feedback('success');
+  }
+  
+  &-error {
+    @include enhanced-form-feedback('error');
+  }
+  
+  &-loading {
+    @include enhanced-form-feedback('loading');
+  }
+  
+  &-validation {
+    @include enhanced-form-feedback('validation');
+  }
+}
+
+/**
+ * Enhanced success confirmation utility classes
+ */
+.enhanced-success-confirmation {
+  &-confetti {
+    @include enhanced-success-confirmation('confetti');
+  }
+  
+  &-sparkle {
+    @include enhanced-success-confirmation('sparkle');
+  }
+  
+  &-bounce {
+    @include enhanced-success-confirmation('bounce');
+  }
+  
+  &-glow {
+    @include enhanced-success-confirmation('glow');
+  }
+}
+
+/**
+ * Enhanced tooltip utility classes
+ */
+.enhanced-tooltip {
+  @include enhanced-tooltip;
+  
+  &-top {
+    @include enhanced-tooltip('top');
+  }
+  
+  &-bottom {
+    @include enhanced-tooltip('bottom');
+  }
+  
+  &-left {
+    @include enhanced-tooltip('left');
+  }
+  
+  &-right {
+    @include enhanced-tooltip('right');
+  }
+  
+  &-dark {
+    @include enhanced-tooltip('top', 'dark');
+  }
+  
+  &-light {
+    @include enhanced-tooltip('top', 'light');
+  }
+  
+  &-accent {
+    @include enhanced-tooltip('top', 'accent');
+  }
+}
+
+////////////////////////////////////
+// ENHANCED RESPONSIVE UTILITIES
+////////////////////////////////////
+
+/**
+ * Responsive micro-interactions that adapt to screen size
+ */
+@each $breakpoint, $value in tokens.$enhanced-breakpoints {
+  @if $breakpoint != 'xs' {
+    @media (min-width: $value) {
+      .#{$breakpoint}\:enhanced-hover {
+        &-lift {
+          @include enhanced-hover('lift');
+        }
+        
+        &-scale {
+          @include enhanced-hover('scale');
+        }
+        
+        &-glow {
+          @include enhanced-hover('glow');
+        }
+      }
+      
+      .#{$breakpoint}\:enhanced-interactive {
+        @include enhanced-interactive;
+      }
+      
+      .#{$breakpoint}\:enhanced-focus {
+        &-ring {
+          @include enhanced-focus('ring');
+        }
+        
+        &-underline {
+          @include enhanced-focus('underline');
+        }
+      }
+    }
+  }
+}
+
+////////////////////////////////////
+// ENHANCED ACCESSIBILITY SUPPORT
+////////////////////////////////////
+
+/**
+ * Reduced motion support for accessibility
+ */
+@media (prefers-reduced-motion: reduce) {
+  .enhanced-hover,
+  .enhanced-interactive,
+  .enhanced-page-transition,
+  .enhanced-button-press,
+  .enhanced-form-feedback,
+  .enhanced-success-confirmation {
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
+  }
+  
+  .enhanced-skeleton,
+  .enhanced-spinner {
+    animation: none !important;
+  }
+  
+  .enhanced-tooltip {
+    transition: none !important;
+    
+    &::before,
+    &::after {
+      transition: none !important;
+    }
+  }
+}
+
+/**
+ * High contrast mode support
+ */
+@media (prefers-contrast: high) {
+  .enhanced-focus {
+    &-ring {
+      box-shadow: 0 0 0 3px var(--color-primary-900) !important;
+    }
+    
+    &-underline {
+      text-decoration-color: var(--color-primary-900) !important;
+      text-decoration-thickness: 3px !important;
+    }
+  }
+  
+  .enhanced-tooltip {
+    &::before {
+      border: 2px solid var(--color-gray-900) !important;
+    }
+  }
+}

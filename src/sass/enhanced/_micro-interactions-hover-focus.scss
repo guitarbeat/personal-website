@@ -1,0 +1,143 @@
+@use "sass:map";
+@use "../enhanced/_tokens" as tokens;
+@use "../enhanced/_typography" as typography;
+@use "./micro-interactions-transitions" as *;
+
+// ENHANCED HOVER STATES
+////////////////////////////////////
+
+/**
+ * Enhanced hover state mixin with perfect timing
+ * @param {String} $type - Hover type (lift, scale, glow, slide, rotate)
+ * @param {String} $intensity - Hover intensity (subtle, moderate, pronounced)
+ */
+@mixin enhanced-hover($type: 'lift', $intensity: 'moderate') {
+  transition: all map.get($enhanced-durations, 'fast') map.get($enhanced-easing, 'smooth');
+  
+  @if $type == 'lift' {
+    @if $intensity == 'subtle' {
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: map.get(tokens.$enhanced-shadows, 'sm');
+      }
+    } @else if $intensity == 'moderate' {
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: map.get(tokens.$enhanced-shadows, 'md');
+      }
+    } @else {
+      &:hover {
+        transform: translateY(-6px);
+        box-shadow: map.get(tokens.$enhanced-shadows, 'lg');
+      }
+    }
+  } @else if $type == 'scale' {
+    @if $intensity == 'subtle' {
+      &:hover {
+        transform: scale(1.02);
+      }
+    } @else if $intensity == 'moderate' {
+      &:hover {
+        transform: scale(1.05);
+      }
+    } @else {
+      &:hover {
+        transform: scale(1.08);
+      }
+    }
+  } @else if $type == 'glow' {
+    &:hover {
+      box-shadow: 0 0 20px rgba(var(--color-primary-rgb), 0.3);
+    }
+  } @else if $type == 'slide' {
+    &:hover {
+      transform: translateX(4px);
+    }
+  } @else if $type == 'rotate' {
+    &:hover {
+      transform: rotate(5deg);
+    }
+  }
+  
+  // Enhanced hover with focus support
+  &:focus-visible {
+    @content;
+  }
+}
+
+/**
+ * Enhanced interactive element with perfect hover states
+ * @param {String} $hover-type - Type of hover effect
+ * @param {String} $intensity - Intensity of hover effect
+ */
+@mixin enhanced-interactive($hover-type: 'lift', $intensity: 'moderate') {
+  cursor: pointer;
+  user-select: none;
+  @include enhanced-hover($hover-type, $intensity);
+  
+  // Active state for immediate feedback
+  &:active {
+    transform: scale(0.98);
+    transition: all map.get($enhanced-durations, 'instant') map.get($enhanced-easing, 'sharp');
+  }
+  
+  // Focus state for accessibility
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--focus-ring);
+  }
+}
+
+////////////////////////////////////
+// ENHANCED FOCUS STATES
+////////////////////////////////////
+
+/**
+ * Enhanced focus state with perfect accessibility
+ * @param {String} $style - Focus style (ring, underline, glow, border)
+ * @param {String} $color - Focus color (primary, secondary, accent, custom)
+ */
+@mixin enhanced-focus($style: 'ring', $color: 'primary') {
+  &:focus {
+    outline: none;
+  }
+  
+  &:focus-visible {
+    outline: none;
+    
+    @if $style == 'ring' {
+      box-shadow: 0 0 0 3px var(--color-#{$color}-200);
+    } @else if $style == 'underline' {
+      text-decoration: underline;
+      text-decoration-color: var(--color-#{$color}-500);
+      text-decoration-thickness: 2px;
+    } @else if $style == 'glow' {
+      box-shadow: 0 0 0 3px var(--color-#{$color}-200), 0 0 20px rgba(var(--color-#{$color}-rgb), 0.3);
+    } @else if $style == 'border' {
+      border-color: var(--color-#{$color}-500);
+      border-width: 2px;
+    }
+  }
+}
+
+/**
+ * Enhanced keyboard navigation support
+ * @param {String} $focus-style - Focus style to apply
+ */
+@mixin enhanced-keyboard-focus($focus-style: 'ring') {
+  // Remove default focus outline
+  &:focus {
+    outline: none;
+  }
+  
+  // Apply enhanced focus for keyboard navigation
+  &:focus-visible {
+    @include enhanced-focus($focus-style);
+  }
+  
+  // Ensure focus is visible when using keyboard
+  &:focus:not(:focus-visible) {
+    outline: none;
+  }
+}
+

@@ -32,10 +32,11 @@ Reference documentation for troubleshooting and future improvements.
 
 ### 2. Extract Expandable Card Pattern
 
-Both Projects and Work sections implement similar expandable card logic.
+Projects and Work both reveal extra content on interaction, but the patterns differ enough that a shared hook is not a drop-in refactor yet.
 
-- **Suggestion**: Shared `useExpandableCards` hook or `ExpandableCard` component
-- **Benefits**: Encapsulate toggling, animation classes, accessibility
+- **Projects**: Per-card click-to-reveal (`isClicked` on each `ProjectCard`); filter bar uses an `activeFilters` string array unrelated to card expansion
+- **Work**: Multi-select `activeCards` `Set` synced with the timeline (`TimelineBar`, hover state, `aria-expanded` on job buttons)
+- **Suggestion**: A future `useExpandableCards` hook would need to support both single-card reveal and multi-select Set modes, or stay thin (Set state + toggle only) with section-specific markup kept separate
 - **Files**: `src/components/content/Projects/Projects.tsx`, `src/components/content/Work/Work.tsx`
 
 ### 3. Externalize Filter Button Styling

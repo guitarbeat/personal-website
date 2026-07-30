@@ -1,28 +1,20 @@
 /**
  * CSS Custom Properties Generator
  *
- * This file generates CSS custom properties (variables) from the design tokens
- * defined in _tokens.scss. It serves as the bridge between the SASS variables 
- * and the runtime CSS variables needed for features like theme switching.
+ * Generates runtime CSS variables from core tokens (_tokens.scss) and enhanced
+ * tokens (enhanced/_tokens.scss). Enhanced variables are emitted after core
+ * variables; overlapping shadow keys use enhanced values.
  *
- * IMPORTANT: This file does NOT define any values directly - it only generates
- * CSS variables based on the values defined in _tokens.scss, ensuring a
- * single source of truth for all design tokens.
- *
- * @see _tokens.scss - Single source of truth for all design tokens
+ * @see _tokens.scss - Core design tokens
+ * @see enhanced/_tokens.scss - Enhanced design tokens
  */
 
 @use "sass:map";
 @use "sass:color";
 @use "sass:list";
 @use "tokens" as tokens;
+@use "../enhanced/_tokens" as enhanced;
 
-/**
- * Extract RGB values from a color
- * Used to create CSS custom properties for colors that can be used with rgba()
- * @param {Color} $color - The color to extract RGB values from
- * @return {List} A list of RGB values
- */
 @function get-rgb-values($color) {
   @return (
     color.channel($color, "red", $space: rgb),
@@ -31,13 +23,7 @@
   );
 }
 
-/**
- * Generate theme color variables for a specific theme
- * @param {String} $theme - The theme name
- * @param {Map} $colors - The theme colors map
- */
 @mixin generate-theme-colors($theme, $colors) {
-  // Base color
   $base-rgb: get-rgb-values(map.get($colors, "base"));
   $light-rgb: get-rgb-values(map.get($colors, "light"));
   $dark-rgb: get-rgb-values(map.get($colors, "dark"));
@@ -48,51 +34,42 @@
 }
 
 :root {
-  // Colors
+  // Core colors
   @each $theme, $variants in tokens.$theme-colors {
     @each $variant, $color in $variants {
       --color-#{$theme}-#{$variant}: #{$color};
-      
-      // Generate RGB values for each color
+
       $rgb: get-rgb-values($color);
       --color-#{$theme}-#{$variant}-rgb: #{list.nth($rgb, 1)}, #{list.nth($rgb, 2)}, #{list.nth($rgb, 3)};
     }
   }
 
-  // Grayscale
   @each $name, $color in tokens.$grayscale {
     --color-#{$name}: #{$color};
-    
-    // Generate RGB values for each color
+
     $rgb: get-rgb-values($color);
     --color-#{$name}-rgb: #{list.nth($rgb, 1)}, #{list.nth($rgb, 2)}, #{list.nth($rgb, 3)};
   }
 
-  // Semantic colors
   @each $name, $color in tokens.$semantic-colors {
     --color-#{$name}: #{$color};
-    
-    // Generate RGB values for each color
+
     $rgb: get-rgb-values($color);
     --color-#{$name}-rgb: #{list.nth($rgb, 1)}, #{list.nth($rgb, 2)}, #{list.nth($rgb, 3)};
   }
 
-  // Background colors
   @each $name, $color in tokens.$background-colors {
     --background-#{$name}: #{$color};
   }
 
-  // Overlay colors
   @each $name, $color in tokens.$overlay-colors {
     --overlay-#{$name}: #{$color};
   }
 
-  // Spacing
   @each $name, $size in tokens.$spacing {
     --spacing-#{$name}: #{$size};
   }
 
-  // Typography
   @each $name, $size in tokens.$font-sizes {
     --font-size-#{$name}: #{$size};
   }
@@ -105,66 +82,212 @@
     --line-height-#{$name}: #{$height};
   }
 
-  // Border radius
   @each $name, $radius in tokens.$border-radius {
     --border-radius-#{$name}: #{$radius};
   }
 
-  // Shadows
   @each $name, $shadow in tokens.$shadows {
     --shadow-#{$name}: #{$shadow};
   }
 
-  // Z-index
   @each $name, $index in tokens.$z-index {
     --z-index-#{$name}: #{$index};
   }
 
-  // Generate transition variables
-  @each $speed, $duration in map.get(tokens.$transitions, 'duration') {
+  @each $speed, $duration in map.get(tokens.$transitions, "duration") {
     --transition-#{$speed}: #{$duration};
   }
-  
-  @each $type, $timing in map.get(tokens.$transitions, 'timing') {
+
+  @each $type, $timing in map.get(tokens.$transitions, "timing") {
     --timing-#{$type}: #{$timing};
   }
 
-  // Layout
   @each $name, $value in tokens.$layout {
     --layout-#{$name}: #{$value};
   }
 
-  // Animation durations
   @each $name, $duration in tokens.$animation-durations {
     --animation-duration-#{$name}: #{$duration};
   }
+
+  // Enhanced typography
+  @each $size, $value in enhanced.$enhanced-type-scale {
+    --type-scale-#{$size}: #{$value};
+  }
+
+  @each $height, $value in enhanced.$enhanced-line-heights {
+    --line-height-#{$height}: #{$value};
+  }
+
+  @each $spacing, $value in enhanced.$enhanced-letter-spacing {
+    --letter-spacing-#{$spacing}: #{$value};
+  }
+
+  @each $weight, $value in enhanced.$enhanced-font-weights {
+    --font-weight-#{$weight}: #{$value};
+  }
+
+  @each $level, $styles in enhanced.$enhanced-heading-styles {
+    @each $property, $value in $styles {
+      --heading-#{$level}-#{$property}: #{$value};
+    }
+  }
+
+  @each $style, $properties in enhanced.$enhanced-text-styles {
+    @each $property, $value in $properties {
+      --text-#{$style}-#{$property}: #{$value};
+    }
+  }
+
+  // Enhanced colors
+  @each $palette, $shades in enhanced.$enhanced-theme-colors {
+    @each $shade, $color in $shades {
+      --color-#{$palette}-#{$shade}: #{$color};
+
+      $rgb: get-rgb-values($color);
+      --color-#{$palette}-#{$shade}-rgb: #{list.nth($rgb, 1)}, #{list.nth($rgb, 2)}, #{list.nth($rgb, 3)};
+    }
+  }
+
+  @each $type, $shades in enhanced.$enhanced-semantic-colors {
+    @each $shade, $color in $shades {
+      --color-#{$type}-#{$shade}: #{$color};
+
+      $rgb: get-rgb-values($color);
+      --color-#{$type}-#{$shade}-rgb: #{list.nth($rgb, 1)}, #{list.nth($rgb, 2)}, #{list.nth($rgb, 3)};
+    }
+  }
+
+  @each $shade, $color in enhanced.$enhanced-grayscale {
+    --color-gray-#{$shade}: #{$color};
+
+    $rgb: get-rgb-values($color);
+    --color-gray-#{$shade}-rgb: #{list.nth($rgb, 1)}, #{list.nth($rgb, 2)}, #{list.nth($rgb, 3)};
+  }
+
+  @each $variant, $color in enhanced.$enhanced-background-colors {
+    --background-#{$variant}: #{$color};
+  }
+
+  // Enhanced numeric spacing (0–15); semantic spacing omitted to avoid overwriting core --spacing-xs etc.
+  @each $size, $value in enhanced.$enhanced-spacing-scale {
+    --spacing-#{$size}: #{$value};
+  }
+
+  @each $component, $properties in enhanced.$enhanced-component-spacing {
+    @each $property, $value in $properties {
+      --#{$component}-#{$property}: #{$value};
+    }
+  }
+
+  @each $size, $value in enhanced.$enhanced-border-radius {
+    --radius-#{$size}: #{$value};
+  }
+
+  @each $size, $value in enhanced.$enhanced-shadows {
+    --shadow-#{$size}: #{$value};
+  }
+
+  @each $state, $value in enhanced.$enhanced-state-shadows {
+    --shadow-#{$state}: #{$value};
+  }
+
+  @each $type, $properties in enhanced.$enhanced-transitions {
+    @each $property, $value in $properties {
+      --transition-#{$type}-#{$property}: #{$value};
+    }
+  }
+
+  @each $layer, $value in enhanced.$enhanced-z-index {
+    --z-#{$layer}: #{$value};
+  }
+
+  @each $breakpoint, $value in enhanced.$enhanced-breakpoints {
+    --breakpoint-#{$breakpoint}: #{$value};
+  }
+
+  @each $size, $properties in map.get(enhanced.$enhanced-button-standards, "sizes") {
+    @each $property, $value in $properties {
+      --button-#{$size}-#{$property}: #{$value};
+    }
+  }
+
+  @each $variant, $properties in map.get(enhanced.$enhanced-button-standards, "variants") {
+    @each $property, $value in $properties {
+      --button-#{$variant}-#{$property}: #{$value};
+    }
+  }
+
+  @each $size, $properties in map.get(enhanced.$enhanced-input-standards, "sizes") {
+    @each $property, $value in $properties {
+      --input-#{$size}-#{$property}: #{$value};
+    }
+  }
+
+  @each $state, $properties in map.get(enhanced.$enhanced-input-standards, "states") {
+    @each $property, $value in $properties {
+      --input-#{$state}-#{$property}: #{$value};
+    }
+  }
+
+  @each $size, $value in map.get(enhanced.$enhanced-icon-standards, "sizes") {
+    --icon-size-#{$size}: #{$value};
+  }
+
+  @each $variant, $properties in map.get(enhanced.$enhanced-card-standards, "variants") {
+    @each $property, $value in $properties {
+      --card-#{$variant}-#{$property}: #{$value};
+    }
+  }
+
+  @each $property, $value in map.get(enhanced.$enhanced-card-standards, "spacing") {
+    --card-#{$property}: #{$value};
+  }
+
+  // Semantic utility aliases
+  --text-primary: var(--color-gray-900);
+  --text-secondary: var(--color-gray-600);
+  --text-muted: var(--color-gray-500);
+  --text-inverse: var(--color-gray-50);
+
+  --border-light: var(--color-gray-200);
+  --border-medium: var(--color-gray-300);
+  --border-dark: var(--color-gray-400);
+
+  --background-primary: var(--background-light);
+  --background-secondary: var(--background-light-secondary);
+  --background-tertiary: var(--background-light-tertiary);
+
+  --focus-ring: var(--color-primary-200);
+  --focus-ring-error: var(--color-error-200);
+
+  --section-padding: var(--spacing-6);
+  --container-padding: var(--spacing-4);
+  --card-padding: var(--spacing-5);
+  --button-padding: var(--spacing-4);
+
+  --radius-default: var(--radius-md);
+  --radius-button: var(--radius-sm);
+  --radius-input: var(--radius-sm);
+  --radius-card: var(--radius-md);
 }
 
-// Dark mode overrides
 @media (prefers-color-scheme: dark) {
   :root {
-    // Override background colors for dark mode
-    --background-light: #{map.get(tokens.$background-colors, 'dark')};
-    --background-dark: #{map.get(tokens.$background-colors, 'light')};
-    
-    // Override overlay colors for dark mode
-    --overlay-light: #{map.get(tokens.$overlay-colors, 'dark')};
-    --overlay-dark: #{map.get(tokens.$overlay-colors, 'light')};
+    --background-light: #{map.get(tokens.$background-colors, "dark")};
+    --background-dark: #{map.get(tokens.$background-colors, "light")};
+    --overlay-light: #{map.get(tokens.$overlay-colors, "dark")};
+    --overlay-dark: #{map.get(tokens.$overlay-colors, "light")};
   }
 }
 
-// Theme class overrides (for manual theme switching)
 .theme-dark {
-  // Override background colors for dark mode
-  --background-light: #{map.get(tokens.$background-colors, 'dark')};
-  --background-dark: #{map.get(tokens.$background-colors, 'light')};
-  
-  // Override overlay colors for dark mode
-  --overlay-light: #{map.get(tokens.$overlay-colors, 'dark')};
-  --overlay-dark: #{map.get(tokens.$overlay-colors, 'light')};
+  --background-light: #{map.get(tokens.$background-colors, "dark")};
+  --background-dark: #{map.get(tokens.$background-colors, "light")};
+  --overlay-light: #{map.get(tokens.$overlay-colors, "dark")};
+  --overlay-dark: #{map.get(tokens.$overlay-colors, "light")};
 }
 
-// Helper classes for using CSS variables
 .bg-primary {
   background-color: var(--color-sage-base);
 }
@@ -189,24 +312,114 @@
   color: var(--color-sand-base);
 }
 
-// Light theme variables
 .light-theme {
-  // Background colors
-  --background-light: #{map.get(tokens.$background-colors, 'dark')};
-  --background-dark: #{map.get(tokens.$background-colors, 'light')};
-  
-  // Overlay colors
-  --overlay-light: #{map.get(tokens.$overlay-colors, 'dark')};
-  --overlay-dark: #{map.get(tokens.$overlay-colors, 'light')};
+  --background-light: #{map.get(tokens.$background-colors, "dark")};
+  --background-dark: #{map.get(tokens.$background-colors, "light")};
+  --overlay-light: #{map.get(tokens.$overlay-colors, "dark")};
+  --overlay-dark: #{map.get(tokens.$overlay-colors, "light")};
 }
 
-// Dark theme variables
 .dark-theme {
-  // Background colors
-  --background-light: #{map.get(tokens.$background-colors, 'dark')};
-  --background-dark: #{map.get(tokens.$background-colors, 'light')};
-  
-  // Overlay colors
-  --overlay-light: #{map.get(tokens.$overlay-colors, 'dark')};
-  --overlay-dark: #{map.get(tokens.$overlay-colors, 'light')};
-} 
+  --background-light: #{map.get(tokens.$background-colors, "dark")};
+  --background-dark: #{map.get(tokens.$background-colors, "light")};
+  --overlay-light: #{map.get(tokens.$overlay-colors, "dark")};
+  --overlay-dark: #{map.get(tokens.$overlay-colors, "light")};
+
+  --text-primary: var(--color-gray-50);
+  --text-secondary: var(--color-gray-300);
+  --text-muted: var(--color-gray-400);
+  --text-inverse: var(--color-gray-900);
+
+  --border-light: var(--color-gray-700);
+  --border-medium: var(--color-gray-600);
+  --border-dark: var(--color-gray-500);
+
+  --background-primary: var(--background-dark);
+  --background-secondary: var(--background-dark-secondary);
+  --background-tertiary: var(--background-dark-tertiary);
+
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.3);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.3), 0 8px 10px -6px rgb(0 0 0 / 0.3);
+  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.4);
+  --shadow-hover: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+  --shadow-active: 0 2px 4px -1px rgb(0 0 0 / 0.3);
+  --shadow-focus: 0 0 0 3px rgb(59 130 246 / 0.6);
+
+  --card-default-background: var(--color-gray-800);
+  --card-default-border: var(--color-gray-700);
+  --card-elevated-background: var(--color-gray-800);
+  --card-outlined-background: transparent;
+  --card-outlined-border: var(--color-gray-700);
+
+  --input-default-background: var(--color-gray-800);
+  --input-default-border: var(--color-gray-600);
+  --input-default-color: var(--color-gray-100);
+  --input-default-placeholder: var(--color-gray-400);
+
+  --input-hover-background: var(--color-gray-800);
+  --input-hover-border: var(--color-gray-500);
+  --input-hover-color: var(--color-gray-100);
+
+  --input-focus-background: var(--color-gray-800);
+  --input-focus-border: var(--color-primary-500);
+  --input-focus-color: var(--color-gray-100);
+
+  --input-error-background: var(--color-gray-800);
+  --input-error-border: var(--color-error-500);
+  --input-error-color: var(--color-gray-100);
+
+  --input-disabled-background: var(--color-gray-900);
+  --input-disabled-border: var(--color-gray-700);
+  --input-disabled-color: var(--color-gray-500);
+}
+
+.high-contrast {
+  --text-primary: var(--color-gray-900);
+  --text-secondary: var(--color-gray-800);
+  --text-muted: var(--color-gray-700);
+
+  --border-light: var(--color-gray-800);
+  --border-medium: var(--color-gray-900);
+  --border-dark: var(--color-black);
+
+  --focus-ring: var(--color-primary-900);
+  --focus-ring-error: var(--color-error-900);
+
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.4);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.4), 0 1px 2px -1px rgb(0 0 0 / 0.4);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.4);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.4), 0 8px 10px -6px rgb(0 0 0 / 0.4);
+  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.5);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --transition-duration-fast: 0s;
+    --transition-duration-normal: 0s;
+    --transition-duration-slow: 0s;
+    --transition-duration-very-slow: 0s;
+  }
+}
+
+@media print {
+  :root {
+    --shadow-xs: none;
+    --shadow-sm: none;
+    --shadow-md: none;
+    --shadow-lg: none;
+    --shadow-xl: none;
+    --shadow-2xl: none;
+
+    --background-primary: white;
+    --background-secondary: white;
+    --background-tertiary: white;
+
+    --color-primary-500: black;
+    --color-primary-600: black;
+    --color-primary-700: black;
+  }
+}

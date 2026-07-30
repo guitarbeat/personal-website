@@ -1,0 +1,85 @@
+@use "sass:map";
+@use "../enhanced/_tokens" as tokens;
+@use "../enhanced/_typography" as typography;
+
+// ENHANCED LOADING ANIMATIONS
+////////////////////////////////////
+
+/**
+ * Enhanced loading spinner with perfect timing
+ * @param {String} $size - Spinner size (sm, md, lg, xl)
+ * @param {String} $style - Spinner style (circular, dots, bars, pulse)
+ * @param {String} $color - Spinner color (primary, secondary, accent, custom)
+ */
+@mixin enhanced-spinner($size: 'md', $style: 'circular', $color: 'primary') {
+  display: inline-block;
+  
+  @if $size == 'sm' {
+    width: 16px;
+    height: 16px;
+  } @else if $size == 'md' {
+    width: 24px;
+    height: 24px;
+  } @else if $size == 'lg' {
+    width: 32px;
+    height: 32px;
+  } @else if $size == 'xl' {
+    width: 48px;
+    height: 48px;
+  }
+  
+  @if $style == 'circular' {
+    border: 2px solid var(--color-#{$color}-200);
+    border-top: 2px solid var(--color-#{$color}-500);
+    border-radius: 50%;
+    animation: enhanced-spinner-spin 1s linear infinite;
+  } @else if $style == 'dots' {
+    display: flex;
+    gap: 4px;
+    
+    &::before,
+    &::after,
+    span {
+      content: '';
+      width: 4px;
+      height: 4px;
+      background-color: var(--color-#{$color}-500);
+      border-radius: 50%;
+      animation: enhanced-spinner-dots 1.4s ease-in-out infinite both;
+    }
+    
+    &::after {
+      animation-delay: 0.2s;
+    }
+    
+    span {
+      animation-delay: 0.4s;
+    }
+  } @else if $style == 'bars' {
+    display: flex;
+    gap: 2px;
+    
+    &::before,
+    &::after,
+    span {
+      content: '';
+      width: 3px;
+      height: 100%;
+      background-color: var(--color-#{$color}-500);
+      animation: enhanced-spinner-bars 1.2s ease-in-out infinite;
+    }
+    
+    &::after {
+      animation-delay: 0.2s;
+    }
+    
+    span {
+      animation-delay: 0.4s;
+    }
+  } @else if $style == 'pulse' {
+    background-color: var(--color-#{$color}-500);
+    border-radius: 50%;
+    animation: enhanced-spinner-pulse 1.2s ease-in-out infinite;
+  }
+}
+

@@ -1,0 +1,68 @@
+@use "sass:map";
+@use "../enhanced/_tokens" as tokens;
+@use "../enhanced/_typography" as typography;
+@use "./micro-interactions-transitions" as *;
+
+// ENHANCED PAGE TRANSITIONS
+////////////////////////////////////
+
+/**
+ * Enhanced page transition with perfect timing
+ * @param {String} $type - Transition type (fade, slide, scale, flip)
+ * @param {String} $direction - Transition direction (left, right, up, down)
+ */
+@mixin enhanced-page-transition($type: 'fade', $direction: 'left') {
+  transition: all map.get($enhanced-durations, 'page') map.get($enhanced-easing, 'smooth');
+  
+  @if $type == 'fade' {
+    opacity: 0;
+    animation: enhanced-fade-in map.get($enhanced-durations, 'page') map.get($enhanced-easing, 'smooth') forwards;
+  } @else if $type == 'slide' {
+    @if $direction == 'left' {
+      transform: translateX(100%);
+      animation: enhanced-slide-in-left map.get($enhanced-durations, 'page') map.get($enhanced-easing, 'smooth') forwards;
+    } @else if $direction == 'right' {
+      transform: translateX(-100%);
+      animation: enhanced-slide-in-right map.get($enhanced-durations, 'page') map.get($enhanced-easing, 'smooth') forwards;
+    } @else if $direction == 'up' {
+      transform: translateY(100%);
+      animation: enhanced-slide-in-up map.get($enhanced-durations, 'page') map.get($enhanced-easing, 'smooth') forwards;
+    } @else if $direction == 'down' {
+      transform: translateY(-100%);
+      animation: enhanced-slide-in-down map.get($enhanced-durations, 'page') map.get($enhanced-easing, 'smooth') forwards;
+    }
+  } @else if $type == 'scale' {
+    transform: scale(0.95);
+    opacity: 0;
+    animation: enhanced-scale-in map.get($enhanced-durations, 'page') map.get($enhanced-easing, 'bounce') forwards;
+  } @else if $type == 'flip' {
+    transform: perspective(1000px) rotateY(90deg);
+    animation: enhanced-flip-in map.get($enhanced-durations, 'page') map.get($enhanced-easing, 'elastic') forwards;
+  }
+}
+
+/**
+ * Enhanced exit transition for smooth page changes
+ * @param {String} $type - Transition type (fade, slide, scale, flip)
+ * @param {String} $direction - Transition direction
+ */
+@mixin enhanced-page-exit($type: 'fade', $direction: 'left') {
+  @if $type == 'fade' {
+    animation: enhanced-fade-out map.get($enhanced-durations, 'normal') map.get($enhanced-easing, 'sharp') forwards;
+  } @else if $type == 'slide' {
+    @if $direction == 'left' {
+      animation: enhanced-slide-out-left map.get($enhanced-durations, 'normal') map.get($enhanced-easing, 'sharp') forwards;
+    } @else if $direction == 'right' {
+      animation: enhanced-slide-out-right map.get($enhanced-durations, 'normal') map.get($enhanced-easing, 'sharp') forwards;
+    } @else if $direction == 'up' {
+      animation: enhanced-slide-out-up map.get($enhanced-durations, 'normal') map.get($enhanced-easing, 'sharp') forwards;
+    } @else if $direction == 'down' {
+      animation: enhanced-slide-out-down map.get($enhanced-durations, 'normal') map.get($enhanced-easing, 'sharp') forwards;
+    }
+  } @else if $type == 'scale' {
+    animation: enhanced-scale-out map.get($enhanced-durations, 'normal') map.get($enhanced-easing, 'sharp') forwards;
+  } @else if $type == 'flip' {
+    animation: enhanced-flip-out map.get($enhanced-durations, 'normal') map.get($enhanced-easing, 'sharp') forwards;
+  }
+}
+

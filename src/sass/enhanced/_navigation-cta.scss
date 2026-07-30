@@ -1,0 +1,190 @@
+@use "sass:map";
+@use "../enhanced/_tokens" as tokens;
+@use "../enhanced/_typography" as typography;
+@use "../enhanced/_micro-interactions" as interactions;
+
+// ENHANCED CALL-TO-ACTION HIERARCHY
+////////////////////////////////////
+
+/**
+ * Enhanced call-to-action with perfect hierarchy
+ * @param {String} $level - CTA level (primary, secondary, tertiary)
+ * @param {String} $size - CTA size (sm, md, lg, xl)
+ * @param {String} $style - CTA style (default, enhanced, minimal)
+ */
+@mixin enhanced-cta($level: 'primary', $size: 'md', $style: 'default') {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: map.get(tokens.$enhanced-spacing-scale, '2');
+  text-decoration: none;
+  border-radius: map.get(tokens.$enhanced-border-radius, 'md');
+  font-weight: typography.enhanced-font-weight('semibold');
+  letter-spacing: 0.025em;
+  cursor: pointer;
+  transition: all map.get(interactions.$enhanced-durations, 'fast') map.get(interactions.$enhanced-easing, 'smooth');
+  user-select: none;
+  
+  // Size variations
+  @if $size == 'sm' {
+    padding: map.get(tokens.$enhanced-spacing-scale, '2') map.get(tokens.$enhanced-spacing-scale, '3');
+    font-size: typography.enhanced-type('xs');
+    min-height: 36px;
+  } @else if $size == 'md' {
+    padding: map.get(tokens.$enhanced-spacing-scale, '3') map.get(tokens.$enhanced-spacing-scale, '4');
+    font-size: typography.enhanced-type('sm');
+    min-height: 44px;
+  } @else if $size == 'lg' {
+    padding: map.get(tokens.$enhanced-spacing-scale, '4') map.get(tokens.$enhanced-spacing-scale, '5');
+    font-size: typography.enhanced-type('base');
+    min-height: 52px;
+  } @else if $size == 'xl' {
+    padding: map.get(tokens.$enhanced-spacing-scale, '5') map.get(tokens.$enhanced-spacing-scale, '6');
+    font-size: typography.enhanced-type('md');
+    min-height: 60px;
+  }
+  
+  // Level variations
+  @if $level == 'primary' {
+    background-color: var(--color-primary-500);
+    color: var(--color-gray-50);
+    border: 1px solid var(--color-primary-500);
+    
+    @if $style == 'enhanced' {
+      box-shadow: map.get(tokens.$enhanced-shadows, 'md');
+    }
+    
+    &:hover {
+      background-color: var(--color-primary-600);
+      border-color: var(--color-primary-600);
+      transform: translateY(-2px);
+      
+      @if $style == 'enhanced' {
+        box-shadow: map.get(tokens.$enhanced-shadows, 'lg');
+      }
+    }
+    
+    &:active {
+      background-color: var(--color-primary-700);
+      border-color: var(--color-primary-700);
+      transform: translateY(0);
+    }
+    
+    &:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px var(--color-primary-200);
+    }
+  } @else if $level == 'secondary' {
+    background-color: transparent;
+    color: var(--color-primary-600);
+    border: 1px solid var(--color-primary-300);
+    
+    &:hover {
+      background-color: var(--color-primary-50);
+      border-color: var(--color-primary-400);
+      transform: translateY(-1px);
+    }
+    
+    &:active {
+      background-color: var(--color-primary-100);
+      border-color: var(--color-primary-500);
+      transform: translateY(0);
+    }
+    
+    &:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px var(--color-primary-200);
+    }
+  } @else if $level == 'tertiary' {
+    background-color: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-light);
+    
+    &:hover {
+      background-color: var(--background-secondary);
+      border-color: var(--border-medium);
+      color: var(--text-primary);
+    }
+    
+    &:active {
+      background-color: var(--background-tertiary);
+      border-color: var(--border-dark);
+      transform: translateY(0);
+    }
+    
+    &:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px var(--focus-ring);
+    }
+  }
+  
+  // Style variations
+  @if $style == 'minimal' {
+    border-radius: map.get(tokens.$enhanced-border-radius, 'sm');
+    font-weight: typography.enhanced-font-weight('medium');
+  } @else if $style == 'enhanced' {
+    border-radius: map.get(tokens.$enhanced-border-radius, 'lg');
+    font-weight: typography.enhanced-font-weight('semibold');
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  
+  // Icon support
+  .icon {
+    width: 1em;
+    height: 1em;
+    flex-shrink: 0;
+  }
+  
+  // Loading state
+  &.loading {
+    position: relative;
+    color: transparent;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 1em;
+      height: 1em;
+      margin: -0.5em 0 0 -0.5em;
+      border: 2px solid currentColor;
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: enhanced-spinner-spin 1s linear infinite;
+    }
+  }
+  
+  // Disabled state
+  &:disabled,
+  &[aria-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+    
+    &:hover {
+      transform: none;
+    }
+  }
+  
+  // Full width option
+  &.full-width {
+    width: 100%;
+  }
+  
+  // Responsive behavior
+  @media (max-width: 768px) {
+    @if $size == 'lg' {
+      padding: map.get(tokens.$enhanced-spacing-scale, '3') map.get(tokens.$enhanced-spacing-scale, '4');
+      font-size: typography.enhanced-type('sm');
+      min-height: 48px;
+    } @else if $size == 'xl' {
+      padding: map.get(tokens.$enhanced-spacing-scale, '4') map.get(tokens.$enhanced-spacing-scale, '5');
+      font-size: typography.enhanced-type('base');
+      min-height: 56px;
+    }
+  }
+}
+
+////////////////////////////////////

@@ -1,0 +1,204 @@
+@use "sass:map";
+@use "../enhanced/_tokens" as tokens;
+@use "../enhanced/_typography" as typography;
+@use "../enhanced/_micro-interactions" as interactions;
+@use "./navigation-breadcrumb" as *;
+@use "./navigation-search" as *;
+@use "./navigation-contextual-help" as *;
+@use "./navigation-controls" as *;
+@use "./navigation-cta" as *;
+
+// ENHANCED UTILITY CLASSES
+////////////////////////////////////
+
+/**
+ * Enhanced breadcrumb utility classes
+ */
+.enhanced-breadcrumb {
+  @include enhanced-breadcrumb;
+  
+  &-minimal {
+    @include enhanced-breadcrumb('minimal');
+  }
+  
+  &-enhanced {
+    @include enhanced-breadcrumb('enhanced');
+  }
+  
+  &-slash {
+    @include enhanced-breadcrumb('default', 'slash');
+  }
+  
+  &-chevron {
+    @include enhanced-breadcrumb('default', 'chevron');
+  }
+  
+  &-arrow {
+    @include enhanced-breadcrumb('default', 'arrow');
+  }
+  
+  &-with-back {
+    @include enhanced-breadcrumb-with-back;
+  }
+}
+
+/**
+ * Enhanced search utility classes
+ */
+.enhanced-search {
+  @include enhanced-search;
+  
+  &-sm {
+    @include enhanced-search('sm');
+  }
+  
+  &-lg {
+    @include enhanced-search('lg');
+  }
+  
+  &-enhanced {
+    @include enhanced-search('md', 'enhanced');
+  }
+  
+  &-minimal {
+    @include enhanced-search('md', 'minimal');
+  }
+}
+
+/**
+ * Enhanced contextual help utility classes
+ */
+.enhanced-contextual-help {
+  @include enhanced-contextual-help;
+  
+  &-tooltip {
+    @include enhanced-contextual-help('tooltip');
+  }
+  
+  &-popover {
+    @include enhanced-contextual-help('popover');
+  }
+  
+  &-inline {
+    @include enhanced-contextual-help('inline');
+  }
+  
+  &-modal {
+    @include enhanced-contextual-help('modal');
+  }
+  
+  &-top {
+    @include enhanced-contextual-help('tooltip', 'top');
+  }
+  
+  &-bottom {
+    @include enhanced-contextual-help('tooltip', 'bottom');
+  }
+  
+  &-left {
+    @include enhanced-contextual-help('tooltip', 'left');
+  }
+  
+  &-right {
+    @include enhanced-contextual-help('tooltip', 'right');
+  }
+}
+
+/**
+ * Enhanced navigation controls utility classes
+ */
+.enhanced-navigation-controls {
+  @include enhanced-navigation-controls;
+  
+  &-minimal {
+    @include enhanced-navigation-controls('minimal');
+  }
+  
+  &-enhanced {
+    @include enhanced-navigation-controls('enhanced');
+  }
+  
+  &-prominent {
+    @include enhanced-navigation-controls('prominent');
+  }
+}
+
+/**
+ * Enhanced CTA utility classes
+ */
+.enhanced-cta {
+  @include enhanced-cta;
+  
+  &-primary {
+    @include enhanced-cta('primary');
+  }
+  
+  &-secondary {
+    @include enhanced-cta('secondary');
+  }
+  
+  &-tertiary {
+    @include enhanced-cta('tertiary');
+  }
+  
+  &-sm {
+    @include enhanced-cta('primary', 'sm');
+  }
+  
+  &-md {
+    @include enhanced-cta('primary', 'md');
+  }
+  
+  &-lg {
+    @include enhanced-cta('primary', 'lg');
+  }
+  
+  &-xl {
+    @include enhanced-cta('primary', 'xl');
+  }
+  
+  &-enhanced {
+    @include enhanced-cta('primary', 'md', 'enhanced');
+  }
+  
+  &-minimal {
+    @include enhanced-cta('primary', 'md', 'minimal');
+  }
+  
+  &-full-width {
+    width: 100%;
+  }
+}
+
+////////////////////////////////////
+// ENHANCED RESPONSIVE UTILITIES
+////////////////////////////////////
+
+/**
+ * Responsive navigation utilities that adapt to screen size
+ */
+@each $breakpoint, $value in tokens.$enhanced-breakpoints {
+  @if $breakpoint != 'xs' {
+    @media (min-width: $value) {
+      .#{$breakpoint}\:enhanced-breadcrumb {
+        @include enhanced-breadcrumb;
+      }
+      
+      .#{$breakpoint}\:enhanced-search {
+        @include enhanced-search;
+      }
+      
+      .#{$breakpoint}\:enhanced-contextual-help {
+        @include enhanced-contextual-help;
+      }
+      
+      .#{$breakpoint}\:enhanced-navigation-controls {
+        @include enhanced-navigation-controls;
+      }
+      
+      .#{$breakpoint}\:enhanced-cta {
+        @include enhanced-cta;
+      }
+    }
+  }
+}

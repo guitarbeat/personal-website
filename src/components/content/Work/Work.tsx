@@ -7,6 +7,11 @@ import React, {
 import { useNotionSectionData } from "../../../hooks/useNotionSectionData";
 import type { NotionData, WorkItem } from "../../../types/content";
 import { cn } from "../../../utils/commonUtils";
+import { formatWorkDuration } from "../../../utils/formatWorkDuration";
+import {
+  WORK_CARD_EFFECTS,
+  type MoireEffectPreset,
+} from "../../../utils/moireEffectPresets";
 import PixelCanvas from "../../effects/PixelCanvas/PixelCanvas";
 import { NotionSectionSkeleton } from "../shared/NotionSectionSkeleton";
 
@@ -42,58 +47,6 @@ function TimelineBar({
   hoveredJob,
   jobs,
 }: TimelineBarProps) {
-  const formatDuration = (months: number) => {
-    const years = Math.floor(months / 12);
-    const remainingMonths = months % 12;
-
-    // Convert numbers to words
-    const numberToWord = (num: number) => {
-      const words = [
-        "One",
-        "Two",
-        "Three",
-        "Four",
-        "Five",
-        "Six",
-        "Seven",
-        "Eight",
-        "Nine",
-        "Ten",
-        "Eleven",
-        "Twelve",
-      ];
-      return num <= 12 ? words[num - 1] : num.toString();
-    };
-
-    // Helper for formatting duration parts
-    const formatPart = (num: number, singular: string, plural: string) => {
-      if (num === 0) {
-        return "";
-      }
-      const word = numberToWord(num);
-      return `${word} ${num === 1 ? singular : plural}`;
-    };
-
-    // Format months only
-    if (years === 0) {
-      return formatPart(remainingMonths, "Month", "Months");
-    }
-
-    // Format years only
-    if (remainingMonths === 0) {
-      return formatPart(years, "Year", "Years");
-    }
-
-    // Format years and months
-    const yearText = formatPart(years, "Year", "Years");
-    const monthText = formatPart(
-      remainingMonths,
-      "Month",
-      "Months",
-    ).toLowerCase();
-    return `${yearText}, ${monthText}`;
-  };
-
   const sub_bars = job_bars.map(([height, start]) => (
     <div
       key={`${height}-${start}`}
@@ -115,7 +68,7 @@ function TimelineBar({
             visibility: hoveredJob ? "visible" : "hidden",
           }}
         >
-          {formatDuration(hoveredJob.duration)}
+          {formatWorkDuration(hoveredJob.duration)}
         </div>
       )}
       <p className="work__timeline__start">{first_year}</p>
@@ -140,31 +93,6 @@ function TimelineBar({
   );
 }
 
-const CARD_EFFECTS = [
-  {
-    colors: ["#f8fafc", "#f1f5f9", "#cbd5e1"],
-    gap: 8,
-    speed: 24,
-  },
-  {
-    colors: ["#e0f2fe", "#7dd3fc", "#0ea5e9"],
-    gap: 12,
-    speed: 18,
-  },
-  {
-    colors: ["#fef08a", "#fde047", "#eab308"],
-    gap: 10,
-    speed: 16,
-  },
-  {
-    colors: ["#fecdd3", "#fda4af", "#e11d48"],
-    gap: 11,
-    speed: 28,
-    noFocus: true,
-  },
-];
-
-// Memoize TimelineBar component
 const MemoizedTimelineBar = React.memo(TimelineBar);
 
 // Standalone helper function to process job data
@@ -268,7 +196,8 @@ function Work({ db: propsDb }: WorkProps = {}) {
               <div className="work__items">
                 {jobs.map((job, index) => {
                   const isActive = activeCards.has(job.slug);
-                  const effect = CARD_EFFECTS[index % CARD_EFFECTS.length];
+                  const effect: MoireEffectPreset =
+                    WORK_CARD_EFFECTS[index % WORK_CARD_EFFECTS.length];
                   return (
                     <button
                       key={job.slug}
