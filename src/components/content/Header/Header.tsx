@@ -3,10 +3,9 @@ import PropTypes from "prop-types";
 import React from "react";
 
 import cvFile from "../../../assets/documents/cv.pdf";
-
+import { useAvatarTransition } from "./useAvatarTransition";
 // Local imports
 import useScrambleEffect from "./useScrambleEffect";
-import { useAvatarTransition } from "./useAvatarTransition";
 
 interface SocialMediaProps {
   keyword: string;

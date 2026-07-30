@@ -1,4 +1,5 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import type React from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { cn } from "@/utils/commonUtils";
 import { isAvatarScaleTransition, prefersReducedMotion } from "@/utils/motion";
@@ -257,10 +258,7 @@ export function useAvatarTransition() {
       );
     }
 
-    if (
-      (phase === "slideIn" || phase === "expand") &&
-      incomingIndex !== null
-    ) {
+    if ((phase === "slideIn" || phase === "expand") && incomingIndex !== null) {
       const photoClassName =
         phase === "expand"
           ? "avatar__photo--active"

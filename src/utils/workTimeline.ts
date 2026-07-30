@@ -11,7 +11,10 @@ export function parseWorkMonth(value: string): Date {
 
 /** Whole-month difference between two dates (matches legacy moment diff). */
 export function diffWorkMonths(from: Date, to: Date): number {
-  return (to.getFullYear() - from.getFullYear()) * 12 + (to.getMonth() - from.getMonth());
+  return (
+    (to.getFullYear() - from.getFullYear()) * 12 +
+    (to.getMonth() - from.getMonth())
+  );
 }
 
 /** Formats a work timeline month label (e.g. `Jan 2020`). */

@@ -17,10 +17,12 @@ describe("Header avatar", () => {
   beforeEach(() => {
     sessionStorage.removeItem("header-profile-index");
     jest.useFakeTimers();
-    jest.spyOn(window, "requestAnimationFrame").mockImplementation((callback) => {
-      callback(0);
-      return 0;
-    });
+    jest
+      .spyOn(window, "requestAnimationFrame")
+      .mockImplementation((callback) => {
+        callback(0);
+        return 0;
+      });
   });
 
   afterEach(() => {
@@ -36,7 +38,9 @@ describe("Header avatar", () => {
       screen.getByRole("button", { name: /change profile image/i }),
     ).toBeInTheDocument();
     expect(container.querySelector(".chat-bubble")).toBeNull();
-    expect(container.querySelectorAll(".avatar__photo--active")).toHaveLength(1);
+    expect(container.querySelectorAll(".avatar__photo--active")).toHaveLength(
+      1,
+    );
 
     const avatar = container.querySelector<HTMLImageElement>(
       ".avatar__photo--active",
@@ -55,9 +59,13 @@ describe("Header avatar", () => {
     });
 
     expect(container.querySelectorAll(".avatar__photo")).toHaveLength(1);
-    expect(container.querySelector(".avatar__photo--outgoing")).toBeInTheDocument();
+    expect(
+      container.querySelector(".avatar__photo--outgoing"),
+    ).toBeInTheDocument();
     expect(container.querySelector(".avatar__photo--incoming")).toBeNull();
-    expect(container.querySelector(".avatar--transitioning")).toBeInTheDocument();
+    expect(
+      container.querySelector(".avatar--transitioning"),
+    ).toBeInTheDocument();
     expect(container.querySelectorAll(".avatar")).toHaveLength(1);
 
     const outgoing = container.querySelector(".avatar__photo--outgoing");
@@ -74,7 +82,9 @@ describe("Header avatar", () => {
 
     await waitFor(() => {
       expect(container.querySelectorAll(".avatar__photo")).toHaveLength(1);
-      expect(container.querySelector(".avatar__photo--incoming")).toBeInTheDocument();
+      expect(
+        container.querySelector(".avatar__photo--incoming"),
+      ).toBeInTheDocument();
       expect(container.querySelector(".avatar__photo--outgoing")).toBeNull();
     });
   });
@@ -106,7 +116,9 @@ describe("Header avatar", () => {
     await waitFor(() => {
       expect(getActiveAvatar()?.getAttribute("src")).not.toBe(initialSrc);
     });
-    expect(container.querySelectorAll(".avatar__photo--active")).toHaveLength(1);
+    expect(container.querySelectorAll(".avatar__photo--active")).toHaveLength(
+      1,
+    );
 
     for (let clickCount = 1; clickCount < profileImageCount; clickCount += 1) {
       fireEvent.click(avatarButton);
@@ -117,6 +129,8 @@ describe("Header avatar", () => {
     }
 
     expect(getActiveAvatar()?.getAttribute("src")).toBe(initialSrc);
-    expect(container.querySelectorAll(".avatar__photo--active")).toHaveLength(1);
+    expect(container.querySelectorAll(".avatar__photo--active")).toHaveLength(
+      1,
+    );
   });
 });

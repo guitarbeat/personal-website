@@ -103,7 +103,9 @@ async function compressImages() {
       await syncDefaultLcpAsset(defaultWebpPath);
       console.log(`Synced ${DEFAULT_LCP_BASENAME} to public/lcp/.`);
     } else {
-      console.warn(`Missing ${DEFAULT_LCP_BASENAME}; public LCP preload may be stale.`);
+      console.warn(
+        `Missing ${DEFAULT_LCP_BASENAME}; public LCP preload may be stale.`,
+      );
     }
   } catch (error) {
     console.error("Image compression failed:", error);

@@ -1,10 +1,10 @@
 import profileAvatarDefault from "../../../assets/images/profile-avatar-default.png";
+import profileAvatarFallback from "../../../assets/images/profile-avatar-fallback.png";
+import profileAvatarFallbackWebp from "../../../assets/images/profile-avatar-fallback.webp";
 import profileAvatarOutdoor from "../../../assets/images/profile-avatar-outdoor.png";
 import profileAvatarOutdoorWebp from "../../../assets/images/profile-avatar-outdoor.webp";
 import profileAvatarStudio from "../../../assets/images/profile-avatar-studio.png";
 import profileAvatarStudioWebp from "../../../assets/images/profile-avatar-studio.webp";
-import profileAvatarFallback from "../../../assets/images/profile-avatar-fallback.png";
-import profileAvatarFallbackWebp from "../../../assets/images/profile-avatar-fallback.webp";
 
 /** Stable URL for HTML preload; copied to public/lcp/ by compress-images. */
 export const DEFAULT_LCP_WEBP_SRC = "/lcp/profile-avatar-default.webp";

@@ -1,9 +1,9 @@
 import { memo, type ReactNode } from "react";
 
 import FrameEffect from "@/components/effects/Loading/FrameEffect";
-import MagicComponent from "@/components/effects/Moire/Moire";
 import { useAuth } from "@/components/effects/Matrix/AuthContext";
 import ScrollToTopButton from "@/components/effects/Matrix/ScrollToTopButton";
+import MagicComponent from "@/components/effects/Moire/Moire";
 import { NavBar } from "@/components/index";
 
 export const SiteStatusPill = memo(() => (

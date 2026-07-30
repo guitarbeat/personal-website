@@ -1,20 +1,19 @@
 import React, { useCallback, useMemo, useState } from "react";
-
+import { NotionSectionSkeleton } from "@/components/content/shared/NotionSectionSkeleton";
+import PixelCanvas from "@/components/effects/PixelCanvas/PixelCanvas";
 import { useNotionSectionData } from "@/hooks/useNotionSectionData";
 import type { NotionData } from "@/types/content";
 import { cn } from "@/utils/commonUtils";
 import { formatWorkDuration } from "@/utils/formatWorkDuration";
 import {
-  WORK_CARD_EFFECTS,
   type MoireEffectPreset,
+  WORK_CARD_EFFECTS,
 } from "@/utils/moireEffectPresets";
 import {
   formatWorkYear,
-  processWorkTimeline,
   type ProcessedWorkJob,
+  processWorkTimeline,
 } from "@/utils/workTimeline";
-import PixelCanvas from "@/components/effects/PixelCanvas/PixelCanvas";
-import { NotionSectionSkeleton } from "@/components/content/shared/NotionSectionSkeleton";
 
 interface TimelineBarProps {
   firstYear: string;
@@ -59,18 +58,16 @@ function TimelineBar({
       {subBars}
       {Array.from(activeCards).map((slug) => {
         const activeJob = jobsBySlug.get(slug);
-        return (
-          activeJob ? (
-            <div
-              key={slug}
-              className="work__timeline__bar"
-              style={{
-                height: `${activeJob.bar_height}%`,
-                bottom: `${activeJob.bar_start}%`,
-              }}
-            />
-          ) : null
-        );
+        return activeJob ? (
+          <div
+            key={slug}
+            className="work__timeline__bar"
+            style={{
+              height: `${activeJob.bar_height}%`,
+              bottom: `${activeJob.bar_start}%`,
+            }}
+          />
+        ) : null;
       })}
     </div>
   );

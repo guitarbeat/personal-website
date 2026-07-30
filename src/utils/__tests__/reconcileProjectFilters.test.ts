@@ -15,6 +15,8 @@ describe("reconcileProjectFilters", () => {
   });
 
   it("falls back to all keywords when no previous filters remain valid", () => {
-    expect(reconcileProjectFilters(["Legacy"], allKeywords)).toEqual(allKeywords);
+    expect(reconcileProjectFilters(["Legacy"], allKeywords)).toEqual(
+      allKeywords,
+    );
   });
 });

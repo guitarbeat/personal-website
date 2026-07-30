@@ -2,14 +2,17 @@ import type { RefObject } from "react";
 import { useEffect } from "react";
 import { debounce } from "@/utils/commonUtils";
 import { MATRIX_RAIN } from "./constants";
+import { Drop } from "./MatrixDrop";
 import {
   getMatrixRainDrawParams,
   getReducedMotionRainIntensity,
 } from "./matrixRainIntensity";
-import { Drop } from "./MatrixDrop";
 
 const prefersReducedMotion = () => {
-  if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+  if (
+    typeof window === "undefined" ||
+    typeof window.matchMedia !== "function"
+  ) {
     return false;
   }
 

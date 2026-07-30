@@ -7,9 +7,7 @@ export function reconcileProjectFilters(
   }
 
   const allKeywordsSet = new Set(allKeywords);
-  const filtered = prevFilters.filter((filter) =>
-    allKeywordsSet.has(filter),
-  );
+  const filtered = prevFilters.filter((filter) => allKeywordsSet.has(filter));
 
   if (filtered.length === 0) {
     return allKeywords;

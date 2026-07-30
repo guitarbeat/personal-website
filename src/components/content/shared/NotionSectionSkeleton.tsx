@@ -29,7 +29,10 @@ export function NotionSectionSkeleton({
           {ABOUT_SKELETON_KEYS.map((skeletonKey) => (
             <div
               key={skeletonKey}
-              className={cn("about-me__text about-me__text--skeleton", className)}
+              className={cn(
+                "about-me__text about-me__text--skeleton",
+                className,
+              )}
               aria-hidden="true"
             >
               <div className="text-background">
@@ -59,7 +62,10 @@ export function NotionSectionSkeleton({
           {PROJECTS_SKELETON_KEYS.map((skeletonKey) => (
             <div
               key={skeletonKey}
-              className={cn("projects__card projects__card--skeleton", className)}
+              className={cn(
+                "projects__card projects__card--skeleton",
+                className,
+              )}
             >
               <div className="projects__card__content">
                 <SkeletonBlock className="projects__skeleton-meta" />
@@ -75,7 +81,9 @@ export function NotionSectionSkeleton({
     case "work":
       return (
         <div aria-hidden="true">
-          <div className={cn("work__timeline work__timeline--skeleton", className)}>
+          <div
+            className={cn("work__timeline work__timeline--skeleton", className)}
+          >
             <SkeletonBlock className="work__skeleton-bar" variant="card" />
           </div>
           <div className="work__items">

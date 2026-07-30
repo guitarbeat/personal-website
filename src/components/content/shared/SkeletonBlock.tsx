@@ -13,7 +13,11 @@ export function SkeletonBlock({
 }: SkeletonBlockProps) {
   return (
     <div
-      className={cn("enhanced-skeleton", `enhanced-skeleton--${variant}`, className)}
+      className={cn(
+        "enhanced-skeleton",
+        `enhanced-skeleton--${variant}`,
+        className,
+      )}
       aria-hidden="true"
     />
   );

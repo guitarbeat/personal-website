@@ -17,11 +17,7 @@ function numberToWord(num: number): string {
   return num <= 12 ? DURATION_WORDS[num - 1] : num.toString();
 }
 
-function formatPart(
-  num: number,
-  singular: string,
-  plural: string,
-): string {
+function formatPart(num: number, singular: string, plural: string): string {
   if (num === 0) {
     return "";
   }

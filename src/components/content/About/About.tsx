@@ -1,9 +1,9 @@
 // About section content component for the personal website.
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import shell from "../../../assets/images/shell.png";
 import { useNotionSectionData } from "@/hooks/useNotionSectionData";
 import { cn } from "@/utils/commonUtils";
+import shell from "../../../assets/images/shell.png";
 import {
   SPOTIFY_WIDGET_HEIGHT,
   SPOTIFY_WIDGET_WIDTH,

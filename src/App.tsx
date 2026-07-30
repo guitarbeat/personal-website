@@ -3,22 +3,15 @@ import { SpeedInsights } from "@vercel/speed-insights/react";
 import { lazy, Suspense, useCallback, useEffect, useState } from "react";
 import { BrowserRouter } from "react-router-dom";
 
-import {
-  AppRoutes,
-  MatrixModal,
-  MatrixRouteSync,
-} from "@/AppRoutes";
-import { ContentUnavailableState } from "@/components/Core/SiteLayout";
+import { AppRoutes, MatrixModal, MatrixRouteSync } from "@/AppRoutes";
 import { NAV_ITEMS } from "@/components/Core/constants";
-import {
-  AuthProvider,
-  useAuth,
-} from "@/components/effects/Matrix/AuthContext";
+import { ContentUnavailableState } from "@/components/Core/SiteLayout";
 import LoadingSequence from "@/components/effects/Loading/LoadingSequence";
+import { AuthProvider, useAuth } from "@/components/effects/Matrix/AuthContext";
 import { NotionProvider, useNotion } from "@/contexts/NotionContext";
-import { isVercelHostedBuild } from "@/utils/vercelHost";
 import { useMatrixActivation } from "@/hooks/useMatrixActivation";
 import { useScrollMode } from "@/hooks/useScrollMode";
+import { isVercelHostedBuild } from "@/utils/vercelHost";
 import "./sass/main.scss";
 
 const CustomCursor = lazy(
