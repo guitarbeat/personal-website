@@ -46,6 +46,7 @@
     "lint:md:fix": "markdownlint-cli2 --fix \"**/*.md\" \"#node_modules\"",
     "compress-images": "node scripts/compress-images.js",
     "sync:html": "node scripts/sync-html-heads.js",
+    "sync:html:check": "node scripts/sync-html-heads.js --check",
     "env:vercel": "vercel env pull .env.vercel.development --yes --environment development",
     "env:vercel:prod": "vercel env pull .env.vercel.production --yes --environment production",
     "build:dev": "vite build --mode development"

@@ -5,11 +5,10 @@ import shell from "../../../assets/images/shell.png";
 import { useNotionSectionData } from "../../../hooks/useNotionSectionData";
 import { cn } from "../../../utils/commonUtils";
 import {
-  ABOUT_SKELETON_KEYS,
   SPOTIFY_WIDGET_HEIGHT,
   SPOTIFY_WIDGET_WIDTH,
 } from "../shared/contentSkeletonConstants";
-import { SkeletonBlock } from "../shared/SkeletonBlock";
+import { NotionSectionSkeleton } from "../shared/NotionSectionSkeleton";
 
 const SHELL_IMAGE_WIDTH = 1957;
 const SHELL_IMAGE_HEIGHT = 2400;
@@ -38,24 +37,6 @@ export function ColorChangeOnHover({ text = "" }) {
   }, [text]);
 
   return <>{content}</>;
-}
-
-function AboutSkeleton() {
-  return (
-    <>
-      {ABOUT_SKELETON_KEYS.map((skeletonKey) => (
-        <div
-          key={skeletonKey}
-          className="about-me__text about-me__text--skeleton"
-          aria-hidden="true"
-        >
-          <div className="text-background">
-            <SkeletonBlock className="about-me__skeleton-title" />
-          </div>
-        </div>
-      ))}
-    </>
-  );
 }
 
 function About() {
@@ -197,7 +178,7 @@ function About() {
           >
             <div className="about-me__text-container">
               {isLoading ? (
-                <AboutSkeleton />
+                <NotionSectionSkeleton section="about" />
               ) : (
                 renderAboutTexts(aboutTexts)
               )}

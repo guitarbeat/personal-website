@@ -1,15 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNotionSectionData } from "../../../hooks/useNotionSectionData";
-import type { ProjectItem } from "../../../types/content";
+import type { NotionData } from "../../../types/content";
 import { generateTagColors } from "../../../utils/colorUtils";
 import { clamp, cn } from "../../../utils/commonUtils";
 import { reconcileProjectFilters } from "../../../utils/reconcileProjectFilters";
 import PixelCanvas from "../../effects/PixelCanvas/PixelCanvas";
-import {
-  PROJECT_FILTER_SKELETON_KEYS,
-  PROJECTS_SKELETON_KEYS,
-} from "../shared/contentSkeletonConstants";
-import { SkeletonBlock } from "../shared/SkeletonBlock";
+import { NotionSectionSkeleton } from "../shared/NotionSectionSkeleton";
 
 const DEFAULT_PROJECT_EFFECT = {
   colors: ["#f8fafc", "#cbd5f5", "#94a3b8"],
@@ -161,30 +157,7 @@ function ProjectCard({
   );
 }
 interface ProjectsProps {
-  db?: {
-    projects: ProjectItem[];
-  };
-}
-
-function ProjectsSkeleton() {
-  return (
-    <>
-      {PROJECTS_SKELETON_KEYS.map((skeletonKey) => (
-        <div
-          key={skeletonKey}
-          className="projects__card projects__card--skeleton"
-          aria-hidden="true"
-        >
-          <div className="projects__card__content">
-            <SkeletonBlock className="projects__skeleton-meta" />
-            <SkeletonBlock className="projects__skeleton-title" />
-            <SkeletonBlock className="projects__skeleton-hook" />
-            <SkeletonBlock className="projects__skeleton-detail" />
-          </div>
-        </div>
-      ))}
-    </>
-  );
+  db?: Pick<NotionData, "projects">;
 }
 
 function Projects({ db: propsDb }: ProjectsProps = {}) {
@@ -211,24 +184,28 @@ function Projects({ db: propsDb }: ProjectsProps = {}) {
     [projectsData],
   );
 
-  const syncProjectFilters = useCallback(() => {
+  const syncTagColors = useCallback(() => {
     setTagColors(generateTagColors(allKeywords));
+  }, [allKeywords]);
+
+  const syncFilters = useCallback(() => {
     setActiveFilters((prevFilters) =>
       reconcileProjectFilters(prevFilters, allKeywords),
     );
   }, [allKeywords]);
 
   useEffect(() => {
-    syncProjectFilters();
-  }, [syncProjectFilters]);
+    syncTagColors();
+    syncFilters();
+  }, [syncTagColors, syncFilters]);
 
   useEffect(() => {
-    document.body.addEventListener("theme-changed", syncProjectFilters);
+    document.body.addEventListener("theme-changed", syncTagColors);
 
     return () => {
-      document.body.removeEventListener("theme-changed", syncProjectFilters);
+      document.body.removeEventListener("theme-changed", syncTagColors);
     };
-  }, [syncProjectFilters]);
+  }, [syncTagColors]);
 
   const toggleFilter = useCallback(
     (filter: string) => {
@@ -277,13 +254,9 @@ function Projects({ db: propsDb }: ProjectsProps = {}) {
         <h1>Some of my Projects</h1>
         <div className="filter-buttons" aria-busy={isLoading}>
           {isLoading
-            ? PROJECT_FILTER_SKELETON_KEYS.map((skeletonKey) => (
-                <SkeletonBlock
-                  key={skeletonKey}
-                  variant="button"
-                  className="tag tag--skeleton"
-                />
-              ))
+            ? (
+                <NotionSectionSkeleton section="project-filters" />
+              )
             : allKeywords.map((filter) => (
                 <button
                   type="button"
@@ -304,7 +277,11 @@ function Projects({ db: propsDb }: ProjectsProps = {}) {
         </div>
         <div className="projects">
           <div className="projects__cards_container">
-            {isLoading ? <ProjectsSkeleton /> : project_cards}
+            {isLoading ? (
+              <NotionSectionSkeleton section="projects" />
+            ) : (
+              project_cards
+            )}
           </div>
         </div>
       </div>

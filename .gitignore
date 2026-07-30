@@ -9,3 +9,5 @@ node_modules
 .env.vercel*
 docs/pr-cleanup-inventory.json
 .playwright-cli/
+dist/
+public/build/css/

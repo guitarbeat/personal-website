@@ -1,0 +1,190 @@
+/* Close Button */
+.matrix-close-btn {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  z-index: 3;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1.5px solid rgba(0, 255, 0, 0.45);
+  color: var(--matrix-white);
+  padding: 0.65rem 1.65rem;
+  font-family: "Courier New", monospace;
+  font-size: 1rem;
+  letter-spacing: 2.5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 999px;
+  text-transform: uppercase;
+  text-shadow:
+    0 0 10px rgba(0, 255, 0, 0.45),
+    0 0 20px rgba(0, 255, 0, 0.25);
+  backdrop-filter: blur(6px);
+
+  &:hover {
+    background: rgba(0, 255, 0, 0.25);
+    color: var(--matrix-white);
+    box-shadow:
+      0 0 18px rgba(0, 255, 0, 0.45),
+      0 0 32px rgba(0, 255, 0, 0.3);
+    transform: translateY(-3px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:focus {
+    outline: 2px solid var(--matrix-white);
+    outline-offset: 3px;
+  }
+}
+
+/* Fade In/Out Animation for Feedback Containers */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+/* Ensure full screen coverage on all devices */
+@media screen {
+  .matrix-container {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+  }
+  
+  .matrix-canvas {
+    width: 100vw !important;
+    height: 100vh !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .matrix-console-shell {
+    width: min(780px, 95vw);
+    gap: 2.25rem;
+  }
+
+  .matrix-console-grid {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .matrix-console-shell {
+    width: 100%;
+    padding: 0 1.25rem 2.5rem;
+    gap: 2rem;
+  }
+
+  .matrix-console-grid {
+    gap: 1.5rem;
+  }
+
+  .hack-sequencer {
+    width: 100%;
+    padding: 1.85rem 1.6rem;
+    border-radius: 12px;
+  }
+
+  .hack-sequencer__header {
+    grid-template-columns: 1fr;
+    grid-auto-rows: auto;
+    justify-items: center;
+    gap: 0.6rem;
+    letter-spacing: 1.4px;
+  }
+
+  .hack-sequencer__spacer {
+    display: none;
+  }
+
+  .hack-sequencer__percentage {
+    justify-self: center;
+    font-size: 1.45rem;
+  }
+
+  .hack-sequencer__feedback {
+    font-size: 1rem;
+    min-height: 0;
+  }
+
+  .hack-input-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 1.45rem 1.6rem;
+    gap: 1rem;
+  }
+
+  .hack-input-field {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    font-size: 1.15rem;
+    padding: 1rem 1.1rem;
+  }
+
+  .matrix-close-btn {
+    top: 1rem;
+    right: 1rem;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .matrix-container {
+    --matrix-green: rgba(0, 255, 0, 1);
+    --matrix-white: rgba(255, 255, 255, 1);
+    --matrix-red: rgba(255, 0, 0, 1);
+    --matrix-yellow: rgba(255, 255, 0, 1);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .matrix-container,
+  .hack-input-panel,
+  .matrix-rate-limit {
+    animation: none;
+  }
+  
+  .feedback-container.glitch-effect {
+    animation: none;
+  }
+  
+  .success-message {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+}
+
+
+
+
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}

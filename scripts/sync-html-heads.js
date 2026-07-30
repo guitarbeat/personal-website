@@ -7,6 +7,7 @@ const ROOT = path.resolve(__dirname, "..");
 const SNIPPET_PATH = path.join(__dirname, "html-head-snippet.html");
 const VITE_HTML_PATH = path.join(ROOT, "index.html");
 const CRACO_HTML_PATH = path.join(ROOT, "public", "index.html");
+const checkOnly = process.argv.includes("--check");
 
 const snippet = fs.readFileSync(SNIPPET_PATH, "utf8");
 
@@ -25,17 +26,43 @@ ${bodyScripts}  </body>
 `;
 }
 
-const viteHtml = renderHtml({
-  assetPrefix: "",
-  bodyScripts: '    <script type="module" src="/src/index.tsx"></script>\n',
-});
+const expected = {
+  [VITE_HTML_PATH]: renderHtml({
+    assetPrefix: "",
+    bodyScripts: '    <script type="module" src="/src/index.tsx"></script>\n',
+  }),
+  [CRACO_HTML_PATH]: renderHtml({
+    assetPrefix: "%PUBLIC_URL%",
+    bodyScripts: "",
+  }),
+};
 
-const cracoHtml = renderHtml({
-  assetPrefix: "%PUBLIC_URL%",
-  bodyScripts: "",
-});
+if (checkOnly) {
+  const outOfSync = Object.entries(expected).filter(([filePath, contents]) => {
+    if (!fs.existsSync(filePath)) {
+      return true;
+    }
 
-fs.writeFileSync(VITE_HTML_PATH, viteHtml);
-fs.writeFileSync(CRACO_HTML_PATH, cracoHtml);
+    return fs.readFileSync(filePath, "utf8") !== contents;
+  });
+
+  if (outOfSync.length > 0) {
+    console.error(
+      "HTML entry files are out of sync with scripts/html-head-snippet.html:",
+    );
+    for (const [filePath] of outOfSync) {
+      console.error(`  - ${path.relative(ROOT, filePath)}`);
+    }
+    console.error("Run: pnpm run sync:html");
+    process.exit(1);
+  }
+
+  console.log("HTML entry files are in sync.");
+  process.exit(0);
+}
+
+for (const [filePath, contents] of Object.entries(expected)) {
+  fs.writeFileSync(filePath, contents);
+}
 
 console.log("Synced index.html and public/index.html from html-head-snippet.html");

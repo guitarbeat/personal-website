@@ -1,3 +1,7 @@
 @use "./matrix-variables";
-@use "./matrix-core";
+@use "./matrix-shell";
+@use "./matrix-console";
+@use "./matrix-widgets";
+@use "./matrix-success";
+@use "./matrix-a11y";
 @use "./matrix-hack-panel";

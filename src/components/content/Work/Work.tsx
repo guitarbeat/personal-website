@@ -5,10 +5,10 @@ import React, {
   useState,
 } from "react";
 import { useNotionSectionData } from "../../../hooks/useNotionSectionData";
+import type { NotionData, WorkItem } from "../../../types/content";
 import { cn } from "../../../utils/commonUtils";
 import PixelCanvas from "../../effects/PixelCanvas/PixelCanvas";
-import { WORK_SKELETON_KEYS } from "../shared/contentSkeletonConstants";
-import { SkeletonBlock } from "../shared/SkeletonBlock";
+import { NotionSectionSkeleton } from "../shared/NotionSectionSkeleton";
 
 interface Job {
   slug: string;
@@ -168,9 +168,16 @@ const CARD_EFFECTS = [
 const MemoizedTimelineBar = React.memo(TimelineBar);
 
 // Standalone helper function to process job data
-const processJobsData = (rawJobs: unknown[]) => {
-  const jobs: Job[] = (rawJobs || []).map((job) => ({
-    ...(job as Job),
+const processJobsData = (rawJobs: WorkItem[]) => {
+  const jobs: Job[] = rawJobs.map((job) => ({
+    ...job,
+    to: job.to ?? "",
+    _from: moment(),
+    _to: moment(),
+    date: "",
+    duration: 0,
+    bar_start: 0,
+    bar_height: 0,
   }));
 
   let first_date = moment();
@@ -208,37 +215,7 @@ const processJobsData = (rawJobs: unknown[]) => {
 };
 
 interface WorkProps {
-  db?: {
-    work: unknown[];
-  };
-}
-
-function WorkSkeleton() {
-  return (
-    <>
-      <div
-        className="work__timeline work__timeline--skeleton"
-        aria-hidden="true"
-      >
-        <SkeletonBlock className="work__skeleton-bar" variant="card" />
-      </div>
-      <div className="work__items">
-        {WORK_SKELETON_KEYS.map((skeletonKey) => (
-          <div
-            key={skeletonKey}
-            className="work__item work__item--skeleton"
-            aria-hidden="true"
-          >
-            <div className="work__item__content">
-              <SkeletonBlock className="work__skeleton-title" />
-              <SkeletonBlock className="work__skeleton-company" />
-              <SkeletonBlock className="work__skeleton-date" />
-            </div>
-          </div>
-        ))}
-      </div>
-    </>
-  );
+  db?: Pick<NotionData, "work">;
 }
 
 // Function for Work component
@@ -278,7 +255,7 @@ function Work({ db: propsDb }: WorkProps = {}) {
         <h1>My career so far</h1>
         <div className="work" aria-busy={isLoading} aria-live="polite">
           {isLoading ? (
-            <WorkSkeleton />
+            <NotionSectionSkeleton section="work" />
           ) : (
             <>
               <MemoizedTimelineBar

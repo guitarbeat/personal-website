@@ -47,11 +47,10 @@ describe("Work timeline", () => {
               company: "Acme Corp",
               place: "Remote",
               from: mockCurrentMonth,
-              to: "",
+              to: null,
               description: "Building resilient timelines.",
               slug: "senior-developer",
-              // biome-ignore lint/suspicious/noExplicitAny: Mock data for test
-            } as any,
+            },
           ],
         }}
       />,
@@ -86,8 +85,7 @@ describe("Work timeline", () => {
               to: "05-2018",
               description: "Older role.",
               slug: "older-role",
-              // biome-ignore lint/suspicious/noExplicitAny: Mock data for test
-            } as any,
+            },
           ],
         }}
       />,

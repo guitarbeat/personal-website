@@ -4,7 +4,7 @@
 
 - Personal website built with React, CRACO, Sass, and a supplemental Vite build path.
 - Local interactive development still runs through CRACO and `react-scripts`.
-- CI, Lighthouse, and the checked-in `dist/` output currently depend on the Vite build path.
+- CI, Lighthouse, and local `pnpm run build:dev` use the Vite build path; output goes to `dist/` (gitignored, built in CI).
 - Production deploys to GitHub Pages use the CRACO build output in `build/`.
 
 ## Environment
@@ -53,6 +53,8 @@
   Compresses JPG and PNG assets in place under `src/assets/images`. The pre-commit hook runs this automatically.
 - `pnpm run sync:html`
   Regenerates `index.html` (Vite) and `public/index.html` (CRACO) from `scripts/html-head-snippet.html`. Edit the snippet, not the HTML files directly.
+- `pnpm run sync:html:check`
+  Fails if either HTML entry file drifted from the snippet (runs in Code Quality CI).
 - `node scripts/fix-ts-imports.js`
   One-off migration utility for removing extension suffixes from TS/TSX imports.
 
@@ -98,7 +100,8 @@
 ## Build Output Notes
 
 - `build/` is the CRACO production bundle used by `pnpm run deploy`.
-- `dist/` is the Vite bundle produced by `pnpm run build:dev` and referenced by CI-related workflows.
+- `dist/` is the Vite bundle produced by `pnpm run build:dev` and built in CI-related workflows (not committed).
+- `public/build/css/` is Sass verification output from `pnpm run sass:check` (not committed).
 - Do not rewrite generated output directories unless the task requires updated build artifacts.
 
 ## Agent Guidance
