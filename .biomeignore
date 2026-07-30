@@ -4,5 +4,6 @@ dist/
 .vscode/
 public/build/
 .biome/
+.tmp-vercel-pack/
 src/css/styles.css
 .git/
