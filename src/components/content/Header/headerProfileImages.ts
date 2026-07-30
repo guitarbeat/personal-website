@@ -1,14 +1,21 @@
 import profileAvatarDefault from "../../../assets/images/profile-avatar-default.png";
 import profileAvatarOutdoor from "../../../assets/images/profile-avatar-outdoor.png";
+import profileAvatarOutdoorWebp from "../../../assets/images/profile-avatar-outdoor.webp";
 import profileAvatarStudio from "../../../assets/images/profile-avatar-studio.png";
+import profileAvatarStudioWebp from "../../../assets/images/profile-avatar-studio.webp";
 import profileAvatarFallback from "../../../assets/images/profile-avatar-fallback.png";
+import profileAvatarFallbackWebp from "../../../assets/images/profile-avatar-fallback.webp";
 
-/** Largest avatar intrinsic width (used for layout hints on non-profile icons). */
-export const PROFILE_IMAGE_WIDTH = 1024;
-export const PROFILE_IMAGE_HEIGHT = 1024;
+/** Stable URL for HTML preload; copied to public/lcp/ by compress-images. */
+export const DEFAULT_LCP_WEBP_SRC = "/lcp/profile-avatar-default.webp";
+
+/** Display size after WebP resize (matches header avatar slot). */
+export const PROFILE_IMAGE_WIDTH = 400;
+export const PROFILE_IMAGE_HEIGHT = 400;
 
 export interface ProfileImage {
   src: string;
+  webpSrc: string;
   alt: string;
   width: number;
   height: number;
@@ -18,27 +25,31 @@ export interface ProfileImage {
 export const PROFILE_IMAGES: ProfileImage[] = [
   {
     src: profileAvatarDefault,
+    webpSrc: DEFAULT_LCP_WEBP_SRC,
     alt: "Aaron Lorenzo Woods — default profile photo",
-    width: 1024,
-    height: 1024,
+    width: PROFILE_IMAGE_WIDTH,
+    height: PROFILE_IMAGE_HEIGHT,
   },
   {
     src: profileAvatarOutdoor,
+    webpSrc: profileAvatarOutdoorWebp,
     alt: "Aaron Lorenzo Woods — outdoor profile photo",
-    width: 800,
-    height: 800,
+    width: PROFILE_IMAGE_WIDTH,
+    height: PROFILE_IMAGE_HEIGHT,
   },
   {
     src: profileAvatarStudio,
+    webpSrc: profileAvatarStudioWebp,
     alt: "Aaron Lorenzo Woods — studio profile photo",
-    width: 500,
-    height: 500,
+    width: PROFILE_IMAGE_WIDTH,
+    height: PROFILE_IMAGE_HEIGHT,
   },
   {
     src: profileAvatarFallback,
+    webpSrc: profileAvatarFallbackWebp,
     alt: "Aaron Lorenzo Woods — profile photo",
-    width: 400,
-    height: 400,
+    width: PROFILE_IMAGE_WIDTH,
+    height: PROFILE_IMAGE_HEIGHT,
     isFallback: true,
   },
 ];
@@ -46,6 +57,10 @@ export const PROFILE_IMAGES: ProfileImage[] = [
 export const FALLBACK_PROFILE_SRC =
   PROFILE_IMAGES.find((image) => image.isFallback)?.src ??
   PROFILE_IMAGES[0].src;
+
+export const FALLBACK_PROFILE_WEBP_SRC =
+  PROFILE_IMAGES.find((image) => image.isFallback)?.webpSrc ??
+  PROFILE_IMAGES[0].webpSrc;
 
 export const PROFILE_INDEX_STORAGE_KEY = "header-profile-index";
 
@@ -77,4 +92,8 @@ export function readStoredProfileIndex(): number {
 
 export function getInitialProfileSrc(): string {
   return PROFILE_IMAGES[readStoredProfileIndex()].src;
+}
+
+export function getInitialLcpImageSrc(): string {
+  return PROFILE_IMAGES[readStoredProfileIndex()].webpSrc;
 }

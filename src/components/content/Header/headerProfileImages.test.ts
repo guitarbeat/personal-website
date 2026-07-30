@@ -1,4 +1,6 @@
 import {
+  DEFAULT_LCP_WEBP_SRC,
+  getInitialLcpImageSrc,
   getInitialProfileSrc,
   PROFILE_IMAGES,
   PROFILE_INDEX_STORAGE_KEY,
@@ -13,13 +15,14 @@ describe("headerProfileImages", () => {
   it("defaults to index 0 when session storage is empty", () => {
     expect(readStoredProfileIndex()).toBe(0);
     expect(getInitialProfileSrc()).toBe(PROFILE_IMAGES[0].src);
+    expect(getInitialLcpImageSrc()).toBe(DEFAULT_LCP_WEBP_SRC);
   });
 
   it("returns stored index when valid", () => {
     sessionStorage.setItem(PROFILE_INDEX_STORAGE_KEY, "2");
 
     expect(readStoredProfileIndex()).toBe(2);
-    expect(getInitialProfileSrc()).toBe(PROFILE_IMAGES[2].src);
+    expect(getInitialLcpImageSrc()).toBe(PROFILE_IMAGES[2].webpSrc);
   });
 
   it("clamps invalid stored index back to 0", () => {

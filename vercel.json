@@ -10,6 +10,19 @@
       "destination": "/"
     }
   ],
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "aaronwoods.info"
+        }
+      ],
+      "destination": "https://www.aaronwoods.info/:path*",
+      "permanent": true
+    }
+  ],
   "headers": [
     {
       "source": "/api/(.*)",

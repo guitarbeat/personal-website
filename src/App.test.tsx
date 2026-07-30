@@ -143,7 +143,7 @@ describe("App reliability states", () => {
     expect(screen.getByText("Header section")).toBeInTheDocument();
 
     act(() => {
-      jest.advanceTimersByTime(500);
+      jest.advanceTimersByTime(100);
     });
 
     expect(screen.queryByTestId("site-loader")).not.toBeInTheDocument();
@@ -206,7 +206,7 @@ describe("App reliability states", () => {
     expect(screen.getByText("Header section")).toBeInTheDocument();
 
     act(() => {
-      jest.advanceTimersByTime(500);
+      jest.advanceTimersByTime(100);
     });
 
     expect(screen.queryByTestId("site-loader")).not.toBeInTheDocument();
@@ -231,7 +231,7 @@ describe("App reliability states", () => {
     expect(screen.getByTestId("site-loader")).toBeInTheDocument();
 
     act(() => {
-      jest.advanceTimersByTime(500);
+      jest.advanceTimersByTime(100);
     });
 
     expect(

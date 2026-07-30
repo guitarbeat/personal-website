@@ -24,7 +24,7 @@ const CustomCursor = lazy(
   () => import("@/components/effects/CustomCursor/CustomCursor"),
 );
 
-const INITIAL_LOADER_MIN_DURATION_MS = 500;
+const INITIAL_LOADER_MIN_DURATION_MS = 100;
 
 function AppContent() {
   const { db, error, isDegraded, loading } = useNotion();

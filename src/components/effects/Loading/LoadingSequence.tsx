@@ -1,10 +1,10 @@
 import { useEffect, useRef } from "react";
 import styled from "styled-components";
 
-/** Matches historical LoadingSequence timing (see git 1d27ad2d / 5bdf3f39). */
-const REVEAL_MASKS_MS = 500;
-const COMPLETE_MS = 2000;
-const REDUCED_COMPLETE_MS = 150;
+/** Faster reveal so LCP (header avatar) is not masked for ~2s. */
+const REVEAL_MASKS_MS = 50;
+const COMPLETE_MS = 450;
+const REDUCED_COMPLETE_MS = 0;
 
 const MaskCommon = styled.div`
   position: fixed;
@@ -13,7 +13,7 @@ const MaskCommon = styled.div`
   height: 50%;
   background: #999;
   z-index: 20000;
-  transition: transform 1s ease-in-out;
+  transition: transform 350ms ease-in-out;
   mix-blend-mode: difference;
 `;
 

@@ -2,7 +2,7 @@
 import { lazy, StrictMode, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 
-import { getInitialProfileSrc } from "./components/content/Header/headerProfileImages";
+import { getInitialLcpImageSrc } from "./components/content/Header/headerProfileImages";
 import { preloadLcpImage } from "./utils/preloadLcpImage";
 
 // Local imports
@@ -18,7 +18,7 @@ if (!root) {
   throw new Error("Root element not found");
 }
 
-preloadLcpImage(getInitialProfileSrc());
+preloadLcpImage(getInitialLcpImageSrc());
 
 // Initialize React root with error handling
 try {

@@ -8,8 +8,7 @@ import cvFile from "../../../assets/documents/cv.pdf";
 import { cn } from "@/utils/commonUtils";
 import {
   FALLBACK_PROFILE_SRC,
-  PROFILE_IMAGE_HEIGHT,
-  PROFILE_IMAGE_WIDTH,
+  FALLBACK_PROFILE_WEBP_SRC,
   PROFILE_IMAGES,
   PROFILE_INDEX_STORAGE_KEY,
   readStoredProfileIndex,
@@ -46,8 +45,8 @@ function SocialMedia({
             alt=""
             className="custom-icon"
             title={keyword}
-            width={PROFILE_IMAGE_WIDTH}
-            height={PROFILE_IMAGE_HEIGHT}
+            width={400}
+            height={400}
           />
         ) : (
           <span
@@ -341,6 +340,12 @@ function Header() {
     const target = e.currentTarget;
     target.onerror = null;
     target.src = FALLBACK_PROFILE_SRC;
+
+    const picture = target.closest("picture");
+    const source = picture?.querySelector("source");
+    if (source) {
+      source.setAttribute("srcset", FALLBACK_PROFILE_WEBP_SRC);
+    }
   };
 
   const renderAvatarImage = (
@@ -354,17 +359,19 @@ function Header() {
     const image = PROFILE_IMAGES[index];
 
     return (
-      <img
-        key={image.src}
-        className={cn("avatar__photo", className)}
-        src={image.src}
-        alt={image.alt}
-        width={image.width}
-        height={image.height}
-        fetchPriority={options.fetchPriority}
-        onError={handleImageError}
-        onTransitionEnd={options.onTransitionEnd}
-      />
+      <picture key={image.webpSrc}>
+        <source srcSet={image.webpSrc} type="image/webp" />
+        <img
+          className={cn("avatar__photo", className)}
+          src={image.src}
+          alt={image.alt}
+          width={image.width}
+          height={image.height}
+          fetchPriority={options.fetchPriority}
+          onError={handleImageError}
+          onTransitionEnd={options.onTransitionEnd}
+        />
+      </picture>
     );
   };
 
