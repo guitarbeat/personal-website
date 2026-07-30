@@ -1,4 +1,4 @@
-import notionConfig from "../../../config/notion.json";
+import notionConfig from "../../../config/notion.json" with { type: "json" };
 
 export const NOTION_API_BASE = notionConfig.apiBase;
 export const NOTION_VERSION = notionConfig.version;
