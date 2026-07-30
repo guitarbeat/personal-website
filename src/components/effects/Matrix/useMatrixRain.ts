@@ -2,11 +2,24 @@ import type { RefObject } from "react";
 import { useEffect } from "react";
 import { debounce } from "@/utils/commonUtils";
 import { MATRIX_RAIN } from "./constants";
+import {
+  getMatrixRainDrawParams,
+  getReducedMotionRainIntensity,
+} from "./matrixRainIntensity";
 import { Drop } from "./MatrixDrop";
+
+const prefersReducedMotion = () => {
+  if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+    return false;
+  }
+
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+};
 
 export const useMatrixRain = (
   canvasRef: RefObject<HTMLCanvasElement | null>,
   isVisible: boolean,
+  intensityRef: RefObject<number>,
 ) => {
   // * Enhanced Matrix Rain Effect
   useEffect(() => {
@@ -58,13 +71,23 @@ export const useMatrixRain = (
     const drawFrame = (currentTime: number) => {
       if (!canvas || !context) return;
       if (currentTime - lastTime >= frameInterval) {
-        // * Enhanced fade effect with slight green tint
-        context.fillStyle = "rgba(0, 0, 0, 0.04)";
+        const rawIntensity = intensityRef.current ?? 0.12;
+        const intensity = prefersReducedMotion()
+          ? getReducedMotionRainIntensity()
+          : rawIntensity;
+        const drawParams = getMatrixRainDrawParams(intensity);
+
+        for (const drop of drops) {
+          drop.setBrightHeadThreshold(drawParams.brightHeadThreshold);
+        }
+
+        // * Enhanced fade effect — lower alpha at high intensity = denser trails
+        context.fillStyle = `rgba(0, 0, 0, ${drawParams.fadeAlpha})`;
         context.fillRect(0, 0, canvas.width, canvas.height);
 
         // * Update all drops first
         for (const drop of drops) {
-          drop.update(canvas.height);
+          drop.update(canvas.height, drawParams.speedMultiplier);
         }
 
         // * Performance Optimization: Batch drawing by font size to minimize state changes
@@ -82,6 +105,8 @@ export const useMatrixRain = (
           buckets[drop.fontSize].push(drop);
         }
 
+        const opacityMultiplier = drawParams.opacityMultiplier;
+
         // Iterate through buckets
         for (const fontSizeStr in buckets) {
           const bucket = buckets[fontSizeStr];
@@ -95,7 +120,8 @@ export const useMatrixRain = (
             const trailLength = drop.trail.length;
             for (let i = 0; i < trailLength; i++) {
               const trailItem = drop.trail[i];
-              const trailOpacity = (i / trailLength) * drop.opacity * 0.3;
+              const trailOpacity =
+                (i / trailLength) * drop.opacity * 0.3 * opacityMultiplier;
               context.globalAlpha = trailOpacity;
               context.fillText(
                 trailItem.char,
@@ -109,7 +135,7 @@ export const useMatrixRain = (
           context.fillStyle = "#00FF64";
           for (const drop of bucket) {
             if (!drop.brightness) {
-              context.globalAlpha = drop.opacity;
+              context.globalAlpha = drop.opacity * opacityMultiplier;
               context.fillText(drop.char, drop.x, drop.y * drop.fontSize);
             }
           }
@@ -121,7 +147,10 @@ export const useMatrixRain = (
 
           for (const drop of bucket) {
             if (drop.brightness) {
-              context.globalAlpha = Math.min(1, drop.opacity * 1.5);
+              context.globalAlpha = Math.min(
+                1,
+                drop.opacity * 1.5 * opacityMultiplier,
+              );
               context.fillText(drop.char, drop.x, drop.y * drop.fontSize);
             }
           }
@@ -149,5 +178,5 @@ export const useMatrixRain = (
       window.removeEventListener("resize", handleResize);
       window.cancelAnimationFrame(animationFrameId);
     };
-  }, [isVisible, canvasRef]);
+  }, [isVisible, canvasRef, intensityRef]);
 };

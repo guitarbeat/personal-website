@@ -15,6 +15,7 @@ import { NuUhUhEasterEgg } from "./NuUhUhEasterEgg";
 import { useHackInteraction } from "./useHackInteraction";
 import { useHackProgressDecay } from "./useHackProgressDecay";
 import { useHackSession } from "./useHackSession";
+import { getMatrixRainIntensity } from "./matrixRainIntensity";
 import { useMatrixRain } from "./useMatrixRain";
 
 interface MatrixProps {
@@ -25,7 +26,6 @@ interface MatrixProps {
 
 const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  useMatrixRain(canvasRef, isVisible);
   const {
     hackingBuffer,
     setHackingBuffer,
@@ -35,6 +35,14 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
     setHackFeedback,
     isHackingComplete,
   } = useHackSession(isVisible);
+  const rainIntensityRef = useRef(getMatrixRainIntensity(hackProgress));
+  const matrixRainIntensity = getMatrixRainIntensity(hackProgress);
+
+  useEffect(() => {
+    rainIntensityRef.current = matrixRainIntensity;
+  }, [matrixRainIntensity]);
+
+  useMatrixRain(canvasRef, isVisible, rainIntensityRef);
   const completionTriggeredRef = useRef(false);
   const [sessionStart] = useState(() => Date.now());
   const [matrixCoordinate] = useState<string>(() => {
@@ -327,6 +335,11 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
         className="matrix-canvas"
         role="img"
         aria-label="Matrix rain animation"
+        style={
+          {
+            "--matrix-rain-intensity": matrixRainIntensity,
+          } as React.CSSProperties
+        }
       />
       <HackTerminalPanel
         consoleDisplay={consoleDisplay}

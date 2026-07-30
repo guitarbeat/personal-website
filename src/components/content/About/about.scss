@@ -41,10 +41,15 @@
 
   &__text-container {
     flex: 1 1 60%;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
     min-width: min(100%, 28rem);
+    align-items: start;
+
+    @media (width >= 1100px) {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
   }
 
   &__spotify {
@@ -104,7 +109,7 @@
       transform var(--about-transition-duration) var(--about-timing-function),
       border-color var(--about-transition-duration) var(--about-timing-function),
       box-shadow var(--about-transition-duration) var(--about-timing-function);
-    max-height: 4em;
+    max-height: 6.5rem;
     cursor: pointer;
     backdrop-filter: blur(var(--about-blur-amount));
     background: var(--about-glass-bg);
@@ -121,6 +126,7 @@
     }
 
     &.expanded {
+      grid-column: 1 / -1;
       max-height: 500px;
       background: linear-gradient(
         135deg,
@@ -171,11 +177,11 @@
     }
 
     h2 {
-      font-size: 2rem;
+      font-size: clamp(0.95rem, 1.15vw, 1.25rem);
       margin: 0;
-      line-height: 2rem;
+      line-height: 1.25;
       text-transform: uppercase;
-      padding: 1.5rem 1rem;
+      padding: 1rem 2.25rem 1rem 0.85rem;
       color: var(--text-color);
       transition: color 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
     }
@@ -298,6 +304,10 @@ body.light-theme {
       margin: 1rem 0;
     }
 
+    &__text-container {
+      grid-template-columns: 1fr;
+    }
+
     &__spotify {
       width: min(100%, 300px);
       max-width: 300px;
@@ -306,7 +316,7 @@ body.light-theme {
 
     &__text {
       h2 {
-        font-size: 1.8rem;
+        font-size: 1.35rem;
       }
 
       p {

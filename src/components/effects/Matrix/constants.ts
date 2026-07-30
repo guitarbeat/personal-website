@@ -151,6 +151,22 @@ export const MATRIX_RAIN = {
   },
 };
 
+/** Progressive rain intensity tuning (see matrixRainIntensity.ts). */
+export const MATRIX_RAIN_INTENSITY = {
+  SESSION_START_PROGRESS: 12,
+  BASE_INTENSITY: 0.12,
+  PHASE_THRESHOLDS: {
+    PHASE_1: 33,
+    PHASE_2: 66,
+  },
+  PHASE_BOOST: 0.05,
+  REDUCED_MOTION_CAP: 0.2,
+  FADE_ALPHA: { min: 0.035, max: 0.07 },
+  OPACITY: { min: 0.45, max: 1.0 },
+  SPEED: { min: 0.75, max: 1.25 },
+  BRIGHT_HEAD: { minThreshold: 0.9, maxThreshold: 0.97 },
+};
+
 // * Security Constants
 export const SECURITY = {
   RATE_LIMIT: {

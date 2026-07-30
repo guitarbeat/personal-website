@@ -26,6 +26,7 @@ export class Drop {
   speed!: number;
   fontSize!: number;
   opacity!: number;
+  brightHeadThreshold!: number;
 
   constructor(x: number) {
     this.x = x;
@@ -39,7 +40,12 @@ export class Drop {
     this.brightness = secureRandom() > 0.95;
     this.trailLength = Math.floor(secureRandom() * 3) + 2;
     this.trail = [];
+    this.brightHeadThreshold = 0.97;
     this.initializeCharacterProperties();
+  }
+
+  setBrightHeadThreshold(threshold: number) {
+    this.brightHeadThreshold = threshold;
   }
 
   initializeCharacterProperties() {
@@ -52,8 +58,8 @@ export class Drop {
     this.opacity = secureRandom() * 0.6 + 0.3;
   }
 
-  update(canvasHeight: number) {
-    this.y += this.speed;
+  update(canvasHeight: number, speedMultiplier = 1) {
+    this.y += this.speed * speedMultiplier;
     this.frame++;
 
     // * Update trail
@@ -68,7 +74,7 @@ export class Drop {
           Math.floor(secureRandom() * MATRIX_RAIN.ALPHABET.length)
         ];
       this.frame = 0;
-      this.brightness = secureRandom() > 0.97;
+      this.brightness = secureRandom() > this.brightHeadThreshold;
     }
 
     if (canvasHeight && this.y * this.fontSize > canvasHeight) {

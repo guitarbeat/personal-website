@@ -171,6 +171,21 @@
   .matrix-rate-limit {
     animation: none;
   }
+
+  .matrix-canvas {
+    --matrix-rain-intensity: 0.2;
+    opacity: calc(0.35 + var(--matrix-rain-intensity) * 0.35);
+    filter: contrast(1.1) brightness(0.9);
+    transition: none;
+
+    &::after {
+      background: radial-gradient(
+        ellipse at center,
+        transparent 0%,
+        rgba(0, 0, 0, 0.5) 100%
+      );
+    }
+  }
   
   .feedback-container.glitch-effect {
     animation: none;
