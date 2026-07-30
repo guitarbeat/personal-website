@@ -1,9 +1,13 @@
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import react from "@vitejs/plugin-react";
 import dotenv from "dotenv";
 import { componentTagger } from "lovable-tagger";
 import { defineConfig, loadEnv } from "vite";
+
+const packageVersion = JSON.parse(
+  readFileSync(path.join(__dirname, "package.json"), "utf8"),
+).version as string;
 
 /** Vercel CLI writes here (not .env.local) so pulls do not wipe manual secrets. */
 function mergeVercelCliEnvFiles() {
@@ -173,7 +177,7 @@ export default defineConfig(({ mode }) => {
       "process.env.REACT_APP_BUILD_DATE": JSON.stringify(
         new Date().toISOString(),
       ),
-      "process.env.REACT_APP_VERSION": JSON.stringify("1.0.0"),
+      "process.env.REACT_APP_VERSION": JSON.stringify(packageVersion),
     },
     css: {
       preprocessorOptions: {
