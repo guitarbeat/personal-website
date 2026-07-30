@@ -8,6 +8,7 @@ import {
   extractBlockPlainText,
   extractRichText,
   getNotionToken,
+  parseResponseJson,
 } from "./helpers.js";
 import {
   getDatasetTransformer,
@@ -21,14 +22,6 @@ import {
   validateDatasetRecords,
   validateQueryBody,
 } from "./validate.js";
-
-async function parseResponseJson(response) {
-  try {
-    return await response.json();
-  } catch (_error) {
-    return null;
-  }
-}
 
 async function fetchNotionBlockChildren({
   blockId,

@@ -10,6 +10,14 @@ export function parseJsonSafely(value) {
   }
 }
 
+export async function parseResponseJson(response) {
+  try {
+    return await response.json();
+  } catch (_error) {
+    return null;
+  }
+}
+
 export function toIsoString(now = new Date()) {
   return now instanceof Date ? now.toISOString() : new Date(now).toISOString();
 }

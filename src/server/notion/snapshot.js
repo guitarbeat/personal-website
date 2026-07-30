@@ -10,6 +10,7 @@ import {
 import {
   getSnapshotAgeSeconds,
   parseJsonSafely,
+  parseResponseJson,
   toIsoString,
 } from "./helpers.js";
 import { validateContentData } from "./validate.js";
