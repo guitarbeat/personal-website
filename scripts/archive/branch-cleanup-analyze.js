@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const { sh } = require("../lib/exec.js");
+const { sh } = require("../lib/exec.cjs");
 
 const KEEP = new Set(["main", "gh-pages"]);
 

@@ -4,14 +4,14 @@ import {
   refreshContentSnapshot,
   SNAPSHOT_KEY,
   SNAPSHOT_META_KEY,
-} from "../index.js";
+} from "../index.mjs";
 import {
   createAboutPage,
   createProjectPage,
   createWorkPage,
   mockResponse,
   snapshotEnvelope,
-} from "../testFixtures.js";
+} from "../testFixtures.mjs";
 
 describe("notion snapshot and health", () => {
   it("writes the KV snapshot after a successful refresh", async () => {

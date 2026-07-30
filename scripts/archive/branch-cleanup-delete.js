@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 const fs = require("node:fs");
-const { shTry } = require("../lib/exec.js");
+const { shTry } = require("../lib/exec.cjs");
 
 const REPO = "guitarbeat/personal-website";
 const analysis = JSON.parse(

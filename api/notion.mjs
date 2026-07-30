@@ -1,4 +1,4 @@
-import { applyCors } from "../src/server/apiCors.js";
+import { applyCors } from "../src/server/apiCors.mjs";
 
 export default async function handler(req, res) {
   applyCors(req, res, {

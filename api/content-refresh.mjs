@@ -3,7 +3,7 @@ import {
   createErrorPayload,
   isAuthorizedCronRequest,
   refreshContentSnapshot,
-} from "../src/server/notion/index.js";
+} from "../src/server/notion/index.mjs";
 
 export default async function handler(req, res) {
   if (req.method !== "GET" && req.method !== "POST") {

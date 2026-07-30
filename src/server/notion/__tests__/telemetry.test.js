@@ -1,4 +1,4 @@
-import { createErrorPayload } from "../index.js";
+import { createErrorPayload } from "../index.mjs";
 
 describe("notion telemetry", () => {
   it("sanitizes public error payloads", () => {

@@ -1,4 +1,4 @@
-import { validateQueryBody } from "../index.js";
+import { validateQueryBody } from "../index.mjs";
 
 describe("notion query validation", () => {
   it("drops invalid properties gracefully due to parsing errors", () => {

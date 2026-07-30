@@ -3,25 +3,25 @@ import {
   DATABASE_IDS,
   NOTION_API_BASE,
   NOTION_VERSION,
-} from "./constants.js";
+} from "./constants.mjs";
 import {
   extractBlockPlainText,
   extractRichText,
   getNotionToken,
   parseResponseJson,
-} from "./helpers.js";
+} from "./helpers.mjs";
 import {
   getDatasetTransformer,
   prepareProjectsForPublicDisplay,
   prepareWorkForPublicDisplay,
   transformProjectsData,
   transformWorkData,
-} from "./transform.js";
+} from "./transform.mjs";
 import {
   validateContentData,
   validateDatasetRecords,
   validateQueryBody,
-} from "./validate.js";
+} from "./validate.mjs";
 
 async function fetchNotionBlockChildren({
   blockId,

@@ -1,4 +1,4 @@
-import { ContentError } from "./constants.js";
+import { ContentError } from "./constants.mjs";
 
 export function buildStructuredLog(event, telemetry) {
   return JSON.stringify({

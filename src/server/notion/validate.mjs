@@ -1,5 +1,5 @@
-import { ContentError } from "./constants.js";
-import { isMonthYear } from "./helpers.js";
+import { ContentError } from "./constants.mjs";
+import { isMonthYear } from "./helpers.mjs";
 
 function isNonEmptyString(value) {
   return typeof value === "string" && value.trim().length > 0;

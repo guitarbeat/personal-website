@@ -1,9 +1,9 @@
-import { queryNotionDatabase } from "../index.js";
+import { queryNotionDatabase } from "../index.mjs";
 import {
   createProjectPage,
   createWorkPage,
   mockResponse,
-} from "../testFixtures.js";
+} from "../testFixtures.mjs";
 
 describe("notion api queries", () => {
   it("paginates through multi-page Notion responses and returns all records", async () => {

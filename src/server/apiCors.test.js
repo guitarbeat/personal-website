@@ -1,4 +1,4 @@
-import { isOriginAllowed } from "./apiCors.js";
+import { isOriginAllowed } from "./apiCors.mjs";
 
 describe("apiCors", () => {
   it("should block empty origins", () => {

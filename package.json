@@ -3,6 +3,7 @@
   "version": "0.1.1",
   "homepage": "https://aaronwoods.info/",
   "private": true,
+  "type": "module",
   "packageManager": "pnpm@9.15.9",
   "engines": {
     "node": "22.x",
@@ -43,9 +44,9 @@
     "sass:check": "sass --no-source-map --no-error-css --verbose src:public/build/css",
     "lint:md": "markdownlint-cli2 \"**/*.md\" \"#node_modules\"",
     "lint:md:fix": "markdownlint-cli2 --fix \"**/*.md\" \"#node_modules\"",
-    "compress-images": "node scripts/compress-images.js",
-    "sync:html": "node scripts/sync-html-heads.js",
-    "sync:html:check": "node scripts/sync-html-heads.js --check",
+    "compress-images": "node scripts/compress-images.cjs",
+    "sync:html": "node scripts/sync-html-heads.cjs",
+    "sync:html:check": "node scripts/sync-html-heads.cjs --check",
     "env:vercel": "pnpm dlx vercel env pull .env.vercel.development --yes --environment development",
     "env:vercel:prod": "pnpm dlx vercel env pull .env.vercel.production --yes --environment production",
     "build:dev": "vite build --mode development"

@@ -5,7 +5,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 
-const { ROOT, sh, shTry } = require("../lib/exec.js");
+const { ROOT, sh, shTry } = require("../lib/exec.cjs");
 
 const REPO = "guitarbeat/personal-website";
 const LOG = path.join(ROOT, "docs/pr-cleanup-log.md");

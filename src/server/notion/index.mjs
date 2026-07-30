@@ -1,8 +1,8 @@
 export {
   fetchAllContentData,
   queryNotionDatabase,
-} from "./api.js";
-export { isAuthorizedCronRequest } from "./auth.js";
+} from "./api.mjs";
+export { isAuthorizedCronRequest } from "./auth.mjs";
 export {
   CACHE_CONTROL_HEADER,
   ContentError,
@@ -12,8 +12,8 @@ export {
   SCHEMA_VERSION,
   SNAPSHOT_KEY,
   SNAPSHOT_META_KEY,
-} from "./constants.js";
-export { getSnapshotAgeSeconds, parseJsonSafely } from "./helpers.js";
+} from "./constants.mjs";
+export { getSnapshotAgeSeconds, parseJsonSafely } from "./helpers.mjs";
 
 export {
   createKvClient,
@@ -22,10 +22,10 @@ export {
   readSnapshot,
   readSnapshotMetadata,
   refreshContentSnapshot,
-} from "./snapshot.js";
-export { buildStructuredLog, createErrorPayload } from "./telemetry.js";
+} from "./snapshot.mjs";
+export { buildStructuredLog, createErrorPayload } from "./telemetry.mjs";
 export {
   validateContentData,
   validateDatasetRecords,
   validateQueryBody,
-} from "./validate.js";
+} from "./validate.mjs";

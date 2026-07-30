@@ -1,4 +1,4 @@
-import { fetchAllContentData } from "./api.js";
+import { fetchAllContentData } from "./api.mjs";
 import {
   ContentError,
   HEALTH_DEGRADED_AFTER_SECONDS,
@@ -6,14 +6,14 @@ import {
   SCHEMA_VERSION,
   SNAPSHOT_KEY,
   SNAPSHOT_META_KEY,
-} from "./constants.js";
+} from "./constants.mjs";
 import {
   getSnapshotAgeSeconds,
   parseJsonSafely,
   parseResponseJson,
   toIsoString,
-} from "./helpers.js";
-import { validateContentData } from "./validate.js";
+} from "./helpers.mjs";
+import { validateContentData } from "./validate.mjs";
 
 function createDatasetCounts(data) {
   return {

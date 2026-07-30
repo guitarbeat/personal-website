@@ -1,4 +1,4 @@
-import { ContentError, DATABASE_IDS } from "./constants.js";
+import { ContentError, DATABASE_IDS } from "./constants.mjs";
 import {
   compareProjectRecords,
   compareWorkRecords,
@@ -9,7 +9,7 @@ import {
   extractNumberValue,
   extractProjectHook,
   extractRichText,
-} from "./helpers.js";
+} from "./helpers.mjs";
 
 export function prepareProjectsForPublicDisplay(records) {
   return records

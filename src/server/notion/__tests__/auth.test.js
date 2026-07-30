@@ -1,4 +1,4 @@
-import { isAuthorizedCronRequest } from "../index.js";
+import { isAuthorizedCronRequest } from "../index.mjs";
 
 describe("notion cron auth", () => {
   it("accepts only header-based cron authorization", () => {

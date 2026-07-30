@@ -7,7 +7,7 @@ import { defineConfig, loadEnv } from "vite";
 import {
   getBuildDate,
   getGitCommitHash,
-} from "./scripts/build-metadata.js";
+} from "./scripts/build-metadata.cjs";
 
 const packageVersion = JSON.parse(
   readFileSync(path.join(__dirname, "package.json"), "utf8"),
