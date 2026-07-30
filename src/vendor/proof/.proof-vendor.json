@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "package": "@aarons-sprites/proof-react",
+  "version": "0.2.0",
+  "sourceDigest": "aed2992badd8fc9dd9145176c3f7cac531e76b362f86269a33530d083f4f75ec",
+  "atlasDigest": "ef1c0dd7e279865bb44e04c91b758e057d314b683d614b2a1de90c299973165c",
+  "files": {
+    "assets/atlas.json": "f7b6c2ac9344acbbbf63c80db3c3e58cf543bf6bdcc240a7aed63cb5523a6ccd",
+    "assets/spritesheet.webp": "bdc67122ac995d68d02992b7c24b84689173e61f0c17c80a78203ddfe8ffe368",
+    "atlas.ts": "aa9a84376bc3c5dec919d220e2afda517570f1109da7a62c052884579781445e",
+    "companionGeometry.ts": "2478bc1785aa52285024a7b5aec780bbffece2fd473838259d9527f2d362e245",
+    "gaze.ts": "c625aa636b3a3a71db33e563d71bdb30a132424a2222d3508c6e7cb000a0503b",
+    "index.ts": "34b5af5aa6f3aa7786c8f61966adbab6c1009cfc7786c592f6faf0341cb407ba",
+    "pointer.ts": "bb60af9232ed01242f8f51cbdf7e353a2155645be5bf7180e63ab630e7d222fa",
+    "Proof.tsx": "051bc88345ccf30ae076efac4e18b728ec1d2fface6c9e34d027a589ea834c6b",
+    "ProofCompanion.tsx": "db8d92dc4107505644e4900f142ede45f7237e4284763944ab64d28cdc7a028b",
+    "types.ts": "554d37e46a0892579ddaa90ce755d8c2de2163807a63e7d83c091383a4545e18",
+    "useReducedMotion.ts": "d6e3166d555da7f6f5eaf33036ee41e0e1320b239af32f52fcfe7178d63a62aa"
+  }
+}

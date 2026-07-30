@@ -18,7 +18,8 @@
       "!dist",
       "!build",
       "!node_modules",
-      "!.tmp-vercel-pack"
+      "!.tmp-vercel-pack",
+      "!src/vendor/**"
     ]
   },
   "formatter": {

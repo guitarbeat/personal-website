@@ -6,4 +6,5 @@ public/build/
 .biome/
 .tmp-vercel-pack/
 src/css/styles.css
+src/vendor/
 .git/

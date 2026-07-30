@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "id": "proof",
+  "image": "spritesheet.webp",
+  "imageWidth": 1536,
+  "imageHeight": 2288,
+  "columns": 8,
+  "rows": 11,
+  "cellWidth": 192,
+  "cellHeight": 208,
+  "timing": "consumer-defined",
+  "neutral": {
+    "row": 0,
+    "column": 6
+  },
+  "animations": {
+    "idle": {
+      "row": 0,
+      "columns": [0, 1, 2, 3, 4, 5],
+      "loop": true
+    },
+    "running-right": {
+      "row": 1,
+      "columns": [0, 1, 2, 3, 4, 5, 6, 7],
+      "loop": true
+    },
+    "running-left": {
+      "row": 2,
+      "columns": [0, 1, 2, 3, 4, 5, 6, 7],
+      "loop": true
+    },
+    "waving": {
+      "row": 3,
+      "columns": [0, 1, 2, 3],
+      "loop": true
+    },
+    "jumping": {
+      "row": 4,
+      "columns": [0, 1, 2, 3, 4],
+      "loop": true,
+      "purpose": "hover acknowledgment: warm glance, small smile, eyebrow lift, and tiny satisfied nod"
+    },
+    "failed": {
+      "row": 5,
+      "columns": [0, 1, 2, 3, 4, 5, 6, 7],
+      "loop": true
+    },
+    "waiting": {
+      "row": 6,
+      "columns": [0, 1, 2, 3, 4, 5],
+      "loop": true,
+      "purpose": "expectant wait: one hand rises smoothly into a small open-palm question, holds, then follows the same path back to neutral"
+    },
+    "running": {
+      "row": 7,
+      "columns": [0, 1, 2, 3, 4, 5],
+      "loop": true,
+      "purpose": "active work: seated laptop typing with a deliberate two-cell chin-rest pause"
+    },
+    "review": {
+      "row": 8,
+      "columns": [0, 1, 2, 3, 4, 5],
+      "loop": true
+    }
+  },
+  "lookDirections": {
+    "000": {"row": 9, "column": 0, "meaning": "up"},
+    "022.5": {"row": 9, "column": 1, "meaning": "up-right"},
+    "045": {"row": 9, "column": 2, "meaning": "up-right"},
+    "067.5": {"row": 9, "column": 3, "meaning": "up-right"},
+    "090": {"row": 9, "column": 4, "meaning": "right"},
+    "112.5": {"row": 9, "column": 5, "meaning": "down-right"},
+    "135": {"row": 9, "column": 6, "meaning": "down-right"},
+    "157.5": {"row": 9, "column": 7, "meaning": "down-right"},
+    "180": {"row": 10, "column": 0, "meaning": "down"},
+    "202.5": {"row": 10, "column": 1, "meaning": "down-left"},
+    "225": {"row": 10, "column": 2, "meaning": "down-left"},
+    "247.5": {"row": 10, "column": 3, "meaning": "down-left"},
+    "270": {"row": 10, "column": 4, "meaning": "left"},
+    "292.5": {"row": 10, "column": 5, "meaning": "up-left"},
+    "315": {"row": 10, "column": 6, "meaning": "up-left"},
+    "337.5": {"row": 10, "column": 7, "meaning": "up-left"}
+  }
+}

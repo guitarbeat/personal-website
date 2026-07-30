@@ -45,6 +45,8 @@
     "compress-images": "node scripts/compress-images.cjs",
     "sync:html": "node scripts/sync-html-heads.cjs",
     "sync:html:check": "node scripts/sync-html-heads.cjs --check",
+    "verify:proof": "node scripts/verify-proof-vendor.mjs",
+    "test:proof-vendor": "node --test scripts/verify-proof-vendor.node-test.mjs",
     "env:vercel": "pnpm dlx vercel env pull .env.vercel.development --yes --environment development",
     "env:vercel:prod": "pnpm dlx vercel env pull .env.vercel.production --yes --environment production",
     "build:dev": "vite build --mode development"
