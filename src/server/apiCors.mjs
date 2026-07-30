@@ -1,4 +1,7 @@
 const PRODUCTION_WHITELIST = [
+  "https://woods.engineer",
+  "https://www.woods.engineer",
+  "https://guitarbeat-github-io.vercel.app",
   "https://aaronwoods.info",
   "https://www.aaronwoods.info",
   "https://pixel-pal-follow.lovable.app",

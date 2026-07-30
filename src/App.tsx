@@ -16,6 +16,7 @@ import {
 } from "@/components/effects/Matrix/AuthContext";
 import LoadingSequence from "@/components/effects/Loading/LoadingSequence";
 import { NotionProvider, useNotion } from "@/contexts/NotionContext";
+import { isVercelHostedBuild } from "@/utils/vercelHost";
 import { useMatrixActivation } from "@/hooks/useMatrixActivation";
 import { useScrollMode } from "@/hooks/useScrollMode";
 import "./sass/main.scss";
@@ -111,8 +112,12 @@ const App = () => (
   <NotionProvider>
     <AuthProvider>
       <AppContent />
-      <Analytics />
-      <SpeedInsights />
+      {isVercelHostedBuild() ? (
+        <>
+          <Analytics />
+          <SpeedInsights />
+        </>
+      ) : null}
     </AuthProvider>
   </NotionProvider>
 );

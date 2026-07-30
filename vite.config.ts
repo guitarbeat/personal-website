@@ -8,6 +8,7 @@ import {
   getBuildDate,
   getGitCommitHash,
 } from "./scripts/build-metadata.cjs";
+import { SITE_ORIGIN } from "./src/utils/vercelHost.ts";
 
 const packageVersion = JSON.parse(
   readFileSync(path.join(__dirname, "package.json"), "utf8"),
@@ -149,6 +150,11 @@ export default defineConfig(({ mode }) => {
   mergeVercelCliEnvFiles();
   const env = loadEnv(mode, process.cwd(), "");
   Object.assign(process.env, env);
+  const isVercelBuild = Boolean(process.env.VERCEL);
+  const apiBase =
+    env.REACT_APP_API_BASE ||
+    process.env.REACT_APP_API_BASE ||
+    (mode === "production" && !isVercelBuild ? SITE_ORIGIN : "");
 
   return {
     plugins: [
@@ -166,9 +172,8 @@ export default defineConfig(({ mode }) => {
       "process.env.NODE_ENV": JSON.stringify(
         env.NODE_ENV || process.env.NODE_ENV || "development",
       ),
-      "process.env.REACT_APP_API_BASE": JSON.stringify(
-        env.REACT_APP_API_BASE || process.env.REACT_APP_API_BASE || "",
-      ),
+      "process.env.REACT_APP_API_BASE": JSON.stringify(apiBase),
+      "process.env.VERCEL": JSON.stringify(process.env.VERCEL || ""),
       // Security Fix: Printful API keys removed to prevent client-side exposure
       "process.env.REACT_APP_PRINTFUL_API_KEY": JSON.stringify(""),
       "process.env.REACT_APP_PRINTFUL_STORE_ID": JSON.stringify(""),

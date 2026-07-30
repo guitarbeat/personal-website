@@ -11,3 +11,4 @@ docs/pr-cleanup-inventory.json
 .playwright-cli/
 dist/
 public/build/css/
+.env*
