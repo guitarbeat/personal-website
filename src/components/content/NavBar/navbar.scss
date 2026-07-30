@@ -135,8 +135,6 @@
     font-weight: 600;
     line-height: 1;
     text-transform: uppercase;
-    transform: translateX(0);
-    transition: transform var(--transition-standard);
     flex-shrink: 0;
     white-space: nowrap;
 
@@ -175,44 +173,9 @@
         }
       }
     }
-
-    // * VFX Active State
-    &.active {
-      position: relative;
-      z-index: 1;
-      backface-visibility: hidden;
-
-      a {
-        position: relative;
-
-        // Single entrance pulse (not infinite)
-        &::before {
-          content: '';
-          position: absolute;
-          inset: -0.2rem;
-          background: radial-gradient(
-            circle at center,
-            rgba(255, 255, 255, 0.1) 0%,
-            transparent 70%
-          );
-          border-radius: 0.5rem;
-          pointer-events: none;
-          opacity: 0;
-          transform: scale(0.95);
-          animation: activeGlowEnter 600ms var(--navbar-ease-out) forwards;
-        }
-      }
-    }
   }
 }
 
-
-@keyframes activeGlowEnter {
-  to {
-    opacity: 0.25;
-    transform: scale(1);
-  }
-}
 
 // Utility Classes
 .visually-hidden {
@@ -289,12 +252,6 @@
 
       &::after {
         transition: background-color 0.2s ease;
-      }
-
-      &.active a::before {
-        animation: none;
-        opacity: 0.2;
-        transform: none;
       }
     }
 

@@ -9,7 +9,6 @@ import {
 } from "react";
 import { Link } from "react-router-dom";
 // Custom hooks
-import { useVFXEffect } from "@/hooks/useVFXEffect";
 import { cn, debounce } from "@/utils/commonUtils";
 // Context imports
 import { useAuth } from "../../effects/Matrix/AuthContext";
@@ -89,11 +88,6 @@ function NavBar({ items, onMatrixActivate, isInShop = false }: NavBarProps) {
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
   const [hasOverflow, setHasOverflow] = useState(false);
-
-  // VFX state for navigation effects
-  const [activeLinkRef, setActiveLinkRef] = useState<HTMLElement | null>(null);
-  const linkRefs = useRef<Record<string, HTMLElement>>({});
-  const vfxTimeoutRef = useRef<NodeJS.Timeout | number | null>(null);
 
   // Create navItems conditionally - memoized to prevent unnecessary re-renders
   const navItems = useMemo(() => {
@@ -221,15 +215,6 @@ function NavBar({ items, onMatrixActivate, isInShop = false }: NavBarProps) {
     return true;
   });
 
-  // * Configure VFX effect for navigation links
-  const vfxEnabled = typeof window !== "undefined";
-
-  useVFXEffect({
-    enabled: vfxEnabled,
-    activeElement: activeLinkRef,
-    effectConfig: { shader: "rgbShift", overflow: 100 },
-  });
-
   const handleThemeClick = useCallback(() => {
     const now = Date.now();
     const clickTimes = themeClickTimesRef.current;
@@ -275,72 +260,31 @@ function NavBar({ items, onMatrixActivate, isInShop = false }: NavBarProps) {
     }
   }, [isLightTheme]);
 
-  // * Cleanup VFX timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (vfxTimeoutRef.current) {
-        clearTimeout(vfxTimeoutRef.current);
-        vfxTimeoutRef.current = null;
+  // * Handle smooth scrolling for hash navigation
+  const handleNavClick = useCallback((e: React.MouseEvent, href: string) => {
+    // Only intercept hash links (#anchor or /#anchor)
+    if (href.includes("#")) {
+      e.preventDefault();
+
+      // Extract the ID from URLs like "/#about" or "#about"
+      const hashIndex = href.indexOf("#");
+      const targetId = href.substring(hashIndex + 1);
+      const targetElement = document.getElementById(targetId);
+
+      if (targetElement) {
+        targetElement.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
       }
-    };
+    }
   }, []);
 
-  // * Handle smooth scrolling for hash navigation
-  const handleNavClick = useCallback(
-    (e: React.MouseEvent, href: string, label: string) => {
-      // * Clear any existing timeout
-      if (vfxTimeoutRef.current) {
-        if (typeof vfxTimeoutRef.current === "number")
-          clearTimeout(vfxTimeoutRef.current);
-        else clearTimeout(vfxTimeoutRef.current as unknown as number);
-        vfxTimeoutRef.current = null;
-      }
-
-      // * Set active link for VFX effect
-      const linkRef = linkRefs.current[label];
-      if (linkRef) {
-        setActiveLinkRef(linkRef);
-
-        // * Clear the effect after 1.5 seconds
-        vfxTimeoutRef.current = setTimeout(() => {
-          setActiveLinkRef(null);
-          vfxTimeoutRef.current = null;
-        }, 1500);
-      }
-
-      // Only intercept hash links (#anchor or /#anchor)
-      if (href.includes("#")) {
-        e.preventDefault();
-
-        // Extract the ID from URLs like "/#about" or "#about"
-        const hashIndex = href.indexOf("#");
-        const targetId = href.substring(hashIndex + 1);
-        const targetElement = document.getElementById(targetId);
-
-        if (targetElement) {
-          targetElement.scrollIntoView({
-            behavior: "smooth",
-            block: "start",
-          });
-        }
-      }
-    },
-    [],
-  );
-
   const links = filteredNavItems.map(([label, href]) => (
-    <li
-      key={label}
-      className="navbar__item"
-      ref={(el) => {
-        if (el) {
-          linkRefs.current[label] = el;
-        }
-      }}
-    >
+    <li key={label} className="navbar__item">
       <Link
         to={isInShop && label === "Home" ? "/" : href}
-        onClick={(e) => handleNavClick(e, href, label)}
+        onClick={(e) => handleNavClick(e, href)}
       >
         {label}
       </Link>
