@@ -25,7 +25,7 @@ Upcoming improvements include expanding the showcased projects, refining the wor
 
 Detailed technical documentation, design specifications, and migration plans are available in the [docs/](docs/) folder:
 
-- [Changelog](CHANGELOG.md) – Release history (current: v0.1.0).
+- [Changelog](CHANGELOG.md) – Release history (current: v0.1.1).
 - [Notion Integration](docs/NOTION_INTEGRATION.md) – Comprehensive guide for the Google Sheets to Notion migration.
 - [Code Audit Report](docs/CODE_AUDIT_REPORT.md) – Security and quality analysis of the codebase.
 - [Development Notes](docs/DEVELOPMENT_NOTES.md) – Technical notes and refactoring opportunities.
