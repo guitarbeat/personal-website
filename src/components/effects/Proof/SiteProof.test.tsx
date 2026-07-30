@@ -39,6 +39,40 @@ jest.mock("@/vendor/proof", () => {
 });
 
 import { SiteProof } from "./SiteProof";
+import { canMountSiteProof } from "./siteProofMount";
+
+describe("canMountSiteProof", () => {
+  it("requires unlock, exited loader, and closed Matrix", () => {
+    expect(
+      canMountSiteProof({
+        isUnlocked: true,
+        isInitialLoaderVisible: false,
+        showMatrix: false,
+      }),
+    ).toBe(true);
+    expect(
+      canMountSiteProof({
+        isUnlocked: false,
+        isInitialLoaderVisible: false,
+        showMatrix: false,
+      }),
+    ).toBe(false);
+    expect(
+      canMountSiteProof({
+        isUnlocked: true,
+        isInitialLoaderVisible: true,
+        showMatrix: false,
+      }),
+    ).toBe(false);
+    expect(
+      canMountSiteProof({
+        isUnlocked: true,
+        isInitialLoaderVisible: false,
+        showMatrix: true,
+      }),
+    ).toBe(false);
+  });
+});
 
 describe("SiteProof", () => {
   beforeEach(() => {
@@ -47,45 +81,8 @@ describe("SiteProof", () => {
     mockUseMobileDetection.mockReturnValue({ isMobile: false });
   });
 
-  it("does not mount while locked", () => {
-    const { container } = render(
-      <SiteProof
-        isUnlocked={false}
-        isInitialLoaderVisible={false}
-        showMatrix={false}
-      />,
-    );
-
-    expect(container).toBeEmptyDOMElement();
-    expect(mockProofCompanion).not.toHaveBeenCalled();
-  });
-
-  it("does not mount while the initial loader is visible", () => {
-    const { container } = render(
-      <SiteProof isUnlocked isInitialLoaderVisible showMatrix={false} />,
-    );
-
-    expect(container).toBeEmptyDOMElement();
-    expect(mockProofCompanion).not.toHaveBeenCalled();
-  });
-
-  it("does not mount while Matrix is open", () => {
-    const { container } = render(
-      <SiteProof isUnlocked isInitialLoaderVisible={false} showMatrix />,
-    );
-
-    expect(container).toBeEmptyDOMElement();
-    expect(mockProofCompanion).not.toHaveBeenCalled();
-  });
-
-  it("mounts unlocked Proof at desktop size after loader and Matrix exit", () => {
-    render(
-      <SiteProof
-        isUnlocked
-        isInitialLoaderVisible={false}
-        showMatrix={false}
-      />,
-    );
+  it("mounts Proof at desktop size with site stacking and persistence", () => {
+    render(<SiteProof />);
 
     const companion = screen.getByTestId("proof-companion");
     expect(companion).toHaveAttribute("data-size", "208");
@@ -104,13 +101,7 @@ describe("SiteProof", () => {
   it("uses the mobile size on narrow viewports", () => {
     mockUseMobileDetection.mockReturnValue({ isMobile: true });
 
-    render(
-      <SiteProof
-        isUnlocked
-        isInitialLoaderVisible={false}
-        showMatrix={false}
-      />,
-    );
+    render(<SiteProof />);
 
     expect(screen.getByTestId("proof-companion")).toHaveAttribute(
       "data-size",

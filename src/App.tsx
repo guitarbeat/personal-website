@@ -8,6 +8,7 @@ import { NAV_ITEMS } from "@/components/Core/constants";
 import { ContentUnavailableState } from "@/components/Core/SiteLayout";
 import LoadingSequence from "@/components/effects/Loading/LoadingSequence";
 import { AuthProvider, useAuth } from "@/components/effects/Matrix/AuthContext";
+import { canMountSiteProof } from "@/components/effects/Proof/siteProofMount";
 import { NotionProvider, useNotion } from "@/contexts/NotionContext";
 import { useMatrixActivation } from "@/hooks/useMatrixActivation";
 import { useScrollMode } from "@/hooks/useScrollMode";
@@ -55,7 +56,11 @@ function AppContent() {
   const isBackgroundVisible = true;
   const canRevealInitialLoader =
     isInitialLoaderVisible && hasMinimumLoaderDurationElapsed;
-  const shouldMountProof = isUnlocked && !isInitialLoaderVisible && !showMatrix;
+  const shouldMountProof = canMountSiteProof({
+    isUnlocked,
+    isInitialLoaderVisible,
+    showMatrix,
+  });
 
   const handleInitialLoaderExit = useCallback(() => {
     setIsInitialLoaderVisible(false);
@@ -80,11 +85,7 @@ function AppContent() {
       ) : null}
       {shouldMountProof ? (
         <Suspense fallback={null}>
-          <SiteProof
-            isUnlocked={isUnlocked}
-            isInitialLoaderVisible={isInitialLoaderVisible}
-            showMatrix={showMatrix}
-          />
+          <SiteProof />
         </Suspense>
       ) : null}
       {showUnavailableState ? (

@@ -5,6 +5,19 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Proof companion on unlocked routes via vendored `@aarons-sprites/proof-react` `0.2.0`
+- `SiteProof` wrapper (208px desktop / 160px mobile, bottom-right, 72px inset)
+- Read-only vendor manifest verifier (`pnpm verify:proof`, `pnpm test:proof-vendor`)
+- Site z-index token `--z-index-proof` (`35`)
+
+### Fixed
+
+- `www.woods.engineer` ↔ apex asset redirect loop that blocked production JS
+
 ## [0.1.1] - 2026-07-29
 
 ### Fixed
