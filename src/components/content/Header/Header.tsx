@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 // Third-party imports
-import React, { useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import cvFile from "../../../assets/documents/cv.pdf";
 
@@ -168,24 +168,107 @@ const SOCIAL_MEDIA = [
   },
 ];
 
+const AVATAR_TRANSITION_FALLBACK_MS = 500;
+
+function prefersReducedMotion(): boolean {
+  if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+    return false;
+  }
+
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
 function Header() {
   const headerRef = useRef<HTMLDivElement>(null);
+  const transitionFallbackRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
   const [profileIndex, setProfileIndex] = useState<number>(() =>
     readStoredProfileIndex(),
   );
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [outgoingIndex, setOutgoingIndex] = useState<number | null>(null);
+  const [incomingIndex, setIncomingIndex] = useState<number | null>(null);
+  const [slideActive, setSlideActive] = useState(false);
 
   useScrambleEffect(headerRef);
 
-  const handleClick = () => {
-    setProfileIndex((prev) => {
-      const next = (prev + 1) % PROFILE_IMAGES.length;
-      try {
-        sessionStorage.setItem(PROFILE_INDEX_STORAGE_KEY, String(next));
-      } catch {
-        /* quota / private mode */
-      }
-      return next;
+  const persistProfileIndex = useCallback((index: number) => {
+    try {
+      sessionStorage.setItem(PROFILE_INDEX_STORAGE_KEY, String(index));
+    } catch {
+      /* quota / private mode */
+    }
+  }, []);
+
+  const completeTransition = useCallback(() => {
+    if (transitionFallbackRef.current) {
+      clearTimeout(transitionFallbackRef.current);
+      transitionFallbackRef.current = null;
+    }
+
+    if (incomingIndex === null) {
+      return;
+    }
+
+    setProfileIndex(incomingIndex);
+    persistProfileIndex(incomingIndex);
+    setIsTransitioning(false);
+    setOutgoingIndex(null);
+    setIncomingIndex(null);
+    setSlideActive(false);
+  }, [incomingIndex, persistProfileIndex]);
+
+  useEffect(() => {
+    if (!isTransitioning) {
+      return;
+    }
+
+    const frameId = requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setSlideActive(true);
+      });
     });
+
+    transitionFallbackRef.current = setTimeout(() => {
+      completeTransition();
+    }, AVATAR_TRANSITION_FALLBACK_MS);
+
+    return () => {
+      cancelAnimationFrame(frameId);
+      if (transitionFallbackRef.current) {
+        clearTimeout(transitionFallbackRef.current);
+        transitionFallbackRef.current = null;
+      }
+    };
+  }, [completeTransition, isTransitioning]);
+
+  const handleClick = () => {
+    if (isTransitioning) {
+      return;
+    }
+
+    const nextIndex = (profileIndex + 1) % PROFILE_IMAGES.length;
+
+    if (prefersReducedMotion()) {
+      setProfileIndex(nextIndex);
+      persistProfileIndex(nextIndex);
+      return;
+    }
+
+    setOutgoingIndex(profileIndex);
+    setIncomingIndex(nextIndex);
+    setSlideActive(false);
+    setIsTransitioning(true);
+  };
+
+  const handleOutgoingTransitionEnd = (
+    e: React.TransitionEvent<HTMLImageElement>,
+  ) => {
+    if (e.propertyName !== "transform") {
+      return;
+    }
+    completeTransition();
   };
 
   const handleImageError = (
@@ -194,6 +277,30 @@ function Header() {
     const target = e.currentTarget;
     target.onerror = null;
     target.src = FALLBACK_PROFILE_SRC;
+  };
+
+  const renderAvatarImage = (
+    index: number,
+    className: string,
+    options: {
+      fetchPriority?: "high";
+      onTransitionEnd?: (e: React.TransitionEvent<HTMLImageElement>) => void;
+    } = {},
+  ) => {
+    const image = PROFILE_IMAGES[index];
+
+    return (
+      <img
+        className={cn("avatar", className)}
+        src={image.src}
+        alt={image.alt}
+        width={image.width}
+        height={image.height}
+        fetchPriority={options.fetchPriority}
+        onError={handleImageError}
+        onTransitionEnd={options.onTransitionEnd}
+      />
+    );
   };
 
   return (
@@ -205,16 +312,31 @@ function Header() {
               type="button"
               onClick={handleClick}
               aria-label="Change profile image"
+              aria-busy={isTransitioning}
             >
-              <img
-                className={cn("avatar", "active")}
-                src={PROFILE_IMAGES[profileIndex].src}
-                alt={PROFILE_IMAGES[profileIndex].alt}
-                width={PROFILE_IMAGES[profileIndex].width}
-                height={PROFILE_IMAGES[profileIndex].height}
-                fetchPriority="high"
-                onError={handleImageError}
-              />
+              {isTransitioning &&
+              outgoingIndex !== null &&
+              incomingIndex !== null ? (
+                <>
+                  {renderAvatarImage(
+                    outgoingIndex,
+                    slideActive
+                      ? "avatar--outgoing avatar--outgoing-exiting"
+                      : "avatar--outgoing",
+                    { onTransitionEnd: handleOutgoingTransitionEnd },
+                  )}
+                  {renderAvatarImage(
+                    incomingIndex,
+                    slideActive
+                      ? "avatar--incoming avatar--incoming-active"
+                      : "avatar--incoming",
+                  )}
+                </>
+              ) : (
+                renderAvatarImage(profileIndex, "avatar--active", {
+                  fetchPriority: "high",
+                })
+              )}
             </button>
           </div>
           <div className="header__text">
