@@ -14,11 +14,9 @@ flowchart TB
   subgraph prod [Build and deploy]
     ViteBuild["pnpm build"]
     Dist["dist/"]
-    Vercel["Vercel serverless /api/*"]
-    Pages["GitHub Pages"]
+    Vercel["Vercel\nwoods.engineer + /api/*"]
     ViteBuild --> Dist
-    Dist --> Pages
-    ViteBuild --> Vercel
+    Dist --> Vercel
   end
 ```
 
@@ -27,7 +25,7 @@ flowchart TB
 | Dev | `pnpm start` | `http://localhost:8080` |
 | Production build | `pnpm run build` | `dist/` |
 | CI / Lighthouse | `pnpm run build:dev` | `dist/` (dev mode flags) |
-| Deploy | `pnpm run deploy` | `dist/` → GitHub Pages |
+| Deploy | Vercel (git push or CLI) | `https://woods.engineer` |
 
 Build metadata (`REACT_APP_GIT_COMMIT_HASH`, `REACT_APP_BUILD_DATE`, `REACT_APP_VERSION`) is injected in [vite.config.ts](../vite.config.ts) via [scripts/build-metadata.js](../scripts/build-metadata.js).
 

@@ -60,11 +60,11 @@ Detailed technical documentation, design specifications, and migration plans are
 
 ### Build outputs
 
-| Path    | Tool                                           | Used for                            |
-| ------- | ---------------------------------------------- | ----------------------------------- |
-| `dist/` | Vite (`pnpm run build` / `pnpm run build:dev`) | CI, Lighthouse, GitHub Pages deploy |
+| Path    | Tool                                           | Used for                         |
+| ------- | ---------------------------------------------- | -------------------------------- |
+| `dist/` | Vite (`pnpm run build` / `pnpm run build:dev`) | CI, Lighthouse, Vercel deploy    |
 
-Both build scripts emit to `dist/`. `build:dev` uses Vite development mode flags (CI/Lighthouse); `build` is the production profile used by `pnpm run deploy`. Local dev uses `pnpm start` on port `8080`.
+Both build scripts emit to `dist/`. `build:dev` uses Vite development mode flags (CI/Lighthouse); `build` is the production profile Vercel uses. Local dev uses `pnpm start` on port `8080`.
 
 See [AGENTS.md](AGENTS.md) for the full command reference.
 

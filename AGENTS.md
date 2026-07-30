@@ -4,7 +4,8 @@
 
 - Personal website built with React, TypeScript, Sass, and Vite.
 - Local development and production builds both use **Vite** on port `8080` (`pnpm start`). Vite middleware serves local `/api/*` routes from [api/](api/).
-- CI, Lighthouse, and GitHub Pages deploy use Vite; output goes to `dist/` (gitignored, built in CI and before deploy).
+- CI and Lighthouse use Vite; output goes to `dist/` (gitignored, built in CI).
+- **Production hosting is Vercel only** — frontend and `/api/*` on the same project (`vercel.json`). Push to `main` or run `pnpm dlx vercel` to deploy.
 - Tests run via `react-scripts` Jest (`pnpm test`) with the `@/` path alias.
 
 ## Environment
@@ -22,9 +23,9 @@
 - `pnpm start` / `pnpm run dev` / `pnpm run dev:api`
   Vite dev server on port `8080` (UI + local `/api/*` from [vite.config.ts](vite.config.ts)).
 - `pnpm run build`
-  Vite production build (`vite build`). Output goes to `dist/`. Runs automatically via `predeploy` before GitHub Pages publish.
+  Vite production build (`vite build`). Output goes to `dist/`. Matches what Vercel runs in production.
 - `pnpm run build:dev`
-  Vite build in development mode (`vite build --mode development`). Same output directory as `build`; used by CI and Lighthouse to match CI env flags. Prefer `pnpm run build` for deploy parity.
+  Vite build in development mode (`vite build --mode development`). Same output directory as `build`; used by CI and Lighthouse.
 - `pnpm test`
   Runs the Jest test suite once with `--watchAll=false`.
 
@@ -64,10 +65,8 @@
 
 ### Deployment
 
-- `pnpm run deploy`
-  Builds with Vite (`predeploy`) and publishes the `dist/` directory to GitHub Pages.
-- `pnpm run predeploy`
-  Runs automatically before `pnpm run deploy` and runs `pnpm run build`.
+- **Vercel** — connect the repo or deploy with `pnpm dlx vercel` from a linked project. Custom domain: `https://woods.engineer` (configure in the Vercel dashboard).
+- Pull env vars locally: `pnpm env:vercel` / `pnpm env:vercel:prod` after `vercel link`.
 
 ## Workflow Map
 
@@ -96,7 +95,7 @@
 
 ## Build Output Notes
 
-- `dist/` is the Vite bundle produced by `pnpm run build`, `pnpm run build:dev`, and CI-related workflows (not committed). GitHub Pages deploy reads from `dist/`.
+- `dist/` is the Vite bundle from `pnpm run build`, `pnpm run build:dev`, and CI (not committed). Vercel serves this output in production.
 - `public/build/css/` is Sass verification output from `pnpm run sass:check` (not committed).
 - Do not rewrite generated output directories unless the task requires updated build artifacts.
 
