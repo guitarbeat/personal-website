@@ -17,6 +17,10 @@ import "./sass/main.scss";
 const CustomCursor = lazy(
   () => import("@/components/effects/CustomCursor/CustomCursor"),
 );
+const SiteProof = lazy(async () => {
+  const module = await import("@/components/effects/Proof/SiteProof");
+  return { default: module.SiteProof };
+});
 
 const INITIAL_LOADER_MIN_DURATION_MS = 100;
 
@@ -51,6 +55,7 @@ function AppContent() {
   const isBackgroundVisible = true;
   const canRevealInitialLoader =
     isInitialLoaderVisible && hasMinimumLoaderDurationElapsed;
+  const shouldMountProof = isUnlocked && !isInitialLoaderVisible && !showMatrix;
 
   const handleInitialLoaderExit = useCallback(() => {
     setIsInitialLoaderVisible(false);
@@ -71,6 +76,15 @@ function AppContent() {
       {isUnlocked ? (
         <Suspense fallback={null}>
           <CustomCursor />
+        </Suspense>
+      ) : null}
+      {shouldMountProof ? (
+        <Suspense fallback={null}>
+          <SiteProof
+            isUnlocked={isUnlocked}
+            isInitialLoaderVisible={isInitialLoaderVisible}
+            showMatrix={showMatrix}
+          />
         </Suspense>
       ) : null}
       {showUnavailableState ? (
