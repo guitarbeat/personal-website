@@ -23,7 +23,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -35,6 +35,9 @@ jobs:
 
       - name: Run Biome
         run: pnpm exec biome check
+
+      - name: Verify Proof vendor manifest
+        run: pnpm run verify:proof
 
       - name: Verify HTML entry sync
         run: pnpm run sync:html:check
@@ -49,7 +52,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4

@@ -17,7 +17,9 @@
       "!src/css/styles.css",
       "!dist",
       "!build",
-      "!node_modules"
+      "!node_modules",
+      "!.tmp-vercel-pack",
+      "!src/vendor"
     ]
   },
   "formatter": {

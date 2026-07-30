@@ -4,6 +4,7 @@ import { cn } from "@/utils/commonUtils";
 import { useAuth } from "./AuthContext";
 import { HackTerminalPanel } from "./HackTerminalPanel";
 import "./matrix.scss";
+import { getMatrixRainIntensity } from "./matrixRainIntensity";
 import {
   buildSuccessConsoleReadout,
   DEFAULT_CONSOLE_PROMPT,
@@ -15,7 +16,6 @@ import { NuUhUhEasterEgg } from "./NuUhUhEasterEgg";
 import { useHackInteraction } from "./useHackInteraction";
 import { useHackProgressDecay } from "./useHackProgressDecay";
 import { useHackSession } from "./useHackSession";
-import { getMatrixRainIntensity } from "./matrixRainIntensity";
 import { useMatrixRain } from "./useMatrixRain";
 
 interface MatrixProps {

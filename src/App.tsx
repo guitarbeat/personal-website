@@ -3,27 +3,24 @@ import { SpeedInsights } from "@vercel/speed-insights/react";
 import { lazy, Suspense, useCallback, useEffect, useState } from "react";
 import { BrowserRouter } from "react-router-dom";
 
-import {
-  AppRoutes,
-  MatrixModal,
-  MatrixRouteSync,
-} from "@/AppRoutes";
-import { ContentUnavailableState } from "@/components/Core/SiteLayout";
+import { AppRoutes, MatrixModal, MatrixRouteSync } from "@/AppRoutes";
 import { NAV_ITEMS } from "@/components/Core/constants";
-import {
-  AuthProvider,
-  useAuth,
-} from "@/components/effects/Matrix/AuthContext";
+import { ContentUnavailableState } from "@/components/Core/SiteLayout";
 import LoadingSequence from "@/components/effects/Loading/LoadingSequence";
+import { AuthProvider, useAuth } from "@/components/effects/Matrix/AuthContext";
 import { NotionProvider, useNotion } from "@/contexts/NotionContext";
-import { isVercelHostedBuild } from "@/utils/vercelHost";
 import { useMatrixActivation } from "@/hooks/useMatrixActivation";
 import { useScrollMode } from "@/hooks/useScrollMode";
+import { isVercelHostedBuild } from "@/utils/vercelHost";
 import "./sass/main.scss";
 
 const CustomCursor = lazy(
   () => import("@/components/effects/CustomCursor/CustomCursor"),
 );
+const SiteProof = lazy(async () => {
+  const module = await import("@/components/effects/Proof/SiteProof");
+  return { default: module.SiteProof };
+});
 
 const INITIAL_LOADER_MIN_DURATION_MS = 100;
 
@@ -58,6 +55,7 @@ function AppContent() {
   const isBackgroundVisible = true;
   const canRevealInitialLoader =
     isInitialLoaderVisible && hasMinimumLoaderDurationElapsed;
+  const shouldMountProof = isUnlocked && !isInitialLoaderVisible && !showMatrix;
 
   const handleInitialLoaderExit = useCallback(() => {
     setIsInitialLoaderVisible(false);
@@ -78,6 +76,15 @@ function AppContent() {
       {isUnlocked ? (
         <Suspense fallback={null}>
           <CustomCursor />
+        </Suspense>
+      ) : null}
+      {shouldMountProof ? (
+        <Suspense fallback={null}>
+          <SiteProof
+            isUnlocked={isUnlocked}
+            isInitialLoaderVisible={isInitialLoaderVisible}
+            showMatrix={showMatrix}
+          />
         </Suspense>
       ) : null}
       {showUnavailableState ? (

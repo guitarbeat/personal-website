@@ -3,7 +3,8 @@ import { MATRIX_RAIN_INTENSITY } from "./constants";
 const clamp = (value: number, min: number, max: number) =>
   Math.min(max, Math.max(min, value));
 
-const lerp = (start: number, end: number, t: number) => start + (end - start) * t;
+const lerp = (start: number, end: number, t: number) =>
+  start + (end - start) * t;
 
 /** Smooth ease-out curve for progressive rain ramp. */
 const easeOut = (t: number) => 1 - (1 - t) ** 2;
@@ -20,11 +21,7 @@ export function getMatrixRainIntensity(progress: number): number {
   const sessionStart = MATRIX_RAIN_INTENSITY.SESSION_START_PROGRESS;
   const range = 100 - sessionStart;
   const t = clamp((progress - sessionStart) / range, 0, 1);
-  let intensity = lerp(
-    MATRIX_RAIN_INTENSITY.BASE_INTENSITY,
-    1,
-    easeOut(t),
-  );
+  let intensity = lerp(MATRIX_RAIN_INTENSITY.BASE_INTENSITY, 1, easeOut(t));
 
   if (progress >= MATRIX_RAIN_INTENSITY.PHASE_THRESHOLDS.PHASE_2) {
     intensity += MATRIX_RAIN_INTENSITY.PHASE_BOOST;

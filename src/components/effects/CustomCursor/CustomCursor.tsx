@@ -18,7 +18,10 @@ type CustomCursorProps = {
 };
 
 function isCustomCursorSupported(): boolean {
-  if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+  if (
+    typeof window === "undefined" ||
+    typeof window.matchMedia !== "function"
+  ) {
     return false;
   }
 
@@ -113,9 +116,13 @@ const CustomCursor = ({ label: defaultLabel = "View" }: CustomCursorProps) => {
       setIsHovering(false);
     };
 
-    window.addEventListener("mousemove", updateMousePosition, { passive: true });
+    window.addEventListener("mousemove", updateMousePosition, {
+      passive: true,
+    });
     window.addEventListener("mouseover", handleMouseOver, { passive: true });
-    document.addEventListener("mouseleave", handleMouseLeave, { passive: true });
+    document.addEventListener("mouseleave", handleMouseLeave, {
+      passive: true,
+    });
 
     return () => {
       window.removeEventListener("mousemove", updateMousePosition);
