@@ -57,13 +57,21 @@ export interface ProofFrame {
   column: number;
 }
 
-export interface ProofCompanionProps
-  extends Omit<
-    HTMLAttributes<HTMLSpanElement>,
-    "children" | "onAnimationStart" | "onAnimationEnd"
-  > {
-  /** Controlled animation state. Omit it for Codex-like autonomous behavior. */
-  state?: ProofState;
+/**
+ * Sprite-facing Proof props that Companion forwards (shell owns hover/press).
+ */
+export type ProofCompanionSpriteProps = Omit<
+  ProofProps,
+  | "reactToHover"
+  | "reactToPress"
+  | "style"
+  | "aria-hidden"
+  | "onAnimationStart"
+  | "onAnimationEnd"
+>;
+
+/** Viewport chrome and position controller around {@link Proof}. */
+export interface ProofCompanionProps extends ProofCompanionSpriteProps {
   /**
    * Rendered sprite height in CSS pixels. Runtime changes preserve a pinned
    * viewport edge or the companion's visual center.
@@ -85,26 +93,14 @@ export interface ProofCompanionProps
   persistPosition?: boolean;
   /** localStorage key used when position persistence is enabled. */
   storageKey?: string;
-  /** Make idle Proof look toward the page pointer. */
-  followCursor?: boolean;
-  /** Play the warm hover acknowledgment in autonomous mode. */
+  /** Play the warm hover acknowledgment in autonomous mode (shell-owned). */
   reactToHover?: boolean;
-  /** Play a wave after an un-dragged press in autonomous mode. */
+  /** Play a wave after an un-dragged press in autonomous mode (shell-owned). */
   reactToPress?: boolean;
-  /** Radius around Proof's center where he keeps his neutral idle animation. */
-  gazeDeadzone?: number;
-  /** Extra degrees required before gaze crosses into an adjacent direction. */
-  gazeHysteresis?: number;
-  /** Override the bundled canonical spritesheet URL. */
-  spriteUrl?: string;
-  /** Freeze sprite animation. */
-  paused?: boolean;
-  /** Control continuous motion and settling behavior. */
-  reducedMotion?: ReducedMotionPreference;
-  /** Change this value to restart the same controlled animation. */
-  animationKey?: string | number;
   /** Show the soft grounding shadow used by the companion wrapper. */
   showShadow?: boolean;
+  /** Styles applied to the fixed companion wrapper. */
+  style?: CSSProperties;
   /** Styles applied to the inner Proof sprite. */
   spriteStyle?: CSSProperties;
   /** Called after a position change caused by drag, keyboard, or resize. */
@@ -113,6 +109,4 @@ export interface ProofCompanionProps
   onDragChange?: (dragging: boolean) => void;
   /** Called when the visible state changes. */
   onStateChange?: (state: ProofState) => void;
-  /** Called when a non-looping action completes. */
-  onAnimationComplete?: (state: ProofState) => void;
 }

@@ -17,6 +17,7 @@ export {
 } from "./gaze.js";
 export type {
   ProofCompanionProps,
+  ProofCompanionSpriteProps,
   ProofFrame,
   ProofPlacement,
   ProofPoint,
