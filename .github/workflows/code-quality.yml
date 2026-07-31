@@ -15,6 +15,7 @@ concurrency:
 jobs:
   biome:
     runs-on: ubuntu-latest
+      timeout-minutes: 20
 
     steps:
       - name: Checkout code
@@ -47,6 +48,7 @@ jobs:
 
   typescript:
     runs-on: ubuntu-latest
+      timeout-minutes: 20
 
     steps:
       - name: Checkout code
