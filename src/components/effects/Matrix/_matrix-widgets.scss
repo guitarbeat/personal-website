@@ -29,13 +29,13 @@
   padding: 2rem;
   border-radius: 12px;
   border: 1.5px solid var(--matrix-green);
-  background: linear-gradient(145deg, rgba(0, 0, 0, 0.95), rgba(0, 32, 0, 0.92));
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.95), rgba(0, 24, 10, 0.92));
   box-shadow:
-    0 0 20px rgba(0, 255, 0, 0.25),
-    0 0 40px rgba(0, 80, 0, 0.3);
+    0 0 20px rgba(0, 255, 65, 0.25),
+    0 0 40px rgba(0, 60, 20, 0.3);
   animation: matrixFadeIn 0.35s ease-out;
   text-align: center;
-  
+
   /* * Remove default dialog white background */
   &::backdrop {
     background: transparent;
@@ -54,8 +54,8 @@
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.15);
   box-shadow:
-    0 0 15px rgba(0, 255, 0, 0.15),
-    0 0 30px rgba(0, 255, 0, 0.1);
+    0 0 15px rgba(0, 255, 65, 0.15),
+    0 0 30px rgba(0, 255, 65, 0.1);
 }
 
 .nuuhuh-overlay__message {
@@ -89,7 +89,7 @@
   text-transform: uppercase;
   cursor: pointer;
   transition: var(--matrix-transition-interactive);
-  text-shadow: 0 0 6px rgba(0, 255, 0, 0.5);
+  text-shadow: 0 0 6px rgba(0, 255, 65, 0.5);
 }
 
 .nuuhuh-overlay__close-btn:hover,
@@ -97,326 +97,11 @@
   background: var(--matrix-green);
   color: rgb(0 0 0 / 85%);
   box-shadow:
-    0 0 15px rgba(0, 255, 0, 0.4),
-    0 0 30px rgba(0, 255, 0, 0.35);
+    0 0 15px rgba(0, 255, 65, 0.4),
+    0 0 30px rgba(0, 255, 65, 0.35);
 }
 
 .nuuhuh-overlay__close-btn:focus {
   outline: 2px solid var(--matrix-white);
   outline-offset: 3px;
 }
-
-/* Passcode widget */
-.passcode-widget {
-  position: fixed;
-  bottom: 2rem;
-  left: 2rem;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  padding: 1.25rem 1.75rem;
-  border-radius: 12px;
-  border: 1.5px solid rgba(0, 255, 0, 0.35);
-  background: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(8px);
-  box-shadow:
-    0 0 24px rgba(0, 255, 0, 0.15),
-    inset 0 0 20px rgba(0, 255, 0, 0.08);
-  animation: widgetFadeIn 0.6s ease-out, widgetGlow 4s ease-in-out infinite;
-  font-family: "Courier New", monospace;
-  
-  /* * CRT scanline effect */
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      rgba(0, 255, 0, 0.05) 0px,
-      transparent 1px,
-      transparent 2px
-    );
-    border-radius: inherit;
-    pointer-events: none;
-    z-index: 1;
-    mix-blend-mode: screen;
-  }
-}
-
-.passcode-widget .auth-state {
-  color: var(--matrix-green);
-  font-size: 1rem;
-  font-weight: 600;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  text-shadow:
-    0 0 8px rgba(0, 255, 0, 0.5),
-    0 0 16px rgba(0, 255, 0, 0.25);
-  position: relative;
-  z-index: 2;
-}
-
-.passcode-widget .auth-hint {
-  color: rgba(0, 255, 0, 0.75);
-  font-size: 0.85rem;
-  letter-spacing: 0.1em;
-  line-height: 1.6;
-  position: relative;
-  z-index: 2;
-}
-
-.passcode-widget .logout-btn {
-  padding: 0.5rem 1.25rem;
-  border-radius: 8px;
-  border: 1.5px solid var(--matrix-green);
-  background: rgba(0, 0, 0, 0.4);
-  color: var(--matrix-green);
-  font-family: "Courier New", monospace;
-  font-size: 0.85rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: var(--matrix-transition-interactive);
-  position: relative;
-  z-index: 2;
-  text-shadow: 0 0 6px rgba(0, 255, 0, 0.4);
-  box-shadow:
-    0 0 12px rgba(0, 255, 0, 0.2),
-    inset 0 0 8px rgba(0, 255, 0, 0.05);
-  
-  &:hover {
-    background: rgba(0, 255, 0, 0.15);
-    color: var(--matrix-white);
-    box-shadow:
-      0 0 18px rgba(0, 255, 0, 0.4),
-      inset 0 0 12px rgba(0, 255, 0, 0.1);
-    transform: translateY(-2px);
-  }
-  
-  &:active {
-    transform: translateY(0);
-  }
-  
-  &:focus {
-    outline: 2px solid var(--matrix-white);
-    outline-offset: 3px;
-  }
-}
-
-@keyframes widgetFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes widgetGlow {
-  0%, 100% {
-    box-shadow:
-      0 0 24px rgba(0, 255, 0, 0.15),
-      inset 0 0 20px rgba(0, 255, 0, 0.08);
-  }
-  50% {
-    box-shadow:
-      0 0 32px rgba(0, 255, 0, 0.25),
-      inset 0 0 28px rgba(0, 255, 0, 0.12);
-  }
-}
-
-/* Logout keypad */
-.logout-keypad {
-  position: fixed;
-  bottom: 2rem;
-  left: 2rem;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  padding: 1.25rem 1.75rem;
-  border-radius: 12px;
-  border: 1.5px solid rgba(0, 255, 0, 0.35);
-  background: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(8px);
-  box-shadow:
-    0 0 24px rgba(0, 255, 0, 0.15),
-    inset 0 0 20px rgba(0, 255, 0, 0.08);
-  animation: widgetFadeIn 0.6s ease-out, widgetGlow 4s ease-in-out infinite;
-  font-family: "Courier New", monospace;
-  min-width: 280px;
-  
-  /* * CRT scanline effect */
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      rgba(0, 255, 0, 0.05) 0px,
-      transparent 1px,
-      transparent 2px
-    );
-    border-radius: inherit;
-    pointer-events: none;
-    z-index: 1;
-    mix-blend-mode: screen;
-  }
-}
-
-.logout-keypad__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: relative;
-  z-index: 2;
-}
-
-.logout-keypad__label {
-  color: var(--matrix-green);
-  font-size: 0.9rem;
-  font-weight: 600;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  text-shadow:
-    0 0 8px rgba(0, 255, 0, 0.5),
-    0 0 16px rgba(0, 255, 0, 0.25);
-}
-
-.logout-keypad__progress {
-  color: var(--matrix-green);
-  font-size: 0.85rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-shadow: 0 0 6px rgba(0, 255, 0, 0.4);
-}
-
-.logout-keypad__progress-bar {
-  position: relative;
-  width: 100%;
-  height: 8px;
-  background: rgba(0, 0, 0, 0.6);
-  border: 1px solid rgba(0, 255, 0, 0.3);
-  border-radius: 4px;
-  overflow: hidden;
-  z-index: 2;
-}
-
-.logout-keypad__progress-fill {
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    rgba(0, 255, 0, 0.3) 0%,
-    rgba(0, 255, 0, 0.8) 50%,
-    rgba(0, 255, 0, 0.3) 100%
-  );
-  box-shadow:
-    0 0 8px rgba(0, 255, 0, 0.6),
-    inset 0 0 4px rgba(0, 255, 0, 0.3);
-  transition: width 0.15s ease-out;
-  animation: progressPulse 2s ease-in-out infinite;
-}
-
-@keyframes progressPulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.85;
-  }
-}
-
-.logout-keypad__hint {
-  color: rgba(0, 255, 0, 0.75);
-  font-size: 0.8rem;
-  letter-spacing: 0.1em;
-  line-height: 1.6;
-  position: relative;
-  z-index: 2;
-  text-align: center;
-  min-height: 1.2em;
-}
-
-/* Passcode widget trigger */
-.passcode-widget .auth-easter-egg-hint {
-  display: block;
-  margin-top: 0.75rem;
-  color: rgba(0, 255, 0, 0.7);
-  font-family: "Courier New", monospace;
-  font-size: 0.75rem;
-  letter-spacing: 0.08em;
-  line-height: 1.6;
-}
-
-.passcode-widget .auth-easter-egg-hint kbd {
-  display: inline-block;
-  padding: 0.1rem 0.4rem;
-  margin: 0 0.15rem;
-  border-radius: 4px;
-  border: 1px solid rgba(0, 255, 0, 0.4);
-  background: rgb(0 0 0 / 25%);
-  color: var(--matrix-white);
-  font-size: 0.7rem;
-  font-family: inherit;
-  box-shadow: 0 0 6px rgba(0, 255, 0, 0.2);
-}
-
-.passcode-widget .access-denied-btn {
-  margin-top: 0.75rem;
-  padding: 0.45rem 1.1rem;
-  border-radius: 8px;
-  border: 1px solid var(--matrix-green);
-  background: rgb(0 0 0 / 30%);
-  color: var(--matrix-green);
-  font-family: "Courier New", monospace;
-  font-size: 0.8rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: var(--matrix-transition-interactive);
-}
-
-.passcode-widget .access-denied-btn:hover,
-.passcode-widget .access-denied-btn:focus {
-  background: rgba(0, 255, 0, 0.2);
-  color: var(--matrix-white);
-  box-shadow: 0 0 10px rgba(0, 255, 0, 0.25);
-}
-
-.passcode-widget .access-denied-btn:focus {
-  outline: 2px solid var(--matrix-white);
-  outline-offset: 3px;
-}
-
-/* Matrix container glitch effect */
-.matrix-container.glitch-effect {
-  animation: matrixContainerGlitch 0.5s ease-in-out;
-}
-
-@keyframes matrixContainerGlitch {
-  0% {
-    transform: translate(0) scale(1);
-    filter: hue-rotate(0deg) contrast(1) brightness(1);
-  }
-  25% {
-    transform: translate(-3px, 3px) scale(1.01);
-    filter: hue-rotate(90deg) contrast(1.3) brightness(1.2);
-  }
-  50% {
-    transform: translate(3px, -3px) scale(0.99);
-    filter: hue-rotate(180deg) contrast(0.8) brightness(0.9);
-  }
-  75% {
-    transform: translate(-2px, -2px) scale(1.02);
-    filter: hue-rotate(270deg) contrast(1.5) brightness(1.3);
-  }
-  100% {
-    transform: translate(0) scale(1);
-    filter: hue-rotate(0deg) contrast(1) brightness(1);
-  }
-}
-
-

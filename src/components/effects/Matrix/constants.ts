@@ -8,28 +8,14 @@ export interface Color {
   alpha: number;
 }
 
-// * Color Definitions - Single Source of Truth
-export const MATRIX_COLORS: Record<string, Color> = {
-  // Primary Matrix Colors
-  GREEN: { r: 0, g: 255, b: 0, alpha: 0.9 },
-  DARK_GREEN: { r: 0, g: 200, b: 0, alpha: 0.8 },
-  DARKER_GREEN: { r: 0, g: 150, b: 0, alpha: 0.7 },
-  DARKEST_GREEN: { r: 0, g: 100, b: 0, alpha: 0.6 },
-  MEDIUM_GREEN: { r: 0, g: 180, b: 0, alpha: 0.75 },
-  BRIGHT_GREEN: { r: 0, g: 255, b: 0, alpha: 1.0 },
-
-  // Accent Colors
-  CYAN_GREEN: { r: 0, g: 255, b: 100, alpha: 0.8 },
-  CYAN: { r: 0, g: 255, b: 255, alpha: 0.8 },
-  WHITE: { r: 255, g: 255, b: 255, alpha: 0.95 },
-  RED: { r: 255, g: 0, b: 0, alpha: 0.9 },
-  YELLOW: { r: 255, g: 255, b: 0, alpha: 0.9 },
-
-  // Background Colors
-  BLACK: { r: 0, g: 0, b: 0, alpha: 0.85 },
-  TERMINAL_BG: { r: 0, g: 0, b: 0, alpha: 0.95 },
-  GLOW: { r: 0, g: 255, b: 0, alpha: 0.15 },
-};
+// * Phosphor palette for the rain canvas. DOM chrome reads the matching CSS
+// * custom properties from _matrix-variables.scss instead.
+export const MATRIX_COLORS = {
+  TRAIL: { r: 0, g: 255, b: 65, alpha: 1 },
+  HEAD: { r: 51, g: 255, b: 102, alpha: 1 },
+  HEAD_BRIGHT: { r: 220, g: 255, b: 230, alpha: 1 },
+  HEAD_BLOOM: { r: 0, g: 255, b: 65, alpha: 0.85 },
+} satisfies Record<string, Color>;
 
 // * Animation Timing Constants (in milliseconds)
 export const ANIMATION_TIMING = {
@@ -189,26 +175,8 @@ export const ERROR_MESSAGES = {
   CANVAS_ERROR: "Canvas rendering failed",
 };
 
-// * Utility Functions for Color Conversion
-export const ColorUtils = {
-  // Convert color object to CSS rgba string
-  toRGBA: (color: Color): string =>
-    `rgba(${color.r}, ${color.g}, ${color.b}, ${color.alpha})`,
-
-  // Convert color object to CSS rgb string
-  toRGB: (color: Color): string => `rgb(${color.r}, ${color.g}, ${color.b})`,
-
-  // Get color with custom alpha
-  withAlpha: (color: Color, alpha: number): Color => ({ ...color, alpha }),
-
-  // Get color array for canvas context
-  toArray: (color: Color): [number, number, number, number] => [
-    color.r,
-    color.g,
-    color.b,
-    color.alpha,
-  ],
-};
+export const toRgba = ({ r, g, b, alpha }: Color): string =>
+  `rgba(${r}, ${g}, ${b}, ${alpha})`;
 
 // * Performance Detection Utilities
 export const PerformanceUtils = {

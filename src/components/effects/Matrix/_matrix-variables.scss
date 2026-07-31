@@ -1,17 +1,20 @@
-/* Root Variables */
+/* Root Variables — green phosphor CRT palette */
 :root {
-  --matrix-bg: rgb(0 0 0 / 40%);
-  --matrix-green: rgba(0, 255, 0, 0.8);
-  --matrix-dark-green: rgba(0, 170, 0, 0.8);
-  --matrix-bright-green: rgba(0, 255, 100, 0.95);
-  --matrix-white: rgba(255, 255, 255, 0.9);
-  --matrix-glow: rgb(0 255 0 / 10%);
+  --matrix-bg: rgb(0 8 4 / 45%);
+  --matrix-green: rgba(0, 255, 65, 0.85);
+  --matrix-dark-green: rgba(0, 180, 50, 0.8);
+  --matrix-bright-green: rgba(51, 255, 102, 0.95);
+  --matrix-white: rgba(220, 255, 230, 0.92);
+  --matrix-glow: rgb(0 255 65 / 12%);
   --matrix-transition: 0.1s cubic-bezier(0.4, 0, 0.2, 1);
-  --matrix-red: rgba(255, 0, 0, 0.8);
-  --matrix-yellow: rgba(255, 255, 0, 0.8);
-  --matrix-cyan: rgba(0, 255, 255, 0.8);
-  --matrix-scanline-opacity: 0.12;
-  --matrix-crt-glow: rgba(0, 255, 0, 0.15);
+  --matrix-red: rgba(255, 72, 48, 0.9);
+  --matrix-amber: rgba(255, 176, 32, 0.92);
+  --matrix-yellow: rgba(255, 220, 80, 0.85);
+  --matrix-cyan: rgba(80, 255, 200, 0.8);
+  --matrix-phosphor-bg: #010603;
+  --matrix-phosphor-mid: #031008;
+  --matrix-scanline-opacity: 0.28;
+  --matrix-crt-glow: rgba(0, 255, 65, 0.28);
   --matrix-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --matrix-shell-enter: 250ms var(--matrix-ease-out);
   --matrix-shell-exit: 180ms var(--matrix-ease-out);

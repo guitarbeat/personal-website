@@ -1,8 +1,8 @@
 @use "./matrix-variables";
 @use "./matrix-keyframes";
 @use "./matrix-shell";
-@use "./matrix-console";
 @use "./matrix-widgets";
-@use "./matrix-success";
-@use "./matrix-a11y";
 @use "./matrix-hack-panel";
+
+/* Accessibility overrides load last so equal-specificity rules win */
+@use "./matrix-a11y";

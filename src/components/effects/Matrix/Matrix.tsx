@@ -327,7 +327,6 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
         margin: 0,
         padding: 0,
         border: "none",
-        background: "transparent",
       }}
     >
       <canvas

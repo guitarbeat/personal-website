@@ -1,7 +1,7 @@
 import type { RefObject } from "react";
 import { useEffect } from "react";
 import { debounce } from "@/utils/commonUtils";
-import { MATRIX_RAIN } from "./constants";
+import { MATRIX_COLORS, MATRIX_RAIN, toRgba } from "./constants";
 import { Drop } from "./MatrixDrop";
 import {
   getMatrixRainDrawParams,
@@ -117,8 +117,8 @@ export const useMatrixRain = (
           // Set font once per bucket
           context.font = `${fontSizeStr}px monospace`;
 
-          // * Pass 1: Draw Trails (Pure Green)
-          context.fillStyle = "#00FF00";
+          // * Pass 1: Draw Trails (phosphor green)
+          context.fillStyle = toRgba(MATRIX_COLORS.TRAIL);
           for (const drop of bucket) {
             const trailLength = drop.trail.length;
             for (let i = 0; i < trailLength; i++) {
@@ -134,8 +134,8 @@ export const useMatrixRain = (
             }
           }
 
-          // * Pass 2: Draw Normal Heads (Spring Green)
-          context.fillStyle = "#00FF64";
+          // * Pass 2: Draw Normal Heads (bright phosphor)
+          context.fillStyle = toRgba(MATRIX_COLORS.HEAD);
           for (const drop of bucket) {
             if (!drop.brightness) {
               context.globalAlpha = drop.opacity * opacityMultiplier;
@@ -143,10 +143,10 @@ export const useMatrixRain = (
             }
           }
 
-          // * Pass 3: Draw Bright Heads (White + Glow)
-          context.fillStyle = "#FFFFFF";
-          context.shadowColor = "rgba(255, 255, 255, 0.9)";
-          context.shadowBlur = 8;
+          // * Pass 3: Draw Bright Heads (phosphor bloom)
+          context.fillStyle = toRgba(MATRIX_COLORS.HEAD_BRIGHT);
+          context.shadowColor = toRgba(MATRIX_COLORS.HEAD_BLOOM);
+          context.shadowBlur = 10;
 
           for (const drop of bucket) {
             if (drop.brightness) {
