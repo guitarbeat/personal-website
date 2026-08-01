@@ -1,8 +1,8 @@
 import { memo, type ReactNode } from "react";
 
 import FrameEffect from "@/components/effects/Loading/FrameEffect";
-import { useAuth } from "@/components/effects/Matrix/AuthContext";
 import ScrollToTopButton from "@/components/effects/Matrix/ScrollToTopButton";
+import { useUnlock } from "@/components/effects/Matrix/UnlockContext";
 import MagicComponent from "@/components/effects/Moire/Moire";
 import { NavBar } from "@/components/index";
 
@@ -35,7 +35,7 @@ export function ContentUnavailableState({ error }: { error: string | null }) {
 }
 
 const UnlockedBadge = memo(() => {
-  const { isUnlocked } = useAuth();
+  const { isUnlocked } = useUnlock();
 
   if (!isUnlocked) {
     return null;

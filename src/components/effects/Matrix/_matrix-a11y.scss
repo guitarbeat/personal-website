@@ -22,13 +22,17 @@
     0 0 20px rgba(0, 255, 65, 0.25);
   backdrop-filter: blur(6px);
 
-  &:hover {
-    background: rgba(0, 255, 65, 0.25);
-    color: var(--matrix-white);
-    box-shadow:
-      0 0 18px rgba(0, 255, 65, 0.45),
-      0 0 32px rgba(0, 255, 65, 0.3);
-    transform: translateY(-3px);
+  /* Touch devices fire :hover on tap and leave it stuck, so the lift is
+     gated to real pointers. */
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: rgba(0, 255, 65, 0.25);
+      color: var(--matrix-white);
+      box-shadow:
+        0 0 18px rgba(0, 255, 65, 0.45),
+        0 0 32px rgba(0, 255, 65, 0.3);
+      transform: translateY(-3px);
+    }
   }
 
   &:active {
@@ -140,6 +144,17 @@
     opacity: 1;
     transform: none;
     filter: none;
+  }
+
+  /* Gentler, not absent: the lockout screen still fades rather than hard-cutting */
+  .hack-terminal .hack-success {
+    animation: matrixSoftFadeIn 200ms ease both !important;
+  }
+
+  /* Drop the decorative trailing meter; the bar still tracks progress */
+  .hack-sequencer__surge,
+  .hack-sequencer__fill {
+    transition-duration: 0ms;
   }
 
   .matrix-canvas {

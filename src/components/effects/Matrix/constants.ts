@@ -25,7 +25,7 @@ export const ANIMATION_TIMING = {
   SCREEN_FLICKER: 100,
 
   // User Feedback
-  SUCCESS_FEEDBACK_DURATION: 2000,
+  HACK_COMPLETE_FEEDBACK_DURATION: 2000,
   MATRIX_MODAL_CLOSE_DELAY: 2000,
   FADE_IN_DURATION: 600,
   FADE_OUT_DURATION: 300,
@@ -139,7 +139,6 @@ export const MATRIX_RAIN = {
 
 /** Progressive rain intensity tuning (see matrixRainIntensity.ts). */
 export const MATRIX_RAIN_INTENSITY = {
-  SESSION_START_PROGRESS: 12,
   BASE_INTENSITY: 0.12,
   PHASE_THRESHOLDS: {
     PHASE_1: 33,
@@ -153,23 +152,15 @@ export const MATRIX_RAIN_INTENSITY = {
   BRIGHT_HEAD: { minThreshold: 0.9, maxThreshold: 0.97 },
 };
 
-// * Security Constants
-export const SECURITY = {
-  RATE_LIMIT: {
-    MAX_ATTEMPTS: 5,
-    WINDOW_MS: 15 * 60 * 1000, // 15 minutes
-    LOCKOUT_MS: 30 * 60 * 1000, // 30 minutes
-  },
-  SESSION: {
-    DURATION_MS: 60 * 60 * 1000, // 1 hour
-  },
+/** Unlock is presentational, not a security boundary — see
+ *  docs/adr/0004-matrix-unlock-is-presentational.md */
+export const UNLOCK = {
+  /** How long an Unlock persists before lapsing back to the blurred state. */
+  WINDOW_MS: 60 * 60 * 1000, // 1 hour
 };
 
 // * Error Messages
 export const ERROR_MESSAGES = {
-  AUTH_REQUIRED: "Authentication required",
-  RATE_LIMITED: "Too many attempts. Please try again later.",
-  SESSION_EXPIRED: "Session expired. Please authenticate again.",
   STORAGE_ERROR: "Failed to save session data",
   AUDIO_ERROR: "Audio playback failed",
   CANVAS_ERROR: "Canvas rendering failed",

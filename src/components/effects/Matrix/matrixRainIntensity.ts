@@ -1,4 +1,5 @@
 import { MATRIX_RAIN_INTENSITY } from "./constants";
+import { ATTEMPT_START_PROGRESS } from "./hackTuning";
 
 const clamp = (value: number, min: number, max: number) =>
   Math.min(max, Math.max(min, value));
@@ -18,9 +19,8 @@ export interface MatrixRainDrawParams {
 
 /** Map hack progress (0–100) to normalized rain intensity (0–1). */
 export function getMatrixRainIntensity(progress: number): number {
-  const sessionStart = MATRIX_RAIN_INTENSITY.SESSION_START_PROGRESS;
-  const range = 100 - sessionStart;
-  const t = clamp((progress - sessionStart) / range, 0, 1);
+  const range = 100 - ATTEMPT_START_PROGRESS;
+  const t = clamp((progress - ATTEMPT_START_PROGRESS) / range, 0, 1);
   let intensity = lerp(MATRIX_RAIN_INTENSITY.BASE_INTENSITY, 1, easeOut(t));
 
   if (progress >= MATRIX_RAIN_INTENSITY.PHASE_THRESHOLDS.PHASE_2) {

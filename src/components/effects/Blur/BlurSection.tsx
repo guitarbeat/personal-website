@@ -47,7 +47,7 @@ const BlurSection = ({
   useEffect(() => {
     if (!disabled && containerRef.current) {
       // Small delay to prevent blur effect initialization during Matrix modal transition
-      // This prevents conflicts when authentication state changes while modal is closing
+      // This prevents conflicts when unlock state changes while modal is closing
       const timer = setTimeout(() => {
         // Double-check that component is still mounted and not disabled
         if (containerRef.current && !disabled) {

@@ -11,7 +11,7 @@ import { Link } from "react-router-dom";
 // Custom hooks
 import { cn, debounce } from "@/utils/commonUtils";
 // Context imports
-import { useAuth } from "../../effects/Matrix/AuthContext";
+import { useUnlock } from "../../effects/Matrix/UnlockContext";
 
 // Theme Configuration
 const THEME = {
@@ -80,7 +80,7 @@ function NavBar({ items, onMatrixActivate, isInShop = false }: NavBarProps) {
   const themeClickTimesRef = useRef<number[]>([]);
   const themeSwitchRef = useRef<HTMLButtonElement>(null);
   const [isLightTheme, setIsLightTheme] = useState(getInitialTheme);
-  const { isUnlocked } = useAuth();
+  const { isUnlocked } = useUnlock();
 
   // Touch gesture handling for mobile dragging
   const navbarRef = useRef<HTMLElement>(null);

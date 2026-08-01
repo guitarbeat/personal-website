@@ -1,16 +1,19 @@
 import { useCallback, useEffect, useState } from "react";
-import { DEFAULT_CONSOLE_PROMPT, INITIAL_FEEDBACK } from "./matrixSessionCopy";
+import { DEFAULT_CONSOLE_PROMPT, INITIAL_FEEDBACK } from "./hackCopy";
+import { ATTEMPT_START_PROGRESS } from "./hackTuning";
 
-export const useHackSession = (isVisible: boolean) => {
+export const useHackAttempt = (isVisible: boolean) => {
   const [hackingBuffer, setHackingBuffer] = useState<string>(
     DEFAULT_CONSOLE_PROMPT,
   );
-  const [hackProgress, setHackProgress] = useState<number>(12);
+  const [hackProgress, setHackProgress] = useState<number>(
+    ATTEMPT_START_PROGRESS,
+  );
   const [hackFeedback, setHackFeedback] = useState<string>(INITIAL_FEEDBACK);
 
-  const resetSession = useCallback(() => {
+  const resetAttempt = useCallback(() => {
     setHackingBuffer(DEFAULT_CONSOLE_PROMPT);
-    setHackProgress(12);
+    setHackProgress(ATTEMPT_START_PROGRESS);
     setHackFeedback(INITIAL_FEEDBACK);
   }, []);
 
@@ -19,10 +22,10 @@ export const useHackSession = (isVisible: boolean) => {
       return;
     }
 
-    resetSession();
-  }, [isVisible, resetSession]);
+    resetAttempt();
+  }, [isVisible, resetAttempt]);
 
-  const isHackingComplete = hackProgress >= 100;
+  const isHackComplete = hackProgress >= 100;
 
   const updateHackProgress = useCallback(
     (updater: number | ((prev: number) => number)) => {
@@ -49,6 +52,6 @@ export const useHackSession = (isVisible: boolean) => {
     setHackProgress: updateHackProgress,
     hackFeedback,
     setHackFeedback,
-    isHackingComplete,
+    isHackComplete,
   };
 };

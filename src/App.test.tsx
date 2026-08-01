@@ -98,9 +98,9 @@ jest.mock("./components/effects/Loading/LoadingSequence", () => {
     },
   };
 });
-jest.mock("./components/effects/Matrix/AuthContext", () => ({
-  AuthProvider: ({ children }: { children: ReactNode }) => children,
-  useAuth: () => ({
+jest.mock("./components/effects/Matrix/UnlockContext", () => ({
+  UnlockProvider: ({ children }: { children: ReactNode }) => children,
+  useUnlock: () => ({
     isUnlocked: false,
   }),
 }));

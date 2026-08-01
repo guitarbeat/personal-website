@@ -1,19 +1,19 @@
 import { act, render } from "@testing-library/react";
-import { AuthProvider, useAuth } from "../AuthContext";
 import { ERROR_MESSAGES } from "../constants";
+import { UnlockProvider, useUnlock } from "../UnlockContext";
 
-describe("AuthContext", () => {
+describe("UnlockContext", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     sessionStorage.clear();
   });
 
   it("handles storage QuotaExceededError gracefully", () => {
-    // Setup component to test useAuth context
+    // Setup component to test useUnlock context
     // biome-ignore lint/suspicious/noExplicitAny: Mock data for test
     let contextValue: any = null;
     const TestComponent = () => {
-      contextValue = useAuth();
+      contextValue = useUnlock();
       return null;
     };
 
@@ -40,9 +40,9 @@ describe("AuthContext", () => {
     const removeItemSpy = jest.spyOn(Storage.prototype, "removeItem");
 
     render(
-      <AuthProvider>
+      <UnlockProvider>
         <TestComponent />
-      </AuthProvider>,
+      </UnlockProvider>,
     );
 
     // Trigger completeHack which calls setSessionData
@@ -74,7 +74,7 @@ describe("AuthContext", () => {
     // biome-ignore lint/suspicious/noExplicitAny: Mock data for test
     let contextValue: any = null;
     const TestComponent = () => {
-      contextValue = useAuth();
+      contextValue = useUnlock();
       return null;
     };
 
@@ -90,9 +90,9 @@ describe("AuthContext", () => {
     });
 
     render(
-      <AuthProvider>
+      <UnlockProvider>
         <TestComponent />
-      </AuthProvider>,
+      </UnlockProvider>,
     );
 
     act(() => {

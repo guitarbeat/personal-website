@@ -92,16 +92,26 @@
   text-shadow: 0 0 6px rgba(0, 255, 65, 0.5);
 }
 
-.nuuhuh-overlay__close-btn:hover,
 .nuuhuh-overlay__close-btn:focus {
   background: var(--matrix-green);
   color: rgb(0 0 0 / 85%);
   box-shadow:
     0 0 15px rgba(0, 255, 65, 0.4),
     0 0 30px rgba(0, 255, 65, 0.35);
-}
-
-.nuuhuh-overlay__close-btn:focus {
   outline: 2px solid var(--matrix-white);
   outline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .nuuhuh-overlay__close-btn:hover {
+    background: var(--matrix-green);
+    color: rgb(0 0 0 / 85%);
+    box-shadow:
+      0 0 15px rgba(0, 255, 65, 0.4),
+      0 0 30px rgba(0, 255, 65, 0.35);
+  }
+}
+
+.nuuhuh-overlay__close-btn:active {
+  transform: scale(0.97);
 }

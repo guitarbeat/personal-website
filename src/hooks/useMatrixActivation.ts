@@ -49,7 +49,7 @@ export function useMatrixActivation() {
   const matrixReadyCallbackRef = useRef<(() => void) | null>(null);
 
   const handleMatrixActivate = useCallback(() => setShowMatrix(true), []);
-  const handleMatrixSuccess = useCallback(() => setShowMatrix(false), []);
+  const handleMatrixDismiss = useCallback(() => setShowMatrix(false), []);
   const handleRouteMatrixChange = useCallback((shouldShow: boolean) => {
     setShowMatrix((prev) => (prev === shouldShow ? prev : shouldShow));
   }, []);
@@ -70,7 +70,7 @@ export function useMatrixActivation() {
   return {
     showMatrix,
     handleMatrixActivate,
-    handleMatrixSuccess,
+    handleMatrixDismiss,
     handleRouteMatrixChange,
     handleMatrixReady,
   };

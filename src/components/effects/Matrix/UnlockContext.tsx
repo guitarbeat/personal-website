@@ -13,26 +13,26 @@ import {
 import { useMobileDetection } from "@/hooks/useMobileDetection";
 
 // Constants
-import { ANIMATION_TIMING, ERROR_MESSAGES, SECURITY } from "./constants";
+import { ANIMATION_TIMING, ERROR_MESSAGES, UNLOCK } from "./constants";
 
-interface AuthContextType {
+interface UnlockContextType {
   isUnlocked: boolean;
   isMobileUnlocked: boolean;
   toolsAccessible: boolean;
   completeHack: () => boolean;
-  showSuccessFeedback: boolean;
+  showHackCompleteFeedback: boolean;
   logout: () => void;
   isMobile: boolean;
 }
 
-const AuthContext = createContext<AuthContextType | null>(null);
+const UnlockContext = createContext<UnlockContextType | null>(null);
 
-// * Session storage keys
-const SESSION_KEYS = {
-  IS_UNLOCKED: "matrix_auth_unlocked",
-  SESSION_TIMESTAMP: "matrix_auth_timestamp",
-  MOBILE_UNLOCKED: "matrix_auth_mobile_unlocked",
-  MOBILE_SESSION_TIMESTAMP: "matrix_auth_mobile_timestamp",
+// * Browser sessionStorage keys
+const STORAGE_KEYS = {
+  IS_UNLOCKED: "matrix_unlocked",
+  UNLOCK_TIMESTAMP: "matrix_unlock_timestamp",
+  MOBILE_UNLOCKED: "matrix_mobile_unlocked",
+  MOBILE_UNLOCK_TIMESTAMP: "matrix_mobile_unlock_timestamp",
 };
 
 const DEVICE_KEYS = {
@@ -40,14 +40,14 @@ const DEVICE_KEYS = {
   MOBILE: "mobile",
 };
 
-const SESSION_CONFIG = {
+const STORAGE_CONFIG = {
   [DEVICE_KEYS.DEFAULT]: {
-    unlockedKey: SESSION_KEYS.IS_UNLOCKED,
-    timestampKey: SESSION_KEYS.SESSION_TIMESTAMP,
+    unlockedKey: STORAGE_KEYS.IS_UNLOCKED,
+    timestampKey: STORAGE_KEYS.UNLOCK_TIMESTAMP,
   },
   [DEVICE_KEYS.MOBILE]: {
-    unlockedKey: SESSION_KEYS.MOBILE_UNLOCKED,
-    timestampKey: SESSION_KEYS.MOBILE_SESSION_TIMESTAMP,
+    unlockedKey: STORAGE_KEYS.MOBILE_UNLOCKED,
+    timestampKey: STORAGE_KEYS.MOBILE_UNLOCK_TIMESTAMP,
   },
 };
 
@@ -59,7 +59,7 @@ const INITIAL_UNLOCK_STATE = {
 const hasSessionStorage = () =>
   typeof window !== "undefined" && typeof window.sessionStorage !== "undefined";
 
-// * Session management utilities
+// * sessionStorage utilities
 const getSessionData = (key: string) => {
   if (!hasSessionStorage()) {
     return null;
@@ -98,7 +98,7 @@ const setSessionData = (key: string, value: unknown) => {
     if (error instanceof Error && error.name === "QuotaExceededError") {
       try {
         // biome-ignore lint/suspicious/useIterableCallbackReturn: forEach used for side effect
-        Object.values(SESSION_KEYS).forEach((k) => clearSessionData(k));
+        Object.values(STORAGE_KEYS).forEach((k) => clearSessionData(k));
         window.sessionStorage.setItem(key, JSON.stringify(value));
       } catch (retryError) {
         console.error(
@@ -110,17 +110,17 @@ const setSessionData = (key: string, value: unknown) => {
   }
 };
 
-const createUnlockStateFromSession = () => {
+const readUnlockStateFromStorage = () => {
   const unlockState = { ...INITIAL_UNLOCK_STATE };
-  const maxSessionAge = SECURITY.SESSION.DURATION_MS;
+  const maxUnlockAge = UNLOCK.WINDOW_MS;
 
-  for (const [device, keys] of Object.entries(SESSION_CONFIG)) {
+  for (const [device, keys] of Object.entries(STORAGE_CONFIG)) {
     const isStoredUnlocked = getSessionData(keys.unlockedKey);
     const storedTimestamp = getSessionData(keys.timestampKey);
 
     if (isStoredUnlocked && storedTimestamp) {
-      const sessionAge = Date.now() - (storedTimestamp as number);
-      if (sessionAge < maxSessionAge) {
+      const unlockAge = Date.now() - (storedTimestamp as number);
+      if (unlockAge < maxUnlockAge) {
         unlockState[device] = true;
       } else {
         clearSessionData(keys.unlockedKey);
@@ -132,15 +132,15 @@ const createUnlockStateFromSession = () => {
   return unlockState;
 };
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+export const UnlockProvider = ({ children }: { children: React.ReactNode }) => {
   const { isMobile } = useMobileDetection();
 
   const [unlockState, setUnlockState] = useState<Record<string, boolean>>(
-    createUnlockStateFromSession,
+    readUnlockStateFromStorage,
   );
-  const [showSuccessFeedback, setShowSuccessFeedback] =
+  const [showHackCompleteFeedback, setShowHackCompleteFeedback] =
     useState<boolean>(false);
-  const authTimeoutRef = useRef<NodeJS.Timeout | number | null>(null);
+  const unlockTimeoutRef = useRef<NodeJS.Timeout | number | null>(null);
   const feedbackTimeoutRef = useRef<NodeJS.Timeout | number | null>(null);
 
   const updateUnlockState = useCallback((device: string, value: boolean) => {
@@ -157,7 +157,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const persistUnlockState = useCallback((device: string, value: boolean) => {
-    const config = SESSION_CONFIG[device];
+    const config = STORAGE_CONFIG[device];
     if (!config) {
       return;
     }
@@ -173,7 +173,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const resetUnlockState = useCallback(() => {
     setUnlockState({ ...INITIAL_UNLOCK_STATE });
-    for (const device of Object.keys(SESSION_CONFIG)) {
+    for (const device of Object.keys(STORAGE_CONFIG)) {
       persistUnlockState(device, false);
     }
   }, [persistUnlockState]);
@@ -196,31 +196,31 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       persistUnlockState(device, true);
     }
 
-    setShowSuccessFeedback(true);
+    setShowHackCompleteFeedback(true);
 
     if (feedbackTimeoutRef.current) {
       clearTimeout(feedbackTimeoutRef.current);
     }
     feedbackTimeoutRef.current = setTimeout(() => {
-      setShowSuccessFeedback(false);
+      setShowHackCompleteFeedback(false);
       feedbackTimeoutRef.current = null;
-    }, ANIMATION_TIMING.SUCCESS_FEEDBACK_DURATION);
+    }, ANIMATION_TIMING.HACK_COMPLETE_FEEDBACK_DURATION);
 
-    if (authTimeoutRef.current) {
-      clearTimeout(authTimeoutRef.current);
+    if (unlockTimeoutRef.current) {
+      clearTimeout(unlockTimeoutRef.current);
     }
-    authTimeoutRef.current = setTimeout(() => {
+    unlockTimeoutRef.current = setTimeout(() => {
       finalizeUnlock();
-      authTimeoutRef.current = null;
+      unlockTimeoutRef.current = null;
     }, ANIMATION_TIMING.MATRIX_MODAL_CLOSE_DELAY);
 
     return true;
   }, [finalizeUnlock, isMobile, persistUnlockState]);
 
   const logout = useCallback(() => {
-    if (authTimeoutRef.current) {
-      clearTimeout(authTimeoutRef.current);
-      authTimeoutRef.current = null;
+    if (unlockTimeoutRef.current) {
+      clearTimeout(unlockTimeoutRef.current);
+      unlockTimeoutRef.current = null;
     }
 
     if (feedbackTimeoutRef.current) {
@@ -228,14 +228,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       feedbackTimeoutRef.current = null;
     }
 
-    setShowSuccessFeedback(false);
+    setShowHackCompleteFeedback(false);
     resetUnlockState();
   }, [resetUnlockState]);
 
   useEffect(() => {
     return () => {
-      if (authTimeoutRef.current) {
-        clearTimeout(authTimeoutRef.current);
+      if (unlockTimeoutRef.current) {
+        clearTimeout(unlockTimeoutRef.current);
       }
       if (feedbackTimeoutRef.current) {
         clearTimeout(feedbackTimeoutRef.current);
@@ -256,14 +256,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [isMobile, isMobileUnlocked, isUnlocked]);
 
   return (
-    <AuthContext.Provider
+    <UnlockContext.Provider
       value={useMemo(
         () => ({
           isUnlocked,
           isMobileUnlocked,
           toolsAccessible,
           completeHack,
-          showSuccessFeedback,
+          showHackCompleteFeedback,
           logout,
           isMobile,
         }),
@@ -272,21 +272,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           isMobileUnlocked,
           toolsAccessible,
           completeHack,
-          showSuccessFeedback,
+          showHackCompleteFeedback,
           logout,
           isMobile,
         ],
       )}
     >
       {children}
-    </AuthContext.Provider>
+    </UnlockContext.Provider>
   );
 };
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
+export const useUnlock = () => {
+  const context = useContext(UnlockContext);
   if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
+    throw new Error("useUnlock must be used within an UnlockProvider");
   }
   return context;
 };

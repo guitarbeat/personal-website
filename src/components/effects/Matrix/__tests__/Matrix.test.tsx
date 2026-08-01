@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom"; // Import custom matchers
-import { AuthProvider } from "../AuthContext";
 import Matrix from "../Matrix";
+import { UnlockProvider } from "../UnlockContext";
 
 describe("Matrix", () => {
   it("does not render the test easter egg button", () => {
@@ -16,9 +16,9 @@ describe("Matrix", () => {
     window.HTMLMediaElement.prototype.pause = jest.fn();
 
     render(
-      <AuthProvider>
+      <UnlockProvider>
         <Matrix isVisible={true} />
-      </AuthProvider>,
+      </UnlockProvider>,
     );
     const button = screen.queryByRole("button", { name: /test easter egg/i });
     expect(button).not.toBeInTheDocument();

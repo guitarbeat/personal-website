@@ -5,12 +5,12 @@ import {
   PROGRESS_DECAY_BASE,
   PROGRESS_DECAY_INTERVAL,
   PROGRESS_DECAY_RAMP,
-} from "./matrixSessionCopy";
+} from "./hackTuning";
 
 interface UseHackProgressDecayOptions {
   easterEggTriggeredRef: React.RefObject<boolean>;
   idleFailureTrackerRef: React.RefObject<{ lowStreak: number }>;
-  isHackingComplete: boolean;
+  isHackComplete: boolean;
   isVisible: boolean;
   lastKeyTimeRef: React.RefObject<number | null>;
   setHackFeedback: React.Dispatch<React.SetStateAction<string>>;
@@ -21,7 +21,7 @@ interface UseHackProgressDecayOptions {
 export function useHackProgressDecay({
   easterEggTriggeredRef,
   idleFailureTrackerRef,
-  isHackingComplete,
+  isHackComplete,
   isVisible,
   lastKeyTimeRef,
   setHackFeedback,
@@ -29,7 +29,7 @@ export function useHackProgressDecay({
   triggerIdleFailure,
 }: UseHackProgressDecayOptions) {
   useEffect(() => {
-    if (!isVisible || isHackingComplete) {
+    if (!isVisible || isHackComplete) {
       return undefined;
     }
 
@@ -55,18 +55,11 @@ export function useHackProgressDecay({
           const next = Math.max(0, prev - decayAmount);
 
           if (next < prev) {
-            setHackFeedback((current) => {
-              if (
-                current ===
-                "Override complete. Authentication channel stabilized."
-              ) {
-                return current;
-              }
-
-              return current.includes("Signal fading")
+            setHackFeedback((current) =>
+              current.includes("Signal fading")
                 ? current
-                : "Signal fading—keep the keys alive.";
-            });
+                : "Signal fading—keep the keys alive.",
+            );
           }
 
           if (next <= 0) {
@@ -127,7 +120,7 @@ export function useHackProgressDecay({
   }, [
     easterEggTriggeredRef,
     idleFailureTrackerRef,
-    isHackingComplete,
+    isHackComplete,
     isVisible,
     lastKeyTimeRef,
     setHackFeedback,

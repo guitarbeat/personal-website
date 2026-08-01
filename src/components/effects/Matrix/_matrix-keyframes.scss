@@ -22,6 +22,17 @@
   }
 }
 
+/* Opacity-only entrance for reduced-motion fallbacks */
+@keyframes matrixSoftFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
 @keyframes cursorBlink {
   0%,
   100% {

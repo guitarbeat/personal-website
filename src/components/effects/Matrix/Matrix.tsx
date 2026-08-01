@@ -1,30 +1,31 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { cn } from "@/utils/commonUtils";
-import { useAuth } from "./AuthContext";
-import { HackTerminalPanel } from "./HackTerminalPanel";
+import { HackTerminal } from "./HackTerminal";
+import {
+  buildHackCompleteConsole,
+  DEFAULT_CONSOLE_PROMPT,
+  HACK_COMPLETE_FEEDBACK,
+  HACKER_TYPER_CORPUS,
+  type HackCompleteConsoleParams,
+} from "./hackCopy";
+import { ATTEMPT_START_PROGRESS } from "./hackTuning";
 import "./matrix.scss";
 import { getMatrixRainIntensity } from "./matrixRainIntensity";
-import {
-  buildSuccessConsoleReadout,
-  DEFAULT_CONSOLE_PROMPT,
-  HACKER_TYPER_CORPUS,
-  SUCCESS_FEEDBACK_MESSAGE,
-  type SuccessConsoleParams,
-} from "./matrixSessionCopy";
 import { NuUhUhEasterEgg } from "./NuUhUhEasterEgg";
+import { useUnlock } from "./UnlockContext";
+import { useHackAttempt } from "./useHackAttempt";
 import { useHackInteraction } from "./useHackInteraction";
 import { useHackProgressDecay } from "./useHackProgressDecay";
-import { useHackSession } from "./useHackSession";
 import { useMatrixRain } from "./useMatrixRain";
 
 interface MatrixProps {
   isVisible: boolean;
-  onSuccess?: () => void;
+  onDismiss?: () => void;
   onMatrixReady?: (callback: (() => void) | null) => void;
 }
 
-const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
+const Matrix = ({ isVisible, onDismiss, onMatrixReady }: MatrixProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const {
     hackingBuffer,
@@ -33,8 +34,8 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
     setHackProgress,
     hackFeedback,
     setHackFeedback,
-    isHackingComplete,
-  } = useHackSession(isVisible);
+    isHackComplete,
+  } = useHackAttempt(isVisible);
   const rainIntensityRef = useRef(getMatrixRainIntensity(hackProgress));
   const matrixRainIntensity = getMatrixRainIntensity(hackProgress);
 
@@ -44,7 +45,7 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
 
   useMatrixRain(canvasRef, isVisible, rainIntensityRef);
   const completionTriggeredRef = useRef(false);
-  const [sessionStart] = useState(() => Date.now());
+  const [attemptStart] = useState(() => Date.now());
   const [matrixCoordinate] = useState<string>(() => {
     const sector = Math.floor(Math.random() * 64)
       .toString(16)
@@ -59,14 +60,14 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
   const [signalSeed] = useState<number>(
     () => Math.floor(Math.random() * 900) + 100,
   );
-  const { completeHack, showSuccessFeedback } = useAuth();
+  const { completeHack, showHackCompleteFeedback } = useUnlock();
   const easterEggTriggeredRef = useRef<boolean>(false);
   const [easterEggs, setEasterEggs] = useState<number[]>([]);
   const hackCorpus = useMemo(
     () => Array.from({ length: 24 }, () => HACKER_TYPER_CORPUS).join("\n"),
     [],
   );
-  const successTelemetryRef = useRef<SuccessConsoleParams | null>(null);
+  const completionTelemetryRef = useRef<HackCompleteConsoleParams | null>(null);
 
   const {
     hackInputRef,
@@ -80,7 +81,7 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
     resetHackStream,
   } = useHackInteraction({
     hackCorpus,
-    isHackingComplete,
+    isHackComplete,
     setHackFeedback,
     setHackProgress,
     setHackingBuffer,
@@ -94,9 +95,7 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
     easterEggTriggeredRef.current = true;
     resetIdleFailureTracking();
     lastKeyTimeRef.current = null;
-    setHackFeedback(
-      "Signal severed. Access denied. Reinitialize the override.",
-    );
+    setHackFeedback("Signal severed. Access denied. Restart the hack.");
 
     const eggId = Date.now();
     setEasterEggs((prev) => [...prev, eggId]);
@@ -105,7 +104,7 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
   useHackProgressDecay({
     easterEggTriggeredRef,
     idleFailureTrackerRef,
-    isHackingComplete,
+    isHackComplete,
     isVisible,
     lastKeyTimeRef,
     setHackFeedback,
@@ -118,9 +117,9 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
       setEasterEggs((prev) => prev.filter((id) => id !== eggId));
       resetIdleFailureTracking();
       lastKeyTimeRef.current = null;
-      setHackProgress(12);
+      setHackProgress(ATTEMPT_START_PROGRESS);
       setHackingBuffer(DEFAULT_CONSOLE_PROMPT);
-      setHackFeedback("Channel reset. Re-engage manual override.");
+      setHackFeedback("Channel reset. Re-engage the hack.");
       easterEggTriggeredRef.current = false;
       focusHackInput();
     },
@@ -137,21 +136,21 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        onSuccess?.();
+        onDismiss?.();
       } else if (
         event.key === "Enter" &&
-        !showSuccessFeedback &&
-        isHackingComplete
+        !showHackCompleteFeedback &&
+        isHackComplete
       ) {
-        onSuccess?.();
+        onDismiss?.();
       }
     },
-    [onSuccess, showSuccessFeedback, isHackingComplete],
+    [onDismiss, showHackCompleteFeedback, isHackComplete],
   );
 
   const consoleDisplay = hackingBuffer || DEFAULT_CONSOLE_PROMPT;
-  const successTelemetry = successTelemetryRef.current;
-  const showConsoleCursor = !isHackingComplete;
+  const completionTelemetry = completionTelemetryRef.current;
+  const showConsoleCursor = !isHackComplete;
 
   const handleContainerClick = useCallback(
     (event: React.MouseEvent) => {
@@ -159,13 +158,13 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
         return;
       }
 
-      if (showSuccessFeedback) {
+      if (showHackCompleteFeedback) {
         return;
       }
 
-      onSuccess?.();
+      onDismiss?.();
     },
-    [showSuccessFeedback, onSuccess],
+    [showHackCompleteFeedback, onDismiss],
   );
 
   useEffect(() => {
@@ -208,16 +207,16 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
   }, [hackingBuffer, resetHackStream]);
 
   useEffect(() => {
-    if (!isHackingComplete) {
-      successTelemetryRef.current = null;
+    if (!isHackComplete) {
+      completionTelemetryRef.current = null;
       return;
     }
 
-    if (!successTelemetryRef.current) {
+    if (!completionTelemetryRef.current) {
       const now = Date.now();
       const elapsedSeconds = Math.max(
         0,
-        Math.round((now - sessionStart) / 1000),
+        Math.round((now - attemptStart) / 1000),
       );
 
       const runtimeDisplay = new Date(elapsedSeconds * 1000)
@@ -235,7 +234,7 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
       const jitter = (elapsedSeconds % 7) * 3;
       const signalChannel = (base + jitter).toString().padStart(3, "0");
 
-      successTelemetryRef.current = {
+      completionTelemetryRef.current = {
         matrixCoordinate,
         runtimeDisplay,
         timecodeDisplay,
@@ -244,27 +243,27 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
       };
     }
 
-    const successReadout = buildSuccessConsoleReadout({
-      matrixCoordinate: successTelemetryRef.current.matrixCoordinate,
-      runtimeDisplay: successTelemetryRef.current.runtimeDisplay,
-      timecodeDisplay: successTelemetryRef.current.timecodeDisplay,
-      signalGain: successTelemetryRef.current.signalGain,
-      signalChannel: successTelemetryRef.current.signalChannel,
+    const completeReadout = buildHackCompleteConsole({
+      matrixCoordinate: completionTelemetryRef.current.matrixCoordinate,
+      runtimeDisplay: completionTelemetryRef.current.runtimeDisplay,
+      timecodeDisplay: completionTelemetryRef.current.timecodeDisplay,
+      signalGain: completionTelemetryRef.current.signalGain,
+      signalChannel: completionTelemetryRef.current.signalChannel,
     });
 
-    setHackFeedback(SUCCESS_FEEDBACK_MESSAGE);
-    setHackingBuffer(successReadout);
+    setHackFeedback(HACK_COMPLETE_FEEDBACK);
+    setHackingBuffer(completeReadout);
   }, [
-    isHackingComplete,
+    isHackComplete,
     matrixCoordinate,
     setHackFeedback,
     setHackingBuffer,
-    sessionStart,
+    attemptStart,
     signalSeed,
   ]);
 
   useEffect(() => {
-    if (!isHackingComplete || completionTriggeredRef.current) {
+    if (!isHackComplete || completionTriggeredRef.current) {
       return undefined;
     }
 
@@ -272,13 +271,13 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
     completeHack();
 
     const closeTimeout = window.setTimeout(() => {
-      onSuccess?.();
+      onDismiss?.();
     }, 2000);
 
     return () => {
       window.clearTimeout(closeTimeout);
     };
-  }, [isHackingComplete, completeHack, onSuccess]);
+  }, [isHackComplete, completeHack, onDismiss]);
 
   useEffect(() => {
     if (!isVisible) {
@@ -287,12 +286,12 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
   }, [isVisible]);
 
   useEffect(() => {
-    if (!isVisible || showSuccessFeedback) {
+    if (!isVisible || showHackCompleteFeedback) {
       return;
     }
 
     focusHackInput();
-  }, [isVisible, showSuccessFeedback, focusHackInput]);
+  }, [isVisible, showHackCompleteFeedback, focusHackInput]);
 
   useEffect(() => {
     if (!isVisible) {
@@ -313,7 +312,7 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
       onClick={handleContainerClick}
       onKeyDown={(event: React.KeyboardEvent) => {
         if (event.key === "Escape") {
-          onSuccess?.();
+          onDismiss?.();
         }
       }}
       aria-modal="true"
@@ -340,7 +339,7 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
           } as React.CSSProperties
         }
       />
-      <HackTerminalPanel
+      <HackTerminal
         consoleDisplay={consoleDisplay}
         hackFeedback={hackFeedback}
         hackInputRef={hackInputRef}
@@ -348,14 +347,14 @@ const Matrix = ({ isVisible, onSuccess, onMatrixReady }: MatrixProps) => {
         handleHackInputChange={handleHackInputChange}
         handleHackKeyDown={handleHackKeyDown}
         handleViewportEngage={handleViewportEngage}
-        isHackingComplete={isHackingComplete}
+        isHackComplete={isHackComplete}
         showConsoleCursor={showConsoleCursor}
-        successTelemetry={successTelemetry}
+        completionTelemetry={completionTelemetry}
       />
       <button
         type="button"
         className="matrix-close-btn"
-        onClick={onSuccess}
+        onClick={onDismiss}
         aria-label="Exit Matrix"
       >
         EXIT

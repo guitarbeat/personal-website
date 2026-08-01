@@ -1,14 +1,4 @@
-export const PROGRESS_DECAY_INTERVAL = 140;
-export const PROGRESS_DECAY_BASE = 0.5; // Increased from 0.18
-export const PROGRESS_DECAY_RAMP = [
-  { threshold: 2600, value: 1.2 }, // Increased from 0.92
-  { threshold: 1900, value: 0.9 }, // Increased from 0.64
-  { threshold: 1300, value: 0.65 }, // Increased from 0.4
-  { threshold: 900, value: 0.45 }, // Increased from 0.26
-];
-export const MIN_IDLE_BEFORE_DECAY = 300; // Reduced from 480
-export const KEY_VARIETY_WINDOW = 12;
-export const REPETITION_DECAY_RESET_MS = 650;
+/** Player-facing strings and scripted Console output for the Hack. */
 
 export const INITIAL_FEEDBACK = "Initialize uplink by mashing the keys.";
 
@@ -18,10 +8,10 @@ export const DEFAULT_CONSOLE_PROMPT = [
   "",
 ].join("\n");
 
-export const SUCCESS_FEEDBACK_MESSAGE =
-  "Access granted! Breach stabilized. Awaiting extraction command.";
+export const HACK_COMPLETE_FEEDBACK =
+  "Access granted! Hack stabilized. Awaiting extraction command.";
 
-export interface SuccessConsoleParams {
+export interface HackCompleteConsoleParams {
   matrixCoordinate: string;
   runtimeDisplay: string;
   timecodeDisplay: string;
@@ -29,15 +19,15 @@ export interface SuccessConsoleParams {
   signalChannel: string;
 }
 
-export const buildSuccessConsoleReadout = ({
+export const buildHackCompleteConsole = ({
   matrixCoordinate,
   runtimeDisplay,
   timecodeDisplay,
   signalGain,
   signalChannel,
-}: SuccessConsoleParams) =>
+}: HackCompleteConsoleParams) =>
   [
-    "uplink> AUTH HANDSHAKE COMPLETE",
+    "uplink> HANDSHAKE COMPLETE",
     `uplink> channel:${signalChannel} :: gain:${signalGain}dB`,
     `uplink> coordinate locked @ ${matrixCoordinate}`,
     `uplink> runtime ${runtimeDisplay} | timestamp ${timecodeDisplay}Z`,
@@ -45,12 +35,9 @@ export const buildSuccessConsoleReadout = ({
     "",
   ].join("\n");
 
-// * --------------------------------------------------------------------------------
-// * Audio Helpers
-// * --------------------------------------------------------------------------------
-
+/** Fake terminal session replayed keystroke-by-keystroke as the player mashes. */
 export const HACKER_TYPER_CORPUS = [
-  "root@matrix:~$ ./initiate_breach.sh",
+  "root@matrix:~$ ./initiate_hack.sh",
   "[INFO] Initializing quantum handshake protocol...",
   "[OK] Connection established to matrix-core",
   "",
@@ -98,8 +85,6 @@ export const HACKER_TYPER_CORPUS = [
   "[SUCCESS] Merge complete, committing changes",
   "root@matrix:~$ matrix.core.flush();",
   "[OK] Core buffer flushed",
-  "[SYSTEM] Breach protocol complete",
+  "[SYSTEM] Hack protocol complete",
   "",
 ].join("\n");
-
-export const MAX_DISPLAY_LENGTH = 1400;

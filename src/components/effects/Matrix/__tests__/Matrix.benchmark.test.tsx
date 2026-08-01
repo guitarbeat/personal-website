@@ -1,7 +1,7 @@
 import { render } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import { AuthProvider } from "../AuthContext";
 import Matrix from "../Matrix";
+import { UnlockProvider } from "../UnlockContext";
 
 describe("Matrix Performance", () => {
   let widthSetterSpy: jest.SpyInstance;
@@ -43,9 +43,9 @@ describe("Matrix Performance", () => {
 
   it("should debounce resize events (optimization verification)", () => {
     render(
-      <AuthProvider>
+      <UnlockProvider>
         <Matrix isVisible={true} />
-      </AuthProvider>,
+      </UnlockProvider>,
     );
 
     // Initial render calls resizeCanvas once directly

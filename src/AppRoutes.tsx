@@ -17,13 +17,13 @@ const Matrix = lazy(() => import("@/components/effects/Matrix/Matrix"));
 
 interface MatrixModalProps {
   showMatrix: boolean;
-  onSuccess: () => void;
+  onDismiss: () => void;
   onMatrixReady: (callback: (() => void) | null) => void;
 }
 
 export function MatrixModal({
   showMatrix,
-  onSuccess,
+  onDismiss,
   onMatrixReady,
 }: MatrixModalProps) {
   if (!showMatrix) {
@@ -34,7 +34,7 @@ export function MatrixModal({
     <Suspense fallback={null}>
       <Matrix
         isVisible={showMatrix}
-        onSuccess={onSuccess}
+        onDismiss={onDismiss}
         onMatrixReady={onMatrixReady}
       />
     </Suspense>

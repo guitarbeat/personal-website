@@ -1,7 +1,7 @@
 import { cn } from "@/utils/commonUtils";
-import type { SuccessConsoleParams } from "./matrixSessionCopy";
+import type { HackCompleteConsoleParams } from "./hackCopy";
 
-interface HackTerminalPanelProps {
+interface HackTerminalProps {
   consoleDisplay: string;
   hackFeedback: string;
   hackInputRef: React.RefObject<HTMLInputElement | null>;
@@ -9,12 +9,12 @@ interface HackTerminalPanelProps {
   handleHackInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleHackKeyDown: (event: React.KeyboardEvent) => void;
   handleViewportEngage: () => void;
-  isHackingComplete: boolean;
+  isHackComplete: boolean;
   showConsoleCursor: boolean;
-  successTelemetry: SuccessConsoleParams | null;
+  completionTelemetry: HackCompleteConsoleParams | null;
 }
 
-export function HackTerminalPanel({
+export function HackTerminal({
   consoleDisplay,
   hackFeedback,
   hackInputRef,
@@ -22,18 +22,20 @@ export function HackTerminalPanel({
   handleHackInputChange,
   handleHackKeyDown,
   handleViewportEngage,
-  isHackingComplete,
+  isHackComplete,
   showConsoleCursor,
-  successTelemetry,
-}: HackTerminalPanelProps) {
+  completionTelemetry,
+}: HackTerminalProps) {
   const phaseLabel =
     hackProgress < 33
-      ? "PHASE 1 // BREACHING"
+      ? "PHASE 1 // HACKING"
       : hackProgress < 66
         ? "PHASE 2 // DECRYPTING"
         : hackProgress < 100
-          ? "PHASE 3 // OVERRIDING"
+          ? "PHASE 3 // ESCALATING"
           : "ACCESS GRANTED";
+
+  const progressScale = Math.min(1, Math.max(0, hackProgress / 100));
 
   const channelLabel =
     hackProgress < 100
@@ -45,7 +47,7 @@ export function HackTerminalPanel({
       : "SYSTEM READY";
 
   return (
-    <div className={cn("hack-terminal", isHackingComplete && "complete")}>
+    <div className={cn("hack-terminal", isHackComplete && "complete")}>
       <header className="hack-terminal-status">
         <span className="hack-terminal-status__phase">{phaseLabel}</span>
         <span className="hack-terminal-status__channel">{channelLabel}</span>
@@ -54,13 +56,23 @@ export function HackTerminalPanel({
       <div className="hack-sequencer">
         <div className="hack-sequencer__header">
           <span className="hack-sequencer__title">
-            {isHackingComplete ? "Access secured" : "Hack in progress"}
+            {isHackComplete ? "Hack complete" : "Hack in progress"}
           </span>
           <span className="hack-sequencer__percentage">
             {Math.round(hackProgress)}%
           </span>
         </div>
-        <div className="hack-sequencer__bar">
+        <div
+          className="hack-sequencer__bar"
+          role="progressbar"
+          aria-valuenow={Math.round(hackProgress)}
+          aria-valuemin={0}
+          aria-valuemax={100}
+        >
+          <div
+            className="hack-sequencer__surge"
+            style={{ transform: `scaleX(${progressScale})` }}
+          />
           <div
             className={cn(
               "hack-sequencer__fill",
@@ -70,7 +82,7 @@ export function HackTerminalPanel({
                   ? "is-amber"
                   : "is-phosphor",
             )}
-            style={{ width: `${hackProgress}%` }}
+            style={{ transform: `scaleX(${progressScale})` }}
           />
         </div>
         <p className="hack-sequencer__feedback">{hackFeedback}</p>
@@ -78,7 +90,7 @@ export function HackTerminalPanel({
 
       {/* biome-ignore lint/a11y/useSemanticElements: viewport layout uses role=button */}
       <div
-        className={cn("hack-input__viewport", isHackingComplete && "complete")}
+        className={cn("hack-input__viewport", isHackComplete && "complete")}
         role="button"
         tabIndex={0}
         onKeyDown={(event) => {
@@ -108,12 +120,12 @@ export function HackTerminalPanel({
           })}
           {showConsoleCursor && <span className="hack-input__cursor" />}
         </div>
-        {isHackingComplete && successTelemetry && (
+        {isHackComplete && completionTelemetry && (
           <output className="hack-success" aria-live="assertive">
             <span className="hack-success__title">ACCESS GRANTED</span>
             <span className="hack-success__meta">
-              Channel {successTelemetry.signalChannel} ·{" "}
-              {successTelemetry.runtimeDisplay}
+              Channel {completionTelemetry.signalChannel} ·{" "}
+              {completionTelemetry.runtimeDisplay}
             </span>
             <span className="hack-success__cta">&gt; PRESS ENTER OR ESC</span>
           </output>
@@ -126,8 +138,8 @@ export function HackTerminalPanel({
         onKeyDown={handleHackKeyDown}
         onChange={handleHackInputChange}
         className="hack-input__field"
-        disabled={isHackingComplete}
-        aria-label="Mash the keys to amplify the breach"
+        disabled={isHackComplete}
+        aria-label="Mash the keys to advance the hack"
         autoComplete="off"
         autoCorrect="off"
         spellCheck={false}
@@ -138,7 +150,7 @@ export function HackTerminalPanel({
         aria-hidden="true"
         id="hack-input-helper"
       >
-        {isHackingComplete
+        {isHackComplete
           ? "Channel stabilized"
           : "Keep mashing to stabilize the signal"}
       </div>

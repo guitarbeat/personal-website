@@ -2,7 +2,7 @@
 @use "./matrix-keyframes";
 @use "./matrix-shell";
 @use "./matrix-widgets";
-@use "./matrix-hack-panel";
+@use "./matrix-terminal";
 
 /* Accessibility overrides load last so equal-specificity rules win */
 @use "./matrix-a11y";

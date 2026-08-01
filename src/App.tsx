@@ -7,7 +7,10 @@ import { AppRoutes, MatrixModal, MatrixRouteSync } from "@/AppRoutes";
 import { NAV_ITEMS } from "@/components/Core/constants";
 import { ContentUnavailableState } from "@/components/Core/SiteLayout";
 import LoadingSequence from "@/components/effects/Loading/LoadingSequence";
-import { AuthProvider, useAuth } from "@/components/effects/Matrix/AuthContext";
+import {
+  UnlockProvider,
+  useUnlock,
+} from "@/components/effects/Matrix/UnlockContext";
 import { canMountSiteProof } from "@/components/effects/Proof/siteProofMount";
 import { NotionProvider, useNotion } from "@/contexts/NotionContext";
 import { useMatrixActivation } from "@/hooks/useMatrixActivation";
@@ -30,11 +33,11 @@ function AppContent() {
   const {
     showMatrix,
     handleMatrixActivate,
-    handleMatrixSuccess,
+    handleMatrixDismiss,
     handleRouteMatrixChange,
     handleMatrixReady,
   } = useMatrixActivation();
-  const { isUnlocked } = useAuth();
+  const { isUnlocked } = useUnlock();
   const { isScrollMode, isInScroll, activateScrollMode } = useScrollMode();
   const [isInitialLoaderVisible, setIsInitialLoaderVisible] = useState(true);
   const [hasMinimumLoaderDurationElapsed, setHasMinimumLoaderDurationElapsed] =
@@ -75,7 +78,7 @@ function AppContent() {
       />
       <MatrixModal
         showMatrix={showMatrix}
-        onSuccess={handleMatrixSuccess}
+        onDismiss={handleMatrixDismiss}
         onMatrixReady={handleMatrixReady}
       />
       {isUnlocked ? (
@@ -118,7 +121,7 @@ function AppContent() {
 
 const App = () => (
   <NotionProvider>
-    <AuthProvider>
+    <UnlockProvider>
       <AppContent />
       {isVercelHostedBuild() ? (
         <>
@@ -126,7 +129,7 @@ const App = () => (
           <SpeedInsights />
         </>
       ) : null}
-    </AuthProvider>
+    </UnlockProvider>
   </NotionProvider>
 );
 

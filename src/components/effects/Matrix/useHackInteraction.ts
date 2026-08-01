@@ -1,11 +1,11 @@
 import { useCallback, useRef } from "react";
 
+import { DEFAULT_CONSOLE_PROMPT } from "./hackCopy";
 import {
-  DEFAULT_CONSOLE_PROMPT,
   KEY_VARIETY_WINDOW,
   MAX_DISPLAY_LENGTH,
   REPETITION_DECAY_RESET_MS,
-} from "./matrixSessionCopy";
+} from "./hackTuning";
 
 interface KeyPattern {
   recentKeys: string[];
@@ -15,7 +15,7 @@ interface KeyPattern {
 
 interface UseHackInteractionOptions {
   hackCorpus: string;
-  isHackingComplete: boolean;
+  isHackComplete: boolean;
   setHackFeedback: React.Dispatch<React.SetStateAction<string>>;
   setHackProgress: React.Dispatch<React.SetStateAction<number>>;
   setHackingBuffer: React.Dispatch<React.SetStateAction<string>>;
@@ -23,7 +23,7 @@ interface UseHackInteractionOptions {
 
 export function useHackInteraction({
   hackCorpus,
-  isHackingComplete,
+  isHackComplete,
   setHackFeedback,
   setHackProgress,
   setHackingBuffer,
@@ -163,7 +163,7 @@ export function useHackInteraction({
 
         if (delta !== null) {
           if (delta < 140)
-            feedbackMessage = "Trace evaded! Ultra-fast breach underway.";
+            feedbackMessage = "Trace evaded! Ultra-fast hack underway.";
           else if (delta < 260)
             feedbackMessage = "Firewall destabilizing—stellar rhythm.";
           else if (delta < 400)
@@ -206,13 +206,13 @@ export function useHackInteraction({
   );
 
   const handleManualHackTrigger = useCallback(() => {
-    if (isHackingComplete) return;
+    if (isHackComplete) return;
     processHackInteraction(false, "touch");
-  }, [isHackingComplete, processHackInteraction]);
+  }, [isHackComplete, processHackInteraction]);
 
   const handleHackKeyDown = useCallback(
     (event: React.KeyboardEvent) => {
-      if (isHackingComplete) {
+      if (isHackComplete) {
         return;
       }
 
@@ -232,7 +232,7 @@ export function useHackInteraction({
         processHackInteraction(false, event.key);
       }
     },
-    [isHackingComplete, processHackInteraction],
+    [isHackComplete, processHackInteraction],
   );
 
   const focusHackInput = useCallback(() => {
@@ -250,13 +250,13 @@ export function useHackInteraction({
   }, []);
 
   const handleViewportEngage = useCallback(() => {
-    if (isHackingComplete) {
+    if (isHackComplete) {
       return;
     }
 
     handleManualHackTrigger();
     focusHackInput();
-  }, [focusHackInput, handleManualHackTrigger, isHackingComplete]);
+  }, [focusHackInput, handleManualHackTrigger, isHackComplete]);
 
   return {
     hackInputRef,

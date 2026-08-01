@@ -18,10 +18,12 @@
   --matrix-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --matrix-shell-enter: 250ms var(--matrix-ease-out);
   --matrix-shell-exit: 180ms var(--matrix-ease-out);
+  /* Colour settles slowly; transform stays in the 100-160ms press band so
+     buttons acknowledge the finger immediately. */
   --matrix-transition-interactive:
     background 0.3s var(--matrix-ease-out),
     color 0.3s var(--matrix-ease-out),
     border-color 0.3s var(--matrix-ease-out),
     box-shadow 0.3s var(--matrix-ease-out),
-    transform 0.3s var(--matrix-ease-out);
+    transform 0.14s var(--matrix-ease-out);
 }
