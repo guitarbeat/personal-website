@@ -37,6 +37,7 @@ export function Proof({
   animationKey = 0,
   onAnimationComplete,
   onPointerEnter,
+  onPointerLeave,
   onPointerDown,
   style,
   role,
@@ -49,6 +50,9 @@ export function Proof({
   const gazeRequestRef = useRef<number | null>(null);
   const gazeDirectionRef = useRef<number | null>(null);
   const latestPointerRef = useRef({ x: 0, y: 0 });
+  const hoveredRef = useRef(false);
+  const pressCycleRef = useRef(false);
+  const pressTimerRef = useRef<number | null>(null);
   const [autonomousState, setAutonomousState] = useState<ProofState>("idle");
   const [frameIndex, setFrameIndex] = useState(0);
   const [gazeFrame, setGazeFrame] = useState<ProofFrame | null>(null);
@@ -85,7 +89,24 @@ export function Proof({
           completed = true;
           completionRef.current?.(effectiveState);
           if (state === undefined) {
-            setAutonomousState("idle");
+            if (effectiveState === "hover") {
+              if (hoveredRef.current) {
+                setAutonomousState("standing");
+              } else if (pressCycleRef.current) {
+                setAutonomousState("standing");
+                pressTimerRef.current = window.setTimeout(() => {
+                  setAutonomousState("lowering");
+                  pressTimerRef.current = null;
+                }, 500);
+              } else {
+                setAutonomousState("lowering");
+              }
+            } else if (effectiveState === "lowering") {
+              pressCycleRef.current = false;
+              setAutonomousState("idle");
+            } else {
+              setAutonomousState("idle");
+            }
           }
         }
         return;
@@ -111,8 +132,17 @@ export function Proof({
     return () => window.cancelAnimationFrame(requestId);
   }, [animation, animationKey, effectiveState, paused, reduceMotion, state]);
 
+  useEffect(
+    () => () => {
+      if (pressTimerRef.current !== null) {
+        window.clearTimeout(pressTimerRef.current);
+      }
+    },
+    [],
+  );
+
   useEffect(() => {
-    if (!followCursor || effectiveState !== "idle") {
+    if (!followCursor || effectiveState !== "standing") {
       gazeDirectionRef.current = null;
       setGazeFrame(null);
       return;
@@ -167,7 +197,7 @@ export function Proof({
   }, [effectiveState, followCursor, gazeDeadzone, gazeHysteresis]);
 
   const frame =
-    effectiveState === "idle" && gazeFrame
+    effectiveState === "standing" && gazeFrame
       ? gazeFrame
       : animationFrame(effectiveState, frameIndex);
   const width = size * (proofAtlas.cellWidth / proofAtlas.cellHeight);
@@ -199,14 +229,31 @@ export function Proof({
       event.pointerType !== "touch" &&
       reactToHover
     ) {
+      hoveredRef.current = true;
+      pressCycleRef.current = false;
       trigger("hover");
+    }
+  };
+
+  const handlePointerLeave = (event: ReactPointerEvent<HTMLSpanElement>) => {
+    onPointerLeave?.(event);
+    hoveredRef.current = false;
+    if (
+      !event.defaultPrevented &&
+      state === undefined &&
+      autonomousState === "standing"
+    ) {
+      trigger("lowering");
     }
   };
 
   const handlePointerDown = (event: ReactPointerEvent<HTMLSpanElement>) => {
     onPointerDown?.(event);
     if (!event.defaultPrevented && reactToPress) {
-      trigger("wave");
+      if (!hoveredRef.current) {
+        pressCycleRef.current = true;
+      }
+      trigger("hover");
     }
   };
 
@@ -222,6 +269,7 @@ export function Proof({
       data-proof-row={frame.row}
       data-proof-column={frame.column}
       onPointerEnter={handlePointerEnter}
+      onPointerLeave={handlePointerLeave}
       onPointerDown={handlePointerDown}
       style={spriteStyle}
     />

@@ -8,7 +8,7 @@ export const proofAtlas = {
   rows: 11,
   cellWidth: 192,
   cellHeight: 208,
-  neutral: { row: 0, column: 6 },
+  neutral: { row: 0, column: 0 },
 } as const;
 
 export interface ProofAnimation {
@@ -43,13 +43,25 @@ export const proofAnimations: Record<ProofState, ProofAnimation> = {
   wave: {
     row: 3,
     columns: [0, 1, 2, 3],
-    durations: [150, 120, 120, 180],
+    durations: [260, 180, 320, 180],
     loop: false,
   },
   hover: {
     row: 4,
     columns: [0, 1, 2, 3, 4],
-    durations: [140, 140, 140, 140, 280],
+    durations: [180, 140, 140, 140, 240],
+    loop: false,
+  },
+  standing: {
+    row: 4,
+    columns: [4],
+    durations: [1000],
+    loop: true,
+  },
+  lowering: {
+    row: 4,
+    columns: [4, 3, 2, 1, 0],
+    durations: [180, 140, 140, 140, 240],
     loop: false,
   },
   error: {

@@ -11,7 +11,7 @@
   "timing": "consumer-defined",
   "neutral": {
     "row": 0,
-    "column": 6
+    "column": 0
   },
   "animations": {
     "idle": {
@@ -32,13 +32,14 @@
     "waving": {
       "row": 3,
       "columns": [0, 1, 2, 3],
-      "loop": true
+      "loop": false,
+      "purpose": "native click reaction: lotus, low uncross, upright stand, and connected return toward lotus"
     },
     "jumping": {
       "row": 4,
       "columns": [0, 1, 2, 3, 4],
-      "loop": true,
-      "purpose": "hover acknowledgment: warm glance, small smile, eyebrow lift, and tiny satisfied nod"
+      "loop": false,
+      "purpose": "reversible interaction path: play 0-4 to rise from lotus, hold 4 while engaged, then play 4-0 to lower"
     },
     "failed": {
       "row": 5,
@@ -49,7 +50,7 @@
       "row": 6,
       "columns": [0, 1, 2, 3, 4, 5],
       "loop": true,
-      "purpose": "expectant wait: one hand rises smoothly into a small open-palm question, holds, then follows the same path back to neutral"
+      "purpose": "cloud-resting input pause: connected doze, gentle breath and loc shift, brief eyelid rouse, then settle"
     },
     "running": {
       "row": 7,

@@ -26,6 +26,8 @@ interface DragSession {
   dragging: boolean;
 }
 
+const PRESS_STAND_HOLD_MS = 500;
+
 export interface UseCompanionInteractionOptions {
   state?: ProofState;
   currentPosition: ProofPoint;
@@ -39,6 +41,7 @@ export interface UseCompanionInteractionOptions {
   onDragChange?: (dragging: boolean) => void;
   onStateChange?: (state: ProofState) => void;
   onPointerEnter?: (event: ReactPointerEvent<HTMLSpanElement>) => void;
+  onPointerLeave?: (event: ReactPointerEvent<HTMLSpanElement>) => void;
   onPointerDown?: (event: ReactPointerEvent<HTMLSpanElement>) => void;
   onPointerMove?: (event: ReactPointerEvent<HTMLSpanElement>) => void;
   onKeyDown?: (event: ReactKeyboardEvent<HTMLSpanElement>) => void;
@@ -57,6 +60,7 @@ export interface CompanionInteractionApi {
     cancelled: boolean,
   ) => void;
   handlePointerEnter: (event: ReactPointerEvent<HTMLSpanElement>) => void;
+  handlePointerLeave: (event: ReactPointerEvent<HTMLSpanElement>) => void;
   handleKeyDown: (event: ReactKeyboardEvent<HTMLSpanElement>) => void;
   handleAnimationComplete: (
     completed: ProofState,
@@ -77,12 +81,16 @@ export function useCompanionInteraction({
   onDragChange,
   onStateChange,
   onPointerEnter,
+  onPointerLeave,
   onPointerDown,
   onPointerMove,
   onKeyDown,
 }: UseCompanionInteractionOptions): CompanionInteractionApi {
   const dragRef = useRef<DragSession | null>(null);
   const keyboardTimerRef = useRef<number | null>(null);
+  const interactionTimerRef = useRef<number | null>(null);
+  const hoveredRef = useRef(false);
+  const activationCycleRef = useRef(false);
   const autonomousStateRef = useRef<ProofState>("idle");
   const [dragging, setDragging] = useState(false);
   const [pressing, setPressing] = useState(false);
@@ -113,6 +121,9 @@ export function useCompanionInteraction({
     () => () => {
       if (keyboardTimerRef.current !== null) {
         window.clearTimeout(keyboardTimerRef.current);
+      }
+      if (interactionTimerRef.current !== null) {
+        window.clearTimeout(interactionTimerRef.current);
       }
     },
     [],
@@ -197,7 +208,10 @@ export function useCompanionInteraction({
       reactToPress &&
       !reduceMotion
     ) {
-      updateState("wave");
+      if (!hoveredRef.current) {
+        activationCycleRef.current = true;
+      }
+      updateState("hover");
     }
   };
 
@@ -212,7 +226,21 @@ export function useCompanionInteraction({
         reduceMotion,
       })
     ) {
+      hoveredRef.current = true;
+      activationCycleRef.current = false;
       updateState("hover");
+    }
+  };
+
+  const handlePointerLeave = (event: ReactPointerEvent<HTMLSpanElement>) => {
+    onPointerLeave?.(event);
+    hoveredRef.current = false;
+    if (
+      !event.defaultPrevented &&
+      state === undefined &&
+      autonomousStateRef.current === "standing"
+    ) {
+      updateState("lowering");
     }
   };
 
@@ -225,7 +253,8 @@ export function useCompanionInteraction({
     if (isActivationKey(event.key)) {
       event.preventDefault();
       if (reactToPress && !reduceMotion) {
-        updateState("wave");
+        activationCycleRef.current = true;
+        updateState("hover");
       }
       return;
     }
@@ -261,7 +290,26 @@ export function useCompanionInteraction({
     onAnimationComplete?: (state: ProofState) => void,
   ) => {
     onAnimationComplete?.(completed);
-    if (state === undefined && oneshotReturnsToIdle(completed)) {
+    if (state !== undefined) {
+      return;
+    }
+    if (completed === "hover") {
+      updateState("standing");
+      if (!hoveredRef.current && activationCycleRef.current) {
+        if (interactionTimerRef.current !== null) {
+          window.clearTimeout(interactionTimerRef.current);
+        }
+        interactionTimerRef.current = window.setTimeout(() => {
+          updateState("lowering");
+          interactionTimerRef.current = null;
+        }, PRESS_STAND_HOLD_MS);
+      } else if (!hoveredRef.current) {
+        updateState("lowering");
+      }
+    } else if (completed === "lowering") {
+      activationCycleRef.current = false;
+      updateState("idle");
+    } else if (oneshotReturnsToIdle(completed)) {
       updateState("idle");
     }
   };
@@ -276,6 +324,7 @@ export function useCompanionInteraction({
     movePointer,
     finishPointer,
     handlePointerEnter,
+    handlePointerLeave,
     handleKeyDown,
     handleAnimationComplete,
   };

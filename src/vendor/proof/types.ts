@@ -6,6 +6,8 @@ export type ProofState =
   | "move-left"
   | "wave"
   | "hover"
+  | "standing"
+  | "lowering"
   | "error"
   | "waiting"
   | "working"
@@ -30,13 +32,13 @@ export interface ProofProps
   state?: ProofState;
   /** Rendered height in CSS pixels. */
   size?: number;
-  /** Make an idle Proof look toward the page pointer. */
+  /** Make a standing Proof look toward the page pointer. Lotus idle stays meditative. */
   followCursor?: boolean;
-  /** Play Proof's warm nod when the pointer enters him in autonomous mode. */
+  /** Let Proof rise from meditation and stand when the pointer enters him. */
   reactToHover?: boolean;
-  /** Make an autonomous Proof wave when pressed. */
+  /** Let an autonomous Proof rise from meditation and stand when pressed. */
   reactToPress?: boolean;
-  /** Radius around Proof's center where he keeps his neutral idle animation. */
+  /** Radius around standing Proof's center where he keeps the neutral standing frame. */
   gazeDeadzone?: number;
   /** Extra degrees required before gaze crosses into an adjacent direction. */
   gazeHysteresis?: number;
@@ -93,9 +95,9 @@ export interface ProofCompanionProps extends ProofCompanionSpriteProps {
   persistPosition?: boolean;
   /** localStorage key used when position persistence is enabled. */
   storageKey?: string;
-  /** Play the warm hover acknowledgment in autonomous mode (shell-owned). */
+  /** Play the stand-up hover reaction in autonomous mode (shell-owned). */
   reactToHover?: boolean;
-  /** Play a wave after an un-dragged press in autonomous mode (shell-owned). */
+  /** Play the stand-up reaction after an un-dragged press (shell-owned). */
   reactToPress?: boolean;
   /** Show the soft grounding shadow used by the companion wrapper. */
   showShadow?: boolean;

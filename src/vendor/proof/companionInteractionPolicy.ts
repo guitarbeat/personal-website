@@ -80,5 +80,5 @@ export function keyboardTravelState(deltaX: number): ProofState | null {
 }
 
 export function oneshotReturnsToIdle(state: ProofState): boolean {
-  return state === "hover" || state === "wave" || state === "error";
+  return state === "lowering" || state === "wave" || state === "error";
 }

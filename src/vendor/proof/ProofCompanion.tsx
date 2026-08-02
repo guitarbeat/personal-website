@@ -45,6 +45,7 @@ export function ProofCompanion({
   onStateChange,
   onAnimationComplete,
   onPointerEnter,
+  onPointerLeave,
   onPointerDown,
   onPointerMove,
   onPointerUp,
@@ -86,6 +87,7 @@ export function ProofCompanion({
     movePointer,
     finishPointer,
     handlePointerEnter,
+    handlePointerLeave,
     handleKeyDown,
     handleAnimationComplete,
   } = useCompanionInteraction({
@@ -101,6 +103,7 @@ export function ProofCompanion({
     onDragChange,
     onStateChange,
     onPointerEnter,
+    onPointerLeave,
     onPointerDown,
     onPointerMove,
     onKeyDown,
@@ -127,6 +130,7 @@ export function ProofCompanion({
       data-proof-x={Math.round(currentPosition.x)}
       data-proof-y={Math.round(currentPosition.y)}
       onPointerEnter={handlePointerEnter}
+      onPointerLeave={handlePointerLeave}
       onPointerDown={beginPointer}
       onPointerMove={movePointer}
       onPointerUp={(event) => {
