@@ -136,7 +136,7 @@
     "imagemin-mozjpeg": "^10.0.0",
     "imagemin-pngquant": "^10.0.0",
     "jest-watch-typeahead": "^2.2.2",
-    "knip": "^5.88.1",
+    "knip": "^6.30.0",
     "lint-staged": "^17.3.0",
     "markdownlint-cli2": "^0.23.2",
     "npm-check": "^6.0.1",
