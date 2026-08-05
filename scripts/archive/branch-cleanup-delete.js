@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 const fs = require("node:fs");
-const { shTry } = require("../lib/exec.cjs");
+const { execFileSync } = require("node:child_process");
 
 const REPO = "guitarbeat/personal-website";
 const analysis = JSON.parse(
@@ -13,12 +13,20 @@ const deleted = [];
 const failed = [];
 
 for (const item of analysis.toDelete) {
-  const result = shTry(
-    `gh api -X DELETE repos/${REPO}/git/refs/heads/${encodeURIComponent(item.branch)}`,
-  );
-  if (result.ok) deleted.push(item.branch);
-  else failed.push(item.branch);
-  process.stderr.write(`${result.ok ? "✓" : "✗"} ${item.branch}\n`);
+  let ok = false;
+  try {
+    execFileSync("gh", [
+      "api",
+      "-X",
+      "DELETE",
+      `repos/${REPO}/git/refs/heads/${encodeURIComponent(item.branch)}`,
+    ]);
+    ok = true;
+    deleted.push(item.branch);
+  } catch (error) {
+    failed.push(item.branch);
+  }
+  process.stderr.write(`${ok ? "✓" : "✗"} ${item.branch}\n`);
 }
 
 console.log(
