@@ -35,11 +35,8 @@ function isCustomCursorSupported(): boolean {
   );
 }
 
-const CustomCursor = ({ label: defaultLabel = "View" }: CustomCursorProps) => {
-  const cursorRef = useRef<HTMLDivElement>(null);
+function useCustomCursorSupport() {
   const [enabled, setEnabled] = useState(false);
-  const [isHovering, setIsHovering] = useState(false);
-  const [cursorText, setCursorText] = useState(defaultLabel);
 
   useEffect(() => {
     const syncEnabled = () => {
@@ -68,6 +65,17 @@ const CustomCursor = ({ label: defaultLabel = "View" }: CustomCursorProps) => {
       hoverQuery.removeEventListener("change", syncEnabled);
     };
   }, []);
+
+  return enabled;
+}
+
+function useCustomCursorEvents(
+  enabled: boolean,
+  defaultLabel: string,
+  cursorRef: React.RefObject<HTMLDivElement | null>,
+) {
+  const [isHovering, setIsHovering] = useState(false);
+  const [cursorText, setCursorText] = useState(defaultLabel);
 
   useEffect(() => {
     if (!enabled) {
@@ -129,7 +137,19 @@ const CustomCursor = ({ label: defaultLabel = "View" }: CustomCursorProps) => {
       window.removeEventListener("mouseover", handleMouseOver);
       document.removeEventListener("mouseleave", handleMouseLeave);
     };
-  }, [defaultLabel, enabled]);
+  }, [defaultLabel, enabled, cursorRef]);
+
+  return { isHovering, cursorText };
+}
+
+const CustomCursor = ({ label: defaultLabel = "View" }: CustomCursorProps) => {
+  const cursorRef = useRef<HTMLDivElement>(null);
+  const enabled = useCustomCursorSupport();
+  const { isHovering, cursorText } = useCustomCursorEvents(
+    enabled,
+    defaultLabel,
+    cursorRef,
+  );
 
   if (!enabled) {
     return null;
