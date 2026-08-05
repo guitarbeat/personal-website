@@ -124,7 +124,7 @@ interface ProjectsProps {
 }
 
 function Projects({ db: propsDb }: ProjectsProps = {}) {
-  const [activeFilters, setActiveFilters] = useState<string[]>([]);
+  const [activeFilters, setActiveFilters] = useState<Set<string>>(new Set());
   const [tagColors, setTagColors] = useState<Record<string, string>>({});
   const { db, isLoading } = useNotionSectionData(propsDb);
 
@@ -173,30 +173,29 @@ function Projects({ db: propsDb }: ProjectsProps = {}) {
   const toggleFilter = useCallback(
     (filter: string) => {
       setActiveFilters((prevFilters) => {
-        if (prevFilters.includes(filter)) {
-          if (prevFilters.length === 1) {
-            return [...allKeywords];
+        const nextFilters = new Set(prevFilters);
+        if (nextFilters.has(filter)) {
+          if (nextFilters.size === 1) {
+            return new Set(allKeywords);
           }
-          return prevFilters.filter((f) => f !== filter);
+          nextFilters.delete(filter);
+          return nextFilters;
         }
 
-        return [...prevFilters, filter];
+        nextFilters.add(filter);
+        return nextFilters;
       });
     },
     [allKeywords],
   );
 
-  const activeFiltersSet = useMemo(
-    () => new Set(activeFilters),
-    [activeFilters],
-  );
 
   const project_cards = projectsData.map((projectProps, index) => {
     const primaryKeyword = projectProps.keywords[0] || "";
     const primaryTagColor = tagColors[primaryKeyword];
     const isFiltered =
       projectProps.keywords.length > 0 &&
-      !projectProps.keywords.some((keyword) => activeFiltersSet.has(keyword));
+      !projectProps.keywords.some((keyword) => activeFilters.has(keyword));
     const effect = createProjectEffect(primaryTagColor, index);
 
     return (
@@ -221,7 +220,7 @@ function Projects({ db: propsDb }: ProjectsProps = {}) {
               <NotionSectionSkeleton section="project-filters" />
             ) : (
               allKeywords.map((filter) => {
-                const isActive = activeFiltersSet.has(filter);
+                const isActive = activeFilters.has(filter);
                 return (
                   <button
                     type="button"

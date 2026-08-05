@@ -1,16 +1,22 @@
 export function reconcileProjectFilters(
-  prevFilters: string[],
+  prevFilters: Set<string>,
   allKeywords: string[],
-): string[] {
-  if (prevFilters.length === 0) {
-    return allKeywords;
+): Set<string> {
+  if (prevFilters.size === 0) {
+    return new Set(allKeywords);
   }
 
   const allKeywordsSet = new Set(allKeywords);
-  const filtered = prevFilters.filter((filter) => allKeywordsSet.has(filter));
+  const filtered = new Set<string>();
 
-  if (filtered.length === 0) {
-    return allKeywords;
+  for (const filter of prevFilters) {
+    if (allKeywordsSet.has(filter)) {
+      filtered.add(filter);
+    }
+  }
+
+  if (filtered.size === 0) {
+    return new Set(allKeywords);
   }
 
   return filtered;
