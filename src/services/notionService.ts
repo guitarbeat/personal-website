@@ -31,7 +31,7 @@ const parseApiError = (payload: unknown, fallbackMessage: string) => {
   return fallbackMessage;
 };
 
-const fetchContent = async (): Promise<ContentResponse> => {
+export const fetchContent = async (): Promise<ContentResponse> => {
   const response = await fetch(`${API_BASE}/api/content`, {
     method: "GET",
   });
