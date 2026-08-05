@@ -239,7 +239,7 @@ export function convertToMMYYYY(dateString) {
   return `${parts[1]}-${parts[0]}`;
 }
 
-const TEXT_BLOCK_TYPES = [
+const TEXT_BLOCK_TYPES = new Set([
   "bulleted_list_item",
   "callout",
   "heading_1",
@@ -250,7 +250,7 @@ const TEXT_BLOCK_TYPES = [
   "quote",
   "to_do",
   "toggle",
-];
+]);
 
 export function extractBlockPlainText(block) {
   if (!block || typeof block !== "object") {
@@ -259,7 +259,7 @@ export function extractBlockPlainText(block) {
 
   const blockType = typeof block.type === "string" ? block.type : "";
 
-  if (!TEXT_BLOCK_TYPES.includes(blockType)) {
+  if (!TEXT_BLOCK_TYPES.has(blockType)) {
     return "";
   }
 
