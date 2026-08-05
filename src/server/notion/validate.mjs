@@ -280,7 +280,7 @@ function validateSorts(sorts) {
     .filter(Boolean);
 }
 
-const ALLOWED_FILTER_TYPES = [
+const ALLOWED_FILTER_TYPES = new Set([
   "title",
   "rich_text",
   "url",
@@ -295,7 +295,7 @@ const ALLOWED_FILTER_TYPES = [
   "people",
   "files",
   "relation",
-];
+]);
 
 function validateFilter(filter, depth = 0) {
   if (depth > 2 || !filter || typeof filter !== "object") {
@@ -324,7 +324,7 @@ function validateFilter(filter, depth = 0) {
 
     for (const key of Object.keys(filter)) {
       if (
-        ALLOWED_FILTER_TYPES.includes(key) &&
+        ALLOWED_FILTER_TYPES.has(key) &&
         filter[key] &&
         typeof filter[key] === "object"
       ) {
