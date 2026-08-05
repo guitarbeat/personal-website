@@ -1,5 +1,14 @@
 #!/usr/bin/env node
-const { sh } = require("../lib/exec.cjs");
+const { execFileSync } = require("node:child_process");
+const { sh, ROOT } = require("../lib/exec.cjs");
+
+function git(args) {
+  return execFileSync("git", args, {
+    cwd: ROOT,
+    encoding: "utf8",
+    stdio: ["pipe", "pipe", "pipe"],
+  }).trim();
+}
 
 const KEEP = new Set(["main", "gh-pages"]);
 
@@ -23,7 +32,7 @@ for (const branch of branches) {
 
   let merged = false;
   try {
-    sh(`git merge-base --is-ancestor "origin/${branch}" origin/main`);
+    git(["merge-base", "--is-ancestor", `origin/${branch}`, "origin/main"]);
     merged = true;
   } catch {
     merged = false;
@@ -34,13 +43,13 @@ for (const branch of branches) {
   let diffStat = "";
   try {
     ahead = Number(
-      sh(`git rev-list --count origin/main..origin/${branch}`) || 0,
+      git(["rev-list", "--count", `origin/main..origin/${branch}`]) || 0,
     );
     behind = Number(
-      sh(`git rev-list --count origin/${branch}..origin/main`) || 0,
+      git(["rev-list", "--count", `origin/${branch}..origin/main`]) || 0,
     );
     if (ahead > 0) {
-      diffStat = sh(`git diff --shortstat origin/main...origin/${branch}`);
+      diffStat = git(["diff", "--shortstat", `origin/main...origin/${branch}`]);
     }
   } catch (e) {
     results.push({
