@@ -3,6 +3,8 @@ const { sh } = require("../lib/exec.cjs");
 
 const KEEP = new Set(["main", "gh-pages"]);
 
+const escapeShell = (arg) => "'" + arg.replace(/'/g, "'\\''") + "'";
+
 const branches = sh(
   'gh api "repos/guitarbeat/personal-website/branches?per_page=100" --paginate -q "[.[].name][]"',
 )
@@ -23,7 +25,7 @@ for (const branch of branches) {
 
   let merged = false;
   try {
-    sh(`git merge-base --is-ancestor "origin/${branch}" origin/main`);
+    sh(`git merge-base --is-ancestor ${escapeShell("origin/" + branch)} origin/main`);
     merged = true;
   } catch {
     merged = false;
@@ -34,13 +36,13 @@ for (const branch of branches) {
   let diffStat = "";
   try {
     ahead = Number(
-      sh(`git rev-list --count origin/main..origin/${branch}`) || 0,
+      sh(`git rev-list --count origin/main..${escapeShell("origin/" + branch)}`) || 0,
     );
     behind = Number(
-      sh(`git rev-list --count origin/${branch}..origin/main`) || 0,
+      sh(`git rev-list --count ${escapeShell("origin/" + branch)}..origin/main`) || 0,
     );
     if (ahead > 0) {
-      diffStat = sh(`git diff --shortstat origin/main...origin/${branch}`);
+      diffStat = sh(`git diff --shortstat origin/main...${escapeShell("origin/" + branch)}`);
     }
   } catch (e) {
     results.push({
