@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 
 import {
   MIN_IDLE_BEFORE_DECAY,
@@ -18,6 +18,33 @@ interface UseHackProgressDecayOptions {
   triggerIdleFailure: () => void;
 }
 
+export function calculateDecayAmount(
+  lastTime: number | null,
+  now: number,
+): number {
+  if (lastTime === null) {
+    return PROGRESS_DECAY_BASE;
+  }
+
+  const idleDuration = now - lastTime;
+
+  if (idleDuration < MIN_IDLE_BEFORE_DECAY) {
+    return 0;
+  }
+
+  const rampDecay = PROGRESS_DECAY_RAMP.find(
+    ({ threshold }) => idleDuration >= threshold,
+  )?.value;
+
+  return (
+    rampDecay ??
+    Math.min(
+      PROGRESS_DECAY_BASE + (idleDuration - MIN_IDLE_BEFORE_DECAY) / 3200,
+      PROGRESS_DECAY_RAMP[0].value,
+    )
+  );
+}
+
 export function useHackProgressDecay({
   easterEggTriggeredRef,
   idleFailureTrackerRef,
@@ -28,103 +55,80 @@ export function useHackProgressDecay({
   setHackProgress,
   triggerIdleFailure,
 }: UseHackProgressDecayOptions) {
+  const applyDecay = useCallback(
+    (decayAmount: number) => {
+      if (decayAmount <= 0) {
+        return;
+      }
+
+      let shouldTriggerFailure = false;
+
+      setHackProgress((prev) => {
+        if (prev <= 0) {
+          if (!easterEggTriggeredRef.current) {
+            shouldTriggerFailure = true;
+          }
+          return prev;
+        }
+
+        const next = Math.max(0, prev - decayAmount);
+
+        if (next < prev) {
+          setHackFeedback((current) =>
+            current.includes("Signal fading")
+              ? current
+              : "Signal fading—keep the keys alive.",
+          );
+        }
+
+        if (next <= 0) {
+          lastKeyTimeRef.current = null;
+          if (idleFailureTrackerRef.current) {
+            idleFailureTrackerRef.current.lowStreak = 0;
+          }
+          shouldTriggerFailure = true;
+        } else if (next < 8) {
+          if (idleFailureTrackerRef.current) {
+            idleFailureTrackerRef.current.lowStreak += 1;
+
+            if (idleFailureTrackerRef.current.lowStreak >= 3) {
+              shouldTriggerFailure = true;
+              idleFailureTrackerRef.current.lowStreak = 0;
+            }
+          }
+        } else if (idleFailureTrackerRef.current) {
+          idleFailureTrackerRef.current.lowStreak = 0;
+        }
+
+        return next;
+      });
+
+      if (shouldTriggerFailure) {
+        triggerIdleFailure();
+      }
+    },
+    [
+      easterEggTriggeredRef,
+      idleFailureTrackerRef,
+      lastKeyTimeRef,
+      setHackFeedback,
+      setHackProgress,
+      triggerIdleFailure,
+    ],
+  );
+
   useEffect(() => {
     if (!isVisible || isHackComplete) {
       return undefined;
     }
 
     const fallbackInterval = window.setInterval(() => {
-      const lastTime = lastKeyTimeRef.current;
-      const now = Date.now();
-
-      const applyDecay = (decayAmount: number) => {
-        if (decayAmount <= 0) {
-          return;
-        }
-
-        let shouldTriggerFailure = false;
-
-        setHackProgress((prev) => {
-          if (prev <= 0) {
-            if (!easterEggTriggeredRef.current) {
-              shouldTriggerFailure = true;
-            }
-            return prev;
-          }
-
-          const next = Math.max(0, prev - decayAmount);
-
-          if (next < prev) {
-            setHackFeedback((current) =>
-              current.includes("Signal fading")
-                ? current
-                : "Signal fading—keep the keys alive.",
-            );
-          }
-
-          if (next <= 0) {
-            lastKeyTimeRef.current = null;
-            if (idleFailureTrackerRef.current) {
-              idleFailureTrackerRef.current.lowStreak = 0;
-            }
-            shouldTriggerFailure = true;
-          } else if (next < 8) {
-            if (idleFailureTrackerRef.current) {
-              idleFailureTrackerRef.current.lowStreak += 1;
-
-              if (idleFailureTrackerRef.current.lowStreak >= 3) {
-                shouldTriggerFailure = true;
-                idleFailureTrackerRef.current.lowStreak = 0;
-              }
-            }
-          } else if (idleFailureTrackerRef.current) {
-            idleFailureTrackerRef.current.lowStreak = 0;
-          }
-
-          return next;
-        });
-
-        if (shouldTriggerFailure) {
-          triggerIdleFailure();
-        }
-      };
-
-      if (lastTime === null) {
-        applyDecay(PROGRESS_DECAY_BASE);
-        return;
-      }
-
-      const idleDuration = now - lastTime;
-
-      if (idleDuration < MIN_IDLE_BEFORE_DECAY) {
-        return;
-      }
-
-      const rampDecay = PROGRESS_DECAY_RAMP.find(
-        ({ threshold }) => idleDuration >= threshold,
-      )?.value;
-
-      const decay =
-        rampDecay ??
-        Math.min(
-          PROGRESS_DECAY_BASE + (idleDuration - MIN_IDLE_BEFORE_DECAY) / 3200,
-          PROGRESS_DECAY_RAMP[0].value,
-        );
-
+      const decay = calculateDecayAmount(lastKeyTimeRef.current, Date.now());
       applyDecay(decay);
     }, PROGRESS_DECAY_INTERVAL);
 
     return () => {
       window.clearInterval(fallbackInterval);
     };
-  }, [
-    easterEggTriggeredRef,
-    idleFailureTrackerRef,
-    isHackComplete,
-    isVisible,
-    lastKeyTimeRef,
-    setHackFeedback,
-    setHackProgress,
-    triggerIdleFailure,
-  ]);
+  }, [applyDecay, isHackComplete, isVisible, lastKeyTimeRef]);
 }
