@@ -132,7 +132,7 @@ const readUnlockStateFromStorage = () => {
   return unlockState;
 };
 
-export const UnlockProvider = ({ children }: { children: React.ReactNode }) => {
+export const useUnlockState = () => {
   const { isMobile } = useMobileDetection();
 
   const [unlockState, setUnlockState] = useState<Record<string, boolean>>(
@@ -255,31 +255,33 @@ export const UnlockProvider = ({ children }: { children: React.ReactNode }) => {
     return isUnlocked;
   }, [isMobile, isMobileUnlocked, isUnlocked]);
 
+  return useMemo(
+    () => ({
+      isUnlocked,
+      isMobileUnlocked,
+      toolsAccessible,
+      completeHack,
+      showHackCompleteFeedback,
+      logout,
+      isMobile,
+    }),
+    [
+      isUnlocked,
+      isMobileUnlocked,
+      toolsAccessible,
+      completeHack,
+      showHackCompleteFeedback,
+      logout,
+      isMobile,
+    ],
+  );
+};
+
+export const UnlockProvider = ({ children }: { children: React.ReactNode }) => {
+  const value = useUnlockState();
+
   return (
-    <UnlockContext.Provider
-      value={useMemo(
-        () => ({
-          isUnlocked,
-          isMobileUnlocked,
-          toolsAccessible,
-          completeHack,
-          showHackCompleteFeedback,
-          logout,
-          isMobile,
-        }),
-        [
-          isUnlocked,
-          isMobileUnlocked,
-          toolsAccessible,
-          completeHack,
-          showHackCompleteFeedback,
-          logout,
-          isMobile,
-        ],
-      )}
-    >
-      {children}
-    </UnlockContext.Provider>
+    <UnlockContext.Provider value={value}>{children}</UnlockContext.Provider>
   );
 };
 
