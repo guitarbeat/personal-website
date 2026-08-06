@@ -21,6 +21,52 @@ interface UseHackInteractionOptions {
   setHackingBuffer: React.Dispatch<React.SetStateAction<string>>;
 }
 
+function calculateBaseIncrement(delta: number | null): number {
+  if (delta === null) return 0.6;
+  if (delta < 120) return 1.8;
+  if (delta < 220) return 1.3;
+  if (delta < 360) return 0.95;
+  return 0.45;
+}
+
+function calculateComboMultiplier(
+  normalizedKey: string,
+  streak: number,
+  recentKeys: string[],
+): number {
+  const uniqueCount = new Set(recentKeys).size;
+  let multiplier = 1;
+
+  if (uniqueCount >= 7) multiplier += 0.25;
+  else if (uniqueCount >= 5) multiplier += 0.15;
+
+  if (normalizedKey === "touch") {
+    multiplier = 1.2;
+  } else {
+    if (streak >= 4) multiplier *= 0.25;
+    if (uniqueCount <= 3 && recentKeys.length >= KEY_VARIETY_WINDOW) {
+      multiplier *= 0.4;
+    }
+  }
+
+  return multiplier;
+}
+
+function getFeedbackMessage(delta: number | null): string {
+  if (delta === null) return "Signal detected. Keep the keystrokes flowing.";
+  if (delta < 140) return "Trace evaded! Ultra-fast hack underway.";
+  if (delta < 260) return "Firewall destabilizing—stellar rhythm.";
+  if (delta < 400) return "Maintaining uplink. Accelerate to finish.";
+  return "Connection cooling—slam the keys faster!";
+}
+
+function calculateNextProgress(prev: number, progressDelta: number): number {
+  const friction =
+    prev >= 85 ? 0.35 : prev >= 65 ? 0.5 : prev >= 40 ? 0.65 : 0.8;
+  const next = prev + progressDelta * friction;
+  return Math.min(100, next);
+}
+
 export function useHackInteraction({
   hackCorpus,
   isHackComplete,
@@ -99,19 +145,7 @@ export function useHackInteraction({
       const lastTime = lastKeyTimeRef.current;
       const delta = lastTime ? now - lastTime : null;
 
-      let baseIncrement = 0.6;
-
-      if (delta !== null) {
-        if (delta < 120) {
-          baseIncrement = 1.8;
-        } else if (delta < 220) {
-          baseIncrement = 1.3;
-        } else if (delta < 360) {
-          baseIncrement = 0.95;
-        } else {
-          baseIncrement = 0.45;
-        }
-      }
+      const baseIncrement = calculateBaseIncrement(delta);
 
       let feedbackMessage = "Signal detected. Keep the keystrokes flowing.";
       let progressDelta = 0;
@@ -144,31 +178,14 @@ export function useHackInteraction({
           normalizedKey,
         ];
 
-        const uniqueCount = new Set(tracker.recentKeys).size;
-        let comboMultiplier = 1;
-
-        if (uniqueCount >= 7) comboMultiplier += 0.25;
-        else if (uniqueCount >= 5) comboMultiplier += 0.15;
-
-        if (normalizedKey === "touch") {
-          comboMultiplier = 1.2;
-        } else {
-          if (tracker.streak >= 4) comboMultiplier *= 0.25;
-          if (
-            uniqueCount <= 3 &&
-            tracker.recentKeys.length >= KEY_VARIETY_WINDOW
-          )
-            comboMultiplier *= 0.4;
-        }
+        const comboMultiplier = calculateComboMultiplier(
+          normalizedKey,
+          tracker.streak,
+          tracker.recentKeys,
+        );
 
         if (delta !== null) {
-          if (delta < 140)
-            feedbackMessage = "Trace evaded! Ultra-fast hack underway.";
-          else if (delta < 260)
-            feedbackMessage = "Firewall destabilizing—stellar rhythm.";
-          else if (delta < 400)
-            feedbackMessage = "Maintaining uplink. Accelerate to finish.";
-          else feedbackMessage = "Connection cooling—slam the keys faster!";
+          feedbackMessage = getFeedbackMessage(delta);
         }
 
         const comboAdjustedIncrement = baseIncrement * comboMultiplier;
@@ -183,12 +200,7 @@ export function useHackInteraction({
       setHackFeedback(feedbackMessage);
 
       if (progressDelta > 0) {
-        setHackProgress((prev) => {
-          const friction =
-            prev >= 85 ? 0.35 : prev >= 65 ? 0.5 : prev >= 40 ? 0.65 : 0.8;
-          const next = prev + progressDelta * friction;
-          return Math.min(100, next);
-        });
+        setHackProgress((prev) => calculateNextProgress(prev, progressDelta));
       } else if (progressDelta < 0) {
         setHackProgress((prev) => Math.max(0, prev + progressDelta));
       }
