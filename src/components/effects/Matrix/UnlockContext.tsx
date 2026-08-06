@@ -14,6 +14,8 @@ import { useMobileDetection } from "@/hooks/useMobileDetection";
 
 // Constants
 import { ANIMATION_TIMING, ERROR_MESSAGES, UNLOCK } from "./constants";
+import { logger } from "@/utils/logger";
+
 
 interface UnlockContextType {
   isUnlocked: boolean;
@@ -69,7 +71,7 @@ const getSessionData = (key: string) => {
     const data = window.sessionStorage.getItem(key);
     return data ? JSON.parse(data) : null;
   } catch (error) {
-    console.warn(`${ERROR_MESSAGES.STORAGE_ERROR} for ${key}:`, error);
+    logger.warn(`${ERROR_MESSAGES.STORAGE_ERROR} for ${key}:`, error);
     return null;
   }
 };
@@ -82,7 +84,7 @@ const clearSessionData = (key: string) => {
   try {
     window.sessionStorage.removeItem(key);
   } catch (error) {
-    console.warn(`${ERROR_MESSAGES.STORAGE_ERROR} for ${key}:`, error);
+    logger.warn(`${ERROR_MESSAGES.STORAGE_ERROR} for ${key}:`, error);
   }
 };
 
@@ -94,14 +96,14 @@ const setSessionData = (key: string, value: unknown) => {
   try {
     window.sessionStorage.setItem(key, JSON.stringify(value));
   } catch (error) {
-    console.warn(`${ERROR_MESSAGES.STORAGE_ERROR} for ${key}:`, error);
+    logger.warn(`${ERROR_MESSAGES.STORAGE_ERROR} for ${key}:`, error);
     if (error instanceof Error && error.name === "QuotaExceededError") {
       try {
         // biome-ignore lint/suspicious/useIterableCallbackReturn: forEach used for side effect
         Object.values(STORAGE_KEYS).forEach((k) => clearSessionData(k));
         window.sessionStorage.setItem(key, JSON.stringify(value));
       } catch (retryError) {
-        console.error(
+        logger.error(
           `${ERROR_MESSAGES.STORAGE_ERROR} even after cleanup:`,
           retryError,
         );
