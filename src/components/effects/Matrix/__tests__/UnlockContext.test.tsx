@@ -95,21 +95,20 @@ describe("UnlockContext", () => {
       </UnlockProvider>,
     );
 
-    act(() => {
-      contextValue.completeHack();
-    });
+    expect(() => {
+      act(() => {
+        contextValue.completeHack();
+      });
+    }).toThrow(
+      `${ERROR_MESSAGES.STORAGE_ERROR} even after cleanup: ${quotaError.message}`
+    );
 
     expect(warnSpy).toHaveBeenCalledWith(
       expect.stringContaining(ERROR_MESSAGES.STORAGE_ERROR),
       quotaError,
     );
 
-    expect(errorSpy).toHaveBeenCalledWith(
-      expect.stringContaining(
-        `${ERROR_MESSAGES.STORAGE_ERROR} even after cleanup:`,
-      ),
-      quotaError,
-    );
+    expect(errorSpy).not.toHaveBeenCalled();
 
     warnSpy.mockRestore();
     errorSpy.mockRestore();
