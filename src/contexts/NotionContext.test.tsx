@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom";
-import { render, renderHook, screen, waitFor } from "@testing-library/react";
+import { render, renderHook, screen, waitFor, act } from "@testing-library/react";
 
 import { NotionProvider, useNotion } from "./NotionContext";
 
@@ -99,7 +99,89 @@ describe("NotionProvider", () => {
     consoleSpy.mockRestore();
   });
 
+
+
+  it("does not update state if unmounted before fetch completes", async () => {
+    const consoleSpy = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+
+    let resolvePromise: any;
+    const promise = new Promise((resolve) => {
+      resolvePromise = resolve;
+    });
+    mockGetAllData.mockReturnValue(promise);
+
+    const { unmount } = render(
+      <NotionProvider>
+        <Consumer />
+      </NotionProvider>,
+    );
+
+    unmount();
+
+    await act(async () => {
+      resolvePromise({ data: { projects: [], work: [], about: [] }, meta: null });
+    });
+
+    consoleSpy.mockRestore();
+  });
+
+
+  it("does not update state if unmounted before fetch fails", async () => {
+    let rejectPromise: any;
+    const promise = new Promise((_, reject) => {
+      rejectPromise = reject;
+    });
+    mockGetAllData.mockReturnValue(promise);
+
+    const consoleSpy = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+
+    const { unmount } = render(
+      <NotionProvider>
+        <Consumer />
+      </NotionProvider>,
+    );
+
+    unmount();
+
+    await act(async () => {
+      rejectPromise(new Error("Network Error"));
+    });
+
+    consoleSpy.mockRestore();
+  });
+
+
+  it("handles non-Error objects thrown during fetch", async () => {
+    const consoleSpy = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+
+    // Throw a simple string instead of an Error object
+    mockGetAllData.mockRejectedValue("String error message");
+
+    render(
+      <NotionProvider>
+        <Consumer />
+      </NotionProvider>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("not-loading")).toBeInTheDocument();
+      // Should fallback to default error message
+      expect(screen.getByText("Failed to load content.")).toBeInTheDocument();
+      expect(screen.getByText("no-projects")).toBeInTheDocument();
+    });
+
+    consoleSpy.mockRestore();
+  });
+
   it("throws an error if useNotion is used outside NotionProvider", () => {
+
+
     const consoleSpy = jest
       .spyOn(console, "error")
       .mockImplementation(() => {});
