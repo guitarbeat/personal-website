@@ -101,9 +101,12 @@ const setSessionData = (key: string, value: unknown) => {
         Object.values(STORAGE_KEYS).forEach((k) => clearSessionData(k));
         window.sessionStorage.setItem(key, JSON.stringify(value));
       } catch (retryError) {
-        console.error(
-          `${ERROR_MESSAGES.STORAGE_ERROR} even after cleanup:`,
-          retryError,
+        throw new Error(
+          `${ERROR_MESSAGES.STORAGE_ERROR} even after cleanup: ${
+            retryError instanceof Error
+              ? retryError.message
+              : String(retryError)
+          }`,
         );
       }
     }
