@@ -1,4 +1,4 @@
-import { render } from "@testing-library/react";
+import { act, render } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import Matrix from "../Matrix";
 import { UnlockProvider } from "../UnlockContext";
@@ -55,16 +55,20 @@ describe("Matrix Performance", () => {
     widthSetterSpy.mockClear();
 
     // Trigger rapid resize events
-    const resizeEvent = new Event("resize");
-    for (let i = 0; i < 10; i++) {
-      window.dispatchEvent(resizeEvent);
-    }
+    act(() => {
+      const resizeEvent = new Event("resize");
+      for (let i = 0; i < 10; i++) {
+        window.dispatchEvent(resizeEvent);
+      }
+    });
 
     // Immediately after events, it should NOT have been called due to debounce
     expect(widthSetterSpy).toHaveBeenCalledTimes(0);
 
     // Advance timers by debounce duration (200ms)
-    jest.advanceTimersByTime(200);
+    act(() => {
+      jest.advanceTimersByTime(200);
+    });
 
     // Now it should have been called EXACTLY once
     expect(widthSetterSpy).toHaveBeenCalledTimes(1);
