@@ -82,7 +82,10 @@ export const NuUhUhEasterEgg = ({ onClose, id: _id }: NuUhUhEasterEggProps) => {
       try {
         await audioElement.play();
       } catch (error) {
-        console.warn("Audio playback failed", error);
+        // Autoplay may be blocked by the browser.
+        // We explicitly catch and swallow this expected error to prevent
+        // unhandled promise rejections, as this is a non-critical easter egg.
+        const _ = error;
       }
     };
 
