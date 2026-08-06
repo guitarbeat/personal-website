@@ -168,7 +168,9 @@ export async function refreshContentSnapshot({
       await kvClient.setJson(SNAPSHOT_KEY, snapshot);
       await kvClient.setJson(SNAPSHOT_META_KEY, snapshotMetadata);
       snapshotStored = true;
+      console.log("[Notion KV] Successfully updated snapshot.");
     } catch (error) {
+      console.error("[Notion KV] Failed to update snapshot:", error);
       if (requireSnapshotPersist) {
         throw error;
       }
