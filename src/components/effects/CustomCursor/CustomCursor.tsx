@@ -35,6 +35,34 @@ function isCustomCursorSupported(): boolean {
   );
 }
 
+function getHoverState(
+  target: EventTarget | null,
+  defaultLabel: string,
+): { isHovering: boolean; text: string } {
+  if (!(target instanceof Element)) {
+    return { isHovering: false, text: defaultLabel };
+  }
+
+  const customTextElement = target.closest("[data-cursor-text]");
+  if (customTextElement) {
+    const text = customTextElement.getAttribute("data-cursor-text");
+    if (text) {
+      return { isHovering: true, text };
+    }
+  }
+
+  const clickable =
+    target.closest("button") ??
+    target.closest("a") ??
+    target.closest('[data-hover="true"]');
+
+  if (clickable) {
+    return { isHovering: true, text: defaultLabel };
+  }
+
+  return { isHovering: false, text: defaultLabel };
+}
+
 const CustomCursor = ({ label: defaultLabel = "View" }: CustomCursorProps) => {
   const cursorRef = useRef<HTMLDivElement>(null);
   const [enabled, setEnabled] = useState(false);
@@ -84,31 +112,10 @@ const CustomCursor = ({ label: defaultLabel = "View" }: CustomCursorProps) => {
     };
 
     const handleMouseOver = (event: MouseEvent) => {
-      const target = event.target;
-      if (!(target instanceof Element)) {
-        return;
-      }
-
-      const customTextElement = target.closest("[data-cursor-text]");
-      if (customTextElement) {
-        const text = customTextElement.getAttribute("data-cursor-text");
-        if (text) {
-          setCursorText(text);
-          setIsHovering(true);
-          return;
-        }
-      }
-
-      const clickable =
-        target.closest("button") ??
-        target.closest("a") ??
-        target.closest('[data-hover="true"]');
-
-      if (clickable) {
-        setCursorText(defaultLabel);
-        setIsHovering(true);
-      } else {
-        setIsHovering(false);
+      const { isHovering, text } = getHoverState(event.target, defaultLabel);
+      setIsHovering(isHovering);
+      if (isHovering) {
+        setCursorText(text);
       }
     };
 
