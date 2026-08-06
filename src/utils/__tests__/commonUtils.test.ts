@@ -72,6 +72,20 @@ describe("commonUtils", () => {
     it("trims whitespace only strings", () => {
       expect(cn("base", "   ", "foo")).toBe("base foo");
     });
+    it("handles boolean, null, and undefined values safely", () => {
+      expect(cn("base", true, false, null, undefined, "extra")).toBe("base extra");
+    });
+
+    it("handles empty arrays passed at runtime", () => {
+      // @ts-expect-error Testing runtime behavior with invalid types
+      expect(cn("base", [])).toBe("base");
+    });
+
+    it("handles boolean conditions like isActive && 'active'", () => {
+      const isActive = true;
+      const isPending = false;
+      expect(cn("button", isActive && "active", isPending && "pending")).toBe("button active");
+    });
   });
 
   describe("isAboveBreakpoint", () => {
