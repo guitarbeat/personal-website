@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNotionSectionData } from "@/hooks/useNotionSectionData";
-import type { NotionData } from "@/types/content";
+import type { NotionData, ProjectItem } from "@/types/content";
 import { generateTagColors } from "@/utils/colorUtils";
 import { cn } from "@/utils/commonUtils";
 import {
@@ -123,7 +123,7 @@ interface ProjectsProps {
   db?: Pick<NotionData, "projects">;
 }
 
-function Projects({ db: propsDb }: ProjectsProps = {}) {
+function useProjectsData(propsDb?: Pick<NotionData, "projects">) {
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [tagColors, setTagColors] = useState<Record<string, string>>({});
   const { db, isLoading } = useNotionSectionData(propsDb);
@@ -191,7 +191,32 @@ function Projects({ db: propsDb }: ProjectsProps = {}) {
     [activeFilters],
   );
 
-  const project_cards = projectsData.map((projectProps, index) => {
+  return useMemo(
+    () => ({
+      allKeywords,
+      activeFiltersSet,
+      tagColors,
+      isLoading,
+      toggleFilter,
+      projectsData,
+    }),
+    [
+      allKeywords,
+      activeFiltersSet,
+      tagColors,
+      isLoading,
+      toggleFilter,
+      projectsData,
+    ],
+  );
+}
+
+function renderProjectCards(
+  projectsData: ProjectItem[],
+  tagColors: Record<string, string>,
+  activeFiltersSet: Set<string>,
+) {
+  return projectsData.map((projectProps, index) => {
     const primaryKeyword = projectProps.keywords[0] || "";
     const primaryTagColor = tagColors[primaryKeyword];
     const isFiltered =
@@ -210,6 +235,22 @@ function Projects({ db: propsDb }: ProjectsProps = {}) {
       />
     );
   });
+}
+
+function Projects({ db: propsDb }: ProjectsProps = {}) {
+  const {
+    allKeywords,
+    activeFiltersSet,
+    tagColors,
+    isLoading,
+    toggleFilter,
+    projectsData,
+  } = useProjectsData(propsDb);
+
+  const project_cards = useMemo(
+    () => renderProjectCards(projectsData, tagColors, activeFiltersSet),
+    [projectsData, tagColors, activeFiltersSet],
+  );
 
   return (
     <div className="container" id="projects">
