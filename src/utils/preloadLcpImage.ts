@@ -3,9 +3,9 @@ export function preloadLcpImage(href: string): void {
     return;
   }
 
-  const alreadyPreloaded = Array.from(
-    document.head.querySelectorAll('link[rel="preload"]'),
-  ).some((link) => link.getAttribute("href") === href);
+  const alreadyPreloaded = !!document.head.querySelector(
+    `link[rel="preload"][href="${href.replace(/"/g, '\\\"')}"]`,
+  );
 
   if (alreadyPreloaded) {
     return;
