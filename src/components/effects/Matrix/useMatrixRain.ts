@@ -59,12 +59,14 @@ export const useMatrixRain = (
     // * Performance Optimization: Pre-allocate buckets to prevent per-frame garbage collection
     // * We reuse these arrays every frame instead of creating new ones
     const buckets: Record<number, Drop[]> = {};
+    const bucketKeys: number[] = [];
     for (
       let size = MATRIX_RAIN.FONT_SIZES.MIN;
       size <= MATRIX_RAIN.FONT_SIZES.MAX;
       size++
     ) {
       buckets[size] = [];
+      bucketKeys.push(size);
     }
 
     let lastTime = 0;
@@ -95,8 +97,8 @@ export const useMatrixRain = (
 
         // * Performance Optimization: Batch drawing by font size to minimize state changes
         // * Reset buckets without reallocation
-        for (const key in buckets) {
-          buckets[key].length = 0;
+        for (let i = 0; i < bucketKeys.length; i++) {
+          buckets[bucketKeys[i]].length = 0;
         }
 
         // Group drops by font size
@@ -104,6 +106,7 @@ export const useMatrixRain = (
           // Safety check in case random logic produces unexpected size
           if (!buckets[drop.fontSize]) {
             buckets[drop.fontSize] = [];
+            bucketKeys.push(drop.fontSize);
           }
           buckets[drop.fontSize].push(drop);
         }
@@ -111,11 +114,12 @@ export const useMatrixRain = (
         const opacityMultiplier = drawParams.opacityMultiplier;
 
         // Iterate through buckets
-        for (const fontSizeStr in buckets) {
-          const bucket = buckets[fontSizeStr];
+        for (let j = 0; j < bucketKeys.length; j++) {
+          const fontSize = bucketKeys[j];
+          const bucket = buckets[fontSize];
           if (bucket.length === 0) continue;
           // Set font once per bucket
-          context.font = `${fontSizeStr}px monospace`;
+          context.font = `${fontSize}px monospace`;
 
           // * Pass 1: Draw Trails (phosphor green)
           context.fillStyle = toRgba(MATRIX_COLORS.TRAIL);
