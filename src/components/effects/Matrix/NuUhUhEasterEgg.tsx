@@ -8,13 +8,13 @@ interface NuUhUhEasterEggProps {
   id?: number;
 }
 
-export const NuUhUhEasterEgg = ({ onClose, id: _id }: NuUhUhEasterEggProps) => {
-  const audioRef = useRef<HTMLAudioElement>(null);
+export const useDraggable = (
+  containerRef: React.RefObject<HTMLElement | null>,
+) => {
   const [position, setPosition] = useState({ x: 100, y: 100 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [zIndex, setZIndex] = useState(9999);
-  const containerRef = useRef<HTMLButtonElement>(null);
 
   // * Generate random position for each instance
   useEffect(() => {
@@ -29,20 +29,23 @@ export const NuUhUhEasterEgg = ({ onClose, id: _id }: NuUhUhEasterEggProps) => {
   }, []);
 
   // * Drag handlers
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if ((e.target as HTMLElement).closest(".nuuhuh-overlay__content")) {
-      setIsDragging(true);
-      const rect = containerRef.current?.getBoundingClientRect();
-      if (rect) {
-        setDragOffset({
-          x: e.clientX - rect.left,
-          y: e.clientY - rect.top,
-        });
-        // Bring to front
-        setZIndex((prev) => prev + 1);
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      if ((e.target as HTMLElement).closest(".nuuhuh-overlay__content")) {
+        setIsDragging(true);
+        const rect = containerRef.current?.getBoundingClientRect();
+        if (rect) {
+          setDragOffset({
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top,
+          });
+          // Bring to front
+          setZIndex((prev) => prev + 1);
+        }
       }
-    }
-  };
+    },
+    [containerRef],
+  );
 
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
@@ -72,6 +75,12 @@ export const NuUhUhEasterEgg = ({ onClose, id: _id }: NuUhUhEasterEggProps) => {
     };
   }, [handleMouseMove, handleMouseUp, isDragging]);
 
+  return { position, isDragging, zIndex, handleMouseDown };
+};
+
+export const useEasterEggAudio = (
+  audioRef: React.RefObject<HTMLAudioElement | null>,
+) => {
   useEffect(() => {
     const audioElement = audioRef.current;
     if (!audioElement) {
@@ -92,7 +101,16 @@ export const NuUhUhEasterEgg = ({ onClose, id: _id }: NuUhUhEasterEggProps) => {
       audioElement.pause();
       audioElement.currentTime = 0;
     };
-  }, []);
+  }, [audioRef]);
+};
+
+export const NuUhUhEasterEgg = ({ onClose, id: _id }: NuUhUhEasterEggProps) => {
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const containerRef = useRef<HTMLButtonElement>(null);
+  const { position, isDragging, zIndex, handleMouseDown } =
+    useDraggable(containerRef);
+
+  useEasterEggAudio(audioRef);
 
   return (
     <button
