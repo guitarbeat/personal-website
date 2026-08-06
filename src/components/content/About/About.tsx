@@ -39,16 +39,7 @@ export function ColorChangeOnHover({ text = "" }) {
   return <>{content}</>;
 }
 
-function About() {
-  const [expandedSection, setExpandedSection] = useState<string | null>(null);
-  const { db, isLoading } = useNotionSectionData();
-
-  const aboutTexts = db.about || [];
-
-  const handleSectionClick = (category: string) => {
-    setExpandedSection(expandedSection === category ? null : category);
-  };
-
+function useSpotifyWidget() {
   // * Suppress Spotify scheme errors globally
   useEffect(() => {
     const handleError = (event: ErrorEvent) => {
@@ -141,32 +132,49 @@ function About() {
     openSpotifyProfile();
   }, []);
 
-  const renderAboutTexts = (
-    texts: { category: string; description: string }[],
-  ) =>
-    texts.map(({ category, description }) => (
-      <button
-        key={category}
-        type="button"
-        className={cn(
-          "about-me__text",
-          expandedSection === category && "expanded",
-        )}
-        onClick={() => handleSectionClick(category)}
-      >
-        <h2>{category}</h2>
-        <div className="about-me__text-body">
-          <div className="about-me__text-body-inner">
-            <p>
-              <ColorChangeOnHover text={description} />
-            </p>
-          </div>
+  return handleSpotifyClick;
+}
+
+const renderAboutTexts = (
+  texts: { category: string; description: string }[],
+  expandedSection: string | null,
+  handleSectionClick: (category: string) => void,
+) =>
+  texts.map(({ category, description }) => (
+    <button
+      key={category}
+      type="button"
+      className={cn(
+        "about-me__text",
+        expandedSection === category && "expanded",
+      )}
+      onClick={() => handleSectionClick(category)}
+    >
+      <h2>{category}</h2>
+      <div className="about-me__text-body">
+        <div className="about-me__text-body-inner">
+          <p>
+            <ColorChangeOnHover text={description} />
+          </p>
         </div>
-        <div className="expand-indicator" aria-hidden="true">
-          {expandedSection === category ? "−" : "+"}
-        </div>
-      </button>
-    ));
+      </div>
+      <div className="expand-indicator" aria-hidden="true">
+        {expandedSection === category ? "−" : "+"}
+      </div>
+    </button>
+  ));
+
+function About() {
+  const [expandedSection, setExpandedSection] = useState<string | null>(null);
+  const { db, isLoading } = useNotionSectionData();
+
+  const aboutTexts = db.about || [];
+
+  const handleSectionClick = (category: string) => {
+    setExpandedSection(expandedSection === category ? null : category);
+  };
+
+  const handleSpotifyClick = useSpotifyWidget();
 
   return (
     <div id="about" className="container">
@@ -182,7 +190,11 @@ function About() {
               {isLoading ? (
                 <NotionSectionSkeleton section="about" />
               ) : (
-                renderAboutTexts(aboutTexts)
+                renderAboutTexts(
+                  aboutTexts,
+                  expandedSection,
+                  handleSectionClick,
+                )
               )}
             </div>
             <a
