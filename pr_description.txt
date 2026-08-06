@@ -1,0 +1,11 @@
+🎯 **What**
+Refactored the `useHackProgressDecay` React hook to fix the "Overly Long Function" issue. The core business logic nested deeply inside the `useEffect` interval has been extracted into two separate pure/standalone functions: `calculateDecayAmount` and `applyDecayStep`. Also fixed an unrelated React state update warning (`act(...)`) in `Matrix.benchmark.test.tsx` that occurred during test runs.
+
+💡 **Why**
+Extracting the decay calculation and the state application steps out of the `useEffect` hook drastically reduces cognitive complexity, making the hook much easier to read and maintain. The refactoring follows the repository's code health directives by separating stateless pure calculations and complex imperative side effects into descriptively named, non-React functions outside the main component/hook.
+
+✅ **Verification**
+Ran `pnpm test src/components/effects/Matrix/ -- --watchAll=false` and verified that all tests passed successfully, ensuring no regressions in the core decay or state update logic. Verified formatting using `@biomejs/biome`.
+
+✨ **Result**
+The `useHackProgressDecay` hook is now much more concise and easier to reason about, and the code health warnings regarding function length are resolved without changing any external behavior.
