@@ -48,6 +48,8 @@ describe("notion snapshot and health", () => {
       setJson: jest.fn().mockResolvedValue(undefined),
     };
 
+    const consoleLogSpy = jest.spyOn(console, "log").mockImplementation();
+
     const result = await refreshContentSnapshot({
       fetchImpl,
       env: { NOTION_TOKEN: "test-token" },
@@ -80,6 +82,11 @@ describe("notion snapshot and health", () => {
         updatedAt: "2026-03-21T12:00:00.000Z",
       }),
     );
+    expect(consoleLogSpy).toHaveBeenCalledWith(
+      "[Notion KV] Successfully updated snapshot.",
+    );
+
+    consoleLogSpy.mockRestore();
   });
 
   it("throws an error when kvClient.setJson fails and requireSnapshotPersist is true", async () => {
@@ -90,10 +97,13 @@ describe("notion snapshot and health", () => {
         next_cursor: null,
       }),
     );
+    const mockError = new Error("KV write failed");
     const kvClient = {
       getJson: jest.fn(),
-      setJson: jest.fn().mockRejectedValue(new Error("KV write failed")),
+      setJson: jest.fn().mockRejectedValue(mockError),
     };
+
+    const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
 
     await expect(
       refreshContentSnapshot({
@@ -104,6 +114,13 @@ describe("notion snapshot and health", () => {
         requireSnapshotPersist: true,
       }),
     ).rejects.toThrow("KV write failed");
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      "[Notion KV] Failed to update snapshot:",
+      mockError,
+    );
+
+    consoleErrorSpy.mockRestore();
   });
 
   it("swallows the error and returns snapshotStored=false when kvClient.setJson fails and requireSnapshotPersist is false", async () => {
@@ -114,10 +131,13 @@ describe("notion snapshot and health", () => {
         next_cursor: null,
       }),
     );
+    const mockError = new Error("KV write failed");
     const kvClient = {
       getJson: jest.fn(),
-      setJson: jest.fn().mockRejectedValue(new Error("KV write failed")),
+      setJson: jest.fn().mockRejectedValue(mockError),
     };
+
+    const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
 
     const result = await refreshContentSnapshot({
       fetchImpl,
@@ -130,6 +150,12 @@ describe("notion snapshot and health", () => {
     expect(result.snapshotStored).toBe(false);
     expect(result.response.meta.snapshotUpdatedAt).toBeNull();
     expect(result.response.meta.source).toBe("live");
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      "[Notion KV] Failed to update snapshot:",
+      mockError,
+    );
+
+    consoleErrorSpy.mockRestore();
   });
 
   it("returns the KV snapshot with degraded=true when live refresh fails", async () => {
