@@ -123,7 +123,7 @@ interface ProjectsProps {
   db?: Pick<NotionData, "projects">;
 }
 
-function Projects({ db: propsDb }: ProjectsProps = {}) {
+function useProjectsState(propsDb?: Pick<NotionData, "projects">) {
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [tagColors, setTagColors] = useState<Record<string, string>>({});
   const { db, isLoading } = useNotionSectionData(propsDb);
@@ -191,25 +191,57 @@ function Projects({ db: propsDb }: ProjectsProps = {}) {
     [activeFilters],
   );
 
-  const project_cards = projectsData.map((projectProps, index) => {
-    const primaryKeyword = projectProps.keywords[0] || "";
-    const primaryTagColor = tagColors[primaryKeyword];
-    const isFiltered =
-      projectProps.keywords.length > 0 &&
-      !projectProps.keywords.some((keyword) => activeFiltersSet.has(keyword));
-    const effect = createProjectEffect(primaryTagColor, index);
+  return useMemo(
+    () => ({
+      isLoading,
+      allKeywords,
+      activeFiltersSet,
+      tagColors,
+      toggleFilter,
+      projectsData,
+    }),
+    [
+      isLoading,
+      allKeywords,
+      activeFiltersSet,
+      tagColors,
+      toggleFilter,
+      projectsData,
+    ],
+  );
+}
 
-    return (
-      <ProjectCard
-        key={projectProps.slug}
-        {...projectProps}
-        tagColors={tagColors}
-        primaryTagColor={primaryTagColor}
-        className={isFiltered ? "filtered-out" : ""}
-        effect={effect}
-      />
-    );
-  });
+function Projects({ db: propsDb }: ProjectsProps = {}) {
+  const {
+    isLoading,
+    allKeywords,
+    activeFiltersSet,
+    tagColors,
+    toggleFilter,
+    projectsData,
+  } = useProjectsState(propsDb);
+
+  const projectCards = useMemo(() => {
+    return projectsData.map((projectProps, index) => {
+      const primaryKeyword = projectProps.keywords[0] || "";
+      const primaryTagColor = tagColors[primaryKeyword];
+      const isFiltered =
+        projectProps.keywords.length > 0 &&
+        !projectProps.keywords.some((keyword) => activeFiltersSet.has(keyword));
+      const effect = createProjectEffect(primaryTagColor, index);
+
+      return (
+        <ProjectCard
+          key={projectProps.slug}
+          {...projectProps}
+          tagColors={tagColors}
+          primaryTagColor={primaryTagColor}
+          className={isFiltered ? "filtered-out" : ""}
+          effect={effect}
+        />
+      );
+    });
+  }, [projectsData, tagColors, activeFiltersSet]);
 
   return (
     <div className="container" id="projects">
@@ -247,7 +279,7 @@ function Projects({ db: propsDb }: ProjectsProps = {}) {
             {isLoading ? (
               <NotionSectionSkeleton section="projects" />
             ) : (
-              project_cards
+              projectCards
             )}
           </div>
         </div>
