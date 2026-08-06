@@ -28,6 +28,8 @@ function formatPart(num: number, singular: string, plural: string): string {
 
 /** Formats a job duration (in months) as human-readable text for the timeline. */
 export function formatWorkDuration(months: number): string {
+  if (months <= 0) return "";
+
   const years = Math.floor(months / 12);
   const remainingMonths = months % 12;
 
