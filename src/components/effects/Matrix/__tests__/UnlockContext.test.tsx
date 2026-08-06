@@ -1,4 +1,5 @@
 import { act, render } from "@testing-library/react";
+import { logger } from "@/utils/logger";
 import { ERROR_MESSAGES } from "../constants";
 import { UnlockProvider, useUnlock } from "../UnlockContext";
 
@@ -18,8 +19,8 @@ describe("UnlockContext", () => {
     };
 
     // Mock console.warn and console.error
-    const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
-    const errorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+    const warnSpy = jest.spyOn(logger, "warn").mockImplementation(() => {});
+    const errorSpy = jest.spyOn(logger, "error").mockImplementation(() => {});
 
     // Mock sessionStorage.setItem to throw QuotaExceededError initially
     const setItemSpy = jest.spyOn(Storage.prototype, "setItem");
@@ -78,8 +79,8 @@ describe("UnlockContext", () => {
       return null;
     };
 
-    const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
-    const errorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+    const warnSpy = jest.spyOn(logger, "warn").mockImplementation(() => {});
+    const errorSpy = jest.spyOn(logger, "error").mockImplementation(() => {});
 
     const setItemSpy = jest.spyOn(Storage.prototype, "setItem");
     const quotaError = new Error("Quota Exceeded");
