@@ -53,7 +53,7 @@
   },
   "dependencies": {
     "@babel/core": "^7.29.7",
-    "@babel/plugin-transform-private-methods": "^7.28.6",
+    "@babel/plugin-transform-private-methods": "^8.0.1",
     "@eslint/config-array": "^0.23.4",
     "@eslint/object-schema": "^3.0.4",
     "@testing-library/jest-dom": "^6.9.1",
