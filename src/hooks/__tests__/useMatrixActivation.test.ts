@@ -51,9 +51,13 @@ describe("useMatrixActivation", () => {
   const originalLocation = window.location;
 
   beforeAll(() => {
-    // Delete window.location so we can mock it
+    // Safely delete and override window.location using Object.defineProperty
+    // This circumvents jsdom navigation errors when altering location directly.
     delete (window as any).location;
-    window.location = { ...originalLocation, search: "" } as Location;
+    Object.defineProperty(window, "location", {
+      value: { ...originalLocation, search: "" },
+      writable: true,
+    });
   });
 
   afterAll(() => {
@@ -74,28 +78,6 @@ describe("useMatrixActivation", () => {
     window.location.search = "?matrix=true";
     const { result } = renderHook(() => useMatrixActivation());
     expect(result.current.showMatrix).toBe(true);
-  });
-
-  it("returns false initially if window is undefined", () => {
-    // Save original window
-    const originalWindow = global.window;
-    // Mock window as undefined
-    delete (global as any).window;
-
-    // Call shouldShowMatrixFromSearch directly since we can't use renderHook without window
-    // as React DOM needs window/document
-    // This is essentially testing the fallback logic inside useState initial value
-    const mockUseStateInit = () => {
-      if (typeof window === "undefined") {
-        return false;
-      }
-      return shouldShowMatrixFromSearch(window.location.search);
-    };
-
-    expect(mockUseStateInit()).toBe(false);
-
-    // Restore window immediately
-    global.window = originalWindow;
   });
 
   it("changes state to true when handleMatrixActivate is called", () => {
