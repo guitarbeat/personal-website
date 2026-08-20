@@ -16,6 +16,15 @@ jest.mock("../services/notionService", () => {
   };
 });
 
+jest.mock("../utils/logger", () => ({
+  logger: {
+    error: jest.fn(),
+    warn: jest.fn(),
+    info: jest.fn(),
+    log: jest.fn(),
+  },
+}));
+
 const Consumer = () => {
   const notion = useNotion();
 
@@ -78,9 +87,7 @@ describe("NotionProvider", () => {
   });
 
   it("handles errors when fetching data fails", async () => {
-    const consoleSpy = jest
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
+
     const errorMessage = "Network Error";
     mockGetAllData.mockRejectedValue(new Error(errorMessage));
 
@@ -96,16 +103,14 @@ describe("NotionProvider", () => {
       expect(screen.getByText("no-projects")).toBeInTheDocument();
     });
 
-    consoleSpy.mockRestore();
+
   });
 
   it("throws an error if useNotion is used outside NotionProvider", () => {
-    const consoleSpy = jest
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
+
     expect(() => renderHook(() => useNotion())).toThrow(
       "useNotion must be used within NotionProvider",
     );
-    consoleSpy.mockRestore();
+
   });
 });
