@@ -34,9 +34,10 @@ export default async function handler(req, res) {
   } catch (error) {
     res.setHeader("Cache-Control", "no-store");
     console.error(
-      error instanceof Error
-        ? `Error: ${error.message}\nStack: ${error.stack}`
-        : String(error),
+      JSON.stringify({
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
+      }),
     );
     return res.status(error?.status || 500).json(createErrorPayload(error));
   }
