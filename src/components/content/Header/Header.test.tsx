@@ -27,7 +27,9 @@ describe("Header avatar", () => {
 
   afterEach(() => {
     jest.restoreAllMocks();
-    jest.runOnlyPendingTimers();
+    act(() => {
+      jest.runOnlyPendingTimers();
+    });
     jest.useRealTimers();
   });
 
@@ -121,7 +123,9 @@ describe("Header avatar", () => {
     );
 
     for (let clickCount = 1; clickCount < profileImageCount; clickCount += 1) {
-      fireEvent.click(avatarButton);
+      act(() => {
+        fireEvent.click(avatarButton);
+      });
 
       await act(async () => {
         jest.advanceTimersByTime(AVATAR_TRANSITION_FALLBACK_MS);
