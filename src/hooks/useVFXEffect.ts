@@ -1,5 +1,6 @@
 // Third-party imports
 import { useEffect, useRef } from "react";
+import { logger } from "../utils/logger";
 
 /**
  * * Custom hook for managing VFX effects on navigation links
@@ -49,7 +50,7 @@ export const useVFXEffect = ({
         vfxRef.current = new VFX();
       })
       .catch((error) => {
-        console.warn("Failed to load VFX core:", error);
+        logger.error("Failed to load VFX core:", error);
       });
 
     return () => {
@@ -74,7 +75,7 @@ export const useVFXEffect = ({
         vfxRef.current.remove(previousActiveRef.current);
         previousActiveRef.current.classList?.remove("active");
       } catch (error) {
-        console.warn("VFX removal error:", error);
+        logger.error("VFX removal error:", error);
       }
     }
 
@@ -85,7 +86,7 @@ export const useVFXEffect = ({
         activeElement.classList?.add("active");
         previousActiveRef.current = activeElement;
       } catch (error) {
-        console.warn("VFX application error:", error);
+        logger.error("VFX application error:", error);
       }
     }
   }, [enabled, activeElement, effectConfig]);
