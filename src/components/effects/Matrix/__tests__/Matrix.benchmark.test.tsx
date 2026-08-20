@@ -1,4 +1,4 @@
-import { render, act } from "@testing-library/react";
+import { act, render } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import Matrix from "../Matrix";
 import { UnlockProvider } from "../UnlockContext";
