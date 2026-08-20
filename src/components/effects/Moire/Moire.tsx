@@ -210,13 +210,17 @@ function MagicComponent({
 
       const onMove = (e) => {
         state.mouseOver = true;
-        const touchX = e.changedTouches?.[0]?.pageX;
-        const touchY = e.changedTouches?.[0]?.pageY;
-        const pageX = e.x === undefined ? e.pageX : e.x;
-        const pageY = e.y === undefined ? e.pageY : e.y;
+        if (state.hasNewMouseInput) return;
 
-        const x = touchX || pageX;
-        const y = touchY || pageY;
+        let x: number;
+        let y: number;
+        if (e.changedTouches && e.changedTouches.length > 0) {
+          x = e.changedTouches[0].pageX;
+          y = e.changedTouches[0].pageY;
+        } else {
+          x = e.x !== undefined ? e.x : e.pageX;
+          y = e.y !== undefined ? e.y : e.pageY;
+        }
 
         state.mouse.set(
           (x / state.gl.renderer.width) * 2 - 1,
