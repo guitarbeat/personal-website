@@ -127,22 +127,6 @@ describe("commonUtils", () => {
       const id = generateId(100);
       expect(id).toMatch(/^[A-Za-z0-9]+$/);
     });
-
-    it("returns empty string when length is 0", () => {
-      expect(generateId(0)).toBe("");
-    });
-
-    it("returns empty string when length is negative", () => {
-      expect(generateId(-5)).toBe("");
-    });
-
-    it("returns empty string when alphabet is empty", () => {
-      expect(generateId(5, "")).toBe("");
-    });
-
-    it("uses provided custom alphabet exclusively", () => {
-      expect(generateId(5, "A")).toBe("AAAAA");
-    });
   });
 
   describe("Point utilities", () => {

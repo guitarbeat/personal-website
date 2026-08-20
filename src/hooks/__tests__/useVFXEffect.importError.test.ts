@@ -1,17 +1,16 @@
 import { act, renderHook } from "@testing-library/react";
 import { useVFXEffect } from "../useVFXEffect";
-import { logger } from "../../utils/logger";
 
-const originalError = console.error;
+const originalWarn = console.warn;
 
 describe("useVFXEffect import error", () => {
   beforeEach(() => {
-    console.error = jest.fn();
+    console.warn = jest.fn();
     jest.clearAllMocks();
   });
 
   afterEach(() => {
-    console.error = originalError;
+    console.warn = originalWarn;
     jest.restoreAllMocks();
   });
 
@@ -23,7 +22,7 @@ describe("useVFXEffect import error", () => {
       await new Promise((resolve) => setTimeout(resolve, 0));
     });
 
-    expect(console.error).toHaveBeenCalledWith(
+    expect(console.warn).toHaveBeenCalledWith(
       "Failed to load VFX core:",
       expect.objectContaining({
         message: expect.stringContaining("Cannot find module"),
@@ -38,6 +37,6 @@ describe("useVFXEffect import error", () => {
       await new Promise((resolve) => setTimeout(resolve, 0));
     });
 
-    expect(console.error).not.toHaveBeenCalled();
+    expect(console.warn).not.toHaveBeenCalled();
   });
 });

@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from "react";
  * @param {number} throttleMs - Throttle time in milliseconds
  * @returns {Function} - Throttled scroll handler
  */
-export const useThrottledScroll = (callback: () => void, throttleMs = 16) => {
+const useThrottledScroll = (callback: () => void, throttleMs = 16) => {
   return useCallback(() => {
     let timeoutId: ReturnType<typeof setTimeout> | null = null;
 

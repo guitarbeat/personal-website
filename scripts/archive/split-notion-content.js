@@ -128,25 +128,33 @@ fs.writeFileSync(
   header('import { ContentError } from "./constants.js";', telemetry.trim()),
 );
 
-// Export constants that were previously internal to notionContent.js
+// Fix constants to export NOTION_API_BASE
 const constantsPath = path.join(outDir, "constants.js");
 let constantsBody = fs.readFileSync(constantsPath, "utf8");
-["NOTION_API_BASE", "NOTION_VERSION", "DATABASE_IDS"].forEach((name) => {
-  constantsBody = constantsBody.replace(
-    `const ${name}`,
-    `export const ${name}`,
-  );
-});
+constantsBody = constantsBody.replace(
+  "const NOTION_API_BASE",
+  "export const NOTION_API_BASE",
+);
+constantsBody = constantsBody.replace(
+  "const NOTION_VERSION",
+  "export const NOTION_VERSION",
+);
 fs.writeFileSync(constantsPath, constantsBody);
 
-// Export helper functions that were previously internal to notionContent.js
+// Export parseJsonSafely and toIsoString from helpers
 let helpersBody = fs.readFileSync(path.join(outDir, "helpers.js"), "utf8");
-["parseJsonSafely", "toIsoString", "extractRichText"].forEach((name) => {
-  helpersBody = helpersBody.replace(
-    `function ${name}`,
-    `export function ${name}`,
-  );
-});
+helpersBody = helpersBody.replace(
+  "function parseJsonSafely",
+  "export function parseJsonSafely",
+);
+helpersBody = helpersBody.replace(
+  "function toIsoString",
+  "export function toIsoString",
+);
+helpersBody = helpersBody.replace(
+  "function extractRichText",
+  "export function extractRichText",
+);
 fs.writeFileSync(path.join(outDir, "helpers.js"), helpersBody);
 
 const barrel = `export {

@@ -108,19 +108,19 @@ const PixelCanvas = ({
       }
     };
 
+    const getDistanceToCanvasCenter = (x: number, y: number) => {
+      const dx = x - logicalWidth / 2;
+      const dy = y - logicalHeight / 2;
+      return Math.sqrt(dx * dx + dy * dy);
+    };
+
     const createPixels = () => {
       pixels = [];
-      const cx = logicalWidth / 2;
-      const cy = logicalHeight / 2;
-      const numColors = colorPalette.length;
-
       for (let x = 0; x < logicalWidth; x += parsedGap) {
-        const dx = x - cx;
-        const dxSq = dx * dx;
         for (let y = 0; y < logicalHeight; y += parsedGap) {
-          const dy = y - cy;
-          const delay = reducedMotion ? 0 : Math.sqrt(dxSq + dy * dy);
-          const color = colorPalette[Math.floor(Math.random() * numColors)];
+          const color =
+            colorPalette[Math.floor(Math.random() * colorPalette.length)];
+          const delay = reducedMotion ? 0 : getDistanceToCanvasCenter(x, y);
 
           pixels.push(
             new Pixel(

@@ -116,15 +116,7 @@ export async function readSnapshot({ kvClient }) {
     return null;
   }
 
-  let snapshot;
-  try {
-    snapshot = await kvClient.getJson(SNAPSHOT_KEY);
-  } catch (error) {
-    if (process.env.NODE_ENV !== 'test') {
-      console.error("Failed to read snapshot from KV:", error);
-    }
-    return null;
-  }
+  const snapshot = await kvClient.getJson(SNAPSHOT_KEY);
 
   if (!snapshot || typeof snapshot !== "object") {
     return null;
@@ -148,15 +140,7 @@ export async function readSnapshotMetadata({ kvClient }) {
     return null;
   }
 
-  let metadata;
-  try {
-    metadata = await kvClient.getJson(SNAPSHOT_META_KEY);
-  } catch (error) {
-    if (process.env.NODE_ENV !== 'test') {
-      console.error("Failed to read snapshot metadata from KV:", error);
-    }
-    return null;
-  }
+  const metadata = await kvClient.getJson(SNAPSHOT_META_KEY);
 
   if (!metadata || typeof metadata !== "object") {
     return null;

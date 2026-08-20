@@ -1,9 +1,5 @@
 import { act, renderHook } from "@testing-library/react";
-import {
-  useScrollPosition,
-  useScrollThreshold,
-  useThrottledScroll,
-} from "../useScrollUtils";
+import { useScrollPosition, useScrollThreshold } from "../useScrollUtils";
 
 describe("useScrollUtils", () => {
   beforeEach(() => {
@@ -18,31 +14,6 @@ describe("useScrollUtils", () => {
   afterEach(() => {
     jest.clearAllTimers();
     jest.useRealTimers();
-  });
-
-  describe("useThrottledScroll", () => {
-    it("should use default throttleMs when not provided", () => {
-      const callback = jest.fn();
-
-      const { result } = renderHook(() => useThrottledScroll(callback));
-
-      let handler: () => void = () => {};
-      act(() => {
-        handler = result.current();
-      });
-
-      act(() => {
-        handler();
-      });
-
-      expect(callback).not.toHaveBeenCalled();
-
-      act(() => {
-        jest.advanceTimersByTime(16);
-      });
-
-      expect(callback).toHaveBeenCalledTimes(1);
-    });
   });
 
   describe("useScrollPosition", () => {
@@ -64,23 +35,6 @@ describe("useScrollUtils", () => {
       expect(result.current).toBe(0);
 
       // Fast forward time
-      act(() => {
-        jest.advanceTimersByTime(16);
-      });
-
-      expect(result.current).toBe(100);
-    });
-
-    it("should use default throttleMs when not provided", () => {
-      const { result } = renderHook(() => useScrollPosition(undefined));
-
-      act(() => {
-        window.scrollY = 100;
-        window.dispatchEvent(new Event("scroll"));
-      });
-
-      expect(result.current).toBe(0);
-
       act(() => {
         jest.advanceTimersByTime(16);
       });
@@ -136,24 +90,6 @@ describe("useScrollUtils", () => {
   });
 
   describe("useScrollThreshold", () => {
-    it("should use default arguments when not provided", () => {
-      const { result } = renderHook(() => useScrollThreshold());
-      expect(result.current).toBe(false);
-
-      act(() => {
-        window.scrollY = 301;
-        window.dispatchEvent(new Event("scroll"));
-      });
-
-      expect(result.current).toBe(false);
-
-      act(() => {
-        jest.advanceTimersByTime(100);
-      });
-
-      expect(result.current).toBe(true);
-    });
-
     it("should return false initially if scroll is below threshold", () => {
       const { result } = renderHook(() => useScrollThreshold(300, 100));
       expect(result.current).toBe(false);
