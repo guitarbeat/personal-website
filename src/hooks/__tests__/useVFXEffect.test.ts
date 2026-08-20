@@ -1,5 +1,6 @@
 import { act, renderHook } from "@testing-library/react";
 import { useVFXEffect } from "../useVFXEffect";
+import { logger } from "../../utils/logger";
 
 const mockAdd = jest.fn();
 const mockRemove = jest.fn();
@@ -18,17 +19,17 @@ jest.mock(
   { virtual: true },
 );
 
-const originalWarn = console.warn;
+const originalError = console.error;
 
 describe("useVFXEffect", () => {
   beforeEach(() => {
-    console.warn = jest.fn();
+    console.error = jest.fn();
     mockAdd.mockClear();
     mockRemove.mockClear();
   });
 
   afterEach(() => {
-    console.warn = originalWarn;
+    console.error = originalError;
   });
 
   it("initializes VFX instance successfully", async () => {
@@ -39,7 +40,7 @@ describe("useVFXEffect", () => {
       await new Promise((resolve) => setTimeout(resolve, 10));
     });
 
-    expect(console.warn).not.toHaveBeenCalled();
+    expect(console.error).not.toHaveBeenCalled();
   });
 
   it("handles VFX application error gracefully", async () => {
@@ -62,7 +63,7 @@ describe("useVFXEffect", () => {
     // Update activeElement
     rerender({ activeElement });
 
-    expect(console.warn).toHaveBeenCalledWith(
+    expect(console.error).toHaveBeenCalledWith(
       "VFX application error:",
       expect.any(Error),
     );
@@ -96,7 +97,7 @@ describe("useVFXEffect", () => {
     // Change to element2 to trigger removal on element1
     rerender({ activeElement: element2 });
 
-    expect(console.warn).toHaveBeenCalledWith(
+    expect(console.error).toHaveBeenCalledWith(
       "VFX removal error:",
       expect.any(Error),
     );
@@ -125,8 +126,8 @@ describe("useVFXEffect", () => {
     unmount();
 
     // The catch block in cleanup has an empty body with a comment // Silently handle cleanup errors
-    // So console.warn should not be called
-    expect(console.warn).not.toHaveBeenCalledWith(
+    // So console.error should not be called
+    expect(console.error).not.toHaveBeenCalledWith(
       "VFX removal error:",
       expect.any(Error),
     );
