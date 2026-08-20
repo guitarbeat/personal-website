@@ -27,7 +27,9 @@ describe("Header avatar", () => {
 
   afterEach(() => {
     jest.restoreAllMocks();
-    act(() => { jest.runOnlyPendingTimers(); });
+    act(() => {
+      jest.runOnlyPendingTimers();
+    });
     jest.useRealTimers();
   });
 
