@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, act } from "@testing-library/react";
 import "@testing-library/jest-dom"; // Import custom matchers
 import Matrix from "../Matrix";
 import { UnlockProvider } from "../UnlockContext";

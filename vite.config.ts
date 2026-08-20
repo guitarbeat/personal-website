@@ -171,9 +171,6 @@ export default defineConfig(({ mode }) => {
       ),
       "process.env.REACT_APP_API_BASE": JSON.stringify(apiBase),
       "process.env.VERCEL": JSON.stringify(process.env.VERCEL || ""),
-      // Security Fix: Printful API keys removed to prevent client-side exposure
-      "process.env.REACT_APP_PRINTFUL_API_KEY": JSON.stringify(""),
-      "process.env.REACT_APP_PRINTFUL_STORE_ID": JSON.stringify(""),
       "process.env.REACT_APP_GIT_COMMIT_HASH": JSON.stringify(
         getGitCommitHash(),
       ),
