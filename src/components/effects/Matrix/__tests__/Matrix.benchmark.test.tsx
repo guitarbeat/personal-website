@@ -56,17 +56,19 @@ describe("Matrix Performance", () => {
 
     // Trigger rapid resize events
     const resizeEvent = new Event("resize");
-
     act(() => {
       for (let i = 0; i < 10; i++) {
         window.dispatchEvent(resizeEvent);
       }
-      // Advance timers by debounce duration (200ms) inside act to avoid warnings
-      jest.advanceTimersByTime(200);
     });
 
-    // We do not check for 0 calls right before advancing time because advancing time triggers state updates
-    // that should be wrapped in act, and separating them causes warnings.
+    // Immediately after events, it should NOT have been called due to debounce
+    expect(widthSetterSpy).toHaveBeenCalledTimes(0);
+
+    // Advance timers by debounce duration (200ms)
+    act(() => {
+      jest.advanceTimersByTime(200);
+    });
 
     // Now it should have been called EXACTLY once
     expect(widthSetterSpy).toHaveBeenCalledTimes(1);
