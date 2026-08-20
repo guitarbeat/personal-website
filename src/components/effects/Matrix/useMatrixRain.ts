@@ -19,6 +19,127 @@ const prefersReducedMotion = () => {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 };
 
+const startAnimationLoop = (
+  canvas: HTMLCanvasElement,
+  context: CanvasRenderingContext2D,
+  drops: Drop[],
+  buckets: Record<number, Drop[]>,
+  intensityRef: RefObject<number>,
+) => {
+  let lastTime = 0;
+  const targetFPS = 60;
+  const frameInterval = 1000 / targetFPS;
+
+  const drawFrame = (currentTime: number) => {
+    if (currentTime - lastTime >= frameInterval) {
+      const rawIntensity = intensityRef.current ?? 0.12;
+      const intensity = prefersReducedMotion()
+        ? getReducedMotionRainIntensity()
+        : rawIntensity;
+      const drawParams = getMatrixRainDrawParams(intensity);
+
+      for (const drop of drops) {
+        drop.setBrightHeadThreshold(drawParams.brightHeadThreshold);
+      }
+
+      // * Enhanced fade effect — lower alpha at high intensity = denser trails
+      context.fillStyle = `rgba(0, 0, 0, ${drawParams.fadeAlpha})`;
+      context.fillRect(0, 0, canvas.width, canvas.height);
+
+      // * Update all drops first
+      for (const drop of drops) {
+        drop.update(canvas.height, drawParams.speedMultiplier);
+      }
+
+      // * Performance Optimization: Batch drawing by font size to minimize state changes
+      // * Reset buckets without reallocation
+      for (const key in buckets) {
+        buckets[key].length = 0;
+      }
+
+      // Group drops by font size
+      for (const drop of drops) {
+        // Safety check in case random logic produces unexpected size
+        if (!buckets[drop.fontSize]) {
+          buckets[drop.fontSize] = [];
+        }
+        buckets[drop.fontSize].push(drop);
+      }
+
+      const opacityMultiplier = drawParams.opacityMultiplier;
+
+      // Iterate through buckets
+      for (const fontSizeStr in buckets) {
+        const bucket = buckets[fontSizeStr];
+        if (bucket.length === 0) continue;
+        // Set font once per bucket
+        context.font = `${fontSizeStr}px monospace`;
+
+        // * Pass 1: Draw Trails (phosphor green)
+        context.fillStyle = toRgba(MATRIX_COLORS.TRAIL);
+        for (const drop of bucket) {
+          const trailLength = drop.trail.length;
+          for (let i = 0; i < trailLength; i++) {
+            const trailItem = drop.trail[i];
+            const trailOpacity =
+              (i / trailLength) * drop.opacity * 0.3 * opacityMultiplier;
+            context.globalAlpha = trailOpacity;
+            context.fillText(
+              trailItem.char,
+              drop.x,
+              trailItem.y * drop.fontSize,
+            );
+          }
+        }
+
+        // * Pass 2: Draw Normal Heads (bright phosphor)
+        context.fillStyle = toRgba(MATRIX_COLORS.HEAD);
+        for (const drop of bucket) {
+          if (!drop.brightness) {
+            context.globalAlpha = drop.opacity * opacityMultiplier;
+            context.fillText(drop.char, drop.x, drop.y * drop.fontSize);
+          }
+        }
+
+        // * Pass 3: Draw Bright Heads (phosphor bloom)
+        context.fillStyle = toRgba(MATRIX_COLORS.HEAD_BRIGHT);
+        context.shadowColor = toRgba(MATRIX_COLORS.HEAD_BLOOM);
+        context.shadowBlur = 10;
+
+        for (const drop of bucket) {
+          if (drop.brightness) {
+            context.globalAlpha = Math.min(
+              1,
+              drop.opacity * 1.5 * opacityMultiplier,
+            );
+            context.fillText(drop.char, drop.x, drop.y * drop.fontSize);
+          }
+        }
+
+        // Reset shadow for next bucket/pass
+        context.shadowBlur = 0;
+      }
+
+      // Reset alpha at end of frame
+      context.globalAlpha = 1.0;
+
+      lastTime = currentTime;
+    }
+  };
+
+  let animationFrameId = 0;
+  const animate = (currentTime: number) => {
+    drawFrame(currentTime);
+    animationFrameId = window.requestAnimationFrame(animate);
+  };
+
+  animate(performance.now());
+
+  return () => {
+    window.cancelAnimationFrame(animationFrameId);
+  };
+};
+
 export const useMatrixRain = (
   canvasRef: RefObject<HTMLCanvasElement | null>,
   isVisible: boolean,
@@ -67,119 +188,17 @@ export const useMatrixRain = (
       buckets[size] = [];
     }
 
-    let lastTime = 0;
-    const targetFPS = 60;
-    const frameInterval = 1000 / targetFPS;
-
-    const drawFrame = (currentTime: number) => {
-      if (!canvas || !context) return;
-      if (currentTime - lastTime >= frameInterval) {
-        const rawIntensity = intensityRef.current ?? 0.12;
-        const intensity = prefersReducedMotion()
-          ? getReducedMotionRainIntensity()
-          : rawIntensity;
-        const drawParams = getMatrixRainDrawParams(intensity);
-
-        for (const drop of drops) {
-          drop.setBrightHeadThreshold(drawParams.brightHeadThreshold);
-        }
-
-        // * Enhanced fade effect — lower alpha at high intensity = denser trails
-        context.fillStyle = `rgba(0, 0, 0, ${drawParams.fadeAlpha})`;
-        context.fillRect(0, 0, canvas.width, canvas.height);
-
-        // * Update all drops first
-        for (const drop of drops) {
-          drop.update(canvas.height, drawParams.speedMultiplier);
-        }
-
-        // * Performance Optimization: Batch drawing by font size to minimize state changes
-        // * Reset buckets without reallocation
-        for (const key in buckets) {
-          buckets[key].length = 0;
-        }
-
-        // Group drops by font size
-        for (const drop of drops) {
-          // Safety check in case random logic produces unexpected size
-          if (!buckets[drop.fontSize]) {
-            buckets[drop.fontSize] = [];
-          }
-          buckets[drop.fontSize].push(drop);
-        }
-
-        const opacityMultiplier = drawParams.opacityMultiplier;
-
-        // Iterate through buckets
-        for (const fontSizeStr in buckets) {
-          const bucket = buckets[fontSizeStr];
-          if (bucket.length === 0) continue;
-          // Set font once per bucket
-          context.font = `${fontSizeStr}px monospace`;
-
-          // * Pass 1: Draw Trails (phosphor green)
-          context.fillStyle = toRgba(MATRIX_COLORS.TRAIL);
-          for (const drop of bucket) {
-            const trailLength = drop.trail.length;
-            for (let i = 0; i < trailLength; i++) {
-              const trailItem = drop.trail[i];
-              const trailOpacity =
-                (i / trailLength) * drop.opacity * 0.3 * opacityMultiplier;
-              context.globalAlpha = trailOpacity;
-              context.fillText(
-                trailItem.char,
-                drop.x,
-                trailItem.y * drop.fontSize,
-              );
-            }
-          }
-
-          // * Pass 2: Draw Normal Heads (bright phosphor)
-          context.fillStyle = toRgba(MATRIX_COLORS.HEAD);
-          for (const drop of bucket) {
-            if (!drop.brightness) {
-              context.globalAlpha = drop.opacity * opacityMultiplier;
-              context.fillText(drop.char, drop.x, drop.y * drop.fontSize);
-            }
-          }
-
-          // * Pass 3: Draw Bright Heads (phosphor bloom)
-          context.fillStyle = toRgba(MATRIX_COLORS.HEAD_BRIGHT);
-          context.shadowColor = toRgba(MATRIX_COLORS.HEAD_BLOOM);
-          context.shadowBlur = 10;
-
-          for (const drop of bucket) {
-            if (drop.brightness) {
-              context.globalAlpha = Math.min(
-                1,
-                drop.opacity * 1.5 * opacityMultiplier,
-              );
-              context.fillText(drop.char, drop.x, drop.y * drop.fontSize);
-            }
-          }
-
-          // Reset shadow for next bucket/pass
-          context.shadowBlur = 0;
-        }
-
-        // Reset alpha at end of frame
-        context.globalAlpha = 1.0;
-
-        lastTime = currentTime;
-      }
-    };
-
-    let animationFrameId = 0;
-    const animate = (currentTime: number) => {
-      drawFrame(currentTime);
-      animationFrameId = window.requestAnimationFrame(animate);
-    };
-
-    animate(performance.now());
+    const cancelAnimation = startAnimationLoop(
+      canvas,
+      context,
+      drops,
+      buckets,
+      intensityRef,
+    );
 
     return () => {
       window.removeEventListener("resize", handleResize);
-      window.cancelAnimationFrame(animationFrameId);
+      cancelAnimation();
     };
   }, [isVisible, canvasRef, intensityRef]);
 };
