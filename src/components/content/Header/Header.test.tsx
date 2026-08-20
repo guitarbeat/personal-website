@@ -27,7 +27,9 @@ describe("Header avatar", () => {
 
   afterEach(() => {
     jest.restoreAllMocks();
-    jest.runOnlyPendingTimers();
+    act(() => {
+      jest.runOnlyPendingTimers();
+    });
     jest.useRealTimers();
   });
 
@@ -79,6 +81,8 @@ describe("Header avatar", () => {
         }),
       );
     });
+
+
 
     await waitFor(() => {
       expect(container.querySelectorAll(".avatar__photo")).toHaveLength(1);
