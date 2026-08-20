@@ -91,8 +91,12 @@ async function fetchProjectContentByPageId({
   fetchImpl = fetch,
   notionToken,
 }) {
-  const contentEntries = await Promise.all(
-    pages.map(async (page) => {
+  const CONCURRENCY_LIMIT = 5;
+  const contentEntries = [];
+  const executing = new Set();
+
+  for (const page of pages) {
+    const prm = (async () => {
       const props = page.properties || {};
       const inlineContent = extractRichText(
         props.Detail?.rich_text ||
@@ -119,10 +123,21 @@ async function fetchProjectContentByPageId({
         .join("\n\n");
 
       return [page.id, pageContent];
-    }),
-  );
+    })().then((result) => {
+      executing.delete(prm);
+      return result;
+    });
 
-  return new Map(contentEntries);
+    executing.add(prm);
+    contentEntries.push(prm);
+
+    if (executing.size >= CONCURRENCY_LIMIT) {
+      await Promise.race(executing);
+    }
+  }
+
+  const results = await Promise.all(contentEntries);
+  return new Map(results);
 }
 
 export async function queryNotionDatabase({
