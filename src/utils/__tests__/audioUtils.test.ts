@@ -1,4 +1,4 @@
-import audioManager from "../audioUtils";
+import audioManager, { cleanupAudio } from "../audioUtils";
 
 describe("AudioManager", () => {
   let MockAudioContext: jest.Mock;
@@ -164,6 +164,18 @@ describe("AudioManager", () => {
         "File playback failed",
       );
       expect(handleAudioErrorSpy).toHaveBeenCalled();
+    });
+  });
+
+  describe("cleanupAudio", () => {
+    it("should call audioManager.cleanup", () => {
+      const cleanupSpy = jest
+        .spyOn(audioManager, "cleanup")
+        .mockImplementation();
+
+      cleanupAudio();
+
+      expect(cleanupSpy).toHaveBeenCalledTimes(1);
     });
   });
 });
