@@ -17,7 +17,7 @@ export interface MatrixRainDrawParams {
   brightHeadThreshold: number;
 }
 
-/** Map hack progress (0–100) to normalized rain intensity (0–1). */
+/** Maps hack progress (0–100) to normalized rain intensity (0–1). */
 export function getMatrixRainIntensity(progress: number): number {
   const range = 100 - ATTEMPT_START_PROGRESS;
   const t = clamp((progress - ATTEMPT_START_PROGRESS) / range, 0, 1);

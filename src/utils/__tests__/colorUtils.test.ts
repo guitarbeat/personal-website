@@ -1,5 +1,6 @@
 import {
   DEFAULT_BASE_COLORS,
+  generateHslColor,
   generateItemColors,
   generateTagColors,
 } from "../colorUtils";
@@ -10,6 +11,23 @@ const getDefaultHslOrder = () =>
   );
 
 describe("colorUtils", () => {
+  describe("generateHslColor", () => {
+    it("should generate a correct HSL string from a given HSL object", () => {
+      const color = { h: 220, s: 45, l: 65 };
+      expect(generateHslColor(color)).toBe("hsl(220, 45%, 65%)");
+    });
+
+    it("should handle zero values correctly", () => {
+      const color = { h: 0, s: 0, l: 0 };
+      expect(generateHslColor(color)).toBe("hsl(0, 0%, 0%)");
+    });
+
+    it("should handle edge case values", () => {
+      const color = { h: 359, s: 100, l: 100 };
+      expect(generateHslColor(color)).toBe("hsl(359, 100%, 100%)");
+    });
+  });
+
   describe("generateTagColors", () => {
     it("cycles through the default palette when keywords exceed available colors", () => {
       const keywords = [
