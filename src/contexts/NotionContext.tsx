@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import NotionService from "../services/notionService";
+import { logger } from "../utils/logger";
 import type { ContentMeta, NotionData } from "../types/content";
 
 const EMPTY_DATA: NotionData = {
@@ -58,7 +59,7 @@ export const NotionProvider = ({ children }: { children: React.ReactNode }) => {
         const message =
           err instanceof Error ? err.message : "Failed to load content.";
 
-        console.error("Error fetching Notion data:", err);
+        logger.error("Error fetching Notion data:", err);
         setData(EMPTY_DATA);
         setMeta(null);
         setError(message);
