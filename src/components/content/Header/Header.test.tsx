@@ -111,7 +111,9 @@ describe("Header avatar", () => {
 
     const initialSrc = initialAvatar?.getAttribute("src");
 
-    fireEvent.click(avatarButton);
+    act(() => {
+      fireEvent.click(avatarButton);
+    });
 
     await act(async () => {
       jest.advanceTimersByTime(AVATAR_TRANSITION_FALLBACK_MS);
@@ -125,7 +127,9 @@ describe("Header avatar", () => {
     );
 
     for (let clickCount = 1; clickCount < profileImageCount; clickCount += 1) {
-      fireEvent.click(avatarButton);
+      act(() => {
+        fireEvent.click(avatarButton);
+      });
 
       await act(async () => {
         jest.advanceTimersByTime(AVATAR_TRANSITION_FALLBACK_MS);
