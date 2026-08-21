@@ -39,16 +39,7 @@ export function ColorChangeOnHover({ text = "" }) {
   return <>{content}</>;
 }
 
-function About() {
-  const [expandedSection, setExpandedSection] = useState<string | null>(null);
-  const { db, isLoading } = useNotionSectionData();
-
-  const aboutTexts = db.about || [];
-
-  const handleSectionClick = (category: string) => {
-    setExpandedSection(expandedSection === category ? null : category);
-  };
-
+function SpotifyWidget() {
   // * Suppress Spotify scheme errors globally
   useEffect(() => {
     const handleError = (event: ErrorEvent) => {
@@ -141,31 +132,80 @@ function About() {
     openSpotifyProfile();
   }, []);
 
+  return (
+    <a
+      className="about-me__spotify"
+      href={SPOTIFY_PROFILE_URL}
+      onClick={handleSpotifyClick}
+      aria-label="View Spotify profile"
+    >
+      <img
+        src={SPOTIFY_IMAGE_URL}
+        alt="Spotify GitHub profile"
+        width={SPOTIFY_WIDGET_WIDTH}
+        height={SPOTIFY_WIDGET_HEIGHT}
+        loading="lazy"
+        decoding="async"
+      />
+    </a>
+  );
+}
+
+interface AboutTextItemProps {
+  category: string;
+  description: string;
+  isExpanded: boolean;
+  onClick: (category: string) => void;
+}
+
+function AboutTextItem({
+  category,
+  description,
+  isExpanded,
+  onClick,
+}: AboutTextItemProps) {
+  return (
+    <button
+      type="button"
+      className={cn("about-me__text", isExpanded && "expanded")}
+      onClick={() => onClick(category)}
+    >
+      <h2>{category}</h2>
+      <div className="about-me__text-body">
+        <div className="about-me__text-body-inner">
+          <p>
+            <ColorChangeOnHover text={description} />
+          </p>
+        </div>
+      </div>
+      <div className="expand-indicator" aria-hidden="true">
+        {isExpanded ? "−" : "+"}
+      </div>
+    </button>
+  );
+}
+
+function About() {
+  const [expandedSection, setExpandedSection] = useState<string | null>(null);
+  const { db, isLoading } = useNotionSectionData();
+
+  const aboutTexts = db.about || [];
+
+  const handleSectionClick = useCallback((category: string) => {
+    setExpandedSection((prev) => (prev === category ? null : category));
+  }, []);
+
   const renderAboutTexts = (
     texts: { category: string; description: string }[],
   ) =>
     texts.map(({ category, description }) => (
-      <button
+      <AboutTextItem
         key={category}
-        type="button"
-        className={cn(
-          "about-me__text",
-          expandedSection === category && "expanded",
-        )}
-        onClick={() => handleSectionClick(category)}
-      >
-        <h2>{category}</h2>
-        <div className="about-me__text-body">
-          <div className="about-me__text-body-inner">
-            <p>
-              <ColorChangeOnHover text={description} />
-            </p>
-          </div>
-        </div>
-        <div className="expand-indicator" aria-hidden="true">
-          {expandedSection === category ? "−" : "+"}
-        </div>
-      </button>
+        category={category}
+        description={description}
+        isExpanded={expandedSection === category}
+        onClick={handleSectionClick}
+      />
     ));
 
   return (
@@ -185,21 +225,7 @@ function About() {
                 renderAboutTexts(aboutTexts)
               )}
             </div>
-            <a
-              className="about-me__spotify"
-              href={SPOTIFY_PROFILE_URL}
-              onClick={handleSpotifyClick}
-              aria-label="View Spotify profile"
-            >
-              <img
-                src={SPOTIFY_IMAGE_URL}
-                alt="Spotify GitHub profile"
-                width={SPOTIFY_WIDGET_WIDTH}
-                height={SPOTIFY_WIDGET_HEIGHT}
-                loading="lazy"
-                decoding="async"
-              />
-            </a>
+            <SpotifyWidget />
           </div>
           <div className="about-me__img">
             <img
