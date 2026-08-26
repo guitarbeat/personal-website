@@ -1,17 +1,11 @@
 import { useCallback, useRef } from "react";
 
-import { DEFAULT_CONSOLE_PROMPT } from "./hackCopy";
 import {
-  KEY_VARIETY_WINDOW,
-  MAX_DISPLAY_LENGTH,
-  REPETITION_DECAY_RESET_MS,
-} from "./hackTuning";
-
-interface KeyPattern {
-  recentKeys: string[];
-  lastKey: string | null;
-  streak: number;
-}
+  KeyPattern,
+  calculateInteractionResult,
+  calculateNextHackProgress,
+  updateHackStreamBuffer,
+} from "./hackLogic";
 
 interface UseHackInteractionOptions {
   hackCorpus: string;
@@ -45,47 +39,15 @@ export function useHackInteraction({
       }
 
       setHackingBuffer((prev) => {
-        if (direction === "backward") {
-          const nextLength = Math.max(0, prev.length - magnitude);
-          const trimmed =
-            nextLength <= DEFAULT_CONSOLE_PROMPT.length
-              ? DEFAULT_CONSOLE_PROMPT
-              : prev.slice(0, nextLength);
-
-          const nextIndex =
-            (hackStreamIndexRef.current - magnitude) % hackCorpus.length;
-          hackStreamIndexRef.current =
-            nextIndex < 0 ? hackCorpus.length + nextIndex : nextIndex;
-
-          return trimmed;
-        }
-
-        let remaining = magnitude;
-        let chunk = "";
-
-        while (remaining > 0) {
-          const start = hackStreamIndexRef.current;
-          const available = Math.min(remaining, hackCorpus.length - start);
-
-          if (available <= 0) {
-            break;
-          }
-
-          chunk += hackCorpus.slice(start, start + available);
-          hackStreamIndexRef.current = (start + available) % hackCorpus.length;
-          remaining -= available;
-        }
-
-        if (chunk.length === 0) {
-          return prev;
-        }
-
-        const combined = `${prev}${chunk}`;
-        if (combined.length <= MAX_DISPLAY_LENGTH) {
-          return combined;
-        }
-
-        return combined.slice(combined.length - MAX_DISPLAY_LENGTH);
+        const { newBuffer, newIndex } = updateHackStreamBuffer(
+          prev,
+          hackStreamIndexRef.current,
+          hackCorpus,
+          direction,
+          magnitude
+        );
+        hackStreamIndexRef.current = newIndex;
+        return newBuffer;
       });
     },
     [hackCorpus, setHackingBuffer],
@@ -99,98 +61,22 @@ export function useHackInteraction({
       const lastTime = lastKeyTimeRef.current;
       const delta = lastTime ? now - lastTime : null;
 
-      let baseIncrement = 0.6;
+      const result = calculateInteractionResult(
+        isBackspace,
+        key,
+        delta,
+        keyPatternRef.current
+      );
 
-      if (delta !== null) {
-        if (delta < 120) {
-          baseIncrement = 1.8;
-        } else if (delta < 220) {
-          baseIncrement = 1.3;
-        } else if (delta < 360) {
-          baseIncrement = 0.95;
-        } else {
-          baseIncrement = 0.45;
-        }
-      }
-
-      let feedbackMessage = "Signal detected. Keep the keystrokes flowing.";
-      let progressDelta = 0;
-
-      if (isBackspace) {
-        updateHackDisplay(
-          "backward",
-          Math.max(4, Math.round(baseIncrement * 3.5)),
-        );
-        keyPatternRef.current.lastKey = null;
-        keyPatternRef.current.streak = 0;
-        feedbackMessage = "Trace sanitized. Countermeasure resetting.";
-        progressDelta = -Math.max(0.45, baseIncrement * 0.65);
-      } else {
-        const normalizedKey = key === " " ? "space" : key.toLowerCase();
-        const tracker = keyPatternRef.current;
-
-        if (
-          tracker.lastKey === normalizedKey &&
-          (delta === null || delta <= REPETITION_DECAY_RESET_MS)
-        ) {
-          tracker.streak += 1;
-        } else {
-          tracker.streak = 1;
-        }
-
-        tracker.lastKey = normalizedKey;
-        tracker.recentKeys = [
-          ...tracker.recentKeys.slice(-(KEY_VARIETY_WINDOW - 1)),
-          normalizedKey,
-        ];
-
-        const uniqueCount = new Set(tracker.recentKeys).size;
-        let comboMultiplier = 1;
-
-        if (uniqueCount >= 7) comboMultiplier += 0.25;
-        else if (uniqueCount >= 5) comboMultiplier += 0.15;
-
-        if (normalizedKey === "touch") {
-          comboMultiplier = 1.2;
-        } else {
-          if (tracker.streak >= 4) comboMultiplier *= 0.25;
-          if (
-            uniqueCount <= 3 &&
-            tracker.recentKeys.length >= KEY_VARIETY_WINDOW
-          )
-            comboMultiplier *= 0.4;
-        }
-
-        if (delta !== null) {
-          if (delta < 140)
-            feedbackMessage = "Trace evaded! Ultra-fast hack underway.";
-          else if (delta < 260)
-            feedbackMessage = "Firewall destabilizing—stellar rhythm.";
-          else if (delta < 400)
-            feedbackMessage = "Maintaining uplink. Accelerate to finish.";
-          else feedbackMessage = "Connection cooling—slam the keys faster!";
-        }
-
-        const comboAdjustedIncrement = baseIncrement * comboMultiplier;
-        const chunkBase = Math.max(8, Math.round(comboAdjustedIncrement * 4));
-        const chunkVariance = Math.floor(Math.random() * 5);
-        updateHackDisplay("forward", chunkBase + chunkVariance);
-
-        progressDelta = comboAdjustedIncrement;
-      }
+      updateHackDisplay(result.direction, result.chunkSize);
 
       lastKeyTimeRef.current = now;
-      setHackFeedback(feedbackMessage);
+      setHackFeedback(result.feedbackMessage);
 
-      if (progressDelta > 0) {
-        setHackProgress((prev) => {
-          const friction =
-            prev >= 85 ? 0.35 : prev >= 65 ? 0.5 : prev >= 40 ? 0.65 : 0.8;
-          const next = prev + progressDelta * friction;
-          return Math.min(100, next);
-        });
-      } else if (progressDelta < 0) {
-        setHackProgress((prev) => Math.max(0, prev + progressDelta));
+      if (result.progressDelta !== 0) {
+        setHackProgress((prev) =>
+          calculateNextHackProgress(prev, result.progressDelta)
+        );
       }
     },
     [setHackFeedback, setHackProgress, updateHackDisplay],
