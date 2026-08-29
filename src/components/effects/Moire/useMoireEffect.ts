@@ -88,18 +88,31 @@ export function useMoireEffect(containerRef: RefObject<HTMLDivElement | null>) {
         }
 
         sizes.fill(ssize / 2);
+        const colY = new Float32Array(ny * 3);
+        const colV = new Float32Array(ny * 2);
+        for (let j = 0; j < ny; j++) {
+          colY[j * 3 + 1] = oy + j * wsize;
+          colV[j * 2 + 1] = uvy + j * uvdy;
+        }
+
+        const ny3 = ny * 3;
+        const ny2 = ny * 2;
+
         for (let i = 0; i < nx; i++) {
+          const posOffset = i * ny3;
+          const uvOffset = i * ny2;
+
+          positions.set(colY, posOffset);
+          uvs.set(colV, uvOffset);
+
           const x = ox + i * wsize;
-          const curUvx = uvx + i * uvdx;
-          for (let j = 0; j < ny; j++) {
-            const i1 = i * ny + j;
-            const posIdx = i1 * 3;
-            const uvIdx = i1 * 2;
-            positions[posIdx] = x;
-            positions[posIdx + 1] = oy + j * wsize;
-            positions[posIdx + 2] = 0;
-            uvs[uvIdx] = curUvx;
-            uvs[uvIdx + 1] = uvy + j * uvdy;
+          const u = uvx + i * uvdx;
+
+          for (let p = posOffset, end = posOffset + ny3; p < end; p += 3) {
+            positions[p] = x;
+          }
+          for (let v = uvOffset, end = uvOffset + ny2; v < end; v += 2) {
+            uvs[v] = u;
           }
         }
 
