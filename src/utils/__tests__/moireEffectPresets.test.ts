@@ -1,4 +1,7 @@
-import { createProjectEffect, DEFAULT_PROJECT_EFFECT } from "../moireEffectPresets";
+import {
+  createProjectEffect,
+  DEFAULT_PROJECT_EFFECT,
+} from "../moireEffectPresets";
 
 describe("createProjectEffect", () => {
   it("should return default colors if tagColor is undefined", () => {

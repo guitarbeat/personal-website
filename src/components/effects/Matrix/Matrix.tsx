@@ -7,7 +7,6 @@ import {
   DEFAULT_CONSOLE_PROMPT,
   HACK_COMPLETE_FEEDBACK,
   HACKER_TYPER_CORPUS,
-  type HackCompleteConsoleParams,
 } from "./hackCopy";
 import { ATTEMPT_START_PROGRESS } from "./hackTuning";
 import "./matrix.scss";
@@ -67,7 +66,9 @@ const Matrix = ({ isVisible, onDismiss, onMatrixReady }: MatrixProps) => {
     () => Array.from({ length: 24 }, () => HACKER_TYPER_CORPUS).join("\n"),
     [],
   );
-  const completionTelemetryRef = useRef<HackCompleteConsoleParams | null>(null);
+  const completionTelemetryRef = useRef<
+    Parameters<typeof buildHackCompleteConsole>[0] | null
+  >(null);
 
   const {
     hackInputRef,

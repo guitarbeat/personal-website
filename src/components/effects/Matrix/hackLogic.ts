@@ -23,7 +23,7 @@ export function updateHackStreamBuffer(
   hackStreamIndex: number,
   hackCorpus: string,
   direction: "forward" | "backward",
-  magnitude: number
+  magnitude: number,
 ): { newBuffer: string; newIndex: number } {
   if (direction === "backward") {
     const nextLength = Math.max(0, prev.length - magnitude);
@@ -71,7 +71,7 @@ export function calculateInteractionResult(
   isBackspace: boolean,
   key: string,
   delta: number | null,
-  tracker: KeyPattern
+  tracker: KeyPattern,
 ): InteractionResult {
   let baseIncrement = 0.6;
 
@@ -135,9 +135,12 @@ export function calculateInteractionResult(
     }
 
     if (delta !== null) {
-      if (delta < 140) feedbackMessage = "Trace evaded! Ultra-fast hack underway.";
-      else if (delta < 260) feedbackMessage = "Firewall destabilizing—stellar rhythm.";
-      else if (delta < 400) feedbackMessage = "Maintaining uplink. Accelerate to finish.";
+      if (delta < 140)
+        feedbackMessage = "Trace evaded! Ultra-fast hack underway.";
+      else if (delta < 260)
+        feedbackMessage = "Firewall destabilizing—stellar rhythm.";
+      else if (delta < 400)
+        feedbackMessage = "Maintaining uplink. Accelerate to finish.";
       else feedbackMessage = "Connection cooling—slam the keys faster!";
     }
 
@@ -158,7 +161,10 @@ export function calculateInteractionResult(
   };
 }
 
-export function calculateNextHackProgress(prev: number, progressDelta: number): number {
+export function calculateNextHackProgress(
+  prev: number,
+  progressDelta: number,
+): number {
   if (progressDelta > 0) {
     const friction =
       prev >= 85 ? 0.35 : prev >= 65 ? 0.5 : prev >= 40 ? 0.65 : 0.8;

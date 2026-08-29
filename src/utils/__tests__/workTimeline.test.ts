@@ -1,4 +1,4 @@
-import { processWorkTimeline, formatWorkYear } from "../workTimeline";
+import { formatWorkYear, processWorkTimeline } from "../workTimeline";
 
 describe("workTimeline", () => {
   it("processes MM-YYYY work rows into timeline bars", () => {
