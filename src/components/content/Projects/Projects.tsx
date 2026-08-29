@@ -135,14 +135,16 @@ function Projects({ db: propsDb }: ProjectsProps = {}) {
   const allKeywords = useMemo(
     () =>
       Array.from(
-        new Set(
-          projectsData.flatMap((project) =>
-            Array.isArray(project.keywords) ? project.keywords : [],
-          ),
-        ),
-      ).filter(
-        (keyword): keyword is string =>
-          typeof keyword === "string" && keyword.trim().length > 0,
+        projectsData.reduce<Set<string>>((acc, project) => {
+          if (Array.isArray(project.keywords)) {
+            for (const keyword of project.keywords) {
+              if (typeof keyword === "string" && keyword.trim().length > 0) {
+                acc.add(keyword);
+              }
+            }
+          }
+          return acc;
+        }, new Set()),
       ),
     [projectsData],
   );
