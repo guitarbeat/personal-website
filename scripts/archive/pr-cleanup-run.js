@@ -41,6 +41,8 @@ let mergeFail = 0;
 
 for (const entry of winners.merge) {
   const { number, reason } = entry;
+  if (!Number.isInteger(Number(number)))
+    throw new Error(`Invalid PR number: ${number}`);
   process.stderr.write(`Merging #${number}...\n`);
   const result = shTry(
     `gh pr merge ${number} --squash --delete-branch --repo ${REPO}`,
@@ -82,6 +84,8 @@ for (const pr of openPrs) {
       "Closing as part of PR cleanup. Change does not provide sufficient value relative to maintenance cost or overlaps with merged work.";
   }
 
+  if (!Number.isInteger(Number(pr.number)))
+    throw new Error(`Invalid PR number: ${pr.number}`);
   process.stderr.write(`Closing #${pr.number}...\n`);
   const closeResult = shTry(
     `gh pr close ${pr.number} --comment "${comment.replace(/"/g, '\\"')}" --repo ${REPO}`,
