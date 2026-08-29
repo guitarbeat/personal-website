@@ -165,13 +165,13 @@ export default defineConfig(({ mode }) => {
       },
     },
     define: {
-      // Map CRA-style process.env to import.meta.env for compatibility
+      // Maps CRA-style process.env to import.meta.env for compatibility
       "process.env.NODE_ENV": JSON.stringify(
         env.NODE_ENV || process.env.NODE_ENV || "development",
       ),
       "process.env.REACT_APP_API_BASE": JSON.stringify(apiBase),
       "process.env.VERCEL": JSON.stringify(process.env.VERCEL || ""),
-      // Security Fix: Printful API keys removed to prevent client-side exposure
+      // Prevents client-side exposure by explicitly clearing Printful API keys
       "process.env.REACT_APP_PRINTFUL_API_KEY": JSON.stringify(""),
       "process.env.REACT_APP_PRINTFUL_STORE_ID": JSON.stringify(""),
       "process.env.REACT_APP_GIT_COMMIT_HASH": JSON.stringify(
