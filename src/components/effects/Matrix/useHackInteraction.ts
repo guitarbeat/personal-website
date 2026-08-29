@@ -1,9 +1,9 @@
 import { useCallback, useRef } from "react";
 
 import {
-  KeyPattern,
   calculateInteractionResult,
   calculateNextHackProgress,
+  type KeyPattern,
   updateHackStreamBuffer,
 } from "./hackLogic";
 
@@ -44,7 +44,7 @@ export function useHackInteraction({
           hackStreamIndexRef.current,
           hackCorpus,
           direction,
-          magnitude
+          magnitude,
         );
         hackStreamIndexRef.current = newIndex;
         return newBuffer;
@@ -65,7 +65,7 @@ export function useHackInteraction({
         isBackspace,
         key,
         delta,
-        keyPatternRef.current
+        keyPatternRef.current,
       );
 
       updateHackDisplay(result.direction, result.chunkSize);
@@ -75,7 +75,7 @@ export function useHackInteraction({
 
       if (result.progressDelta !== 0) {
         setHackProgress((prev) =>
-          calculateNextHackProgress(prev, result.progressDelta)
+          calculateNextHackProgress(prev, result.progressDelta),
         );
       }
     },

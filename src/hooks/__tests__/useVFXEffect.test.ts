@@ -1,6 +1,6 @@
 import { act, renderHook } from "@testing-library/react";
-import { useVFXEffect } from "../useVFXEffect";
 import { logger } from "../../utils/logger";
+import { useVFXEffect } from "../useVFXEffect";
 
 const mockAdd = jest.fn();
 const mockRemove = jest.fn();

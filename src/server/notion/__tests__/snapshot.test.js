@@ -276,7 +276,7 @@ describe("notion snapshot and health", () => {
         kvClient: null,
         now: new Date("2026-03-21T12:00:00.000Z"),
         requireSnapshotPersist: true,
-      })
+      }),
     ).rejects.toMatchObject({
       code: "KV_NOT_CONFIGURED",
       status: 500,

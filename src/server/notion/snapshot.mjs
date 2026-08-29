@@ -120,7 +120,7 @@ export async function readSnapshot({ kvClient }) {
   try {
     snapshot = await kvClient.getJson(SNAPSHOT_KEY);
   } catch (error) {
-    if (process.env.NODE_ENV !== 'test') {
+    if (process.env.NODE_ENV !== "test") {
       console.error("Failed to read snapshot from KV:", error);
     }
     return null;
@@ -152,7 +152,7 @@ export async function readSnapshotMetadata({ kvClient }) {
   try {
     metadata = await kvClient.getJson(SNAPSHOT_META_KEY);
   } catch (error) {
-    if (process.env.NODE_ENV !== 'test') {
+    if (process.env.NODE_ENV !== "test") {
       console.error("Failed to read snapshot metadata from KV:", error);
     }
     return null;
