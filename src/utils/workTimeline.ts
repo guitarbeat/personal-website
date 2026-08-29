@@ -17,12 +17,14 @@ export function diffWorkMonths(from: Date, to: Date): number {
   );
 }
 
+const monthFormatter = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  year: "numeric",
+});
+
 /** Formats a work timeline month label (e.g. `Jan 2020`). */
 export function formatWorkMonthLabel(date: Date): string {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    year: "numeric",
-  }).format(date);
+  return monthFormatter.format(date);
 }
 
 /** Formats the calendar year for timeline axis labels. */
@@ -65,49 +67,60 @@ export function processWorkTimeline(
   }>,
 ): ProcessedWorkTimeline {
   const now = new Date();
-  const jobs: ProcessedWorkJob[] = rawJobs.map((job) => {
+  let firstDate = now;
+  const count = rawJobs.length;
+
+  const jobs: ProcessedWorkJob[] = new Array(count);
+
+  for (let i = 0; i < count; i++) {
+    const job = rawJobs[i];
+    if (!job) continue;
     const fromDate = parseWorkMonth(job.from);
     const toDate = job.to ? parseWorkMonth(job.to) : now;
+    const from = formatWorkMonthLabel(fromDate);
+    const to = job.to ? formatWorkMonthLabel(toDate) : "Now";
 
-    return {
+    const durationDiff = diffWorkMonths(fromDate, toDate);
+    const duration = durationDiff === 0 ? 1 : durationDiff;
+    const date = durationDiff === 0 ? from : `${from} - ${to}`;
+
+    if (firstDate.getTime() > fromDate.getTime()) {
+      firstDate = fromDate;
+    }
+
+    jobs[i] = {
       slug: job.slug,
       title: job.title,
       company: job.company,
       place: job.place,
-      from: formatWorkMonthLabel(fromDate),
-      to: job.to ? formatWorkMonthLabel(toDate) : "Now",
+      from,
+      to,
       fromDate,
       toDate,
-      date: "",
-      duration: 0,
+      date,
+      duration,
       bar_start: 0,
       bar_height: 0,
       description: job.description,
     };
-  });
-
-  let firstDate = now;
-
-  for (const job of jobs) {
-    const duration = diffWorkMonths(job.fromDate, job.toDate);
-
-    job.date = duration === 0 ? job.from : `${job.from} - ${job.to}`;
-    job.duration = duration === 0 ? 1 : duration;
-
-    if (firstDate.getTime() > job.fromDate.getTime()) {
-      firstDate = job.fromDate;
-    }
   }
 
   const timeSpan = diffWorkMonths(firstDate, now);
   const safeTimeSpan = timeSpan === 0 ? 1 : timeSpan;
 
-  const jobBars = jobs.map((job) => {
-    job.bar_start =
+  const jobBars: number[][] = new Array(count);
+
+  for (let i = 0; i < count; i++) {
+    const job = jobs[i];
+    if (!job) continue;
+    const bar_start =
       (100 * diffWorkMonths(firstDate, job.fromDate)) / safeTimeSpan;
-    job.bar_height = (100 * job.duration) / safeTimeSpan;
-    return [job.bar_height, job.bar_start];
-  });
+    const bar_height = (100 * job.duration) / safeTimeSpan;
+
+    job.bar_start = bar_start;
+    job.bar_height = bar_height;
+    jobBars[i] = [bar_height, bar_start];
+  }
 
   return { jobs, firstDate, jobBars };
 }
