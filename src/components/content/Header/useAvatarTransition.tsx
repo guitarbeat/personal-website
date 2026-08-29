@@ -3,19 +3,72 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { cn } from "@/utils/commonUtils";
 import { isAvatarScaleTransition, prefersReducedMotion } from "@/utils/motion";
-
+import { AvatarImage } from "./AvatarImage";
 import { AVATAR_TRANSITION_FALLBACK_MS } from "./avatarTransition.constants";
 import {
-  FALLBACK_PROFILE_SRC,
-  FALLBACK_PROFILE_WEBP_SRC,
-  PROFILE_IMAGES,
-  PROFILE_INDEX_STORAGE_KEY,
-  readStoredProfileIndex,
-} from "./headerProfileImages";
-
-type AvatarPhase = "idle" | "shrink" | "slideOut" | "slideIn" | "expand";
+  type AvatarPhase,
+  getAvatarFrameClassName,
+  persistProfileIndex,
+} from "./avatarTransition.utils";
+import { PROFILE_IMAGES, readStoredProfileIndex } from "./headerProfileImages";
 
 export { AVATAR_TRANSITION_FALLBACK_MS };
+
+function renderAvatarContent(
+  phase: AvatarPhase,
+  profileIndex: number,
+  outgoingIndex: number | null,
+  incomingIndex: number | null,
+  phaseAnimating: boolean,
+  onPhotoTransitionEnd: (e: React.TransitionEvent<HTMLImageElement>) => void,
+) {
+  if (phase === "idle") {
+    return (
+      <AvatarImage
+        index={profileIndex}
+        className="avatar__photo--active"
+        fetchPriority="high"
+      />
+    );
+  }
+
+  if ((phase === "shrink" || phase === "slideOut") && outgoingIndex !== null) {
+    return (
+      <AvatarImage
+        index={outgoingIndex}
+        className={cn(
+          "avatar__photo--outgoing",
+          phase === "slideOut" &&
+            phaseAnimating &&
+            "avatar__photo--outgoing-exiting",
+        )}
+        onTransitionEnd={
+          phase === "slideOut" ? onPhotoTransitionEnd : undefined
+        }
+      />
+    );
+  }
+
+  if ((phase === "slideIn" || phase === "expand") && incomingIndex !== null) {
+    const photoClassName =
+      phase === "expand"
+        ? "avatar__photo--active"
+        : cn(
+            "avatar__photo--incoming",
+            phaseAnimating && "avatar__photo--incoming-active",
+          );
+
+    return (
+      <AvatarImage
+        index={incomingIndex}
+        className={photoClassName}
+        onTransitionEnd={phase === "slideIn" ? onPhotoTransitionEnd : undefined}
+      />
+    );
+  }
+
+  return null;
+}
 
 export function useAvatarTransition() {
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -37,14 +90,6 @@ export function useAvatarTransition() {
   phaseRef.current = phase;
   incomingIndexRef.current = incomingIndex;
 
-  const persistProfileIndex = useCallback((index: number) => {
-    try {
-      sessionStorage.setItem(PROFILE_INDEX_STORAGE_KEY, String(index));
-    } catch {
-      /* quota / private mode */
-    }
-  }, []);
-
   const completeTransition = useCallback(() => {
     if (transitionFallbackRef.current) {
       clearTimeout(transitionFallbackRef.current);
@@ -63,7 +108,7 @@ export function useAvatarTransition() {
     setIncomingIndex(null);
     shouldExpandRef.current = false;
     setPhaseAnimating(false);
-  }, [persistProfileIndex]);
+  }, []);
 
   useEffect(() => {
     if (phase === "idle") {
@@ -108,7 +153,7 @@ export function useAvatarTransition() {
     transitionFallbackRef.current = setTimeout(() => {
       completeTransition();
     }, AVATAR_TRANSITION_FALLBACK_MS);
-  }, [completeTransition, persistProfileIndex, profileIndex]);
+  }, [completeTransition, profileIndex]);
 
   const handleFrameTransitionEnd = useCallback(
     (e: React.TransitionEvent<HTMLSpanElement>) => {
@@ -159,122 +204,16 @@ export function useAvatarTransition() {
     [completeTransition],
   );
 
-  const handleImageError = useCallback(
-    (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-      const target = e.currentTarget;
-      target.onerror = null;
-      target.src = FALLBACK_PROFILE_SRC;
+  const frameClassName = getAvatarFrameClassName(phase, phaseAnimating);
 
-      const picture = target.closest("picture");
-      const source = picture?.querySelector("source");
-      if (source) {
-        source.setAttribute("srcset", FALLBACK_PROFILE_WEBP_SRC);
-      }
-    },
-    [],
+  const content = renderAvatarContent(
+    phase,
+    profileIndex,
+    outgoingIndex,
+    incomingIndex,
+    phaseAnimating,
+    handlePhotoTransitionEnd,
   );
-
-  const renderAvatarImage = useCallback(
-    (
-      index: number,
-      className: string,
-      options: {
-        fetchPriority?: "high";
-        onTransitionEnd?: (e: React.TransitionEvent<HTMLImageElement>) => void;
-      } = {},
-    ) => {
-      const image = PROFILE_IMAGES[index];
-
-      return (
-        <picture key={image.webpSrc}>
-          <source srcSet={image.webpSrc} type="image/webp" />
-          <img
-            className={cn("avatar__photo", className)}
-            src={image.src}
-            alt={image.alt}
-            width={image.width}
-            height={image.height}
-            fetchPriority={options.fetchPriority}
-            onError={handleImageError}
-            onTransitionEnd={options.onTransitionEnd}
-          />
-        </picture>
-      );
-    },
-    [handleImageError],
-  );
-
-  const frameClassName = (() => {
-    if (phase === "idle") {
-      return "avatar";
-    }
-
-    if (phase === "shrink") {
-      return cn(
-        "avatar",
-        "avatar--transitioning",
-        phaseAnimating ? "avatar--scale-rest" : "avatar--scale-from-hover",
-      );
-    }
-
-    if (phase === "slideOut" || phase === "slideIn") {
-      return cn("avatar", "avatar--transitioning", "avatar--scale-rest");
-    }
-
-    if (phase === "expand") {
-      return cn(
-        "avatar",
-        "avatar--transitioning",
-        phaseAnimating ? "avatar--scale-hover" : "avatar--scale-rest",
-      );
-    }
-
-    return "avatar";
-  })();
-
-  const content = (() => {
-    if (phase === "idle") {
-      return renderAvatarImage(profileIndex, "avatar__photo--active", {
-        fetchPriority: "high",
-      });
-    }
-
-    if (
-      (phase === "shrink" || phase === "slideOut") &&
-      outgoingIndex !== null
-    ) {
-      return renderAvatarImage(
-        outgoingIndex,
-        cn(
-          "avatar__photo--outgoing",
-          phase === "slideOut" &&
-            phaseAnimating &&
-            "avatar__photo--outgoing-exiting",
-        ),
-        {
-          onTransitionEnd:
-            phase === "slideOut" ? handlePhotoTransitionEnd : undefined,
-        },
-      );
-    }
-
-    if ((phase === "slideIn" || phase === "expand") && incomingIndex !== null) {
-      const photoClassName =
-        phase === "expand"
-          ? "avatar__photo--active"
-          : cn(
-              "avatar__photo--incoming",
-              phaseAnimating && "avatar__photo--incoming-active",
-            );
-
-      return renderAvatarImage(incomingIndex, photoClassName, {
-        onTransitionEnd:
-          phase === "slideIn" ? handlePhotoTransitionEnd : undefined,
-      });
-    }
-
-    return null;
-  })();
 
   return {
     buttonRef,

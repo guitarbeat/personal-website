@@ -1,4 +1,4 @@
-import { renderHook, act } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react";
 import { useAvatarTransition } from "./useAvatarTransition";
 
 describe("useAvatarTransition error handling", () => {
@@ -18,12 +18,12 @@ describe("useAvatarTransition error handling", () => {
       throw new Error("QuotaExceededError");
     });
 
-    Object.defineProperty(window, 'sessionStorage', {
+    Object.defineProperty(window, "sessionStorage", {
       value: {
         ...window.sessionStorage,
         setItem: mockSetItem,
       },
-      writable: true
+      writable: true,
     });
 
     const { result } = renderHook(() => useAvatarTransition());
@@ -39,12 +39,12 @@ describe("useAvatarTransition error handling", () => {
     expect(mockSetItem).toHaveBeenCalled();
     expect(result.current.isTransitioning).toBe(false);
 
-    Object.defineProperty(window, 'sessionStorage', {
+    Object.defineProperty(window, "sessionStorage", {
       value: {
         ...window.sessionStorage,
         setItem: originalSetItem,
       },
-      writable: true
+      writable: true,
     });
   });
 
@@ -56,7 +56,8 @@ describe("useAvatarTransition error handling", () => {
 
     // Save original if it exists
     const originalStartViewTransition = document.startViewTransition;
-    document.startViewTransition = mockStartViewTransition as any;
+    document.startViewTransition =
+      mockStartViewTransition as unknown as typeof document.startViewTransition;
 
     const { result } = renderHook(() => useAvatarTransition());
 

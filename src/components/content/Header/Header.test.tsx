@@ -82,8 +82,6 @@ describe("Header avatar", () => {
       );
     });
 
-
-
     await waitFor(() => {
       expect(container.querySelectorAll(".avatar__photo")).toHaveLength(1);
       expect(
