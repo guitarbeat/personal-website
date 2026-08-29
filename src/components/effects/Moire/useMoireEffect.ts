@@ -87,13 +87,19 @@ export function useMoireEffect(containerRef: RefObject<HTMLDivElement | null>) {
           uvdy = 1 / ny;
         }
 
+        sizes.fill(ssize / 2);
         for (let i = 0; i < nx; i++) {
           const x = ox + i * wsize;
+          const curUvx = uvx + i * uvdx;
           for (let j = 0; j < ny; j++) {
             const i1 = i * ny + j;
-            positions.set([x, oy + j * wsize, 0], i1 * 3);
-            uvs.set([uvx + i * uvdx, uvy + j * uvdy], i1 * 2);
-            sizes[i1] = ssize / 2;
+            const posIdx = i1 * 3;
+            const uvIdx = i1 * 2;
+            positions[posIdx] = x;
+            positions[posIdx + 1] = oy + j * wsize;
+            positions[posIdx + 2] = 0;
+            uvs[uvIdx] = curUvx;
+            uvs[uvIdx + 1] = uvy + j * uvdy;
           }
         }
 
