@@ -259,4 +259,46 @@ describe("notion snapshot and health", () => {
     expect(summary.status).toBe("failed");
     expect(summary.snapshotAgeSeconds).toBe(93600);
   });
+
+  it("throws a ContentError when kvClient is missing and requireSnapshotPersist is true", async () => {
+    const fetchImpl = jest.fn().mockResolvedValue(
+      mockResponse({
+        results: [],
+        has_more: false,
+        next_cursor: null,
+      }),
+    );
+
+    await expect(
+      refreshContentSnapshot({
+        fetchImpl,
+        env: { NOTION_TOKEN: "test-token" },
+        kvClient: null,
+        now: new Date("2026-03-21T12:00:00.000Z"),
+        requireSnapshotPersist: true,
+      })
+    ).rejects.toMatchObject({
+      code: "KV_NOT_CONFIGURED",
+      status: 500,
+      failureType: "kv_not_configured",
+    });
+  });
+
+  it("throws CONTENT_UNAVAILABLE with 503 when live refresh fails and kvClient.getJson throws an error", async () => {
+    const kvClient = {
+      getJson: jest.fn().mockRejectedValue(new Error("Redis connection lost")),
+      setJson: jest.fn(),
+    };
+
+    await expect(
+      getContentResponse({
+        fetchImpl: jest.fn().mockRejectedValue(new Error("network down")),
+        env: { NOTION_TOKEN: "test-token" },
+        kvClient,
+      }),
+    ).rejects.toMatchObject({
+      status: 503,
+      code: "CONTENT_UNAVAILABLE",
+    });
+  });
 });
