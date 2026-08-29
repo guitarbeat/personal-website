@@ -328,4 +328,59 @@ describe("notion api queries", () => {
       },
     });
   });
+  it("limits concurrent block fetching requests to concurrencyLimit", async () => {
+    let activeRequests = 0;
+    let maxActiveRequests = 0;
+
+    const pages = Array.from({ length: 12 }, (_, i) => ({
+      id: `page-${i}`,
+      properties: {
+        Name: { title: [{ plain_text: `Project ${i}` }] },
+        Date: { number: 2024 },
+        Link: { url: `https://example.com/project-${i}` },
+        Slug: { rich_text: [{ plain_text: `project-${i}` }] },
+        Published: { checkbox: true },
+      },
+    }));
+
+    const fetchImpl = jest.fn().mockImplementation(async (url) => {
+      if (url.includes("/databases/")) {
+        return mockResponse({
+          results: pages,
+          has_more: false,
+          next_cursor: null,
+        });
+      }
+      if (url.includes("/blocks/")) {
+        activeRequests++;
+        if (activeRequests > maxActiveRequests) {
+          maxActiveRequests = activeRequests;
+        }
+        await new Promise((resolve) => setTimeout(resolve, 10));
+        activeRequests--;
+        return mockResponse({
+          results: [
+            {
+              type: "paragraph",
+              paragraph: {
+                rich_text: [{ plain_text: `Body content` }],
+              },
+            },
+          ],
+          has_more: false,
+          next_cursor: null,
+        });
+      }
+      return mockResponse({});
+    });
+
+    const records = await queryNotionDatabase({
+      databaseType: "projects",
+      fetchImpl,
+      env: { NOTION_TOKEN: "test-token" },
+    });
+
+    expect(records).toHaveLength(12);
+    expect(maxActiveRequests).toBeLessThanOrEqual(5);
+  });
 });
