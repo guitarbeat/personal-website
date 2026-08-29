@@ -1,4 +1,4 @@
-import { memo, type ReactNode } from "react";
+import { memo } from "react";
 
 import FrameEffect from "@/components/effects/Loading/FrameEffect";
 import ScrollToTopButton from "@/components/effects/Matrix/ScrollToTopButton";
@@ -50,7 +50,7 @@ const UnlockedBadge = memo(() => {
 UnlockedBadge.displayName = "UnlockedBadge";
 
 export interface SiteLayoutProps {
-  children: ReactNode;
+  children: React.ReactNode;
   navItems: Record<string, string>;
   onMatrixActivate: () => void;
   isInScroll: boolean;
