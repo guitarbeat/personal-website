@@ -67,58 +67,65 @@ export function processWorkTimeline(
   }>,
 ): ProcessedWorkTimeline {
   const now = new Date();
-  let firstDate = now;
   const count = rawJobs.length;
+  if (count === 0) {
+    return { jobs: [], firstDate: now, jobBars: [] };
+  }
 
-  const jobs: ProcessedWorkJob[] = new Array(count);
+  const parsedFromDates: Date[] = new Array(count);
+  const parsedToDates: Date[] = new Array(count);
+  let firstDate = now;
 
   for (let i = 0; i < count; i++) {
-    const job = rawJobs[i];
-    if (!job) continue;
-    const fromDate = parseWorkMonth(job.from);
-    const toDate = job.to ? parseWorkMonth(job.to) : now;
+    const rawJob = rawJobs[i];
+    if (!rawJob) continue;
+    const fromDate = parseWorkMonth(rawJob.from);
+    parsedFromDates[i] = fromDate;
+    parsedToDates[i] = rawJob.to ? parseWorkMonth(rawJob.to) : now;
+
+    if (firstDate.getTime() > fromDate.getTime()) {
+      firstDate = fromDate;
+    }
+  }
+
+  const timeSpan = diffWorkMonths(firstDate, now);
+  const safeTimeSpan = timeSpan === 0 ? 1 : timeSpan;
+
+  const jobs: ProcessedWorkJob[] = new Array(count);
+  const jobBars: number[][] = new Array(count);
+
+  for (let i = 0; i < count; i++) {
+    const rawJob = rawJobs[i];
+    if (!rawJob) continue;
+    const fromDate = parsedFromDates[i] as Date;
+    const toDate = parsedToDates[i] as Date;
     const from = formatWorkMonthLabel(fromDate);
-    const to = job.to ? formatWorkMonthLabel(toDate) : "Now";
+    const to = rawJob.to ? formatWorkMonthLabel(toDate) : "Now";
 
     const durationDiff = diffWorkMonths(fromDate, toDate);
     const duration = durationDiff === 0 ? 1 : durationDiff;
     const date = durationDiff === 0 ? from : `${from} - ${to}`;
 
-    if (firstDate.getTime() > fromDate.getTime()) {
-      firstDate = fromDate;
-    }
+    const bar_start =
+      (100 * diffWorkMonths(firstDate, fromDate)) / safeTimeSpan;
+    const bar_height = (100 * duration) / safeTimeSpan;
 
     jobs[i] = {
-      slug: job.slug,
-      title: job.title,
-      company: job.company,
-      place: job.place,
+      slug: rawJob.slug,
+      title: rawJob.title,
+      company: rawJob.company,
+      place: rawJob.place,
       from,
       to,
       fromDate,
       toDate,
       date,
       duration,
-      bar_start: 0,
-      bar_height: 0,
-      description: job.description,
+      bar_start,
+      bar_height,
+      description: rawJob.description,
     };
-  }
 
-  const timeSpan = diffWorkMonths(firstDate, now);
-  const safeTimeSpan = timeSpan === 0 ? 1 : timeSpan;
-
-  const jobBars: number[][] = new Array(count);
-
-  for (let i = 0; i < count; i++) {
-    const job = jobs[i];
-    if (!job) continue;
-    const bar_start =
-      (100 * diffWorkMonths(firstDate, job.fromDate)) / safeTimeSpan;
-    const bar_height = (100 * job.duration) / safeTimeSpan;
-
-    job.bar_start = bar_start;
-    job.bar_height = bar_height;
     jobBars[i] = [bar_height, bar_start];
   }
 
