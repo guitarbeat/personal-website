@@ -13,13 +13,13 @@ describe("apiCors", () => {
     ).toBe(false);
   });
 
-  it("should evaluate global allow wildcard correctly", () => {
+  it("should reject arbitrary origins even if ALLOWED_ORIGINS is wildcard *", () => {
     expect(
       isOriginAllowed("https://anything.com", { ALLOWED_ORIGINS: "*" }),
-    ).toBe(true);
+    ).toBe(false);
     expect(
       isOriginAllowed("http://localhost:3000", { ALLOWED_ORIGINS: "*" }),
-    ).toBe(true);
+    ).toBe(false);
   });
 
   it("should match exact origins", () => {

@@ -16,15 +16,6 @@ function buildCorsConfig(env = process.env) {
     return {
       exact: PRODUCTION_WHITELIST,
       regexes: [],
-      allowAll: false,
-    };
-  }
-
-  if (envOrigins === "*") {
-    return {
-      exact: [],
-      regexes: [],
-      allowAll: true,
     };
   }
 
@@ -45,7 +36,7 @@ function buildCorsConfig(env = process.env) {
     }
   }
 
-  return { exact, regexes, allowAll: false };
+  return { exact, regexes };
 }
 
 export function isOriginAllowed(origin, env = process.env) {
@@ -60,10 +51,6 @@ export function isOriginAllowed(origin, env = process.env) {
   }
 
   const config = corsConfigCache.get(envOrigins);
-
-  if (config.allowAll) {
-    return true;
-  }
 
   if (config.exact.includes(origin)) {
     return true;
