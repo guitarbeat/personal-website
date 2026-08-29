@@ -1,14 +1,12 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { useNotionSectionData } from "@/hooks/useNotionSectionData";
+import { useState } from "react";
+import { useProjects } from "@/hooks/useProjects";
 import type { NotionData } from "@/types/content";
-import { generateTagColors } from "@/utils/colorUtils";
 import { cn } from "@/utils/commonUtils";
 import {
   createProjectEffect,
   DEFAULT_PROJECT_EFFECT,
   type MoireEffectPreset,
 } from "@/utils/moireEffectPresets";
-import { reconcileProjectFilters } from "@/utils/reconcileProjectFilters";
 import PixelCanvas from "../../effects/PixelCanvas/PixelCanvas";
 import { NotionSectionSkeleton } from "../shared/NotionSectionSkeleton";
 
@@ -124,74 +122,14 @@ interface ProjectsProps {
 }
 
 function Projects({ db: propsDb }: ProjectsProps = {}) {
-  const [activeFilters, setActiveFilters] = useState<string[]>([]);
-  const [tagColors, setTagColors] = useState<Record<string, string>>({});
-  const { db, isLoading } = useNotionSectionData(propsDb);
-
-  const projectsData = useMemo(
-    () => (Array.isArray(db?.projects) ? db.projects : []),
-    [db?.projects],
-  );
-  const allKeywords = useMemo(
-    () =>
-      Array.from(
-        new Set(
-          projectsData.flatMap((project) =>
-            Array.isArray(project.keywords)
-              ? project.keywords.filter(
-                  (keyword) =>
-                    typeof keyword === "string" && keyword.trim().length > 0,
-                )
-              : [],
-          ),
-        ),
-      ),
-    [projectsData],
-  );
-
-  const syncTagColors = useCallback(() => {
-    setTagColors(generateTagColors(allKeywords));
-  }, [allKeywords]);
-
-  const syncFilters = useCallback(() => {
-    setActiveFilters((prevFilters) =>
-      reconcileProjectFilters(prevFilters, allKeywords),
-    );
-  }, [allKeywords]);
-
-  useEffect(() => {
-    syncTagColors();
-    syncFilters();
-  }, [syncTagColors, syncFilters]);
-
-  useEffect(() => {
-    document.body.addEventListener("theme-changed", syncTagColors);
-
-    return () => {
-      document.body.removeEventListener("theme-changed", syncTagColors);
-    };
-  }, [syncTagColors]);
-
-  const toggleFilter = useCallback(
-    (filter: string) => {
-      setActiveFilters((prevFilters) => {
-        if (prevFilters.includes(filter)) {
-          if (prevFilters.length === 1) {
-            return [...allKeywords];
-          }
-          return prevFilters.filter((f) => f !== filter);
-        }
-
-        return [...prevFilters, filter];
-      });
-    },
-    [allKeywords],
-  );
-
-  const activeFiltersSet = useMemo(
-    () => new Set(activeFilters),
-    [activeFilters],
-  );
+  const {
+    projectsData,
+    allKeywords,
+    activeFiltersSet,
+    tagColors,
+    isLoading,
+    toggleFilter,
+  } = useProjects({ db: propsDb });
 
   const project_cards = projectsData.map((projectProps, index) => {
     const primaryKeyword = projectProps.keywords[0] || "";
