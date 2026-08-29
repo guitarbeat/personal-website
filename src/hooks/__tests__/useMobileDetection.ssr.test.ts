@@ -23,17 +23,19 @@ describe("useMobileDetection in SSR", () => {
 
     expect(html).toContain("test");
     expect(result).not.toBeNull();
-    expect(result?.isMobile).toBe(false);
-    expect(result?.isTablet).toBe(false);
-    expect(result?.isDesktop).toBe(false);
-    expect(result?.screenWidth).toBe(0);
-    expect(result?.screenHeight).toBe(0);
-    expect(result?.isTouchDevice).toBe(false);
-    expect(result?.isMobileUserAgent).toBe(false);
+    // biome-ignore lint/style/noNonNullAssertion: needed for closure type narrowing in test
+    const res = result!;
+    expect(res.isMobile).toBe(false);
+    expect(res.isTablet).toBe(false);
+    expect(res.isDesktop).toBe(false);
+    expect(res.screenWidth).toBe(0);
+    expect(res.screenHeight).toBe(0);
+    expect(res.isTouchDevice).toBe(false);
+    expect(res.isMobileUserAgent).toBe(false);
 
     // Test helper functions
-    expect(result?.isBelowBreakpoint(1000)).toBe(true); // screenWidth is 0
-    expect(result?.isAboveBreakpoint(1000)).toBe(false);
-    expect(result?.isBetweenBreakpoints(0, 1000)).toBe(true);
+    expect(res.isBelowBreakpoint(1000)).toBe(true); // screenWidth is 0
+    expect(res.isAboveBreakpoint(1000)).toBe(false);
+    expect(res.isBetweenBreakpoints(0, 1000)).toBe(true);
   });
 });
