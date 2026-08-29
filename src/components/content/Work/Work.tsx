@@ -9,11 +9,7 @@ import {
   type MoireEffectPreset,
   WORK_CARD_EFFECTS,
 } from "@/utils/moireEffectPresets";
-import {
-  formatWorkYear,
-  type ProcessedWorkJob,
-  processWorkTimeline,
-} from "@/utils/workTimeline";
+import { formatWorkYear, processWorkTimeline } from "@/utils/workTimeline";
 
 interface TimelineBarProps {
   firstYear: string;
