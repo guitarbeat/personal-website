@@ -36,7 +36,6 @@ export default async function handler(req, res) {
     console.error(
       JSON.stringify({
         error: error instanceof Error ? error.message : String(error),
-        stack: error instanceof Error ? error.stack : undefined,
       }),
     );
     return res.status(error?.status || 500).json(createErrorPayload(error));
