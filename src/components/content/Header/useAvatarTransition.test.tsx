@@ -56,7 +56,8 @@ describe("useAvatarTransition error handling", () => {
 
     // Save original if it exists
     const originalStartViewTransition = document.startViewTransition;
-    document.startViewTransition = mockStartViewTransition as any;
+    document.startViewTransition =
+      mockStartViewTransition as unknown as typeof document.startViewTransition;
 
     const { result } = renderHook(() => useAvatarTransition());
 
