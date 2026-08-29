@@ -43,7 +43,15 @@ jest.mock("ogl", () => {
       fov = 45;
       aspect = 1;
     },
-    Geometry: class {},
+    Geometry: class {
+      attributes: Record<string, unknown>;
+      constructor(_gl: unknown, attributes: Record<string, unknown>) {
+        this.attributes = attributes;
+        (
+          global as unknown as Record<string, unknown>
+        ).__lastGeometryAttributes = attributes;
+      }
+    },
     Program: class {
       uniforms = {
         tDiffuse: { value: null },
@@ -134,5 +142,38 @@ describe("MagicComponent (Moire)", () => {
       expect.any(Function),
       { passive: true },
     );
+  });
+
+  it("populates points mesh geometry data correctly and efficiently", async () => {
+    (global as unknown as Record<string, unknown>).__lastGeometryAttributes =
+      null;
+    const { unmount } = render(<MagicComponent />);
+
+    await waitFor(() => {
+      expect(
+        (global as unknown as Record<string, unknown>).__lastGeometryAttributes,
+      ).not.toBeNull();
+    });
+
+    const attrs = (global as unknown as Record<string, unknown>)
+      .__lastGeometryAttributes as {
+      position: { data: Float32Array };
+      uv: { data: Float32Array };
+      size: { data: Float32Array };
+    };
+    expect(attrs.position).toBeDefined();
+    expect(attrs.uv).toBeDefined();
+    expect(attrs.size).toBeDefined();
+
+    const { position, uv, size } = attrs;
+    expect(position.data.length).toBeGreaterThan(0);
+    expect(uv.data.length).toBeGreaterThan(0);
+    expect(size.data.length).toBeGreaterThan(0);
+
+    // Verify sizes filled with ssize / 2 (which is 1.5)
+    expect(size.data[0]).toBe(1.5);
+    expect(size.data[size.data.length - 1]).toBe(1.5);
+
+    unmount();
   });
 });
