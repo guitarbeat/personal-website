@@ -109,10 +109,16 @@ const PixelCanvas = ({
     };
 
     const createPixels = () => {
-      pixels = [];
+      const numCols = Math.ceil(logicalWidth / parsedGap);
+      const numRows = Math.ceil(logicalHeight / parsedGap);
+      const totalPixels = numCols * numRows;
+      pixels = new Array(totalPixels);
+
       const cx = logicalWidth / 2;
       const cy = logicalHeight / 2;
       const numColors = colorPalette.length;
+      const counterBase = (logicalWidth + logicalHeight) * 0.01;
+      let pixelIndex = 0;
 
       for (let x = 0; x < logicalWidth; x += parsedGap) {
         const dx = x - cx;
@@ -122,18 +128,18 @@ const PixelCanvas = ({
           const delay = reducedMotion ? 0 : Math.sqrt(dxSq + dy * dy);
           const color = colorPalette[Math.floor(Math.random() * numColors)];
 
-          pixels.push(
-            new Pixel(
-              context,
-              logicalWidth,
-              logicalHeight,
-              x,
-              y,
-              color,
-              parsedSpeed,
-              delay,
-            ),
+          pixels[pixelIndex] = new Pixel(
+            context,
+            logicalWidth,
+            logicalHeight,
+            x,
+            y,
+            color,
+            parsedSpeed,
+            delay,
+            counterBase,
           );
+          pixelIndex += 1;
         }
       }
     };
