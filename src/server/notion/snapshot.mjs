@@ -13,6 +13,7 @@ import {
   parseResponseJson,
   toIsoString,
 } from "./helpers.mjs";
+import { sanitizeErrorMessage } from "./telemetry.mjs";
 import { validateContentData } from "./validate.mjs";
 
 function createDatasetCounts(data) {
@@ -121,7 +122,10 @@ export async function readSnapshot({ kvClient }) {
     snapshot = await kvClient.getJson(SNAPSHOT_KEY);
   } catch (error) {
     if (process.env.NODE_ENV !== "test") {
-      console.error("Failed to read snapshot from KV:", error);
+      console.error(
+        "Failed to read snapshot from KV:",
+        sanitizeErrorMessage(error),
+      );
     }
     return null;
   }
@@ -153,7 +157,10 @@ export async function readSnapshotMetadata({ kvClient }) {
     metadata = await kvClient.getJson(SNAPSHOT_META_KEY);
   } catch (error) {
     if (process.env.NODE_ENV !== "test") {
-      console.error("Failed to read snapshot metadata from KV:", error);
+      console.error(
+        "Failed to read snapshot metadata from KV:",
+        sanitizeErrorMessage(error),
+      );
     }
     return null;
   }

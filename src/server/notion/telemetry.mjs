@@ -1,3 +1,10 @@
+export function sanitizeErrorMessage(error) {
+  if (error instanceof Error) {
+    return error.message;
+  }
+  return String(error);
+}
+
 import { ContentError } from "./constants.mjs";
 
 export function buildStructuredLog(event, telemetry) {

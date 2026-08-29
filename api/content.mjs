@@ -4,6 +4,7 @@ import {
   CACHE_CONTROL_HEADER,
   createErrorPayload,
   getContentResponse,
+  sanitizeErrorMessage,
 } from "../src/server/notion/index.mjs";
 
 export default async function handler(req, res) {
@@ -49,7 +50,7 @@ export default async function handler(req, res) {
     );
     console.error(
       JSON.stringify({
-        error: error instanceof Error ? error.message : String(error),
+        error: sanitizeErrorMessage(error),
       }),
     );
 
