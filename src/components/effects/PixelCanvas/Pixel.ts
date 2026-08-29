@@ -28,6 +28,7 @@ export class Pixel {
     color: string,
     speed: number,
     delay: number,
+    counterBase?: number,
   ) {
     this.width = logicalWidth;
     this.height = logicalHeight;
@@ -44,7 +45,8 @@ export class Pixel {
     this.alpha = Pixel.getRandomValue(0.08, 0.25);
     this.delay = delay;
     this.counter = 0;
-    this.counterStep = Math.random() * 4 + (this.width + this.height) * 0.01;
+    this.counterStep =
+      Math.random() * 4 + (counterBase ?? (this.width + this.height) * 0.01);
     this.isIdle = false;
     this.isReverse = false;
     this.isShimmer = false;
