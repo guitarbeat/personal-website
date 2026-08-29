@@ -167,6 +167,78 @@ describe("AudioManager", () => {
     });
   });
 
+  describe("fadeOut promise behavior", () => {
+    let rafCallbacks: FrameRequestCallback[];
+    let currentTime: number;
+
+    beforeEach(() => {
+      rafCallbacks = [];
+      currentTime = 1000;
+
+      jest.spyOn(Date, "now").mockImplementation(() => currentTime);
+      jest
+        .spyOn(window, "requestAnimationFrame")
+        .mockImplementation((cb: FrameRequestCallback) => {
+          rafCallbacks.push(cb);
+          return rafCallbacks.length;
+        });
+    });
+
+    it("should resolve immediately when audioElement is null", async () => {
+      const promise = audioManager.fadeOut();
+      await expect(promise).resolves.toBeUndefined();
+    });
+
+    it("should gradually reduce volume and resolve promise when fadeout completes", async () => {
+      const mockAudio = audioManager.createAudioElement("test.mp3");
+      mockAudio.volume = 1.0;
+
+      const fadePromise = audioManager.fadeOut();
+
+      let resolved = false;
+      fadePromise.then(() => {
+        resolved = true;
+      });
+
+      // Frame 1: 500ms elapsed out of 1500ms fadeOutDuration
+      currentTime = 1500;
+      expect(rafCallbacks.length).toBe(1);
+      const cb1 = rafCallbacks.shift();
+      if (cb1) cb1(currentTime);
+
+      expect(mockAudio.volume).toBeLessThan(1.0);
+      expect(mockAudio.volume).toBeGreaterThan(0);
+      expect(resolved).toBe(false);
+
+      // Frame 2: 1500ms elapsed (progress = 1)
+      currentTime = 2500;
+      expect(rafCallbacks.length).toBe(1);
+      const cb2 = rafCallbacks.shift();
+      if (cb2) cb2(currentTime);
+
+      await fadePromise;
+      expect(mockAudio.volume).toBe(0);
+      expect(resolved).toBe(true);
+    });
+
+    it("should resolve promise if audioElement becomes null during fadeout", async () => {
+      const mockAudio = audioManager.createAudioElement("test.mp3");
+      mockAudio.volume = 1.0;
+
+      const fadePromise = audioManager.fadeOut();
+
+      expect(rafCallbacks.length).toBe(1);
+
+      // Set audioElement to null mid-fade
+      (audioManager as unknown as { audioElement: null }).audioElement = null;
+
+      const cb = rafCallbacks.shift();
+      if (cb) cb(currentTime);
+
+      await expect(fadePromise).resolves.toBeUndefined();
+    });
+  });
+
   describe("cleanupAudio", () => {
     it("should call audioManager.cleanup", () => {
       const cleanupSpy = jest
