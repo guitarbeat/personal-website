@@ -18,12 +18,12 @@ describe("useAvatarTransition error handling", () => {
       throw new Error("QuotaExceededError");
     });
 
-    Object.defineProperty(window, 'sessionStorage', {
+    Object.defineProperty(window, "sessionStorage", {
       value: {
         ...window.sessionStorage,
         setItem: mockSetItem,
       },
-      writable: true
+      writable: true,
     });
 
     const { result } = renderHook(() => useAvatarTransition());
@@ -39,12 +39,12 @@ describe("useAvatarTransition error handling", () => {
     expect(mockSetItem).toHaveBeenCalled();
     expect(result.current.isTransitioning).toBe(false);
 
-    Object.defineProperty(window, 'sessionStorage', {
+    Object.defineProperty(window, "sessionStorage", {
       value: {
         ...window.sessionStorage,
         setItem: originalSetItem,
       },
-      writable: true
+      writable: true,
     });
   });
 

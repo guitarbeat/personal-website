@@ -1,4 +1,8 @@
-import { validateQueryBody, validateDatasetRecords, ContentError } from "../index.mjs";
+import {
+  validateQueryBody,
+  validateDatasetRecords,
+  ContentError,
+} from "../index.mjs";
 
 describe("notion query validation", () => {
   let consoleErrorSpy;
@@ -84,58 +88,68 @@ describe("validateDatasetRecords", () => {
   });
 
   it("validates project records successfully", () => {
-    const validProject = [{
-      title: "Title",
-      slug: "slug",
-      hook: "hook",
-      detail: "detail",
-      date: "2023",
-      link: "link",
-      image: "image",
-      keywords: ["keyword"]
-    }];
-    expect(validateDatasetRecords("projects", validProject)).toEqual(validProject);
+    const validProject = [
+      {
+        title: "Title",
+        slug: "slug",
+        hook: "hook",
+        detail: "detail",
+        date: "2023",
+        link: "link",
+        image: "image",
+        keywords: ["keyword"],
+      },
+    ];
+    expect(validateDatasetRecords("projects", validProject)).toEqual(
+      validProject,
+    );
   });
 
   it("throws ContentError if project record is invalid", () => {
-    const invalidProject = [{
-      title: "Title",
-      slug: "slug",
-      hook: "hook",
-      detail: "detail",
-      date: "2023",
-      link: "link",
-      image: "image",
-      keywords: [""]
-    }];
+    const invalidProject = [
+      {
+        title: "Title",
+        slug: "slug",
+        hook: "hook",
+        detail: "detail",
+        date: "2023",
+        link: "link",
+        image: "image",
+        keywords: [""],
+      },
+    ];
     expect(() => {
       validateDatasetRecords("projects", invalidProject);
     }).toThrow(ContentError);
   });
 
   it("validates work records successfully", () => {
-    const validWork = [{
-      title: "Title",
-      slug: "slug",
-      company: "Company",
-      description: "Desc",
-      from: "01-2023",
-      to: "12-2023",
-      place: "Place"
-    }];
+    const validWork = [
+      {
+        title: "Title",
+        slug: "slug",
+        company: "Company",
+        description: "Desc",
+        from: "01-2023",
+        to: "12-2023",
+        place: "Place",
+      },
+    ];
     expect(validateDatasetRecords("work", validWork)).toEqual(validWork);
   });
 
   it("throws ContentError if work record is invalid", () => {
-    const invalidWork = [{
-      title: "Title",
-      slug: "slug",
-      company: "Company",
-      description: "Desc",
-      from: "invalid-date",
-      to: "12-2023",
-      place: "Place"
-    }];
+    const invalidWork = [
+      {
+        title: "Title",
+        slug: "slug",
+        company: "Company",
+        description: "Desc",
+        from: "invalid-date",
+        to: "12-2023",
+        place: "Place",
+      },
+    ];
     expect(() => {
       validateDatasetRecords("work", invalidWork);
     }).toThrow(ContentError);

@@ -6,18 +6,18 @@ describe("Drop", () => {
     // Mock secureRandom implicitly by setting Math.random or spying on crypto if needed.
     // The implementation falls back to Math.random if window.crypto is unavailable.
     // In node/jsdom test env, window.crypto might not be fully implemented.
-    jest.spyOn(Math, 'random').mockReturnValue(0.5);
+    jest.spyOn(Math, "random").mockReturnValue(0.5);
 
     // Mock crypto to ensure tests are deterministic
     if (typeof window !== "undefined") {
-      Object.defineProperty(window, 'crypto', {
+      Object.defineProperty(window, "crypto", {
         value: {
           getRandomValues: (arr: Uint32Array) => {
             arr[0] = 4294967296 * 0.5; // 0.5
             return arr;
-          }
+          },
         },
-        configurable: true
+        configurable: true,
       });
     }
   });
