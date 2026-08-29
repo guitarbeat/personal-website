@@ -5,10 +5,7 @@ import { useNotionSectionData } from "@/hooks/useNotionSectionData";
 import type { NotionData } from "@/types/content";
 import { cn } from "@/utils/commonUtils";
 import { formatWorkDuration } from "@/utils/formatWorkDuration";
-import {
-  type MoireEffectPreset,
-  WORK_CARD_EFFECTS,
-} from "@/utils/moireEffectPresets";
+import { WORK_CARD_EFFECTS } from "@/utils/moireEffectPresets";
 import {
   formatWorkYear,
   type ProcessedWorkJob,
@@ -126,7 +123,7 @@ function Work({ db: propsDb }: WorkProps = {}) {
               <div className="work__items">
                 {jobs.map((job, index) => {
                   const isActive = activeCards.has(job.slug);
-                  const effect: MoireEffectPreset =
+                  const effect =
                     WORK_CARD_EFFECTS[index % WORK_CARD_EFFECTS.length];
                   return (
                     <button
