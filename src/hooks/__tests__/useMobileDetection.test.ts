@@ -118,6 +118,18 @@ describe("useMobileDetection", () => {
     expect(result.current.isMobileUserAgent).toBe(true);
   });
 
+  it("detects legacy touch device via msMaxTouchPoints", () => {
+    Object.defineProperty(window.navigator, "msMaxTouchPoints", {
+      value: 1,
+      writable: true,
+      configurable: true,
+    });
+    const { result } = renderHook(() => useMobileDetection());
+    expect(result.current.isTouchDevice).toBe(true);
+    // Cleanup
+    delete (window.navigator as any).msMaxTouchPoints;
+  });
+
   it("detects non-mobile user agent correctly", () => {
     setUserAgent(
       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
@@ -190,6 +202,16 @@ describe("useMobileDetection", () => {
       expect(result.current.isBetweenBreakpoints(800, 1000)).toBe(true);
       expect(result.current.isBetweenBreakpoints(500, 700)).toBe(false);
       expect(result.current.isBetweenBreakpoints(900, 1000)).toBe(false);
+    });
+
+    it("unmounts event listener correctly", () => {
+      const removeEventListenerSpy = jest.spyOn(window, "removeEventListener");
+      const { unmount } = renderHook(() => useMobileDetection());
+      unmount();
+      expect(removeEventListenerSpy).toHaveBeenCalledWith(
+        "resize",
+        expect.any(Function),
+      );
     });
   });
 });
