@@ -86,13 +86,31 @@ async function fetchNotionBlockChildren({
   return rawBlocks;
 }
 
+async function mapConcurrent(items, limit, fn) {
+  if (!items.length) return [];
+  const results = new Array(items.length);
+  let index = 0;
+  const workerCount = Math.min(items.length, limit);
+  const workers = Array.from({ length: workerCount }, async () => {
+    while (index < items.length) {
+      const i = index++;
+      results[i] = await fn(items[i], i);
+    }
+  });
+  await Promise.all(workers);
+  return results;
+}
+
 async function fetchProjectContentByPageId({
   pages,
   fetchImpl = fetch,
   notionToken,
+  concurrencyLimit = 5,
 }) {
-  const contentEntries = await Promise.all(
-    pages.map(async (page) => {
+  const contentEntries = await mapConcurrent(
+    pages,
+    concurrencyLimit,
+    async (page) => {
       const props = page.properties || {};
       const inlineContent = extractRichText(
         props.Detail?.rich_text ||
@@ -119,7 +137,7 @@ async function fetchProjectContentByPageId({
         .join("\n\n");
 
       return [page.id, pageContent];
-    }),
+    },
   );
 
   return new Map(contentEntries);
