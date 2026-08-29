@@ -1,11 +1,11 @@
 import { DEFAULT_CONSOLE_PROMPT } from "../hackCopy";
-import { MAX_DISPLAY_LENGTH } from "../hackTuning";
 import {
   calculateInteractionResult,
   calculateNextHackProgress,
-  KeyPattern,
+  type KeyPattern,
   updateHackStreamBuffer,
 } from "../hackLogic";
+import { MAX_DISPLAY_LENGTH } from "../hackTuning";
 
 describe("hackLogic", () => {
   describe("updateHackStreamBuffer", () => {
@@ -17,7 +17,7 @@ describe("hackLogic", () => {
         0,
         mockCorpus,
         "forward",
-        5
+        5,
       );
       expect(newBuffer).toBe("prev-ABCDE");
       expect(newIndex).toBe(5);
@@ -29,7 +29,7 @@ describe("hackLogic", () => {
         24, // YZ...
         mockCorpus,
         "forward",
-        5 // ...ABC
+        5, // ...ABC
       );
       expect(newBuffer).toBe("YZABC");
       expect(newIndex).toBe(3); // after ABC
@@ -42,7 +42,7 @@ describe("hackLogic", () => {
         0,
         mockCorpus,
         "forward",
-        5
+        5,
       );
       expect(newBuffer.length).toBe(MAX_DISPLAY_LENGTH);
       // It should have sliced off the beginning of longPrev
@@ -56,7 +56,7 @@ describe("hackLogic", () => {
         3,
         mockCorpus,
         "backward",
-        5 // Trying to delete more than what was added
+        5, // Trying to delete more than what was added
       );
       expect(newBuffer).toBe(DEFAULT_CONSOLE_PROMPT);
       expect(newIndex).toBe(mockCorpus.length - 2); // 3 - 5 = -2 -> 24
@@ -78,7 +78,12 @@ describe("hackLogic", () => {
       mockTracker.lastKey = "a";
       mockTracker.streak = 5;
 
-      const result = calculateInteractionResult(true, "Backspace", 100, mockTracker);
+      const result = calculateInteractionResult(
+        true,
+        "Backspace",
+        100,
+        mockTracker,
+      );
 
       expect(result.direction).toBe("backward");
       expect(result.progressDelta).toBeLessThan(0);
@@ -115,11 +120,18 @@ describe("hackLogic", () => {
       // with multiplier
       const result = calculateInteractionResult(false, "h", 500, mockTracker);
 
-      expect(result.progressDelta).toBeGreaterThan(slowDeltaResult.progressDelta);
+      expect(result.progressDelta).toBeGreaterThan(
+        slowDeltaResult.progressDelta,
+      );
     });
 
     it("should handle touch key behavior", () => {
-      const result = calculateInteractionResult(false, "touch", 100, mockTracker);
+      const result = calculateInteractionResult(
+        false,
+        "touch",
+        100,
+        mockTracker,
+      );
       // touch key has a fixed 1.2 combo multiplier
       expect(result.progressDelta).toBeGreaterThan(0);
     });
