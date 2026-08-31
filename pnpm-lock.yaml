@@ -125,8 +125,8 @@ importers:
         specifier: ^1.102.0
         version: 1.102.0
       styled-components:
-        specifier: ^6.4.4
-        version: 6.4.4(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: ^6.5.3
+        version: 6.5.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       terser-webpack-plugin:
         specifier: ^5.6.1
         version: 5.6.1(clean-css@5.3.3)(esbuild@0.27.0)(postcss@8.5.26)(webpack@5.107.1(clean-css@5.3.3)(esbuild@0.27.0)(postcss@8.5.26))
@@ -8718,8 +8718,8 @@ packages:
     peerDependencies:
       webpack: ^5.0.0
 
-  styled-components@6.4.4:
-    resolution: {integrity: sha512-tJk5CmKUPMDoTsZQ8m0hHInBk9HFKUPSusqmbBuefDX+yUbMBWea2Ob/wdXFyHW8XZqXkprJscysAdKeGWNqlA==}
+  styled-components@6.5.3:
+    resolution: {integrity: sha512-vAX79sfpmUerP9fsTTxoTrBDE0RuO4ahjInyWYoohNgqrdg63Ms4q6FJ/o2Fyity82NU3cujOT8Ewl9TThBdwg==}
     engines: {node: '>= 16'}
     peerDependencies:
       css-to-react-native: '>= 3.2.0'
@@ -19319,7 +19319,7 @@ snapshots:
     dependencies:
       webpack: 5.107.1(clean-css@5.3.3)(esbuild@0.27.0)(postcss@8.5.26)
 
-  styled-components@6.4.4(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
+  styled-components@6.5.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
     dependencies:
       '@emotion/is-prop-valid': 1.4.0
       csstype: 3.2.3
