@@ -153,7 +153,7 @@
     "stylelint-scss": "^7.2.0",
     "svgo": "^4.0.2",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.3"
+    "typescript": "^7.0.2"
   },
   "sassConfig": {
     "api": "modern",
