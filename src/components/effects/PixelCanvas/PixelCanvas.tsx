@@ -119,6 +119,16 @@ const PixelCanvas = ({
       const numColors = colorPalette.length;
       const counterBase = (logicalWidth + logicalHeight) * 0.01;
 
+      const xPositions = new Int32Array(numCols);
+      const dxSqArray = new Float64Array(numCols);
+      let colIdx = 0;
+      for (let x = 0; x < logicalWidth; x += parsedGap) {
+        xPositions[colIdx] = x;
+        const dx = x - cx;
+        dxSqArray[colIdx] = dx * dx;
+        colIdx += 1;
+      }
+
       const yPositions = new Int32Array(numRows);
       const dySqArray = new Float64Array(numRows);
       let rowIdx = 0;
@@ -130,11 +140,10 @@ const PixelCanvas = ({
       }
 
       let pixelIndex = 0;
-      for (let x = 0; x < logicalWidth; x += parsedGap) {
-        const dx = x - cx;
-        const dxSq = dx * dx;
+      for (let c = 0; c < colIdx; c += 1) {
+        const x = xPositions[c];
+        const dxSq = dxSqArray[c];
         for (let r = 0; r < rowIdx; r += 1) {
-          const y = yPositions[r];
           const delay = reducedMotion ? 0 : Math.sqrt(dxSq + dySqArray[r]);
           const color = colorPalette[Math.floor(Math.random() * numColors)];
 
@@ -143,7 +152,7 @@ const PixelCanvas = ({
             logicalWidth,
             logicalHeight,
             x,
-            y,
+            yPositions[r],
             color,
             parsedSpeed,
             delay,
