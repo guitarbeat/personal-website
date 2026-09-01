@@ -20,16 +20,16 @@ export function useProjects({ db: propsDb }: UseProjectsOptions = {}) {
   const allKeywords = useMemo(
     () =>
       Array.from(
-        new Set(
-          projectsData.flatMap((project) =>
-            Array.isArray(project.keywords)
-              ? project.keywords.filter(
-                  (keyword) =>
-                    typeof keyword === "string" && keyword.trim().length > 0,
-                )
-              : [],
-          ),
-        ),
+        projectsData.reduce<Set<string>>((acc, project) => {
+          if (Array.isArray(project.keywords)) {
+            for (const keyword of project.keywords) {
+              if (typeof keyword === "string" && keyword.trim().length > 0) {
+                acc.add(keyword);
+              }
+            }
+          }
+          return acc;
+        }, new Set()),
       ),
     [projectsData],
   );
