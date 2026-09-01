@@ -6,7 +6,7 @@
 // 	</defs>
 // </svg>
 
-import { generateId, type Point } from "@/utils/commonUtils";
+import { generateId } from "@/utils/commonUtils";
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 
@@ -77,7 +77,7 @@ export function createBlurSvg() {
 
   // Debounced blur updates
   let updateTimeout: number;
-  const setBlur = ({ x, y }: Point) => {
+  const setBlur = ({ x, y }: { x: number; y: number }) => {
     cancelAnimationFrame(updateTimeout);
     updateTimeout = requestAnimationFrame(() => {
       blurFilter.setAttribute("stdDeviation", `${x},${y}`);
