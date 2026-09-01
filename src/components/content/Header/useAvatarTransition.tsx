@@ -1,5 +1,5 @@
 import type React from "react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 
 import { isAvatarScaleTransition, prefersReducedMotion } from "@/utils/motion";
 import { AvatarContent } from "./AvatarContent";
@@ -7,9 +7,12 @@ import { AVATAR_TRANSITION_FALLBACK_MS } from "./avatarTransition.constants";
 import {
   type AvatarPhase,
   getAvatarFrameClassName,
+  getNextPhaseOnFrameEnd,
+  getNextPhaseOnPhotoEnd,
   persistProfileIndex,
 } from "./avatarTransition.utils";
 import { PROFILE_IMAGES, readStoredProfileIndex } from "./headerProfileImages";
+import { useAvatarPhaseAnimation } from "./useAvatarPhaseAnimation";
 
 export { AVATAR_TRANSITION_FALLBACK_MS };
 
@@ -28,7 +31,7 @@ export function useAvatarTransition() {
   const [phase, setPhase] = useState<AvatarPhase>("idle");
   const [outgoingIndex, setOutgoingIndex] = useState<number | null>(null);
   const [incomingIndex, setIncomingIndex] = useState<number | null>(null);
-  const [phaseAnimating, setPhaseAnimating] = useState(false);
+  const [phaseAnimating, setPhaseAnimating] = useAvatarPhaseAnimation(phase);
 
   phaseRef.current = phase;
   incomingIndexRef.current = incomingIndex;
@@ -51,25 +54,7 @@ export function useAvatarTransition() {
     setIncomingIndex(null);
     shouldExpandRef.current = false;
     setPhaseAnimating(false);
-  }, []);
-
-  useEffect(() => {
-    if (phase === "idle") {
-      return;
-    }
-
-    setPhaseAnimating(false);
-
-    const frameId = requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        setPhaseAnimating(true);
-      });
-    });
-
-    return () => {
-      cancelAnimationFrame(frameId);
-    };
-  }, [phase]);
+  }, [setPhaseAnimating]);
 
   const handleClick = useCallback(() => {
     if (phaseRef.current !== "idle") {
@@ -96,7 +81,7 @@ export function useAvatarTransition() {
     transitionFallbackRef.current = setTimeout(() => {
       completeTransition();
     }, AVATAR_TRANSITION_FALLBACK_MS);
-  }, [completeTransition, profileIndex]);
+  }, [completeTransition, profileIndex, setPhaseAnimating]);
 
   const handleFrameTransitionEnd = useCallback(
     (e: React.TransitionEvent<HTMLSpanElement>) => {
@@ -104,19 +89,21 @@ export function useAvatarTransition() {
         return;
       }
 
-      const currentPhase = phaseRef.current;
+      const { nextPhase, shouldComplete } = getNextPhaseOnFrameEnd(
+        phaseRef.current,
+      );
 
-      if (currentPhase === "shrink") {
+      if (nextPhase) {
         setPhaseAnimating(false);
-        setPhase("slideOut");
+        setPhase(nextPhase);
         return;
       }
 
-      if (currentPhase === "expand") {
+      if (shouldComplete) {
         completeTransition();
       }
     },
-    [completeTransition],
+    [completeTransition, setPhaseAnimating],
   );
 
   const handlePhotoTransitionEnd = useCallback(
@@ -125,26 +112,22 @@ export function useAvatarTransition() {
         return;
       }
 
-      const currentPhase = phaseRef.current;
+      const { nextPhase, shouldComplete } = getNextPhaseOnPhotoEnd(
+        phaseRef.current,
+        shouldExpandRef.current,
+      );
 
-      if (currentPhase === "slideOut") {
+      if (nextPhase) {
         setPhaseAnimating(false);
-        setPhase("slideIn");
+        setPhase(nextPhase);
         return;
       }
 
-      if (currentPhase === "slideIn") {
-        setPhaseAnimating(false);
-
-        if (shouldExpandRef.current) {
-          setPhase("expand");
-          return;
-        }
-
+      if (shouldComplete) {
         completeTransition();
       }
     },
-    [completeTransition],
+    [completeTransition, setPhaseAnimating],
   );
 
   const frameClassName = getAvatarFrameClassName(phase, phaseAnimating);

@@ -41,3 +41,41 @@ export function getAvatarFrameClassName(
 
   return "avatar";
 }
+
+/**
+ * Derives the next avatar transition phase or completion action when frame transition ends.
+ */
+export function getNextPhaseOnFrameEnd(phase: AvatarPhase): {
+  nextPhase?: AvatarPhase;
+  shouldComplete?: boolean;
+} {
+  if (phase === "shrink") {
+    return { nextPhase: "slideOut" };
+  }
+  if (phase === "expand") {
+    return { shouldComplete: true };
+  }
+  return {};
+}
+
+/**
+ * Derives the next avatar transition phase or completion action when photo transition ends.
+ */
+export function getNextPhaseOnPhotoEnd(
+  phase: AvatarPhase,
+  shouldExpand: boolean,
+): {
+  nextPhase?: AvatarPhase;
+  shouldComplete?: boolean;
+} {
+  if (phase === "slideOut") {
+    return { nextPhase: "slideIn" };
+  }
+  if (phase === "slideIn") {
+    if (shouldExpand) {
+      return { nextPhase: "expand" };
+    }
+    return { shouldComplete: true };
+  }
+  return {};
+}
