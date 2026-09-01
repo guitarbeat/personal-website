@@ -72,43 +72,24 @@ export function processWorkTimeline(
     return { jobs: [], firstDate: now, jobBars: [] };
   }
 
-  const parsedFromDates: Date[] = new Array(count);
-  const parsedToDates: Date[] = new Array(count);
+  const jobs: ProcessedWorkJob[] = new Array(count);
   let firstDate = now;
 
   for (let i = 0; i < count; i++) {
     const rawJob = rawJobs[i];
     if (!rawJob) continue;
     const fromDate = parseWorkMonth(rawJob.from);
-    parsedFromDates[i] = fromDate;
-    parsedToDates[i] = rawJob.to ? parseWorkMonth(rawJob.to) : now;
+    const toDate = rawJob.to ? parseWorkMonth(rawJob.to) : now;
 
     if (firstDate.getTime() > fromDate.getTime()) {
       firstDate = fromDate;
     }
-  }
 
-  const timeSpan = diffWorkMonths(firstDate, now);
-  const safeTimeSpan = timeSpan === 0 ? 1 : timeSpan;
-
-  const jobs: ProcessedWorkJob[] = new Array(count);
-  const jobBars: number[][] = new Array(count);
-
-  for (let i = 0; i < count; i++) {
-    const rawJob = rawJobs[i];
-    if (!rawJob) continue;
-    const fromDate = parsedFromDates[i] as Date;
-    const toDate = parsedToDates[i] as Date;
     const from = formatWorkMonthLabel(fromDate);
     const to = rawJob.to ? formatWorkMonthLabel(toDate) : "Now";
-
     const durationDiff = diffWorkMonths(fromDate, toDate);
     const duration = durationDiff === 0 ? 1 : durationDiff;
     const date = durationDiff === 0 ? from : `${from} - ${to}`;
-
-    const bar_start =
-      (100 * diffWorkMonths(firstDate, fromDate)) / safeTimeSpan;
-    const bar_height = (100 * duration) / safeTimeSpan;
 
     jobs[i] = {
       slug: rawJob.slug,
@@ -121,11 +102,26 @@ export function processWorkTimeline(
       toDate,
       date,
       duration,
-      bar_start,
-      bar_height,
+      bar_start: 0,
+      bar_height: 0,
       description: rawJob.description,
     };
+  }
 
+  const timeSpan = diffWorkMonths(firstDate, now);
+  const safeTimeSpan = timeSpan === 0 ? 1 : timeSpan;
+  const jobBars: number[][] = new Array(count);
+
+  for (let i = 0; i < count; i++) {
+    const job = jobs[i];
+    if (!job) continue;
+
+    const bar_start =
+      (100 * diffWorkMonths(firstDate, job.fromDate)) / safeTimeSpan;
+    const bar_height = (100 * job.duration) / safeTimeSpan;
+
+    job.bar_start = bar_start;
+    job.bar_height = bar_height;
     jobBars[i] = [bar_height, bar_start];
   }
 
