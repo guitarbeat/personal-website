@@ -332,7 +332,10 @@ function validateFilter(filter, depth = 0) {
           nextFilter[key] = JSON.parse(JSON.stringify(filter[key]));
           hasType = true;
         } catch (error) {
-          console.error("Failed to parse filter property:", error);
+          console.error(
+            "Failed to parse filter property:",
+            error instanceof Error ? error.message : String(error),
+          );
         }
       }
     }

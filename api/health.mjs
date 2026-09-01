@@ -2,6 +2,7 @@ import { applyCors } from "../src/server/apiCors.mjs";
 import {
   createErrorPayload,
   getHealthSummary,
+  sanitizeErrorMessage,
 } from "../src/server/notion/index.mjs";
 
 export default async function handler(req, res) {
@@ -35,7 +36,7 @@ export default async function handler(req, res) {
     res.setHeader("Cache-Control", "no-store");
     console.error(
       JSON.stringify({
-        error: error instanceof Error ? error.message : String(error),
+        error: sanitizeErrorMessage(error),
       }),
     );
     return res.status(error?.status || 500).json(createErrorPayload(error));

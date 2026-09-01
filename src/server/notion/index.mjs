@@ -23,7 +23,11 @@ export {
   readSnapshotMetadata,
   refreshContentSnapshot,
 } from "./snapshot.mjs";
-export { buildStructuredLog, createErrorPayload } from "./telemetry.mjs";
+export {
+  buildStructuredLog,
+  createErrorPayload,
+  sanitizeErrorMessage,
+} from "./telemetry.mjs";
 export {
   validateContentData,
   validateDatasetRecords,
