@@ -118,14 +118,24 @@ const PixelCanvas = ({
       const cy = logicalHeight / 2;
       const numColors = colorPalette.length;
       const counterBase = (logicalWidth + logicalHeight) * 0.01;
-      let pixelIndex = 0;
 
+      const yPositions = new Int32Array(numRows);
+      const dySqArray = new Float64Array(numRows);
+      let rowIdx = 0;
+      for (let y = 0; y < logicalHeight; y += parsedGap) {
+        yPositions[rowIdx] = y;
+        const dy = y - cy;
+        dySqArray[rowIdx] = dy * dy;
+        rowIdx += 1;
+      }
+
+      let pixelIndex = 0;
       for (let x = 0; x < logicalWidth; x += parsedGap) {
         const dx = x - cx;
         const dxSq = dx * dx;
-        for (let y = 0; y < logicalHeight; y += parsedGap) {
-          const dy = y - cy;
-          const delay = reducedMotion ? 0 : Math.sqrt(dxSq + dy * dy);
+        for (let r = 0; r < rowIdx; r += 1) {
+          const y = yPositions[r];
+          const delay = reducedMotion ? 0 : Math.sqrt(dxSq + dySqArray[r]);
           const color = colorPalette[Math.floor(Math.random() * numColors)];
 
           pixels[pixelIndex] = new Pixel(
