@@ -79,3 +79,23 @@ export function getNextPhaseOnPhotoEnd(
   }
   return {};
 }
+
+/**
+ * Derives the next index, initial transition phase, and expand state on avatar click.
+ */
+export function getClickTransitionState(
+  currentIndex: number,
+  totalImages: number,
+  wasHovered: boolean,
+): {
+  nextIndex: number;
+  initialPhase: AvatarPhase;
+  shouldExpand: boolean;
+} {
+  const nextIndex = (currentIndex + 1) % totalImages;
+  return {
+    nextIndex,
+    initialPhase: wasHovered ? "shrink" : "slideOut",
+    shouldExpand: wasHovered,
+  };
+}

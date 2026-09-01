@@ -1,5 +1,6 @@
 import {
   getAvatarFrameClassName,
+  getClickTransitionState,
   getNextPhaseOnFrameEnd,
   getNextPhaseOnPhotoEnd,
   persistProfileIndex,
@@ -7,6 +8,32 @@ import {
 import { PROFILE_INDEX_STORAGE_KEY } from "./headerProfileImages";
 
 describe("avatarTransition.utils", () => {
+  describe("getClickTransitionState", () => {
+    it("returns shrink phase and shouldExpand true when hovered", () => {
+      expect(getClickTransitionState(0, 3, true)).toEqual({
+        nextIndex: 1,
+        initialPhase: "shrink",
+        shouldExpand: true,
+      });
+    });
+
+    it("returns slideOut phase and shouldExpand false when not hovered", () => {
+      expect(getClickTransitionState(0, 3, false)).toEqual({
+        nextIndex: 1,
+        initialPhase: "slideOut",
+        shouldExpand: false,
+      });
+    });
+
+    it("wraps around nextIndex correctly", () => {
+      expect(getClickTransitionState(2, 3, false)).toEqual({
+        nextIndex: 0,
+        initialPhase: "slideOut",
+        shouldExpand: false,
+      });
+    });
+  });
+
   describe("getAvatarFrameClassName", () => {
     it("returns correct class names for all phases", () => {
       expect(getAvatarFrameClassName("idle", false)).toBe("avatar");
