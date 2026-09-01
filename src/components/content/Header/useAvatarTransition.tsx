@@ -1,9 +1,8 @@
 import type React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { cn } from "@/utils/commonUtils";
 import { isAvatarScaleTransition, prefersReducedMotion } from "@/utils/motion";
-import { AvatarImage } from "./AvatarImage";
+import { AvatarContent } from "./AvatarContent";
 import { AVATAR_TRANSITION_FALLBACK_MS } from "./avatarTransition.constants";
 import {
   type AvatarPhase,
@@ -13,62 +12,6 @@ import {
 import { PROFILE_IMAGES, readStoredProfileIndex } from "./headerProfileImages";
 
 export { AVATAR_TRANSITION_FALLBACK_MS };
-
-function renderAvatarContent(
-  phase: AvatarPhase,
-  profileIndex: number,
-  outgoingIndex: number | null,
-  incomingIndex: number | null,
-  phaseAnimating: boolean,
-  onPhotoTransitionEnd: (e: React.TransitionEvent<HTMLImageElement>) => void,
-) {
-  if (phase === "idle") {
-    return (
-      <AvatarImage
-        index={profileIndex}
-        className="avatar__photo--active"
-        fetchPriority="high"
-      />
-    );
-  }
-
-  if ((phase === "shrink" || phase === "slideOut") && outgoingIndex !== null) {
-    return (
-      <AvatarImage
-        index={outgoingIndex}
-        className={cn(
-          "avatar__photo--outgoing",
-          phase === "slideOut" &&
-            phaseAnimating &&
-            "avatar__photo--outgoing-exiting",
-        )}
-        onTransitionEnd={
-          phase === "slideOut" ? onPhotoTransitionEnd : undefined
-        }
-      />
-    );
-  }
-
-  if ((phase === "slideIn" || phase === "expand") && incomingIndex !== null) {
-    const photoClassName =
-      phase === "expand"
-        ? "avatar__photo--active"
-        : cn(
-            "avatar__photo--incoming",
-            phaseAnimating && "avatar__photo--incoming-active",
-          );
-
-    return (
-      <AvatarImage
-        index={incomingIndex}
-        className={photoClassName}
-        onTransitionEnd={phase === "slideIn" ? onPhotoTransitionEnd : undefined}
-      />
-    );
-  }
-
-  return null;
-}
 
 export function useAvatarTransition() {
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -206,13 +149,15 @@ export function useAvatarTransition() {
 
   const frameClassName = getAvatarFrameClassName(phase, phaseAnimating);
 
-  const content = renderAvatarContent(
-    phase,
-    profileIndex,
-    outgoingIndex,
-    incomingIndex,
-    phaseAnimating,
-    handlePhotoTransitionEnd,
+  const content = (
+    <AvatarContent
+      phase={phase}
+      profileIndex={profileIndex}
+      outgoingIndex={outgoingIndex}
+      incomingIndex={incomingIndex}
+      phaseAnimating={phaseAnimating}
+      onPhotoTransitionEnd={handlePhotoTransitionEnd}
+    />
   );
 
   return {
