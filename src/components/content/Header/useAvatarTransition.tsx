@@ -7,6 +7,7 @@ import { AVATAR_TRANSITION_FALLBACK_MS } from "./avatarTransition.constants";
 import {
   type AvatarPhase,
   getAvatarFrameClassName,
+  getClickTransitionState,
   getNextPhaseOnFrameEnd,
   getNextPhaseOnPhotoEnd,
   persistProfileIndex,
@@ -61,22 +62,26 @@ export function useAvatarTransition() {
       return;
     }
 
-    const nextIndex = (profileIndex + 1) % PROFILE_IMAGES.length;
-
     if (prefersReducedMotion()) {
+      const nextIndex = (profileIndex + 1) % PROFILE_IMAGES.length;
       setProfileIndex(nextIndex);
       persistProfileIndex(nextIndex);
       return;
     }
 
     const wasHovered = buttonRef.current?.matches(":hover") ?? false;
+    const { nextIndex, initialPhase, shouldExpand } = getClickTransitionState(
+      profileIndex,
+      PROFILE_IMAGES.length,
+      wasHovered,
+    );
 
     incomingIndexRef.current = nextIndex;
-    shouldExpandRef.current = wasHovered;
+    shouldExpandRef.current = shouldExpand;
     setOutgoingIndex(profileIndex);
     setIncomingIndex(nextIndex);
     setPhaseAnimating(false);
-    setPhase(wasHovered ? "shrink" : "slideOut");
+    setPhase(initialPhase);
 
     transitionFallbackRef.current = setTimeout(() => {
       completeTransition();
