@@ -1,7 +1,7 @@
-import type { Point } from "@/utils/commonUtils";
 import {
   copyPoint,
   createTimeout,
+  type Point,
   subtractPoints,
   throttle,
 } from "@/utils/commonUtils";
