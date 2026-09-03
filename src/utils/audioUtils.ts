@@ -412,8 +412,6 @@ const audioManager = new AudioManager();
 
 // Export functions for easy use
 export const playKnightRiderTheme = () => audioManager.playKnightRiderTheme();
-export const stopKnightRiderTheme = () => audioManager.stop();
-export const isAudioPlaying = () => audioManager.getPlayingState();
 export const cleanupAudio = () => audioManager.cleanup();
 
 export default audioManager;
