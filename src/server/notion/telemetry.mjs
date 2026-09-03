@@ -2,6 +2,15 @@ export function sanitizeErrorMessage(error) {
   if (error instanceof Error) {
     return error.message;
   }
+  if (
+    error !== null &&
+    (typeof error === "object" || typeof error === "function")
+  ) {
+    if (typeof error.message === "string") {
+      return error.message;
+    }
+    return Object.prototype.toString.call(error);
+  }
   return String(error);
 }
 

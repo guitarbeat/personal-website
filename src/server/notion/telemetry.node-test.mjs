@@ -24,3 +24,18 @@ test("buildStructuredLog constructs JSON string with event and telemetry", () =>
   const log = buildStructuredLog("test.event", { status: "ok" });
   assert.equal(log, JSON.stringify({ event: "test.event", status: "ok" }));
 });
+
+test("sanitizeErrorMessage handles raw objects safely without exposing sensitive fields", () => {
+  assert.equal(
+    sanitizeErrorMessage({ message: "Raw object error", secret: "sensitive" }),
+    "Raw object error",
+  );
+  assert.equal(
+    sanitizeErrorMessage({ secret: "sensitive" }),
+    "[object Object]",
+  );
+  assert.equal(
+    sanitizeErrorMessage({ toString: () => "secret=123" }),
+    "[object Object]",
+  );
+});
