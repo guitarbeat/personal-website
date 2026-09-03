@@ -69,6 +69,15 @@ export const useMatrixRain = (
       bucketKeys.push(size);
     }
 
+    // Group initial drops into buckets
+    for (const drop of drops) {
+      if (!buckets[drop.fontSize]) {
+        buckets[drop.fontSize] = [];
+        bucketKeys.push(drop.fontSize);
+      }
+      buckets[drop.fontSize].push(drop);
+    }
+
     let lastTime = 0;
     const targetFPS = 60;
     const frameInterval = 1000 / targetFPS;
@@ -82,33 +91,36 @@ export const useMatrixRain = (
           : rawIntensity;
         const drawParams = getMatrixRainDrawParams(intensity);
 
-        for (const drop of drops) {
-          drop.setBrightHeadThreshold(drawParams.brightHeadThreshold);
-        }
-
         // * Enhanced fade effect — lower alpha at high intensity = denser trails
         context.fillStyle = `rgba(0, 0, 0, ${drawParams.fadeAlpha})`;
         context.fillRect(0, 0, canvas.width, canvas.height);
 
-        // * Update all drops first
-        for (const drop of drops) {
-          drop.update(canvas.height, drawParams.speedMultiplier);
-        }
-
-        // * Performance Optimization: Batch drawing by font size to minimize state changes
-        // * Reset buckets without reallocation
+        // * Performance Optimization: Update drops in-place within static buckets
+        // * Moves drop between buckets only when its font size changes on reset
         for (let i = 0; i < bucketKeys.length; i++) {
-          buckets[bucketKeys[i]].length = 0;
-        }
+          const fontSize = bucketKeys[i];
+          const bucket = buckets[fontSize];
+          for (let j = bucket.length - 1; j >= 0; j--) {
+            const drop = bucket[j];
+            drop.setBrightHeadThreshold(drawParams.brightHeadThreshold);
+            const oldFontSize = drop.fontSize;
+            drop.update(canvas.height, drawParams.speedMultiplier);
 
-        // Group drops by font size
-        for (const drop of drops) {
-          // Safety check in case random logic produces unexpected size
-          if (!buckets[drop.fontSize]) {
-            buckets[drop.fontSize] = [];
-            bucketKeys.push(drop.fontSize);
+            if (drop.fontSize !== oldFontSize) {
+              // Move drop to new bucket using O(1) swap-and-pop
+              const last = bucket.pop();
+              if (last) {
+                if (j < bucket.length) {
+                  bucket[j] = last;
+                }
+                if (!buckets[drop.fontSize]) {
+                  buckets[drop.fontSize] = [];
+                  bucketKeys.push(drop.fontSize);
+                }
+                buckets[drop.fontSize].push(drop);
+              }
+            }
           }
-          buckets[drop.fontSize].push(drop);
         }
 
         const opacityMultiplier = drawParams.opacityMultiplier;
