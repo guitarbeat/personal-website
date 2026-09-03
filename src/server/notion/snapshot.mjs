@@ -188,8 +188,10 @@ export async function refreshContentSnapshot({
 
   if (kvClient) {
     try {
-      await kvClient.setJson(SNAPSHOT_KEY, snapshot);
-      await kvClient.setJson(SNAPSHOT_META_KEY, snapshotMetadata);
+      await Promise.all([
+        kvClient.setJson(SNAPSHOT_KEY, snapshot),
+        kvClient.setJson(SNAPSHOT_META_KEY, snapshotMetadata),
+      ]);
       snapshotStored = true;
     } catch (error) {
       if (requireSnapshotPersist) {
