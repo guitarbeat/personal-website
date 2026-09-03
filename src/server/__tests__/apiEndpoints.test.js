@@ -1,6 +1,6 @@
-import healthHandler from "../../../api/health.mjs";
 import contentHandler from "../../../api/content.mjs";
 import contentRefreshHandler from "../../../api/content-refresh.mjs";
+import healthHandler from "../../../api/health.mjs";
 import * as notionModule from "../notion/index.mjs";
 
 jest.mock("../notion/index.mjs", () => {
