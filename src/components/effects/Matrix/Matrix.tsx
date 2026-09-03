@@ -18,6 +18,19 @@ import { useHackInteraction } from "./useHackInteraction";
 import { useHackProgressDecay } from "./useHackProgressDecay";
 import { useMatrixRain } from "./useMatrixRain";
 
+const secureRandom = (): number => {
+  if (
+    typeof window !== "undefined" &&
+    window.crypto &&
+    window.crypto.getRandomValues
+  ) {
+    const array = new Uint32Array(1);
+    window.crypto.getRandomValues(array);
+    return array[0] / 4294967296;
+  }
+  return Math.random();
+};
+
 interface MatrixProps {
   isVisible: boolean;
   onDismiss?: () => void;
@@ -46,18 +59,18 @@ const Matrix = ({ isVisible, onDismiss, onMatrixReady }: MatrixProps) => {
   const completionTriggeredRef = useRef(false);
   const [attemptStart] = useState(() => Date.now());
   const [matrixCoordinate] = useState<string>(() => {
-    const sector = Math.floor(Math.random() * 64)
+    const sector = Math.floor(secureRandom() * 64)
       .toString(16)
       .toUpperCase()
       .padStart(2, "0");
-    const node = Math.floor(Math.random() * 4096)
+    const node = Math.floor(secureRandom() * 4096)
       .toString(16)
       .toUpperCase()
       .padStart(3, "0");
     return `${sector}:${node}`;
   });
   const [signalSeed] = useState<number>(
-    () => Math.floor(Math.random() * 900) + 100,
+    () => Math.floor(secureRandom() * 900) + 100,
   );
   const { completeHack, showHackCompleteFeedback } = useUnlock();
   const easterEggTriggeredRef = useRef<boolean>(false);

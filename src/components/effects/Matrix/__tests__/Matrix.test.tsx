@@ -23,4 +23,28 @@ describe("Matrix", () => {
     const button = screen.queryByRole("button", { name: /test easter egg/i });
     expect(button).not.toBeInTheDocument();
   });
+
+  it("uses crypto.getRandomValues for matrix coordinate and seed generation", () => {
+    const mockGetContext = jest.fn();
+    HTMLCanvasElement.prototype.getContext = mockGetContext;
+    window.HTMLMediaElement.prototype.play = jest
+      .fn()
+      .mockImplementation(() => Promise.resolve());
+    window.HTMLMediaElement.prototype.pause = jest.fn();
+
+    const mockGetRandomValues = jest.fn((array) => array);
+    Object.defineProperty(window, "crypto", {
+      value: { getRandomValues: mockGetRandomValues },
+      writable: true,
+      configurable: true,
+    });
+
+    render(
+      <UnlockProvider>
+        <Matrix isVisible={true} />
+      </UnlockProvider>,
+    );
+
+    expect(mockGetRandomValues).toHaveBeenCalled();
+  });
 });
