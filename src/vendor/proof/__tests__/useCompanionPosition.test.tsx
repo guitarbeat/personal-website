@@ -77,6 +77,20 @@ describe("useCompanionPosition localStorage interactions", () => {
     expect(result.current.currentPosition).toEqual(defaultPos);
   });
 
+  it("handles empty or missing value in localStorage", () => {
+    window.localStorage.setItem(STORAGE_KEY, "");
+
+    const defaultPos = { x: 50, y: 50 };
+    const { result } = renderHook(() =>
+      useCompanionPosition({
+        ...defaultOptions,
+        defaultPosition: defaultPos,
+      }),
+    );
+
+    expect(result.current.currentPosition).toEqual(defaultPos);
+  });
+
   it("persists position to localStorage when commitPosition is called", () => {
     const { result } = renderHook(() =>
       useCompanionPosition(defaultOptions),
