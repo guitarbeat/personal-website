@@ -129,12 +129,14 @@ async function fetchProjectContentByPageId({
         fetchImpl,
         notionToken,
       });
-      const pageContent = blocks
-        .map(extractBlockPlainText)
-        .filter(
-          (blockText) => typeof blockText === "string" && blockText.length,
-        )
-        .join("\n\n");
+      const validBlocks = [];
+      for (const block of blocks) {
+        const blockText = extractBlockPlainText(block);
+        if (typeof blockText === "string" && blockText.length > 0) {
+          validBlocks.push(blockText);
+        }
+      }
+      const pageContent = validBlocks.join("\n\n");
 
       return [page.id, pageContent];
     },
