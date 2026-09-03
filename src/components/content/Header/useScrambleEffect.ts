@@ -68,7 +68,6 @@ export default function useScrambleEffect(
 
     enhance();
 
-    // * Cleanup function to remove all event listeners
     return () => {
       eventHandlers.forEach((handlers, letter) => {
         letter.removeEventListener("mouseover", handlers.mouseover);
