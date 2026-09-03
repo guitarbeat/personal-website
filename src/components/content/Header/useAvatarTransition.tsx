@@ -1,61 +1,35 @@
 import type React from "react";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef } from "react";
 
 import { isAvatarScaleTransition, prefersReducedMotion } from "@/utils/motion";
 import { AvatarContent } from "./AvatarContent";
 import { AVATAR_TRANSITION_FALLBACK_MS } from "./avatarTransition.constants";
 import {
-  type AvatarPhase,
   getAvatarFrameClassName,
   getClickTransitionState,
   getNextPhaseOnFrameEnd,
   getNextPhaseOnPhotoEnd,
-  persistProfileIndex,
 } from "./avatarTransition.utils";
-import { PROFILE_IMAGES, readStoredProfileIndex } from "./headerProfileImages";
-import { useAvatarPhaseAnimation } from "./useAvatarPhaseAnimation";
+import { PROFILE_IMAGES } from "./headerProfileImages";
+import { useAvatarTransitionState } from "./useAvatarTransitionState";
 
 export { AVATAR_TRANSITION_FALLBACK_MS };
 
 export function useAvatarTransition() {
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const transitionFallbackRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  );
-  const phaseRef = useRef<AvatarPhase>("idle");
-  const shouldExpandRef = useRef(false);
-  const incomingIndexRef = useRef<number | null>(null);
-
-  const [profileIndex, setProfileIndex] = useState<number>(() =>
-    readStoredProfileIndex(),
-  );
-  const [phase, setPhase] = useState<AvatarPhase>("idle");
-  const [outgoingIndex, setOutgoingIndex] = useState<number | null>(null);
-  const [incomingIndex, setIncomingIndex] = useState<number | null>(null);
-  const [phaseAnimating, setPhaseAnimating] = useAvatarPhaseAnimation(phase);
-
-  phaseRef.current = phase;
-  incomingIndexRef.current = incomingIndex;
-
-  const completeTransition = useCallback(() => {
-    if (transitionFallbackRef.current) {
-      clearTimeout(transitionFallbackRef.current);
-      transitionFallbackRef.current = null;
-    }
-
-    const nextIndex = incomingIndexRef.current;
-    if (nextIndex === null) {
-      return;
-    }
-
-    setProfileIndex(nextIndex);
-    persistProfileIndex(nextIndex);
-    setPhase("idle");
-    setOutgoingIndex(null);
-    setIncomingIndex(null);
-    shouldExpandRef.current = false;
-    setPhaseAnimating(false);
-  }, [setPhaseAnimating]);
+  const {
+    profileIndex,
+    phase,
+    outgoingIndex,
+    incomingIndex,
+    phaseAnimating,
+    phaseRef,
+    shouldExpandRef,
+    completeTransition,
+    advancePhase,
+    startTransition,
+    updateProfileIndexDirectly,
+  } = useAvatarTransitionState();
 
   const handleClick = useCallback(() => {
     if (phaseRef.current !== "idle") {
@@ -64,8 +38,7 @@ export function useAvatarTransition() {
 
     if (prefersReducedMotion()) {
       const nextIndex = (profileIndex + 1) % PROFILE_IMAGES.length;
-      setProfileIndex(nextIndex);
-      persistProfileIndex(nextIndex);
+      updateProfileIndexDirectly(nextIndex);
       return;
     }
 
@@ -76,17 +49,8 @@ export function useAvatarTransition() {
       wasHovered,
     );
 
-    incomingIndexRef.current = nextIndex;
-    shouldExpandRef.current = shouldExpand;
-    setOutgoingIndex(profileIndex);
-    setIncomingIndex(nextIndex);
-    setPhaseAnimating(false);
-    setPhase(initialPhase);
-
-    transitionFallbackRef.current = setTimeout(() => {
-      completeTransition();
-    }, AVATAR_TRANSITION_FALLBACK_MS);
-  }, [completeTransition, profileIndex, setPhaseAnimating]);
+    startTransition(profileIndex, nextIndex, initialPhase, shouldExpand);
+  }, [phaseRef, profileIndex, updateProfileIndexDirectly, startTransition]);
 
   const handleFrameTransitionEnd = useCallback(
     (e: React.TransitionEvent<HTMLSpanElement>) => {
@@ -99,8 +63,7 @@ export function useAvatarTransition() {
       );
 
       if (nextPhase) {
-        setPhaseAnimating(false);
-        setPhase(nextPhase);
+        advancePhase(nextPhase);
         return;
       }
 
@@ -108,7 +71,7 @@ export function useAvatarTransition() {
         completeTransition();
       }
     },
-    [completeTransition, setPhaseAnimating],
+    [advancePhase, completeTransition, phaseRef],
   );
 
   const handlePhotoTransitionEnd = useCallback(
@@ -123,8 +86,7 @@ export function useAvatarTransition() {
       );
 
       if (nextPhase) {
-        setPhaseAnimating(false);
-        setPhase(nextPhase);
+        advancePhase(nextPhase);
         return;
       }
 
@@ -132,7 +94,7 @@ export function useAvatarTransition() {
         completeTransition();
       }
     },
-    [completeTransition, setPhaseAnimating],
+    [advancePhase, completeTransition, phaseRef, shouldExpandRef],
   );
 
   const frameClassName = getAvatarFrameClassName(phase, phaseAnimating);
