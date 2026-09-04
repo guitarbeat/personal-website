@@ -111,6 +111,43 @@ describe("NotionService", () => {
     await expect(service.getAllData()).rejects.toThrow("Bad Gateway");
   });
 
+  it("falls back to statusText when payload has error object without message, failureType, or code", async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: false,
+      statusText: "Internal Error",
+      json: jest.fn().mockResolvedValue({
+        error: {},
+      }),
+    } as unknown as Response);
+
+    const service = new NotionService();
+    await expect(service.getAllData()).rejects.toThrow("Internal Error");
+  });
+
+  it("falls back to statusText when top-level message is not a string", async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: false,
+      statusText: "Bad Request",
+      json: jest.fn().mockResolvedValue({
+        message: 12345,
+      }),
+    } as unknown as Response);
+
+    const service = new NotionService();
+    await expect(service.getAllData()).rejects.toThrow("Bad Request");
+  });
+
+  it("falls back to statusText when payload is a primitive string or number", async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: false,
+      statusText: "Gateway Timeout",
+      json: jest.fn().mockResolvedValue("Plain text error"),
+    } as unknown as Response);
+
+    const service = new NotionService();
+    await expect(service.getAllData()).rejects.toThrow("Gateway Timeout");
+  });
+
   it("throws error when response is ok but payload is invalid structure", async () => {
     global.fetch = jest.fn().mockResolvedValue({
       ok: true,
