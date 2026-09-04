@@ -1,5 +1,7 @@
 import {
   DEFAULT_LCP_WEBP_SRC,
+  FALLBACK_PROFILE_SRC,
+  FALLBACK_PROFILE_WEBP_SRC,
   getInitialLcpImageSrc,
   getInitialProfileSrc,
   PROFILE_IMAGES,
@@ -30,5 +32,14 @@ describe("headerProfileImages", () => {
 
     expect(readStoredProfileIndex()).toBe(0);
     expect(getInitialProfileSrc()).toBe(PROFILE_IMAGES[0].src);
+  });
+
+  it("exports fallback profile src and webp src directly without runtime search", () => {
+    expect(FALLBACK_PROFILE_SRC).toBe(
+      PROFILE_IMAGES.find((img) => img.isFallback)?.src,
+    );
+    expect(FALLBACK_PROFILE_WEBP_SRC).toBe(
+      PROFILE_IMAGES.find((img) => img.isFallback)?.webpSrc,
+    );
   });
 });
