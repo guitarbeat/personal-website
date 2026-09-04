@@ -1,35 +1,18 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 
 import { cn } from "@/utils/commonUtils";
 import { HackTerminal } from "./HackTerminal";
-import {
-  buildHackCompleteConsole,
-  DEFAULT_CONSOLE_PROMPT,
-  HACK_COMPLETE_FEEDBACK,
-  HACKER_TYPER_CORPUS,
-} from "./hackCopy";
-import { ATTEMPT_START_PROGRESS } from "./hackTuning";
+import { DEFAULT_CONSOLE_PROMPT, HACKER_TYPER_CORPUS } from "./hackCopy";
 import "./matrix.scss";
 import { getMatrixRainIntensity } from "./matrixRainIntensity";
 import { NuUhUhEasterEgg } from "./NuUhUhEasterEgg";
 import { useUnlock } from "./UnlockContext";
 import { useHackAttempt } from "./useHackAttempt";
+import { useHackEasterEgg } from "./useHackEasterEgg";
 import { useHackInteraction } from "./useHackInteraction";
 import { useHackProgressDecay } from "./useHackProgressDecay";
+import { useHackTelemetry } from "./useHackTelemetry";
 import { useMatrixRain } from "./useMatrixRain";
-
-const secureRandom = (): number => {
-  if (
-    typeof window !== "undefined" &&
-    window.crypto &&
-    window.crypto.getRandomValues
-  ) {
-    const array = new Uint32Array(1);
-    window.crypto.getRandomValues(array);
-    return array[0] / 4294967296;
-  }
-  return Math.random();
-};
 
 interface MatrixProps {
   isVisible: boolean;
@@ -57,31 +40,12 @@ const Matrix = ({ isVisible, onDismiss, onMatrixReady }: MatrixProps) => {
 
   useMatrixRain(canvasRef, isVisible, rainIntensityRef);
   const completionTriggeredRef = useRef(false);
-  const [attemptStart] = useState(() => Date.now());
-  const [matrixCoordinate] = useState<string>(() => {
-    const sector = Math.floor(secureRandom() * 64)
-      .toString(16)
-      .toUpperCase()
-      .padStart(2, "0");
-    const node = Math.floor(secureRandom() * 4096)
-      .toString(16)
-      .toUpperCase()
-      .padStart(3, "0");
-    return `${sector}:${node}`;
-  });
-  const [signalSeed] = useState<number>(
-    () => Math.floor(secureRandom() * 900) + 100,
-  );
   const { completeHack, showHackCompleteFeedback } = useUnlock();
-  const easterEggTriggeredRef = useRef<boolean>(false);
-  const [easterEggs, setEasterEggs] = useState<number[]>([]);
+
   const hackCorpus = useMemo(
     () => Array.from({ length: 24 }, () => HACKER_TYPER_CORPUS).join("\n"),
     [],
   );
-  const completionTelemetryRef = useRef<
-    Parameters<typeof buildHackCompleteConsole>[0] | null
-  >(null);
 
   const {
     hackInputRef,
@@ -101,19 +65,20 @@ const Matrix = ({ isVisible, onDismiss, onMatrixReady }: MatrixProps) => {
     setHackingBuffer,
   });
 
-  const triggerIdleFailure = useCallback(() => {
-    if (easterEggTriggeredRef.current) {
-      return;
-    }
-
-    easterEggTriggeredRef.current = true;
-    resetIdleFailureTracking();
-    lastKeyTimeRef.current = null;
-    setHackFeedback("Signal severed. Access denied. Restart the hack.");
-
-    const eggId = Date.now();
-    setEasterEggs((prev) => [...prev, eggId]);
-  }, [lastKeyTimeRef, resetIdleFailureTracking, setHackFeedback]);
+  const {
+    easterEggs,
+    easterEggTriggeredRef,
+    triggerIdleFailure,
+    handleDismissEasterEgg,
+  } = useHackEasterEgg({
+    focusHackInput,
+    isVisible,
+    lastKeyTimeRef,
+    resetIdleFailureTracking,
+    setHackFeedback,
+    setHackProgress,
+    setHackingBuffer,
+  });
 
   useHackProgressDecay({
     easterEggTriggeredRef,
@@ -126,26 +91,11 @@ const Matrix = ({ isVisible, onDismiss, onMatrixReady }: MatrixProps) => {
     triggerIdleFailure,
   });
 
-  const handleDismissEasterEgg = useCallback(
-    (eggId: number) => {
-      setEasterEggs((prev) => prev.filter((id) => id !== eggId));
-      resetIdleFailureTracking();
-      lastKeyTimeRef.current = null;
-      setHackProgress(ATTEMPT_START_PROGRESS);
-      setHackingBuffer(DEFAULT_CONSOLE_PROMPT);
-      setHackFeedback("Channel reset. Re-engage the hack.");
-      easterEggTriggeredRef.current = false;
-      focusHackInput();
-    },
-    [
-      focusHackInput,
-      lastKeyTimeRef,
-      resetIdleFailureTracking,
-      setHackFeedback,
-      setHackProgress,
-      setHackingBuffer,
-    ],
-  );
+  const completionTelemetry = useHackTelemetry({
+    isHackComplete,
+    setHackFeedback,
+    setHackingBuffer,
+  });
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
@@ -163,7 +113,6 @@ const Matrix = ({ isVisible, onDismiss, onMatrixReady }: MatrixProps) => {
   );
 
   const consoleDisplay = hackingBuffer || DEFAULT_CONSOLE_PROMPT;
-  const completionTelemetry = completionTelemetryRef.current;
   const showConsoleCursor = !isHackComplete;
 
   const handleContainerClick = useCallback(
@@ -221,62 +170,6 @@ const Matrix = ({ isVisible, onDismiss, onMatrixReady }: MatrixProps) => {
   }, [hackingBuffer, resetHackStream]);
 
   useEffect(() => {
-    if (!isHackComplete) {
-      completionTelemetryRef.current = null;
-      return;
-    }
-
-    if (!completionTelemetryRef.current) {
-      const now = Date.now();
-      const elapsedSeconds = Math.max(
-        0,
-        Math.round((now - attemptStart) / 1000),
-      );
-
-      const runtimeDisplay = new Date(elapsedSeconds * 1000)
-        .toISOString()
-        .substring(11, 19);
-      const timecodeDisplay = new Date(now).toISOString().substring(11, 19);
-
-      const oscillation = Math.sin(elapsedSeconds / 2) * 4;
-      const progressBonus = 100 / 3;
-      const signalGain = Math.round(
-        signalSeed / 10 + oscillation + progressBonus,
-      );
-
-      const base = Math.floor(signalSeed / 3);
-      const jitter = (elapsedSeconds % 7) * 3;
-      const signalChannel = (base + jitter).toString().padStart(3, "0");
-
-      completionTelemetryRef.current = {
-        matrixCoordinate,
-        runtimeDisplay,
-        timecodeDisplay,
-        signalGain,
-        signalChannel,
-      };
-    }
-
-    const completeReadout = buildHackCompleteConsole({
-      matrixCoordinate: completionTelemetryRef.current.matrixCoordinate,
-      runtimeDisplay: completionTelemetryRef.current.runtimeDisplay,
-      timecodeDisplay: completionTelemetryRef.current.timecodeDisplay,
-      signalGain: completionTelemetryRef.current.signalGain,
-      signalChannel: completionTelemetryRef.current.signalChannel,
-    });
-
-    setHackFeedback(HACK_COMPLETE_FEEDBACK);
-    setHackingBuffer(completeReadout);
-  }, [
-    isHackComplete,
-    matrixCoordinate,
-    setHackFeedback,
-    setHackingBuffer,
-    attemptStart,
-    signalSeed,
-  ]);
-
-  useEffect(() => {
     if (!isHackComplete || completionTriggeredRef.current) {
       return undefined;
     }
@@ -306,14 +199,6 @@ const Matrix = ({ isVisible, onDismiss, onMatrixReady }: MatrixProps) => {
 
     focusHackInput();
   }, [isVisible, showHackCompleteFeedback, focusHackInput]);
-
-  useEffect(() => {
-    if (!isVisible) {
-      setEasterEggs([]);
-      easterEggTriggeredRef.current = false;
-      resetIdleFailureTracking();
-    }
-  }, [isVisible, resetIdleFailureTracking]);
 
   if (!isVisible) {
     return null;
