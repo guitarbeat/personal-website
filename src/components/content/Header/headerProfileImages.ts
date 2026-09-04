@@ -54,13 +54,9 @@ export const PROFILE_IMAGES: ProfileImage[] = [
   },
 ];
 
-export const FALLBACK_PROFILE_SRC =
-  PROFILE_IMAGES.find((image) => image.isFallback)?.src ??
-  PROFILE_IMAGES[0].src;
+export const FALLBACK_PROFILE_SRC = profileAvatarFallback;
 
-export const FALLBACK_PROFILE_WEBP_SRC =
-  PROFILE_IMAGES.find((image) => image.isFallback)?.webpSrc ??
-  PROFILE_IMAGES[0].webpSrc;
+export const FALLBACK_PROFILE_WEBP_SRC = profileAvatarFallbackWebp;
 
 export const PROFILE_INDEX_STORAGE_KEY = "header-profile-index";
 
