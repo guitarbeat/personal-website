@@ -10,8 +10,8 @@ import profileAvatarStudioWebp from "../../../assets/images/profile-avatar-studi
 export const DEFAULT_LCP_WEBP_SRC = "/lcp/profile-avatar-default.webp";
 
 /** Display size after WebP resize (matches header avatar slot). */
-export const PROFILE_IMAGE_WIDTH = 400;
-export const PROFILE_IMAGE_HEIGHT = 400;
+const PROFILE_IMAGE_WIDTH = 400;
+const PROFILE_IMAGE_HEIGHT = 400;
 
 export interface ProfileImage {
   src: string;
