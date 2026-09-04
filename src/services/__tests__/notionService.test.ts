@@ -148,6 +148,48 @@ describe("NotionService", () => {
     await expect(service.getAllData()).rejects.toThrow("Gateway Timeout");
   });
 
+  it("falls back to statusText when payload error property is explicitly null", async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: false,
+      statusText: "Service Error",
+      json: jest.fn().mockResolvedValue({
+        error: null,
+      }),
+    } as unknown as Response);
+
+    const service = new NotionService();
+    await expect(service.getAllData()).rejects.toThrow("Service Error");
+  });
+
+  it("falls back to top-level message when error object has empty fields", async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: false,
+      statusText: "Bad Request",
+      json: jest.fn().mockResolvedValue({
+        error: {},
+        message: "Fallback top-level message",
+      }),
+    } as unknown as Response);
+
+    const service = new NotionService();
+    await expect(service.getAllData()).rejects.toThrow(
+      "Fallback top-level message",
+    );
+  });
+
+  it("falls back to statusText when nested error fields are empty strings", async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: false,
+      statusText: "Internal Server Error",
+      json: jest.fn().mockResolvedValue({
+        error: { message: "", failureType: "", code: "" },
+      }),
+    } as unknown as Response);
+
+    const service = new NotionService();
+    await expect(service.getAllData()).rejects.toThrow("Internal Server Error");
+  });
+
   it("throws error when response is ok but payload is invalid structure", async () => {
     global.fetch = jest.fn().mockResolvedValue({
       ok: true,
