@@ -173,6 +173,39 @@ describe("notion api queries", () => {
     ]);
   });
 
+  it("skips fetching block children for unpublished projects without inline content", async () => {
+    const fetchImpl = jest.fn().mockResolvedValue(
+      mockResponse({
+        results: [
+          createProjectPage({
+            titleText: "Published Project",
+            slug: "published-project",
+            published: true,
+            detail: "Inline Detail",
+          }),
+          createProjectPage({
+            titleText: "Unpublished Project",
+            slug: "unpublished-project",
+            published: false,
+            detail: "",
+          }),
+        ],
+        has_more: false,
+        next_cursor: null,
+      }),
+    );
+
+    const records = await queryNotionDatabase({
+      databaseType: "projects",
+      fetchImpl,
+      env: { NOTION_TOKEN: "test-token" },
+    });
+
+    expect(records).toHaveLength(1);
+    expect(records[0].slug).toBe("published-project");
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
+
   it("sorts work records with current roles first, then by end date", async () => {
     const fetchImpl = jest.fn().mockResolvedValue(
       mockResponse({

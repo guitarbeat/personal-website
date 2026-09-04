@@ -6,6 +6,7 @@ import {
 } from "./constants.mjs";
 import {
   extractBlockPlainText,
+  extractCheckboxValue,
   extractRichText,
   getNotionToken,
   parseResponseJson,
@@ -107,40 +108,55 @@ async function fetchProjectContentByPageId({
   notionToken,
   concurrencyLimit = 5,
 }) {
-  const contentEntries = await mapConcurrent(
-    pages,
-    concurrencyLimit,
-    async (page) => {
-      const props = page.properties || {};
-      const inlineContent = extractRichText(
-        props.Detail?.rich_text ||
-          props.detail?.rich_text ||
-          props.content?.rich_text ||
-          props.Description?.rich_text ||
-          [],
-      );
+  const contentEntries = [];
+  const pagesNeedingBlocks = [];
 
-      if (inlineContent) {
-        return [page.id, inlineContent];
-      }
+  for (const page of pages) {
+    const props = page.properties || {};
+    const published = extractCheckboxValue(props.Published, props.published);
+    if (published === false) {
+      continue;
+    }
 
-      const blocks = await fetchNotionBlockChildren({
-        blockId: page.id,
-        fetchImpl,
-        notionToken,
-      });
-      const validBlocks = [];
-      for (const block of blocks) {
-        const blockText = extractBlockPlainText(block);
-        if (typeof blockText === "string" && blockText.length > 0) {
-          validBlocks.push(blockText);
+    const inlineContent = extractRichText(
+      props.Detail?.rich_text ||
+        props.detail?.rich_text ||
+        props.content?.rich_text ||
+        props.Description?.rich_text ||
+        [],
+    );
+
+    if (inlineContent) {
+      contentEntries.push([page.id, inlineContent]);
+    } else {
+      pagesNeedingBlocks.push(page);
+    }
+  }
+
+  if (pagesNeedingBlocks.length > 0) {
+    const blockEntries = await mapConcurrent(
+      pagesNeedingBlocks,
+      concurrencyLimit,
+      async (page) => {
+        const blocks = await fetchNotionBlockChildren({
+          blockId: page.id,
+          fetchImpl,
+          notionToken,
+        });
+        const validBlocks = [];
+        for (const block of blocks) {
+          const blockText = extractBlockPlainText(block);
+          if (typeof blockText === "string" && blockText.length > 0) {
+            validBlocks.push(blockText);
+          }
         }
-      }
-      const pageContent = validBlocks.join("\n\n");
+        const pageContent = validBlocks.join("\n\n");
 
-      return [page.id, pageContent];
-    },
-  );
+        return [page.id, pageContent];
+      },
+    );
+    contentEntries.push(...blockEntries);
+  }
 
   return new Map(contentEntries);
 }
