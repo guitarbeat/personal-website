@@ -278,7 +278,7 @@ a {
   user-select: none;
 }
 
-// Configures iOS momentum scrolling
+// Fix for iOS momentum scrolling
 .scroll-container {
   overflow-y: scroll;
   overscroll-behavior-y: contain;
