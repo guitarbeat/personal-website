@@ -16,7 +16,11 @@ const parseApiError = (payload: unknown, fallbackMessage: string) => {
       code?: string;
     };
 
-    return nestedError.message || nestedError.failureType || nestedError.code;
+    const errorMessage =
+      nestedError.message || nestedError.failureType || nestedError.code;
+    if (errorMessage) {
+      return errorMessage;
+    }
   }
 
   if (
