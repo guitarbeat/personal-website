@@ -258,7 +258,6 @@ export function useMoireEffect(containerRef: RefObject<HTMLDivElement | null>) {
         document.body.addEventListener("mouseleave", handleMouseLeave, false);
       }
 
-      // Assign the cleanup function to the variable scoped to useEffect
       internalCleanup = () => {
         if (animationFrameId) cancelAnimationFrame(animationFrameId);
 
