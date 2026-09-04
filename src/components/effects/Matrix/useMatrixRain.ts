@@ -71,10 +71,6 @@ export const useMatrixRain = (
 
     // Group initial drops into buckets
     for (const drop of drops) {
-      if (!buckets[drop.fontSize]) {
-        buckets[drop.fontSize] = [];
-        bucketKeys.push(drop.fontSize);
-      }
       buckets[drop.fontSize].push(drop);
     }
 
@@ -112,10 +108,6 @@ export const useMatrixRain = (
               if (last) {
                 if (j < bucket.length) {
                   bucket[j] = last;
-                }
-                if (!buckets[drop.fontSize]) {
-                  buckets[drop.fontSize] = [];
-                  bucketKeys.push(drop.fontSize);
                 }
                 buckets[drop.fontSize].push(drop);
               }
