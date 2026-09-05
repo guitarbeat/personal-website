@@ -443,7 +443,8 @@ body:not(.light-theme) {
     &:focus-visible {
       background-color: rgb(255 255 255 / 14%);
       color: var(--text-primary);
-      outline: none;
+      outline: 2px solid var(--focus-ring, currentColor);
+    outline-offset: 2px;
 
       .light-theme & {
         background-color: rgb(255 255 255 / 72%);

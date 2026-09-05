@@ -1,4 +1,5 @@
 import { Analytics } from "@vercel/analytics/react";
+import SkipLink from "@/components/Core/SkipLink";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { lazy, Suspense, useCallback, useEffect, useState } from "react";
 import { BrowserRouter } from "react-router-dom";
@@ -71,6 +72,7 @@ function AppContent() {
 
   return (
     <>
+      <SkipLink />
       <LoadingSequence
         isVisible={isInitialLoaderVisible}
         isReadyToReveal={canRevealInitialLoader}

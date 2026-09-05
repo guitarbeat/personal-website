@@ -83,7 +83,8 @@
   
   // Focus state for accessibility
   &:focus-visible {
-    outline: none;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
     box-shadow: 0 0 0 3px var(--focus-ring);
   }
 }
@@ -99,11 +100,13 @@
  */
 @mixin enhanced-focus($style: 'ring', $color: 'primary') {
   &:focus {
-    outline: none;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
   }
   
   &:focus-visible {
-    outline: none;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
     
     @if $style == 'ring' {
       box-shadow: 0 0 0 3px var(--color-#{$color}-200);
@@ -127,7 +130,8 @@
 @mixin enhanced-keyboard-focus($focus-style: 'ring') {
   // Remove default focus outline
   &:focus {
-    outline: none;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
   }
   
   // Apply enhanced focus for keyboard navigation
