@@ -80,13 +80,15 @@
   
   // Focus state
   &:focus {
-    outline: none;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
     box-shadow: 0 0 0 3px $focus-ring;
   }
   
   // Focus visible for keyboard navigation
   &:focus-visible {
-    outline: none;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
     box-shadow: 0 0 0 3px $focus-ring;
   }
   
@@ -233,14 +235,16 @@
   
   // Focus state
   &:focus {
-    outline: none;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
     border-color: map.get(map.get(map.get(tokens.$enhanced-input-standards, 'states'), 'focus'), 'border');
     box-shadow: 0 0 0 3px map.get(map.get(map.get(tokens.$enhanced-input-standards, 'states'), 'focus'), 'ring');
   }
   
   // Focus visible for keyboard navigation
   &:focus-visible {
-    outline: none;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
     border-color: map.get(map.get(map.get(tokens.$enhanced-input-standards, 'states'), 'focus'), 'border');
     box-shadow: 0 0 0 3px map.get(map.get(map.get(tokens.$enhanced-input-standards, 'states'), 'focus'), 'ring');
   }
@@ -464,7 +468,8 @@
     }
     
     &:focus {
-      outline: none;
+      outline: 2px solid transparent;
+    outline-offset: 2px;
       box-shadow: 0 0 0 3px var(--focus-ring);
     }
   }
