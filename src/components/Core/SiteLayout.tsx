@@ -4,7 +4,7 @@ import FrameEffect from "@/components/effects/Loading/FrameEffect";
 import ScrollToTopButton from "@/components/effects/Matrix/ScrollToTopButton";
 import { useUnlock } from "@/components/effects/Matrix/UnlockContext";
 import MagicComponent from "@/components/effects/Moire/Moire";
-import { NavBar } from "@/components/index";
+import NavBar from "@/components/content/NavBar/NavBar";
 
 export const SiteStatusPill = memo(() => (
   <div className="site-status-pill" role="status">
