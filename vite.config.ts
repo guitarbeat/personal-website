@@ -192,5 +192,31 @@ export default defineConfig(({ mode }) => {
       host: "::",
     },
     publicDir: "public",
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes("src/pages/HomePage")) {
+              return "route-home";
+            }
+            if (id.includes("src/components/effects/InfiniteScrollEffect")) {
+              return "route-scroll";
+            }
+            if (id.includes("src/components/content/About/")) {
+              return "section-about";
+            }
+            if (id.includes("src/components/content/Projects/")) {
+              return "section-projects";
+            }
+            if (id.includes("src/components/content/Work/")) {
+              return "section-work";
+            }
+            if (id.includes("src/components/content/Header/")) {
+              return "section-header";
+            }
+          },
+        },
+      },
+    },
   };
 });

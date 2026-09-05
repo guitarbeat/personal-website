@@ -9,9 +9,10 @@ import {
 
 import { SiteLayout } from "@/components/Core/SiteLayout";
 import { BlurSection } from "@/components/effects/Blur/index";
-import InfiniteScrollEffect from "@/components/effects/InfiniteScrollEffect";
+const InfiniteScrollEffect = lazy(() => import("@/components/effects/InfiniteScrollEffect"));
 import { shouldShowMatrixFromSearch } from "@/hooks/useMatrixActivation";
-import { HomePage } from "@/pages/HomePage";
+// Route-based code splitting for the main page to reduce the initial bundle size and improve First Contentful Paint.
+const HomePage = lazy(() => import("@/pages/HomePage").then((m) => ({ default: m.HomePage })));
 
 const Matrix = lazy(() => import("@/components/effects/Matrix/Matrix"));
 
@@ -131,9 +132,11 @@ export function AppRoutes({
             hideNavBar={false}
           >
             <BlurSection as="div" disabled={!isUnlocked} className="">
-              <InfiniteScrollEffect shopMode={isScrollMode}>
-                <HomePage />
-              </InfiniteScrollEffect>
+              <Suspense fallback={null}>
+                <InfiniteScrollEffect shopMode={isScrollMode}>
+                  <HomePage />
+                </InfiniteScrollEffect>
+              </Suspense>
             </BlurSection>
           </SiteLayout>
         }
@@ -150,9 +153,11 @@ export function AppRoutes({
             hideNavBar={true}
           >
             <BlurSection as="div" disabled={false} className="">
-              <InfiniteScrollEffect shopMode={true}>
-                <HomePage />
-              </InfiniteScrollEffect>
+              <Suspense fallback={null}>
+                <InfiniteScrollEffect shopMode={true}>
+                  <HomePage />
+                </InfiniteScrollEffect>
+              </Suspense>
             </BlurSection>
           </SiteLayout>
         }

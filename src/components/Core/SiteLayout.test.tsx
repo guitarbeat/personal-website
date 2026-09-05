@@ -27,10 +27,9 @@ jest.mock("../effects/Moire/Moire", () => {
   );
 });
 
-jest.mock("../index", () => ({
-  NavBar: ({ items }: { items: Record<string, string> }) => (
+jest.mock("../content/NavBar/NavBar", () => ({ __esModule: true, default: ({ items }: { items: Record<string, string> }) => (
     <nav data-testid="nav-bar">{Object.keys(items).join(",")}</nav>
-  ),
+  )
 }));
 
 describe("SiteStatusPill", () => {

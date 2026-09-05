@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom";
-import { act, render, screen } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import type { ReactNode } from "react";
 
 const mockUseNotion = jest.fn();
@@ -55,13 +55,12 @@ jest.mock("./contexts/NotionContext", () => ({
   useNotion: () => mockUseNotion(),
 }));
 
-jest.mock("./components/index", () => ({
-  Header: () => <div>Header section</div>,
-  About: () => <div>About section</div>,
-  Projects: () => <div>Projects section</div>,
-  Work: () => <div>Work section</div>,
-  NavBar: () => <div>Navigation</div>,
-}));
+jest.mock("./components/content/NavBar/NavBar", () => ({ __esModule: true, default: () => <div>Navigation</div> }));
+jest.mock("./components/content/Header/Header", () => ({ __esModule: true, default: () => <div>Header section</div> }));
+jest.mock("./components/content/About/About", () => ({ __esModule: true, default: () => <div>About section</div> }));
+jest.mock("./components/content/Projects/Projects", () => ({ __esModule: true, default: () => <div>Projects section</div> }));
+jest.mock("./components/content/Work/Work", () => ({ __esModule: true, default: () => <div>Work section</div> }));
+// Removed mock for index
 
 jest.mock("./components/effects/Blur/index", () => ({
   BlurSection: ({ children }: { children: ReactNode }) => children,
@@ -123,7 +122,7 @@ describe("App reliability states", () => {
     jest.useRealTimers();
   });
 
-  it("renders the loader over the shell while initial content is still loading", () => {
+  it("renders the loader over the shell while initial content is still loading", async () => {
     mockUseNotion.mockReturnValue({
       db: {
         about: [],
@@ -140,17 +139,17 @@ describe("App reliability states", () => {
     render(<App />);
 
     expect(screen.getByTestId("site-loader")).toBeInTheDocument();
-    expect(screen.getByText("Header section")).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByText("Header section")).toBeInTheDocument());
 
     act(() => {
       jest.advanceTimersByTime(100);
     });
 
     expect(screen.queryByTestId("site-loader")).not.toBeInTheDocument();
-    expect(screen.getByText("Header section")).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByText("Header section")).toBeInTheDocument());
   });
 
-  it("renders a degraded-status pill while cached content is displayed", () => {
+  it("renders a degraded-status pill while cached content is displayed", async () => {
     mockUseNotion.mockReturnValue({
       db: {
         about: [{ category: "Bio", description: "Hello" }],
@@ -176,10 +175,10 @@ describe("App reliability states", () => {
     expect(
       screen.getByText("Showing cached content. Live refresh is unavailable."),
     ).toBeInTheDocument();
-    expect(screen.getByText("Header section")).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByText("Header section")).toBeInTheDocument());
   });
 
-  it("dismisses the loader after the minimum intro duration", () => {
+  it("dismisses the loader after the minimum intro duration", async () => {
     mockUseNotion.mockReturnValue({
       db: {
         about: [{ category: "Bio", description: "Hello" }],
@@ -203,7 +202,7 @@ describe("App reliability states", () => {
     render(<App />);
 
     expect(screen.getByTestId("site-loader")).toBeInTheDocument();
-    expect(screen.getByText("Header section")).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByText("Header section")).toBeInTheDocument());
 
     act(() => {
       jest.advanceTimersByTime(100);
@@ -212,7 +211,7 @@ describe("App reliability states", () => {
     expect(screen.queryByTestId("site-loader")).not.toBeInTheDocument();
   });
 
-  it("reveals the unavailable state after loading resolves with no content", () => {
+  it("reveals the unavailable state after loading resolves with no content", async () => {
     mockUseNotion.mockReturnValue({
       db: {
         about: [],
@@ -238,6 +237,6 @@ describe("App reliability states", () => {
       screen.getByText("Site content is temporarily unavailable."),
     ).toBeInTheDocument();
     expect(screen.queryByTestId("site-loader")).not.toBeInTheDocument();
-    expect(screen.queryByText("Header section")).not.toBeInTheDocument();
+    await waitFor(() => expect(screen.queryByText("Header section")).not.toBeInTheDocument());
   });
 });
