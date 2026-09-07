@@ -29,4 +29,52 @@ describe("logger utility", () => {
     logger.log("log message", true);
     expect(spy).toHaveBeenCalledWith("log message", true);
   });
+
+  it("should handle calls with no arguments", () => {
+    const infoSpy = jest.spyOn(console, "info").mockImplementation(() => {});
+    const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
+    const errorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+    const logSpy = jest.spyOn(console, "log").mockImplementation(() => {});
+
+    logger.info();
+    logger.warn();
+    logger.error();
+    logger.log();
+
+    expect(infoSpy).toHaveBeenCalledWith();
+    expect(warnSpy).toHaveBeenCalledWith();
+    expect(errorSpy).toHaveBeenCalledWith();
+    expect(logSpy).toHaveBeenCalledWith();
+  });
+
+  it("should isolate console calls to the intended method", () => {
+    const infoSpy = jest.spyOn(console, "info").mockImplementation(() => {});
+    const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
+    const errorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+    const logSpy = jest.spyOn(console, "log").mockImplementation(() => {});
+
+    logger.info("only info");
+
+    expect(infoSpy).toHaveBeenCalledTimes(1);
+    expect(warnSpy).not.toHaveBeenCalled();
+    expect(errorSpy).not.toHaveBeenCalled();
+    expect(logSpy).not.toHaveBeenCalled();
+  });
+
+  it("should pass primitive and complex arguments including null and undefined", () => {
+    const logSpy = jest.spyOn(console, "log").mockImplementation(() => {});
+    const fn = () => {};
+    const sym = Symbol("test");
+
+    logger.log("test", null, undefined, fn, sym, [1, 2]);
+
+    expect(logSpy).toHaveBeenCalledWith(
+      "test",
+      null,
+      undefined,
+      fn,
+      sym,
+      [1, 2],
+    );
+  });
 });
