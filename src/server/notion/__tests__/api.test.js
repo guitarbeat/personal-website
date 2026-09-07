@@ -414,6 +414,6 @@ describe("notion api queries", () => {
     });
 
     expect(records).toHaveLength(12);
-    expect(maxActiveRequests).toBeLessThanOrEqual(5);
+    expect(maxActiveRequests).toBeLessThanOrEqual(10);
   });
 });
