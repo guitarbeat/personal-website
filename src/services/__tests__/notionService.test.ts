@@ -201,4 +201,46 @@ describe("NotionService", () => {
       "Content API returned an invalid response",
     );
   });
+
+  it("falls back to statusText when payload error is boolean false", async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: false,
+      statusText: "Bad Request",
+      json: jest.fn().mockResolvedValue({
+        error: false,
+      }),
+    } as unknown as Response);
+
+    const service = new NotionService();
+    await expect(service.getAllData()).rejects.toThrow("Bad Request");
+  });
+
+  it("falls back to top-level message when payload error is non-object string", async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: false,
+      statusText: "Bad Request",
+      json: jest.fn().mockResolvedValue({
+        error: "String error",
+        message: "Valid top level message",
+      }),
+    } as unknown as Response);
+
+    const service = new NotionService();
+    await expect(service.getAllData()).rejects.toThrow(
+      "Valid top level message",
+    );
+  });
+
+  it("falls back to statusText when payload error is an array", async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: false,
+      statusText: "Unprocessable Entity",
+      json: jest.fn().mockResolvedValue({
+        error: [],
+      }),
+    } as unknown as Response);
+
+    const service = new NotionService();
+    await expect(service.getAllData()).rejects.toThrow("Unprocessable Entity");
+  });
 });
