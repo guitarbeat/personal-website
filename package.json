@@ -145,7 +145,7 @@
     "prettier": "^3.9.6",
     "react-scripts": "^5.0.1",
     "resolve-url-loader": "^5.0.0",
-    "sass-loader": "^17.0.0",
+    "sass-loader": "^17.0.1",
     "sharp": "^0.35.4",
     "stylelint": "^17.14.1",
     "stylelint-config-standard-scss": "^17.0.0",
