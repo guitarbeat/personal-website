@@ -106,7 +106,7 @@ async function fetchProjectContentByPageId({
   pages,
   fetchImpl = fetch,
   notionToken,
-  concurrencyLimit = 5,
+  concurrencyLimit = 10,
 }) {
   const contentEntries = [];
   const pagesNeedingBlocks = [];
