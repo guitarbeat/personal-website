@@ -9,10 +9,14 @@ import {
 
 import { SiteLayout } from "@/components/Core/SiteLayout";
 import { BlurSection } from "@/components/effects/Blur/index";
-const InfiniteScrollEffect = lazy(() => import("@/components/effects/InfiniteScrollEffect"));
+const InfiniteScrollEffect = lazy(
+  () => import("@/components/effects/InfiniteScrollEffect"),
+);
 import { shouldShowMatrixFromSearch } from "@/hooks/useMatrixActivation";
 // Route-based code splitting for the main page to reduce the initial bundle size and improve First Contentful Paint.
-const HomePage = lazy(() => import("@/pages/HomePage").then((m) => ({ default: m.HomePage })));
+const HomePage = lazy(() =>
+  import("@/pages/HomePage").then((m) => ({ default: m.HomePage })),
+);
 
 const Matrix = lazy(() => import("@/components/effects/Matrix/Matrix"));
 
