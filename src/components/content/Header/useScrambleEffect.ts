@@ -1,19 +1,16 @@
 import { useEffect } from "react";
 import { isAboveBreakpoint, randomInt } from "@/utils/commonUtils";
 
-// * Breakpoint constant - matches SCSS breakpoint system
 const DESKTOP_BREAKPOINT = 768;
 
 export default function useScrambleEffect(
   ref: React.RefObject<HTMLElement | null>,
 ) {
   useEffect(() => {
-    // * Early return if ref is not available
     if (!ref?.current) {
       return undefined;
     }
 
-    // * Store event handlers for cleanup
     const eventHandlers = new Map();
 
     const enhance = () => {
@@ -38,7 +35,6 @@ export default function useScrambleEffect(
           ref.current.querySelectorAll(".letter"),
         ) as HTMLElement[];
         for (const letter of letterElements) {
-          // * Create event handlers
           const handleMouseOver = (e: Event) => {
             const target = e.target as HTMLElement;
             target.style.setProperty("--x", `${randomInt(-10, 10)}px`);
@@ -53,13 +49,11 @@ export default function useScrambleEffect(
             target.style.setProperty("--r", "0deg");
           };
 
-          // * Store handlers for cleanup
           eventHandlers.set(letter, {
             mouseover: handleMouseOver,
             mouseout: handleMouseOut,
           });
 
-          // * Add event listeners
           letter.addEventListener("mouseover", handleMouseOver);
           letter.addEventListener("mouseout", handleMouseOut);
         }
