@@ -51,7 +51,7 @@ importers:
         version: 2.0.0(react@19.3.0)
       '@vitejs/plugin-react':
         specifier: ^6.1.1
-        version: 6.1.1(vite@8.3.0(@types/node@25.9.3)(esbuild@0.27.0)(jiti@1.21.7)(sass@1.104.1)(terser@5.48.0)(tsx@4.21.0)(yaml@2.9.1))
+        version: 6.1.1(vite@8.3.0(@types/node@25.9.3)(esbuild@0.27.0)(jiti@1.21.7)(sass@1.105.0)(terser@5.48.0)(tsx@4.21.0)(yaml@2.9.1))
       ajv:
         specifier: ^8.18.0
         version: 8.20.0
@@ -93,7 +93,7 @@ importers:
         version: 3.15.0
       lovable-tagger:
         specifier: ^1.3.3
-        version: 1.3.3(tsx@4.21.0)(vite@8.3.0(@types/node@25.9.3)(esbuild@0.27.0)(jiti@1.21.7)(sass@1.104.1)(terser@5.48.0)(tsx@4.21.0)(yaml@2.9.1))(yaml@2.9.1)
+        version: 1.3.3(tsx@4.21.0)(vite@8.3.0(@types/node@25.9.3)(esbuild@0.27.0)(jiti@1.21.7)(sass@1.105.0)(terser@5.48.0)(tsx@4.21.0)(yaml@2.9.1))(yaml@2.9.1)
       ogl:
         specifier: ^1.0.11
         version: 1.0.11
@@ -122,8 +122,8 @@ importers:
         specifier: ^6.1.3
         version: 6.1.3
       sass:
-        specifier: ^1.104.1
-        version: 1.104.1
+        specifier: ^1.105.0
+        version: 1.105.0
       styled-components:
         specifier: ^6.5.3
         version: 6.5.3(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -135,7 +135,7 @@ importers:
         version: 15.1.22
       vite:
         specifier: ^8.3.0
-        version: 8.3.0(@types/node@25.9.3)(esbuild@0.27.0)(jiti@1.21.7)(sass@1.104.1)(terser@5.48.0)(tsx@4.21.0)(yaml@2.9.1)
+        version: 8.3.0(@types/node@25.9.3)(esbuild@0.27.0)(jiti@1.21.7)(sass@1.105.0)(terser@5.48.0)(tsx@4.21.0)(yaml@2.9.1)
     devDependencies:
       '@babel/eslint-parser':
         specifier: ^8.0.5
@@ -238,13 +238,13 @@ importers:
         version: 3.9.8
       react-scripts:
         specifier: ^5.0.1
-        version: 5.0.1(@babel/plugin-syntax-flow@7.28.6(@babel/core@8.0.5))(@babel/plugin-transform-react-jsx@7.28.6(@babel/core@8.0.5))(@types/babel__core@7.20.5)(clean-css@5.3.3)(esbuild@0.27.0)(eslint@10.10.0(jiti@1.21.7))(react@19.3.0)(sass@1.104.1)(ts-node@10.9.2(@types/node@25.9.3)(typescript@5.9.3))(tsx@4.21.0)(type-fest@4.41.0)(typescript@5.9.3)(yaml@2.9.1)
+        version: 5.0.1(@babel/plugin-syntax-flow@7.28.6(@babel/core@8.0.5))(@babel/plugin-transform-react-jsx@7.28.6(@babel/core@8.0.5))(@types/babel__core@7.20.5)(clean-css@5.3.3)(esbuild@0.27.0)(eslint@10.10.0(jiti@1.21.7))(react@19.3.0)(sass@1.105.0)(ts-node@10.9.2(@types/node@25.9.3)(typescript@5.9.3))(tsx@4.21.0)(type-fest@4.41.0)(typescript@5.9.3)(yaml@2.9.1)
       resolve-url-loader:
         specifier: ^5.0.0
         version: 5.0.0
       sass-loader:
         specifier: ^13.3.2
-        version: 13.3.3(sass@1.104.1)(webpack@5.107.1(clean-css@5.3.3)(esbuild@0.27.0)(postcss@8.5.28))
+        version: 13.3.3(sass@1.105.0)(webpack@5.107.1(clean-css@5.3.3)(esbuild@0.27.0)(postcss@8.5.28))
       sharp:
         specifier: ^0.35.4
         version: 0.35.4(@types/node@25.9.3)
@@ -8231,8 +8231,8 @@ packages:
       sass-embedded:
         optional: true
 
-  sass@1.104.1:
-    resolution: {integrity: sha512-yDA+1aIG3EHgN4V/BvuhCvu61FF6hEd4e+9DxikUm9U0CAGuvdIZ/UYy7qbOxjhbbWQraoyLlMuzdRGOSV5Bmw==}
+  sass@1.105.0:
+    resolution: {integrity: sha512-4EjSuRTyG8M4yRXXY1PT9OUV5zz23xBxJkbIAprohKHqf6HOU4MCpE3U3vAC+iO1gxobBjESNbcj8rYAQZWnyA==}
     engines: {node: '>=20.19.0'}
     hasBin: true
 
@@ -10800,14 +10800,14 @@ snapshots:
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
 
-  '@csstools/css-calc@3.4.0(@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.0))(@csstools/css-tokenizer@4.0.0)':
+  '@csstools/css-calc@3.4.0(@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.1))(@csstools/css-tokenizer@4.0.0)':
     dependencies:
-      '@csstools/css-parser-algorithms': 4.0.0(@csstools/css-tokenizer@4.0.0)
+      '@csstools/css-parser-algorithms': 4.0.0(@csstools/css-tokenizer@4.0.1)
       '@csstools/css-tokenizer': 4.0.0
 
-  '@csstools/css-calc@3.4.0(@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.0))(@csstools/css-tokenizer@4.0.1)':
+  '@csstools/css-calc@3.4.0(@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.1))(@csstools/css-tokenizer@4.0.1)':
     dependencies:
-      '@csstools/css-parser-algorithms': 4.0.0(@csstools/css-tokenizer@4.0.0)
+      '@csstools/css-parser-algorithms': 4.0.0(@csstools/css-tokenizer@4.0.1)
       '@csstools/css-tokenizer': 4.0.1
 
   '@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.0)':
@@ -10830,9 +10830,9 @@ snapshots:
 
   '@csstools/css-tokenizer@4.0.1': {}
 
-  '@csstools/media-query-list-parser@5.0.0(@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.0))(@csstools/css-tokenizer@4.0.0)':
+  '@csstools/media-query-list-parser@5.0.0(@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.1))(@csstools/css-tokenizer@4.0.0)':
     dependencies:
-      '@csstools/css-parser-algorithms': 4.0.0(@csstools/css-tokenizer@4.0.0)
+      '@csstools/css-parser-algorithms': 4.0.0(@csstools/css-tokenizer@4.0.1)
       '@csstools/css-tokenizer': 4.0.0
 
   '@csstools/normalize.css@12.1.1': {}
@@ -12435,10 +12435,10 @@ snapshots:
     optionalDependencies:
       react: 19.3.0
 
-  '@vitejs/plugin-react@6.1.1(vite@8.3.0(@types/node@25.9.3)(esbuild@0.27.0)(jiti@1.21.7)(sass@1.104.1)(terser@5.48.0)(tsx@4.21.0)(yaml@2.9.1))':
+  '@vitejs/plugin-react@6.1.1(vite@8.3.0(@types/node@25.9.3)(esbuild@0.27.0)(jiti@1.21.7)(sass@1.105.0)(terser@5.48.0)(tsx@4.21.0)(yaml@2.9.1))':
     dependencies:
       '@rolldown/pluginutils': 1.0.1
-      vite: 8.3.0(@types/node@25.9.3)(esbuild@0.27.0)(jiti@1.21.7)(sass@1.104.1)(terser@5.48.0)(tsx@4.21.0)(yaml@2.9.1)
+      vite: 8.3.0(@types/node@25.9.3)(esbuild@0.27.0)(jiti@1.21.7)(sass@1.105.0)(terser@5.48.0)(tsx@4.21.0)(yaml@2.9.1)
 
   '@vue/compiler-core@3.5.34':
     dependencies:
@@ -16657,11 +16657,11 @@ snapshots:
     dependencies:
       js-tokens: 4.0.0
 
-  lovable-tagger@1.3.3(tsx@4.21.0)(vite@8.3.0(@types/node@25.9.3)(esbuild@0.27.0)(jiti@1.21.7)(sass@1.104.1)(terser@5.48.0)(tsx@4.21.0)(yaml@2.9.1))(yaml@2.9.1):
+  lovable-tagger@1.3.3(tsx@4.21.0)(vite@8.3.0(@types/node@25.9.3)(esbuild@0.27.0)(jiti@1.21.7)(sass@1.105.0)(terser@5.48.0)(tsx@4.21.0)(yaml@2.9.1))(yaml@2.9.1):
     dependencies:
       esbuild: 0.25.12
       tailwindcss: 3.4.19(tsx@4.21.0)(yaml@2.9.1)
-      vite: 8.3.0(@types/node@25.9.3)(esbuild@0.27.0)(jiti@1.21.7)(sass@1.104.1)(terser@5.48.0)(tsx@4.21.0)(yaml@2.9.1)
+      vite: 8.3.0(@types/node@25.9.3)(esbuild@0.27.0)(jiti@1.21.7)(sass@1.105.0)(terser@5.48.0)(tsx@4.21.0)(yaml@2.9.1)
     transitivePeerDependencies:
       - tsx
       - yaml
@@ -18316,7 +18316,7 @@ snapshots:
     optionalDependencies:
       react-dom: 19.3.0(react@19.3.0)
 
-  react-scripts@5.0.1(@babel/plugin-syntax-flow@7.28.6(@babel/core@8.0.5))(@babel/plugin-transform-react-jsx@7.28.6(@babel/core@8.0.5))(@types/babel__core@7.20.5)(clean-css@5.3.3)(esbuild@0.27.0)(eslint@10.10.0(jiti@1.21.7))(react@19.3.0)(sass@1.104.1)(ts-node@10.9.2(@types/node@25.9.3)(typescript@5.9.3))(tsx@4.21.0)(type-fest@4.41.0)(typescript@5.9.3)(yaml@2.9.1):
+  react-scripts@5.0.1(@babel/plugin-syntax-flow@7.28.6(@babel/core@8.0.5))(@babel/plugin-transform-react-jsx@7.28.6(@babel/core@8.0.5))(@types/babel__core@7.20.5)(clean-css@5.3.3)(esbuild@0.27.0)(eslint@10.10.0(jiti@1.21.7))(react@19.3.0)(sass@1.105.0)(ts-node@10.9.2(@types/node@25.9.3)(typescript@5.9.3))(tsx@4.21.0)(type-fest@4.41.0)(typescript@5.9.3)(yaml@2.9.1):
     dependencies:
       '@babel/core': 7.29.7
       '@pmmmwh/react-refresh-webpack-plugin': 0.5.17(react-refresh@0.11.0)(type-fest@4.41.0)(webpack-dev-server@4.15.2(webpack@5.107.1(clean-css@5.3.3)(esbuild@0.27.0)(postcss@8.5.28)))(webpack@5.107.1(clean-css@5.3.3)(esbuild@0.27.0)(postcss@8.5.28))
@@ -18356,7 +18356,7 @@ snapshots:
       react-refresh: 0.11.0
       resolve: 1.22.12
       resolve-url-loader: 5.0.0
-      sass-loader: 13.3.3(sass@1.104.1)(webpack@5.107.1(clean-css@5.3.3)(esbuild@0.27.0)(postcss@8.5.28))
+      sass-loader: 13.3.3(sass@1.105.0)(webpack@5.107.1(clean-css@5.3.3)(esbuild@0.27.0)(postcss@8.5.28))
       semver: 7.8.1
       source-map-loader: 3.0.2(webpack@5.107.1(clean-css@5.3.3)(esbuild@0.27.0)(postcss@8.5.28))
       style-loader: 3.3.4(webpack@5.107.1(clean-css@5.3.3)(esbuild@0.27.0)(postcss@8.5.28))
@@ -18681,14 +18681,14 @@ snapshots:
 
   sanitize.css@13.0.0: {}
 
-  sass-loader@13.3.3(sass@1.104.1)(webpack@5.107.1(clean-css@5.3.3)(esbuild@0.27.0)(postcss@8.5.28)):
+  sass-loader@13.3.3(sass@1.105.0)(webpack@5.107.1(clean-css@5.3.3)(esbuild@0.27.0)(postcss@8.5.28)):
     dependencies:
       neo-async: 2.6.2
       webpack: 5.107.1(clean-css@5.3.3)(esbuild@0.27.0)(postcss@8.5.28)
     optionalDependencies:
-      sass: 1.104.1
+      sass: 1.105.0
 
-  sass@1.104.1:
+  sass@1.105.0:
     dependencies:
       chokidar: 5.0.0
       immutable: 5.1.9
@@ -19306,7 +19306,7 @@ snapshots:
 
   stylelint-scss@7.3.0(stylelint@17.15.0(typescript@5.9.3)):
     dependencies:
-      '@csstools/css-calc': 3.4.0(@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.0))(@csstools/css-tokenizer@4.0.1)
+      '@csstools/css-calc': 3.4.0(@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.1))(@csstools/css-tokenizer@4.0.1)
       '@csstools/css-parser-algorithms': 4.0.0(@csstools/css-tokenizer@4.0.1)
       '@csstools/css-syntax-patches-for-csstree': 1.1.14(css-tree@3.2.1)
       '@csstools/css-tokenizer': 4.0.1
@@ -19321,11 +19321,11 @@ snapshots:
 
   stylelint@17.15.0(typescript@5.9.3):
     dependencies:
-      '@csstools/css-calc': 3.4.0(@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.0))(@csstools/css-tokenizer@4.0.0)
+      '@csstools/css-calc': 3.4.0(@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.1))(@csstools/css-tokenizer@4.0.0)
       '@csstools/css-parser-algorithms': 4.0.0(@csstools/css-tokenizer@4.0.0)
       '@csstools/css-syntax-patches-for-csstree': 1.1.13(css-tree@3.2.1)
       '@csstools/css-tokenizer': 4.0.0
-      '@csstools/media-query-list-parser': 5.0.0(@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.0))(@csstools/css-tokenizer@4.0.0)
+      '@csstools/media-query-list-parser': 5.0.0(@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.1))(@csstools/css-tokenizer@4.0.0)
       '@csstools/selector-resolve-nested': 4.0.1(postcss-selector-parser@7.1.6)
       '@csstools/selector-specificity': 6.0.0(postcss-selector-parser@7.1.6)
       colord: 2.10.0
@@ -19869,7 +19869,7 @@ snapshots:
 
   verkit@0.3.2: {}
 
-  vite@8.3.0(@types/node@25.9.3)(esbuild@0.27.0)(jiti@1.21.7)(sass@1.104.1)(terser@5.48.0)(tsx@4.21.0)(yaml@2.9.1):
+  vite@8.3.0(@types/node@25.9.3)(esbuild@0.27.0)(jiti@1.21.7)(sass@1.105.0)(terser@5.48.0)(tsx@4.21.0)(yaml@2.9.1):
     dependencies:
       lightningcss: 1.33.0
       picomatch: 4.0.7
@@ -19881,7 +19881,7 @@ snapshots:
       esbuild: 0.27.0
       fsevents: 2.3.3
       jiti: 1.21.7
-      sass: 1.104.1
+      sass: 1.105.0
       terser: 5.48.0
       tsx: 4.21.0
       yaml: 2.9.1
