@@ -180,8 +180,8 @@ importers:
         specifier: ^1.4.7
         version: 1.4.7
       dotenv:
-        specifier: ^17.4.2
-        version: 17.4.2
+        specifier: ^18.0.5
+        version: 18.0.5
       eslint:
         specifier: ^10.11.0
         version: 10.11.0(jiti@1.21.7)
@@ -4481,9 +4481,10 @@ packages:
     resolution: {integrity: sha512-rlBi9d8jpv9Sf1klPjNfFAuWDjKLwTIJJ/VxtoTwIR6hnZxcEOQCZg2oIL3MWBYw5GpUDKOEnND7LXTbIpQ03Q==}
     engines: {node: '>=10'}
 
-  dotenv@17.4.2:
-    resolution: {integrity: sha512-nI4U3TottKAcAD9LLud4Cb7b2QztQMUEfHbvhTH09bqXTxnSie8WnjPALV/WMCrJZ6UV/qHJ6L03OqO3LcdYZw==}
+  dotenv@18.0.5:
+    resolution: {integrity: sha512-aBrGvt6KhjxbEnatqMWOMidftwsrCiCvqh1yNIGB9QyF0J+VcWkKDMsvYOEm7ZS82oiV+BT1sTOtIlAmUlTpwQ==}
     engines: {node: '>=12'}
+    hasBin: true
 
   download@6.2.5:
     resolution: {integrity: sha512-DpO9K1sXAST8Cpzb7kmEhogJxymyVUd5qz/vCOSyvwtp2Klj2XcDt5YUuasgxka44SxF0q5RriKIwJmQHG2AuA==}
@@ -14071,7 +14072,7 @@ snapshots:
 
   dotenv@10.0.0: {}
 
-  dotenv@17.4.2: {}
+  dotenv@18.0.5: {}
 
   download@6.2.5:
     dependencies:
