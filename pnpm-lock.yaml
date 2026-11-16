@@ -47,8 +47,8 @@ importers:
         specifier: ^3.0.0
         version: 3.0.0
       '@vercel/speed-insights':
-        specifier: ^2.0.0
-        version: 2.0.0(react@19.3.1)
+        specifier: ^2.1.0
+        version: 2.1.0(react@19.3.1)
       '@vitejs/plugin-react':
         specifier: ^6.2.1
         version: 6.2.1(vite@8.3.6(@types/node@25.9.3)(esbuild@0.27.0)(jiti@1.21.7)(sass@1.108.0)(terser@5.48.0)(tsx@4.21.0)(yaml@2.9.1))
@@ -1338,6 +1338,7 @@ packages:
 
   '@devexpress/error-stack-parser@2.0.6':
     resolution: {integrity: sha512-fneVypElGUH6Be39mlRZeAu00pccTlf4oVuzf9xPJD1cdEqI8NyAiQua/EW7lZdrbMUbgyXcJmfKPefhYius3A==}
+    deprecated: The @devexpress/error-stack-parser package is deprecated and will no longer receive updates.
 
   '@emnapi/core@1.11.2':
     resolution: {integrity: sha512-TC8MkTuZUtcTSiFeuC0ksCh9QIJ5+F21MvZ4Wn4ORfYaFJ/0dsiudv5tVkejgwZlwQ39jL9WWDe2lz8x0WglOA==}
@@ -3066,10 +3067,10 @@ packages:
     engines: {node: '>=14.6'}
     deprecated: 'Vercel KV is deprecated. If you had an existing KV store, it should have moved to Upstash Redis which you will see under Vercel Integrations. For new projects, install a Redis integration from Vercel Marketplace: https://vercel.com/marketplace?category=storage&search=redis'
 
-  '@vercel/speed-insights@2.0.0':
-    resolution: {integrity: sha512-jwkNcrTeafWxjmWq4AHBaptSqZiJkYU5adLC9QBSqeim0GcqDMgN5Ievh8OG1rJ6W3A4l1oiP7qr9CWxGuzu3w==}
+  '@vercel/speed-insights@2.1.0':
+    resolution: {integrity: sha512-tkDiIEjjmlwPpTFnOK14hBhsRLMo5yoCeK2Er3AHWlL7WTzHgFSyItps3TOW0HukErUlYlaUeHiVLCyfiE4WAA==}
     peerDependencies:
-      '@sveltejs/kit': ^1 || ^2
+      '@sveltejs/kit': ^1 || ^2 || ^3 || ^3.0.0-next.0
       next: '>= 13'
       nuxt: '>= 3'
       react: ^18 || ^19 || ^19.0.0-rc
@@ -12498,7 +12499,7 @@ snapshots:
     dependencies:
       '@upstash/redis': 1.38.0
 
-  '@vercel/speed-insights@2.0.0(react@19.3.1)':
+  '@vercel/speed-insights@2.1.0(react@19.3.1)':
     optionalDependencies:
       react: 19.3.1
 
